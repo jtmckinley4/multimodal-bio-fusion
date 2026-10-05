@@ -51,7 +51,7 @@ The analyses generate evidence and hypotheses for those later stages. Choosing a
 
 ## Summary
 
-The saved run covers twelve frozen encoders, four per modality, on 981 retained mRNA stability sequences, where every input derives from one coding sequence, and on the GTEx pilot, where DNA, transcript, and protein are distinct inputs (999 train and 996 test transcripts).
+The retained outputs and execution counts come from the combined Stage 1 notebook; they do not record new runs of the separated files. The saved run covers twelve frozen encoders, four per modality, on 981 retained mRNA stability sequences, where every input derives from one coding sequence, and on the GTEx pilot, where DNA, transcript, and protein are distinct inputs (999 train and 996 test transcripts).
 
 **What the frozen embeddings make accessible.**
 
@@ -65,13 +65,13 @@ The saved run covers twelve frozen encoders, four per modality, on 981 retained 
 - Agreement follows tokenization and training more than the modality label. RNA-FM and RiNALMo agree most of any pair, the ESM-2 models next, and encoders reading single letters or short tokens of the same sequence agree whether labeled DNA or RNA. mRNA-FM agrees globally with almost no encoder.
 - Most agreement involving a DNA encoder is composition: removing letter, codon, and amino-acid frequencies cuts CKA by 52% to 90% for every such pair.
 - Three groups keep strong agreement after the control on both datasets: the protein encoders among themselves, RNA-FM with RiNALMo, and CaLM with the protein encoders. CaLM still retrieves its protein partner 58% to 69% of the time on stability, about 170 to 200 times chance.
-- On GTEx, the DNA window and the gene's other molecules share almost no retrievable correspondence (Recall@1 at most 4%), as expected for different sequences.
+- On GTEx, the DNA window and the gene's other molecules share almost no retrievable correspondence (Recall@1 at most 0.041), as expected for different sequences.
 - Composition, stability signal, and most agreement sit in each embedding's ten dominant principal components; the ESM-2 models and CaLM with the protein encoders also agree in the low-variance directions, and mRNA-FM's correspondence with the protein encoders lies mainly there.
 
 **Combining representations.**
 
 - On stability, every pairing of a codon-level encoder with a protein encoder improves on the better encoder under all ten further fold assignments, by about 0.01 to 0.02; larger concatenations do not help.
-- On GTEx, 47 of 66 pairs gain under every assignment, every DNA encoder gains with every protein and codon-level encoder, and all twelve encoders together reach 0.24, the level of the length features.
+- On GTEx, 47 of 66 pairs gain under every assignment, every DNA encoder gains with every protein and codon-level encoder, and all twelve encoders together reach 0.239, the level of the length features.
 - On the published splits, the frozen probes keep the cross-validated order. BioLangFusion's three encoders concatenated reach Spearman 0.364 against its published 0.539 to 0.563, and the GTEx three-modality sets reach $R^2$ 0.216 to 0.249 against IsoFormer's 0.43, in the same order of modalities.
 
 **Diagnostics.**
@@ -80,3 +80,51 @@ The saved run covers twelve frozen encoders, four per modality, on 981 retained 
 - Position never explains the attention associations, and codon context explains most of them: mRNA-FM's DRACH shift and RiNALMo's ARE gap vanish under the codon-and-frame null. CaLM's attention to ARE pentamers survives both nulls, a lead rather than a finding. In 3' untranslated regions, RNA-FM shows no association and RiNALMo's ARE gap is explained by local three-nucleotide context.
 
 **Implications for alignment and fusion.** Raw similarity between frozen pooled embeddings is a weak alignment target, because composition reproduces most of it; alignment and fusion comparisons should report agreement before and after a composition control. Per-sequence alignment does not track prediction error on either dataset, which is consistent with letting a fusion model learn interactions rather than imposing an explicit alignment loss, although these diagnostics do not test an alignment loss directly. Encoders of one modality are not interchangeable: mRNA-FM and CaLM both read codons and both complement the protein encoders, yet their geometries differ sharply. Where inputs are distinct, simple concatenation already adds signal across modalities, but transcript lengths match it, so any fusion comparison on GTEx should include length as a baseline. The pairing of a codon-level RNA encoder with a protein encoder is the clearest candidate for the trained fusion comparisons in Stage 3 on the stability data, and DNA with protein or codon-level encoders on GTEx.
+
+### Result tables
+
+These tables summarize the saved notebook outputs. Stability uses 981 retained sequences; GTEx cross-validation uses the pilot's 999 train transcripts. Probe entries give mean $R^2$ over five pinned folds with fold standard deviation, plus the mean over ten further assignments where shown.
+
+Probes use ridge regression over five folds. Stability groups identical sequences; GTEx groups transcripts by gene. A hash of each group identifier and seed pins the fold assignment across machines, and each probe is repeated over ten further fold assignments to show how much the partition moves the result. The concatenated-embedding probe uses a linear model, distinct from the concatenation + MLP reference baseline. These analyses can inform experiment design; their outputs alone do not establish which fusion method to use or validate a wet-lab application.
+
+| Encoder | Modality | Stability $R^2$, pinned (fold SD) | Stability $R^2$, ten further assignments | GC3 $R^2$ | Share of embedding variance explained by composition | GTEx expression $R^2$, pinned (fold SD) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Nucleotide Transformer 500M human-ref | DNA | 0.032 (0.043) | 0.046 | 0.968 | 0.618 | 0.034 (0.025) |
+| Nucleotide Transformer v2 100M multi-species | DNA | 0.080 (0.032) | 0.074 | 0.986 | 0.804 | 0.036 (0.030) |
+| DNABERT-2 | DNA | 0.054 (0.031) | 0.057 | 0.948 | 0.610 | 0.033 (0.028) |
+| HyenaDNA large | DNA | 0.026 (0.017) | 0.019 | 0.896 | 0.924 | 0.031 (0.028) |
+| RNA-FM | RNA | 0.052 (0.032) | 0.046 | 0.917 | 0.677 | 0.149 (0.037) |
+| RiNALMo 150M | RNA | 0.078 (0.021) | 0.079 | 0.949 | 0.648 | 0.149 (0.047) |
+| mRNA-FM | RNA | 0.127 (0.032) | 0.110 | 0.946 | 0.296 | 0.172 (0.044) |
+| CaLM | RNA | 0.127 (0.058) | 0.132 | 0.982 | 0.472 | 0.120 (0.032) |
+| ESM-2 8M | Protein | 0.127 (0.044) | 0.131 | 0.379 | 0.479 | 0.091 (0.022) |
+| ESM-2 35M | Protein | 0.114 (0.049) | 0.123 | 0.387 | 0.446 | 0.104 (0.031) |
+| ESM-2 150M | Protein | 0.144 (0.035) | 0.142 | 0.436 | 0.437 | 0.130 (0.043) |
+| ProtBERT | Protein | 0.143 (0.041) | 0.135 | 0.440 | 0.415 | 0.163 (0.040) |
+
+On GTEx, four transcript-length features alone reach an expression $R^2$ of 0.242 (0.036).
+
+| Encoder pairs, stability data | Linear CKA | CKA after composition control | CCA Recall@1 (chance 0.0034) | Recall@1 after composition control |
+| --- | --- | --- | --- | --- |
+| Within ESM-2 | 0.553 to 0.744 | 0.376 to 0.643 | 0.942 to 0.955 | 0.701 to 0.869 |
+| ProtBERT with ESM-2 | 0.199 to 0.312 | 0.093 to 0.162 | 0.818 to 0.873 | 0.481 to 0.622 |
+| Within DNA | 0.270 to 0.736 | 0.038 to 0.113 | 0.591 to 0.773 | 0.103 to 0.162 |
+| RNA-FM with RiNALMo | 0.809 | 0.378 | 0.931 | 0.704 |
+| mRNA-FM with CaLM | 0.163 | 0.084 | 0.619 | 0.124 |
+| DNA with RNA-FM or RiNALMo | 0.171 to 0.613 | 0.044 to 0.164 | 0.491 to 0.677 | 0.052 to 0.244 |
+| DNA with mRNA-FM or CaLM | 0.030 to 0.517 | 0.012 to 0.075 | 0.271 to 0.632 | 0.027 to 0.086 |
+| DNA with protein | 0.058 to 0.163 | 0.010 to 0.072 | 0.168 to 0.540 | 0.021 to 0.082 |
+| RNA-FM or RiNALMo with protein | 0.116 to 0.339 | 0.035 to 0.161 | 0.196 to 0.509 | 0.021 to 0.223 |
+| mRNA-FM with protein | 0.037 to 0.295 | 0.021 to 0.261 | 0.405 to 0.464 | 0.069 to 0.113 |
+| CaLM with protein | 0.309 to 0.448 | 0.246 to 0.401 | 0.794 to 0.866 | 0.581 to 0.687 |
+
+### Published comparisons and distinct inputs
+
+The frozen encoders are compared with published fusion studies in two settings: [Setting A in the stability notebook](../Code/Stage1_stability.ipynb#Published-split-comparison), fitting probes on rows sampled from the published train split and scoring its test split, and [Setting B in the GTEx notebook](../Code/Stage1_gtex.ipynb#GTEx-published-split-comparison), whose rows carry separate DNA, transcript, and protein sequences. The Overleaf sections on the published split and on GTEx give the full comparison.
+
+| Setting | Dataset | How DNA enters | Published comparison | Frozen encoders here |
+| --- | --- | --- | --- | --- |
+| A: derived modalities | CodonBERT mRNA stability (the current CSV) | A DNA encoder reads the coding sequence in DNA letters, an RNA encoder reads it in RNA letters, and a protein encoder reads its translation. | [BioLangFusion](../Papers/core/BioLangFusion.pdf), Table 1: best fusion Spearman 0.563 versus 0.553 for the best single encoder. | BioLangFusion's three encoders concatenated reach Spearman 0.364 on 981 published test rows; ProtBERT alone reaches 0.396. |
+| B: distinct modalities | [IsoFormer GTEx transcript expression](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression) | Genomic DNA centered on the transcription start site, alongside the full transcript and the protein. | [IsoFormer](../Papers/core/Multi-Modal-Transfer-Learning.pdf), Table 2: three modalities reach $R^2$ 0.43 versus 0.36 for RNA alone. | The three-modality sets reach $R^2$ 0.216 to 0.249 on 996 published test transcripts, with the modalities in IsoFormer's order. |
+
+In Setting A all three inputs derive from one coding sequence, so differences between encoders come from pretraining corpora and tokenization rather than new biological information. The stability CSV has no gene or transcript identifiers, so genomic context around each gene is not available without a separate mapping step. Setting B supplies DNA that carries promoter and regulatory context absent from the protein. The frozen-probe values fall short of the published ones because those studies train their heads on token-level embeddings with far more data; the comparison places the frozen encoders on the published splits rather than reproducing the published models.

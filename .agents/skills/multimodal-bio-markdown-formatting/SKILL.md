@@ -5,7 +5,7 @@ description: Format shared multimodal-bio-fusion project Markdown, repository sk
 
 # Shared Markdown formatting
 
-Make contributions fit the shared document's structure using the rules below and the scope in [AGENTS.md](../../../AGENTS.md). This repository file owns the presentation conventions. It requires no personal skill installation and does not prescribe a contributor's research process or learning style.
+Make contributions fit the shared document's structure using the rules below and the scope in [AGENTS.md](../../../AGENTS.md). This repository file owns presentation conventions, not a contributor's research process or learning style.
 
 ## Select the applicable treatment
 
@@ -18,7 +18,7 @@ Read the requested file and the surrounding material before editing. Identify th
 | Repository instructions and skill prose | Apply the common Markdown rules, preserving functional metadata, imports, paths, and examples. Formatting alone does not authorize changing triggers, scope, or behavior. |
 | Executable code | Outside this skill. Code may be read to understand an explanation; code formatting and implementation are separate work. No external coding skill is a prerequisite. |
 
-Individual material in `docs/notes/Reviews/` and personal notes in `docs/notes/` keeps its author's format and voice. Follow a specific request concerning that material without extending these shared conventions to it by default. For document purpose, tone, attribution, or retaining research sources, use the repository's [shared-documentation workflow](../multimodal-bio-shared-documentation/SKILL.md); a small formatting correction needs only the applicable presentation rules.
+Individual notes and reviews retain their author's format under the [scope rules](../../../AGENTS.md#shared-documentation-and-sources). Use the [shared-documentation workflow](../multimodal-bio-shared-documentation/SKILL.md) for purpose, tone, attribution, and source retention; a small formatting correction needs only the applicable presentation rules.
 
 ## Define the outline before choosing heading levels
 
@@ -60,6 +60,6 @@ Use relative repository links for shared files and descriptive labels for extern
 
 ## Check the requested change
 
-Apply these rules within the requested scope. Existing formatting helps locate structure but does not replace the definitions above. Do not normalize untouched material merely because it differs. Follow the task-exception and conflict rules in AGENTS.md without treating one exception as a change to the shared standard.
+Existing formatting helps locate structure but does not replace the definitions above. Do not normalize untouched material merely because it differs; follow AGENTS.md for task exceptions and conflicts.
 
-Check the resulting outline, list nesting, literal examples, local links, and final diff. For a skill file, verify that frontmatter and routing still express the intended behavior. When rendering is relevant, inspect the intended viewer if available and state any unverified rendering behavior. Source checks alone do not establish visual correctness. Report the result in the task conversation without creating a separate formatting report.
+Check the outline, list nesting, and literal examples, plus frontmatter and routing when editing a skill. Follow the [documentation checks and reporting guidance](../../../AGENTS.md#checks-and-handoff) for links, change scope, and the handoff. When rendering matters, inspect the intended viewer if available and state any unverified behavior; source checks do not establish visual correctness.

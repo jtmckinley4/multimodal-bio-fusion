@@ -50,76 +50,17 @@ Agents working in this repository should start with [AGENTS.md](AGENTS.md).
 
 ## Stage 1 analysis
 
-Start with the [overview](docs/stage1-overview.md) for the models, research questions, and cross-dataset summary. Read the stability notebook for the first method walkthrough, then use GTEx to compare the findings when DNA, transcript, and protein are distinct inputs.
-
-| File | What to read or run |
-| --- | --- |
-| [Stage 1 overview](docs/stage1-overview.md) | Model context, research questions, and cross-dataset summary in a Markdown document. |
-| [Stage1_stability.ipynb](Code/Stage1_stability.ipynb) | Independent experiment: sequence checks, dataset audit, embeddings, stability and biological-target probes, representation comparisons, synonymous-recoding control, attention diagnostics, and the BioLangFusion published-split comparison. |
-| [Stage1_gtex.ipynb](Code/Stage1_gtex.ipynb) | Independent experiment: GTEx inputs, expression probes and baselines, concatenation, the IsoFormer published-split comparison, representation comparisons, and attention diagnostics. |
-
 Each experiment keeps its settings, analysis calls, outputs, and interpretations together. The [method guides](docs/README.md#understand-the-methods) provide the longer derivations and biological explanations; links beside the relevant notebook cells connect them to the analysis. Reusable calculations live in [Code/mbf/](Code/mbf/). See [Reading implementation code](#reading-implementation-code) to inspect a function from the notebook.
 
-Each experiment has its own Setup section and can run without executing the other. For a new run, use a fresh kernel with `Code/` as its working directory and follow that experiment from Setup onward; see [Setup](#setup). The saved outputs and execution counts were retained from the combined notebook, not produced by a new run of the separated files. They cover twelve encoders on 981 retained mRNA stability sequences and the GTEx pilot's 999 train and 996 test transcripts. Keep these results associated with the producing code version and settings.
-
-Probes use ridge regression over five folds that keep identical sequences together. A hash of each sequence pins the fold assignment, so it does not depend on the machine, and each probe is repeated over ten further fold assignments to show how much the partition moves the result. The concatenated-embedding probe uses a linear model, distinct from the concatenation + MLP reference baseline. These analyses can inform experiment design; their outputs alone do not establish which fusion method to use or validate a wet-lab application.
+The saved outputs were retained from the combined notebook. The [overview](docs/stage1-overview.md#summary) identifies the samples, evaluation protocol, and findings; follow [Setup](#setup) for a new run.
 
 ### Stage 1 results
 
-The main results retained in the [stability](Code/Stage1_stability.ipynb) and [GTEx](Code/Stage1_gtex.ipynb) notebooks cover 981 retained stability sequences and the GTEx pilot's 999 train transcripts for cross-validation. Probe scores are mean $R^2$ over the five pinned folds, with the fold standard deviation, and the mean over ten further fold assignments. Each experiment gives the full tables and interpretations beside its outputs; the overview's [Summary](docs/stage1-overview.md#summary) draws them together.
-
-| Encoder | Modality | Stability $R^2$, pinned (fold SD) | Stability $R^2$, ten further assignments | GC3 $R^2$ | Share of embedding variance explained by composition | GTEx expression $R^2$, pinned (fold SD) |
-| --- | --- | --- | --- | --- | --- | --- |
-| Nucleotide Transformer 500M human-ref | DNA | 0.032 (0.043) | 0.046 | 0.968 | 0.618 | 0.034 (0.025) |
-| Nucleotide Transformer v2 100M multi-species | DNA | 0.080 (0.032) | 0.074 | 0.986 | 0.804 | 0.036 (0.030) |
-| DNABERT-2 | DNA | 0.054 (0.031) | 0.057 | 0.948 | 0.610 | 0.033 (0.028) |
-| HyenaDNA large | DNA | 0.026 (0.017) | 0.019 | 0.896 | 0.924 | 0.031 (0.028) |
-| RNA-FM | RNA | 0.052 (0.032) | 0.046 | 0.917 | 0.677 | 0.149 (0.037) |
-| RiNALMo 150M | RNA | 0.078 (0.021) | 0.079 | 0.949 | 0.648 | 0.149 (0.047) |
-| mRNA-FM | RNA | 0.127 (0.032) | 0.110 | 0.946 | 0.296 | 0.172 (0.044) |
-| CaLM | RNA | 0.127 (0.058) | 0.132 | 0.982 | 0.472 | 0.120 (0.032) |
-| ESM-2 8M | Protein | 0.127 (0.044) | 0.131 | 0.379 | 0.479 | 0.091 (0.022) |
-| ESM-2 35M | Protein | 0.114 (0.049) | 0.123 | 0.387 | 0.446 | 0.104 (0.031) |
-| ESM-2 150M | Protein | 0.144 (0.035) | 0.142 | 0.436 | 0.437 | 0.130 (0.043) |
-| ProtBERT | Protein | 0.143 (0.041) | 0.135 | 0.440 | 0.415 | 0.163 (0.040) |
-
-On GTEx, four transcript-length features alone reach an expression $R^2$ of 0.242 (0.036).
-
-| Encoder pairs, stability data | Linear CKA | CKA after composition control | CCA Recall@1 (chance 0.0034) | Recall@1 after composition control |
-| --- | --- | --- | --- | --- |
-| Within ESM-2 | 0.553 to 0.744 | 0.376 to 0.643 | 0.942 to 0.955 | 0.701 to 0.869 |
-| ProtBERT with ESM-2 | 0.199 to 0.312 | 0.093 to 0.162 | 0.818 to 0.873 | 0.481 to 0.622 |
-| Within DNA | 0.270 to 0.736 | 0.038 to 0.113 | 0.591 to 0.773 | 0.103 to 0.162 |
-| RNA-FM with RiNALMo | 0.809 | 0.378 | 0.931 | 0.704 |
-| mRNA-FM with CaLM | 0.163 | 0.084 | 0.619 | 0.124 |
-| DNA with RNA-FM or RiNALMo | 0.171 to 0.613 | 0.044 to 0.164 | 0.491 to 0.677 | 0.052 to 0.244 |
-| DNA with mRNA-FM or CaLM | 0.030 to 0.517 | 0.012 to 0.075 | 0.271 to 0.632 | 0.027 to 0.086 |
-| DNA with protein | 0.058 to 0.163 | 0.010 to 0.072 | 0.168 to 0.540 | 0.021 to 0.082 |
-| RNA-FM or RiNALMo with protein | 0.116 to 0.339 | 0.035 to 0.161 | 0.196 to 0.509 | 0.021 to 0.223 |
-| mRNA-FM with protein | 0.037 to 0.295 | 0.021 to 0.261 | 0.405 to 0.464 | 0.069 to 0.113 |
-| CaLM with protein | 0.309 to 0.448 | 0.246 to 0.401 | 0.794 to 0.866 | 0.581 to 0.687 |
-
-- The protein encoders and the two codon-level RNA encoders carry the most linearly accessible stability signal ($R^2$ about 0.11 to 0.14). The encoders that read single nucleotides, six-nucleotide tokens, or byte-pair tokens reach 0.03 to 0.08, and sequence length alone predicts almost nothing ($R^2$ 0.003).
-- Every nucleotide encoder retains synonymous codon information that the protein encoders cannot see, shown by the GC3 probes.
-- On the stability data, every pairing of a codon-level RNA encoder with a protein encoder improves on the better of the two under all ten further fold assignments, by about 0.01 to 0.02. Larger concatenations do not improve on the best single encoder.
-- Agreement follows tokenization and training more than the modality label: RNA-FM and RiNALMo agree most of any pair, and encoders reading single letters or short tokens of the same sequence agree whether they are labeled DNA or RNA. mRNA-FM agrees globally with almost no encoder.
-- Most agreement involving a DNA encoder comes from shared sequence composition: removing letter, codon, and amino-acid frequencies cuts CKA by 52% to 90% for every such pair. Three groups keep strong agreement after the control: the protein encoders, RNA-FM with RiNALMo, and CaLM with the protein encoders, which still retrieves its protein partner 58% to 69% of the time, about 170 to 200 times chance.
-- Position never explains the attention associations at candidate stability patterns, and codon context explains most of them. CaLM's attention to AU-rich pentamers survives both permutation nulls, a lead rather than a finding.
-- On GTEx, where each modality is a different molecule, RNA and protein encoders predict expression (0.09 to 0.18) far better than DNA encoders reading the region around the start site (0.03 to 0.05), but four length features beat every single encoder. 47 of the 66 pairs gain under every fold assignment, and all twelve encoders together reach 0.239, the level of the length features. The DNA window shares almost no retrievable correspondence with the transcript or protein (Recall@1 at most 0.041).
-- Per-sequence alignment does not track prediction error for any of the 66 pairs on either dataset after correction for multiple tests.
+Codon-level RNA and protein encoders carry the strongest linearly accessible stability signal. Sequence composition explains much of the raw agreement between encoders, and simple transcript-length features remain a strong GTEx baseline. Read the overview's [interpretation](docs/stage1-overview.md#summary) and [result tables](docs/stage1-overview.md#result-tables) alongside the notebook evidence before choosing a fusion experiment.
 
 ### Published comparisons and distinct inputs
 
-The frozen encoders are compared with published fusion studies in two settings: [Setting A in the stability notebook](Code/Stage1_stability.ipynb#Published-split-comparison), fitting probes on rows sampled from the published train split and scoring its test split, and [Setting B in the GTEx notebook](Code/Stage1_gtex.ipynb#GTEx-published-split-comparison), whose rows carry separate DNA, transcript, and protein sequences. The Overleaf sections on the published split and on GTEx give the full comparison.
-
-| Setting | Dataset | How DNA enters | Published comparison | Frozen encoders here |
-| --- | --- | --- | --- | --- |
-| A: derived modalities | CodonBERT mRNA stability (the current CSV) | A DNA encoder reads the coding sequence in DNA letters, an RNA encoder reads it in RNA letters, and a protein encoder reads its translation. | [BioLangFusion](Papers/core/BioLangFusion.pdf), Table 1: best fusion Spearman 0.563 versus 0.553 for the best single encoder. | BioLangFusion's three encoders concatenated reach Spearman 0.364 on 981 published test rows; ProtBERT alone reaches 0.396. |
-| B: distinct modalities | [IsoFormer GTEx transcript expression](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression) | Genomic DNA centered on the transcription start site, alongside the full transcript and the protein. | [IsoFormer](Papers/core/Multi-Modal-Transfer-Learning.pdf), Table 2: three modalities reach $R^2$ 0.43 versus 0.36 for RNA alone. | The three-modality sets reach $R^2$ 0.216 to 0.249 on 996 published test transcripts, with the modalities in IsoFormer's order. |
-
-In Setting A all three inputs derive from one coding sequence, so differences between encoders come from pretraining corpora and tokenization rather than new biological information. The stability CSV has no gene or transcript identifiers, so genomic context around each gene is not available without a separate mapping step. Setting B supplies DNA that carries promoter and regulatory context absent from the protein. The frozen-probe values fall short of the published ones because those studies train their heads on token-level embeddings with far more data; the comparison places the frozen encoders on the published splits rather than reproducing the published models.
-
-The twelve encoders include BioLangFusion's three, Nucleotide Transformer v2 100M multi-species, RNA-FM, and ESM-2 8M, and IsoFormer's protein encoder, ESM-2 150M. Nucleotide Transformer v2 and DNABERT-2 load custom model code written for `transformers` 4; the encoder registry, [encoders.py](Code/mbf/encoders.py), applies the small compatibility adjustments they need under `transformers` 5 and pins both to a fixed checkpoint revision. Trained fusion architectures, including BioLangFusion's fusion heads and IsoFormer's cross-attention, need token-level embeddings and belong to Stage 3.
+The overview's [published comparisons](docs/stage1-overview.md#published-comparisons-and-distinct-inputs) place the frozen probes on BioLangFusion's and IsoFormer's published splits and explain the limits of comparing them with trained fusion models.
 
 ## Stage 2: defining alignment
 
@@ -182,6 +123,8 @@ python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biop
 Open notebooks with VS Code's Python and Jupyter extensions and [select the environment containing these packages as the kernel](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management). Use `Code/` as the kernel's working directory for local package imports and embedding-cache paths. Dataset loaders resolve the supplied CSVs from the repository's `datasets/` folder independently of that working directory.
 
 The Stage 1 experiment notebooks use a CUDA GPU when available, then an Apple Silicon GPU through PyTorch's MPS backend, and otherwise the CPU; on MPS they let operations the backend lacks fall back to the CPU. `multimolecule` provides RNA-FM, RiNALMo, mRNA-FM, CaLM, and HyenaDNA. Version 0.2.1 imports with `transformers` 5.14.1 and 5.15.1 but not 5.16 or later, which is why `transformers` is pinned. If `import multimolecule` fails in an Anaconda environment with an older `datasets` or `huggingface_hub`, upgrade `datasets` and `fsspec` and reinstall `huggingface_hub`.
+
+Nucleotide Transformer v2 and DNABERT-2 load custom model code written for `transformers` 4; the encoder registry, [encoders.py](Code/mbf/encoders.py), applies the small compatibility adjustments they need under `transformers` 5 and pins both to a fixed checkpoint revision.
 
 `PYTORCH_ENABLE_MPS_FALLBACK` must be configured before PyTorch is imported for the MPS fallback to take effect. Each experiment notebook's Imports cell uses `os.environ.setdefault` before `import torch`, setting the value to `1` only when it is absent; an existing value is preserved.
 
