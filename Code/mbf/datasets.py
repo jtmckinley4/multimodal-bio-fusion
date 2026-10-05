@@ -13,6 +13,7 @@ from __future__ import annotations
 import itertools
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -22,12 +23,16 @@ from .sequences import dna_to_rna, rna_to_dna
 from .sequences import is_in_frame_and_starts_correctly, translate_cds
 
 
+DEFAULT_DATA_DIR = Path(__file__).resolve().parents[2] / "datasets"
+
+
 @dataclass(frozen=True)
 class DatasetSpec:
     """A labeled sequence dataset and where its encoder inputs come from.
 
-    path is relative to the Code directory. split_column names the column holding the
-    published train, validation, and test assignment, when the file has one.
+    path is a filename within the selected data directory, which defaults to the
+    repository's datasets folder. split_column names the column holding the published
+    train, validation, and test assignment, when the file has one.
 
     In the "derived" setting every encoder input comes from sequence_column, one coding
     sequence. In the "distinct" setting, input_columns names separate columns: "dna"
@@ -143,12 +148,12 @@ class Dataset:
         return [protein_input(encoder, s) for s in self.column("protein")]
 
 
-def sample_rows(key, n_rows=None, seed=42, data_dir="."):
+def sample_rows(key, n_rows=None, seed=42, data_dir=DEFAULT_DATA_DIR):
     """Return a registered dataset's rows with a sequence, sampled before any filtering.
 
     With n_rows, n_rows rows are drawn without replacement using seed; otherwise every
-    row is returned. data_dir is the directory holding the files, the Code directory by
-    default.
+    row is returned. data_dir defaults to the repository's datasets folder, regardless
+    of the working directory. An explicit relative data_dir uses the working directory.
     """
     spec = DATASETS[key]
     df = pd.read_csv(os.path.join(data_dir, spec.path)).dropna(subset=[spec.sequence_column])
@@ -177,12 +182,12 @@ def retain(spec, df):
     )
 
 
-def load_dataset(key, n_rows=None, seed=42, data_dir="."):
+def load_dataset(key, n_rows=None, seed=42, data_dir=DEFAULT_DATA_DIR):
     """Load a registered dataset, sample it, and keep the rows that pass the Stage 1 filters."""
     return retain(DATASETS[key], sample_rows(key, n_rows, seed, data_dir))
 
 
-def official_split_sample(key, n_train, n_test, seed=42, data_dir="."):
+def official_split_sample(key, n_train, n_test, seed=42, data_dir=DEFAULT_DATA_DIR):
     """Sample rows from a dataset's published train and test splits and apply the filters.
 
     Returns (train, test) Datasets. Each split is sampled before filtering, with n_train
@@ -200,7 +205,7 @@ def official_split_sample(key, n_train, n_test, seed=42, data_dir="."):
     return tuple(parts)
 
 
-def audit(key, data_dir=".", length_limit=1000):
+def audit(key, data_dir=DEFAULT_DATA_DIR, length_limit=1000):
     """Summarize properties of the whole file that matter for comparisons with published results.
 
     Reports rows and distinct sequences, rows per published split and the distinct

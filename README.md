@@ -2,11 +2,23 @@
 
 A research project in the [Complex Adaptive Systems Laboratory](https://complexity.cecs.ucf.edu/directors-welcome/) at the University of Central Florida, studying how to choose and combine pretrained DNA, RNA, and protein foundation models. The team's manuscript is the Overleaf project [multimodal-bio-fusion](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f), which records the Stage 1 methods, metric definitions, and results.
 
+## Start here
+
+1. Read the [Stage 1 overview](docs/stage1-overview.md) for the research questions, the twelve encoders, and how the two experiments relate. Its [summary](docs/stage1-overview.md#summary) brings their findings together.
+2. Follow the [mRNA stability notebook](Code/Stage1_stability.ipynb) as the first worked analysis. Read each question, its code and saved output, and the interpretation that follows. Links beside the analysis open the relevant method explanation.
+3. Read the [GTEx transcript-expression notebook](Code/Stage1_gtex.ipynb) to compare the findings when the DNA input includes genomic context and the transcript includes regions absent from the protein. GTEx stands for [Genotype-Tissue Expression](https://www.genome.gov/Funded-Programs-Projects/Genotype-Tissue-Expression-Project); this experiment uses a small sample of IsoFormer's processed data with expression targets for 30 human tissues.
+
+The saved notebooks can be studied without running their cells. When ready to execute an experiment, follow [Setup](#setup), select the notebook's Python environment, and use a fresh kernel with `Code/` as its working directory. Each experiment runs independently; reading stability first is a learning route, not an execution dependency.
+
+For a specific question, go directly to the [method guides](docs/README.md#understand-the-methods), [Stage 1 results](#stage-1-results), [dataset descriptions](#data), or [Stage 2 alignment definition](#stage-2-defining-alignment). The [documentation index](docs/README.md#find-plans-and-literature) links the research canvas, schedule, bibliography, and literature review.
+
 ## Project background
 
-The aim is to develop methods for choosing which biological modalities and pretrained models to combine, and for deciding when and how fusion is useful for a target task. The longer-term goal set with Mina Basirat is to fuse several pretrained encoders, with more than one model per modality (for example, several DNA, RNA, and protein models), and to compare those combinations. Those choices should be grounded in the biological question and the wet-lab work the predictions could inform. The [meeting slides](Notes/Mina_Meeting_Slides_2026-09-23.pptx), particularly slide 3, frame the contribution as a method for deciding whether and how to fuse.
+The aim is to develop methods for choosing which biological modalities and pretrained models to combine, and for deciding when and how fusion is useful for a target task. The longer-term goal set with Mina Basirat is to fuse several pretrained encoders, with more than one model per modality (for example, several DNA, RNA, and protein models), and to compare those combinations. Those choices should be grounded in the biological question and the wet-lab work the predictions could inform. The [meeting slides](docs/notes/Mina_Meeting_Slides_2026-09-23.pptx), particularly slide 3, frame the contribution as a method for deciding whether and how to fuse.
 
-Stage 1 studies DNA, RNA, and translated protein representations from frozen encoders, beginning with mRNA stability prediction and a synonymous-recoding control. Frozen means that the encoder weights are not updated during these analyses. The [Stage 1 overview](Code/Stage1_analysis.ipynb) introduces twelve encoders, four per modality, and compares the saved results from two experiment notebooks. Nucleotide Transformer 500M human-ref, Nucleotide Transformer v2 100M multi-species, DNABERT-2, and HyenaDNA read each coding sequence in DNA letters; RNA-FM and RiNALMo (pretrained on non-coding RNA) and mRNA-FM and CaLM (pretrained on coding sequences, one token per codon) read the same sequence in RNA letters; and ESM-2 8M, 35M, and 150M and ProtBERT read its translation. The [stability notebook](Code/Stage1_stability.ipynb) analyzes these derived inputs. The [GTEx notebook](Code/Stage1_gtex.ipynb) repeats the main analyses on IsoFormer's transcript-expression data, where each encoder reads its own input: genomic DNA around the transcription start site, the transcript, or the protein. Both experiment notebooks use the dataset and encoder registries in the `mbf` package. The choice of future tasks, model combinations, and evaluation criteria remains part of the research.
+Stage 1 compares twelve pretrained encoders, four each for DNA, RNA, and protein. An encoder turns a biological sequence into numerical representations called embeddings; the notebooks summarize these as one vector per input sequence. Frozen means the encoder weights are not updated during these analyses. We fit simple predictive models to those vectors and compare how the encoders represent corresponding inputs. The [overview's model table](docs/stage1-overview.md#models-and-input-settings) identifies the encoders, their pretraining data, and why they are included.
+
+The two experiments supply different biological context. In the stability experiment, the DNA and RNA inputs are letter conversions of the same coding sequence, and the protein is its translation, which loses synonymous codon distinctions. In the GTEx experiment, the inputs include genomic DNA around the transcription start site, the transcript or its coding sequence, and the protein. Comparing these settings helps us examine whether a combination adds useful information for the prediction task. The choice of future tasks, model combinations, and evaluation criteria remains part of the research.
 
 ### Architecture priorities
 
@@ -16,31 +28,33 @@ Stage 1 studies DNA, RNA, and translated protein representations from frozen enc
 | 2 | Isoformer-style cross-attention |
 | Fallbacks | Cross-Mamba / BiMamba; mixture-of-experts fusion |
 
-Coupled Mamba's priority was agreed at the September 23, 2026 online meeting. The [meeting slides](Notes/Mina_Meeting_Slides_2026-09-23.pptx), slide 6, list the primary and fallback architectures. Concatenation + MLP is the reference baseline in the research design.
+Coupled Mamba's priority was agreed at the September 23, 2026 online meeting. The [meeting slides](docs/notes/Mina_Meeting_Slides_2026-09-23.pptx), slide 6, list the primary and fallback architectures. Concatenation + MLP is the reference baseline in the research design.
 
 ## Repo structure
 
 | Location | Contents |
 | --- | --- |
-| [Code/](Code/) | Analysis notebooks, input datasets, and the script that builds the GTEx pilot; local runs also produce intermediate outputs here. |
-| [Code/mbf/](Code/mbf/) | The Python package the notebooks share: sequence utilities, encoder and dataset registries, fold assignments, embedding, and analysis functions. |
-| [docs/](docs/README.md) | Team research plans, bibliography, selected sources, and shared method guides linked from the experiment notebooks. |
-| [tests/](tests/README.md) | Checks for notebook setup, implementation displays, and shared concatenation calculations using synthetic inputs. |
-| [Notes/Reviews/](Notes/Reviews/) | Individual paper reviews and interpretations, organized by contributor. |
-| [Notes/](Notes/) | Working notes, meeting records, and discussion slides. |
-| [Papers/](Papers/) | Reference papers informing the research. |
+| [Code/](Code/) | Analysis notebooks and the script that builds the GTEx pilot; local runs also produce intermediate outputs here. |
+| [datasets/](datasets/) | The three supplied CSV inputs; their sources and contents are described in [Data](#data). |
+| [Code/mbf/](Code/mbf/) | Reusable Python functions called by both notebooks: load datasets and encoders, prepare sequences, assign evaluation folds, extract embeddings, and calculate analyses. Follow notebook source links when you want to inspect a calculation. |
+| [docs/](docs/README.md) | The Stage 1 overview, shared method explanations, research plans, bibliography, literature review, and selected sources. |
+| [Code/build_gtex_pilot.py](Code/build_gtex_pilot.py) | Rebuilds the GTEx pilot CSV from external source data. The CSV is already included; this script is only needed to rebuild it. See [Data](#data) for its source and contents. |
+| [tests/](tests/README.md) | Automated software checks for notebook setup, dataset paths, links to function definitions, and shared calculations using controlled examples. They help detect code breakage; they do not validate biological conclusions. |
+| [docs/notes/Reviews/](docs/notes/Reviews/) | Individual paper reviews and interpretations, organized by contributor. |
+| [docs/notes/](docs/notes/) | Working notes, meeting records, and discussion slides. |
+| [Papers/](Papers/README.md) | Catalog of core and supporting papers, including retained PDFs, versions, and source links. |
 
-Keep individual paper notes in contributor folders, such as [Notes/Reviews/Julian/](Notes/Reviews/Julian/) and `Notes/Reviews/Chase/`, so interpretations remain attributable. Obsidian supports personal study; explanations needed to understand the project belong in the shared documentation.
+Keep individual paper notes in contributor folders, such as [docs/notes/Reviews/Julian/](docs/notes/Reviews/Julian/) and `docs/notes/Reviews/Chase/`, so interpretations remain attributable. Obsidian supports personal study; explanations needed to understand the project belong in the shared documentation.
 
 Agents working in this repository should start with [AGENTS.md](AGENTS.md).
 
 ## Stage 1 analysis
 
-Start with the [overview](Code/Stage1_analysis.ipynb) for the models, research questions, and cross-dataset summary. Read the stability notebook for the first method walkthrough, then use GTEx to compare the findings when DNA, transcript, and protein are distinct inputs.
+Start with the [overview](docs/stage1-overview.md) for the models, research questions, and cross-dataset summary. Read the stability notebook for the first method walkthrough, then use GTEx to compare the findings when DNA, transcript, and protein are distinct inputs.
 
-| Notebook | What to read or run |
+| File | What to read or run |
 | --- | --- |
-| [Stage1_analysis.ipynb](Code/Stage1_analysis.ipynb) | Overview and cross-dataset Summary. This file contains Markdown only. |
+| [Stage 1 overview](docs/stage1-overview.md) | Model context, research questions, and cross-dataset summary in a Markdown document. |
 | [Stage1_stability.ipynb](Code/Stage1_stability.ipynb) | Independent experiment: sequence checks, dataset audit, embeddings, stability and biological-target probes, representation comparisons, synonymous-recoding control, attention diagnostics, and the BioLangFusion published-split comparison. |
 | [Stage1_gtex.ipynb](Code/Stage1_gtex.ipynb) | Independent experiment: GTEx inputs, expression probes and baselines, concatenation, the IsoFormer published-split comparison, representation comparisons, and attention diagnostics. |
 
@@ -52,7 +66,7 @@ Probes use ridge regression over five folds that keep identical sequences togeth
 
 ### Stage 1 results
 
-The main results retained in the [stability](Code/Stage1_stability.ipynb) and [GTEx](Code/Stage1_gtex.ipynb) notebooks cover 981 retained stability sequences and the GTEx pilot's 999 train transcripts for cross-validation. Probe scores are mean $R^2$ over the five pinned folds, with the fold standard deviation, and the mean over ten further fold assignments. Each experiment gives the full tables and interpretations beside its outputs; the overview's [Summary](Code/Stage1_analysis.ipynb#Summary) draws them together.
+The main results retained in the [stability](Code/Stage1_stability.ipynb) and [GTEx](Code/Stage1_gtex.ipynb) notebooks cover 981 retained stability sequences and the GTEx pilot's 999 train transcripts for cross-validation. Probe scores are mean $R^2$ over the five pinned folds, with the fold standard deviation, and the mean over ten further fold assignments. Each experiment gives the full tables and interpretations beside its outputs; the overview's [Summary](docs/stage1-overview.md#summary) draws them together.
 
 | Encoder | Modality | Stability $R^2$, pinned (fold SD) | Stability $R^2$, ten further assignments | GC3 $R^2$ | Share of embedding variance explained by composition | GTEx expression $R^2$, pinned (fold SD) |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -100,8 +114,8 @@ The frozen encoders are compared with published fusion studies in two settings: 
 
 | Setting | Dataset | How DNA enters | Published comparison | Frozen encoders here |
 | --- | --- | --- | --- | --- |
-| A: derived modalities | CodonBERT mRNA stability (the current CSV) | A DNA encoder reads the coding sequence in DNA letters, an RNA encoder reads it in RNA letters, and a protein encoder reads its translation. | [BioLangFusion](Papers/BioLangFusion.pdf), Table 1: best fusion Spearman 0.563 versus 0.553 for the best single encoder. | BioLangFusion's three encoders concatenated reach Spearman 0.364 on 981 published test rows; ProtBERT alone reaches 0.396. |
-| B: distinct modalities | [IsoFormer GTEx transcript expression](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression) | Genomic DNA centered on the transcription start site, alongside the full transcript and the protein. | [IsoFormer](Papers/Multi-Modal-Transfer-Learning.pdf), Table 2: three modalities reach $R^2$ 0.43 versus 0.36 for RNA alone. | The three-modality sets reach $R^2$ 0.216 to 0.249 on 996 published test transcripts, with the modalities in IsoFormer's order. |
+| A: derived modalities | CodonBERT mRNA stability (the current CSV) | A DNA encoder reads the coding sequence in DNA letters, an RNA encoder reads it in RNA letters, and a protein encoder reads its translation. | [BioLangFusion](Papers/core/BioLangFusion.pdf), Table 1: best fusion Spearman 0.563 versus 0.553 for the best single encoder. | BioLangFusion's three encoders concatenated reach Spearman 0.364 on 981 published test rows; ProtBERT alone reaches 0.396. |
+| B: distinct modalities | [IsoFormer GTEx transcript expression](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression) | Genomic DNA centered on the transcription start site, alongside the full transcript and the protein. | [IsoFormer](Papers/core/Multi-Modal-Transfer-Learning.pdf), Table 2: three modalities reach $R^2$ 0.43 versus 0.36 for RNA alone. | The three-modality sets reach $R^2$ 0.216 to 0.249 on 996 published test transcripts, with the modalities in IsoFormer's order. |
 
 In Setting A all three inputs derive from one coding sequence, so differences between encoders come from pretraining corpora and tokenization rather than new biological information. The stability CSV has no gene or transcript identifiers, so genomic context around each gene is not available without a separate mapping step. Setting B supplies DNA that carries promoter and regulatory context absent from the protein. The frozen-probe values fall short of the published ones because those studies train their heads on token-level embeddings with far more data; the comparison places the frozen encoders on the published splits rather than reproducing the published models.
 
@@ -109,7 +123,7 @@ The twelve encoders include BioLangFusion's three, Nucleotide Transformer v2 100
 
 ## Stage 2: defining alignment
 
-Stage 2 is a decision rather than a computation, so it has no notebook. It is recorded in the Overleaf section "Stage 2: Defining Alignment" and in the [project notes](Notes/Mina_Project_Notes.docx), and the [October 7, 2026 meeting slides](Notes/Mina_Meeting_Slides_2026-10-07.pptx) present it. Any code it calls for is built and tested in Stage 3.
+Stage 2 is a decision rather than a computation, so it has no notebook. It is recorded in the Overleaf section "Stage 2: Defining Alignment" and in the [project notes](docs/notes/Mina_Project_Notes.docx), and the [October 7, 2026 meeting slides](docs/notes/Mina_Meeting_Slides_2026-10-07.pptx) present it. Any code it calls for is built and tested in Stage 3.
 
 - **Definition.** Two encoders are aligned to the extent that their representations of corresponding inputs agree on held-out examples after the composition control. Agreement that letter, codon, and amino-acid frequencies reproduce is reported but not counted as alignment, and alignment is reported separately from predictive complementarity (the concatenation gain).
 - **No explicit alignment loss in the first fusion models.** Per-sequence alignment does not track prediction error on either dataset, and most cross-modal agreement is composition, so the fusion architecture learns any useful interaction. An alignment-loss ablation on CaLM with a protein encoder, the one cross-modal pairing whose agreement survives the control, stays a conditional Stage 3 experiment.
@@ -123,20 +137,22 @@ Stage 3 trains fusion models on the encoder pairings above and compares each wit
 
 ## Data
 
-The input datasets are included in `Code/`:
+The input datasets are included as CSV tables in `datasets/`. The notebooks load these tables; you can use the existing files without running a data-building script:
 
-- [mRFP_Expression.csv](Code/mRFP_Expression.csv): 1,459 rows containing 1,455 distinct sequence strings, from synonymous codon randomization of one gene.
-- [mRNA_Stability.csv](Code/mRNA_Stability.csv): 65,356 rows containing 29,949 distinct sequence strings.
-- [GTEx_pilot.csv](Code/GTEx_pilot.csv): 2,000 protein-coding human transcripts from [IsoFormer's GTEx transcript-expression table](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression), 1,000 from its published train split and 1,000 from its test split, each with its expression in 30 tissues. Each row holds the transcript, its untranslated regions and coding sequence, its protein, and 6,000 nucleotides of GRCh38 DNA centered on its transcription start site. [build_gtex_pilot.py](Code/build_gtex_pilot.py) produced it: it downloads IsoFormer's table, samples the transcripts, and reads the DNA windows from the [Ensembl REST service](https://rest.ensembl.org/documentation/info/sequence_region_post).
+- [mRFP_Expression.csv](datasets/mRFP_Expression.csv): 1,459 rows containing 1,455 distinct sequence strings, from synonymous codon randomization of one gene.
+- [mRNA_Stability.csv](datasets/mRNA_Stability.csv): 65,356 rows containing 29,949 distinct sequence strings.
+- [GTEx_pilot.csv](datasets/GTEx_pilot.csv): 2,000 protein-coding human transcripts from [IsoFormer's GTEx transcript-expression table](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression), 1,000 from its published train split and 1,000 from its test split, each with its expression in 30 tissues. Each row holds the transcript, its untranslated regions and coding sequence, its protein, and 6,000 nucleotides of GRCh38 DNA centered on its transcription start site. [build_gtex_pilot.py](Code/build_gtex_pilot.py) produced it: it downloads IsoFormer's table, samples the transcripts, and reads the DNA windows from the [Ensembl REST service](https://rest.ensembl.org/documentation/info/sequence_region_post).
 
 These counts describe the included CSVs before notebook filtering or subsampling.
+
+**Rebuilding the GTEx pilot.** The `build_gtex_pilot.py` script prepares this input table rather than running the representation analyses. Run `python Code/build_gtex_pilot.py` from the repository root when a rebuild is needed. It downloads IsoFormer's larger table into the repository's `.data-cache/` if it is not already cached, selects transcripts from the published splits, obtains their genomic DNA windows from Ensembl, and writes `datasets/GTEx_pilot.csv`. Rebuilding is a separate preparation step that requires network access and replaces that CSV; it is not part of running the notebook on the supplied pilot. The [generated-file inventory](#generated-files) distinguishes the full source-table download from the supplied pilot and the embeddings saved during analysis.
 
 The [dataset audit in the stability notebook](Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons) records the following properties of `mRNA_Stability.csv`, which matter for comparisons with published results:
 
 - The `Split` column assigns 45,749 rows to train, 9,803 to validation, and 9,804 to test. Of the 8,283 distinct test sequences, 5,392 also occur in training.
 - 12,844 sequences occur more than once, and 12,775 of those carry differing `Value` labels; the median standard deviation of labels within one sequence is 0.49.
 - 37% of rows are at most 1,000 nucleotides, so single-nucleotide encoders with a limit near 1,000 tokens see truncated input for most sequences.
-- [BioLangFusion](Papers/BioLangFusion.pdf), Appendix A.2, reports 41,123 raw and 23,929 used mRNA stability sequences with the CodonBERT splits. Whether this file is the same version, and which filtering produced 23,929, is unresolved.
+- [BioLangFusion](Papers/core/BioLangFusion.pdf), Appendix A.2, reports 41,123 raw and 23,929 used mRNA stability sequences with the CodonBERT splits. Whether this file is the same version, and which filtering produced 23,929, is unresolved.
 
 Comparisons with published numbers should therefore use the official split, while leakage-free estimates need a deduplicated, sequence-disjoint split. The CSVs were sourced from the fine-tuning benchmark data in [Sanofi-Public/CodonBERT](https://github.com/Sanofi-Public/CodonBERT/tree/master/benchmarks/CodonBERT/data/fine-tune). Their inclusion supplies the notebook inputs; interpreting a prediction still requires checking the source assay, labels, and retained sequence regions.
 
@@ -163,7 +179,7 @@ Use your existing Python environment for the project. Install PyTorch using the 
 python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biopython "transformers==5.15.1" multimolecule einops ipykernel
 ```
 
-Open notebooks with VS Code's Python and Jupyter extensions and [select the environment containing these packages as the kernel](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management). Use `Code/` as the kernel's working directory because the notebooks use relative CSV and output paths.
+Open notebooks with VS Code's Python and Jupyter extensions and [select the environment containing these packages as the kernel](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management). Use `Code/` as the kernel's working directory for local package imports and embedding-cache paths. Dataset loaders resolve the supplied CSVs from the repository's `datasets/` folder independently of that working directory.
 
 The Stage 1 experiment notebooks use a CUDA GPU when available, then an Apple Silicon GPU through PyTorch's MPS backend, and otherwise the CPU; on MPS they let operations the backend lacks fall back to the CPU. `multimolecule` provides RNA-FM, RiNALMo, mRNA-FM, CaLM, and HyenaDNA. Version 0.2.1 imports with `transformers` 5.14.1 and 5.15.1 but not 5.16 or later, which is why `transformers` is pinned. If `import multimolecule` fails in an Anaconda environment with an older `datasets` or `huggingface_hub`, upgrade `datasets` and `fsspec` and reinstall `huggingface_hub`.
 

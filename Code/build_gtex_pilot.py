@@ -1,6 +1,7 @@
-"""Build GTEx_pilot.csv, the input of Stage1_gtex.ipynb.
+"""Build datasets/GTEx_pilot.csv, the input of Stage1_gtex.ipynb.
 
-Run from the Code directory: python build_gtex_pilot.py
+Run from the repository root: python Code/build_gtex_pilot.py
+Input-cache and output paths are anchored to this script, not the working directory.
 
 1. Download IsoFormer's GTEx table (about 645 MB) unless it is already in DOWNLOAD_DIR:
    huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression,
@@ -22,6 +23,7 @@ import os
 import sys
 import time
 import urllib.request
+from pathlib import Path
 
 import pandas as pd
 
@@ -29,8 +31,9 @@ SOURCE_URL = (
     "https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/"
     "resolve/main/transcript_expression/GTEx_final.csv"
 )
-DOWNLOAD_DIR = os.path.join("..", ".data-cache")
-OUTPUT = "GTEx_pilot.csv"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+DOWNLOAD_DIR = REPO_ROOT / ".data-cache"
+OUTPUT = REPO_ROOT / "datasets" / "GTEx_pilot.csv"
 WINDOW = 6000
 SEED = 42
 N_PER_SPLIT = {"train": 1000, "test": 1000}
@@ -95,6 +98,7 @@ def main():
 
     columns = ["transcript_id_gtex", "gene_id_gtex", "split", "chr", "strand", "TSS",
                "DNA", "RNA", "5UTR", "CDS", "3UTR", "Protein"] + tissues
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     pilot[columns].rename(columns={"transcript_id_gtex": "transcript_id", "gene_id_gtex": "gene_id"}).to_csv(
         OUTPUT, index=False
     )

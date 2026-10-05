@@ -9,7 +9,7 @@ Make contributions fit the shared document's structure using the rules below and
 
 ## Select the applicable treatment
 
-Read the requested file and the surrounding material before editing. Identify the reader's question, the parent section of the proposed contribution, and the task's change boundary.
+Read the requested file and the surrounding material before editing. Identify the reader's question, the parent section of the proposed contribution, and the task's change boundary. Choose the file format for its role: a standalone overview or synthesis belongs in Markdown; explanations accompanying executable analysis belong beside that analysis in the notebook. During an authorized conversion, preserve the explanation and repair its incoming links. Length or mathematical notation alone does not justify another file.
 
 | Target | Applicable treatment |
 | --- | --- |
@@ -18,7 +18,7 @@ Read the requested file and the surrounding material before editing. Identify th
 | Repository instructions and skill prose | Apply the common Markdown rules, preserving functional metadata, imports, paths, and examples. Formatting alone does not authorize changing triggers, scope, or behavior. |
 | Executable code | Outside this skill. Code may be read to understand an explanation; code formatting and implementation are separate work. No external coding skill is a prerequisite. |
 
-Individual material in `Notes/Reviews/` and personal notes in `Notes/` keeps its author's format and voice. Follow a specific request concerning that material without extending these shared conventions to it by default. For document purpose, tone, attribution, or retaining research sources, use the repository's [shared-documentation workflow](../multimodal-bio-shared-documentation/SKILL.md); a small formatting correction needs only the applicable presentation rules.
+Individual material in `docs/notes/Reviews/` and personal notes in `docs/notes/` keeps its author's format and voice. Follow a specific request concerning that material without extending these shared conventions to it by default. For document purpose, tone, attribution, or retaining research sources, use the repository's [shared-documentation workflow](../multimodal-bio-shared-documentation/SKILL.md); a small formatting correction needs only the applicable presentation rules.
 
 ## Define the outline before choosing heading levels
 

@@ -1,6 +1,6 @@
 # Selected sources and readings
 
-Use these readings to revisit useful explanations, evidence, and guidance for the project. The [core papers](../Papers/) and [individual reviews](../Notes/Reviews/) remain the starting points for the project's biological literature. Add useful research readings here as they arise; group them by the question they help answer.
+Use these readings to revisit useful explanations, evidence, and guidance for the project. Start with the [paper catalog](../Papers/README.md) and [individual reviews](notes/Reviews/) for the biological literature. The catalog identifies retained files, versions, source links, and availability; this page records reading scope and relevance to the project. Add useful research readings here as they arise; group them by the question they help answer.
 
 A citation that already serves a specific claim can stay in its owning page. This index gives reusable readings a route beyond that single use. Selection and annotation guidance lives in the [shared-documentation workflow](../.agents/skills/multimodal-bio-shared-documentation/SKILL.md).
 
