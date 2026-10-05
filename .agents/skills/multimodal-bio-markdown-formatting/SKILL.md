@@ -14,7 +14,7 @@ Read the requested file and the surrounding material before editing. Identify th
 | Target | Applicable treatment |
 | --- | --- |
 | Shared documentation | Apply the heading, emphasis, list, table, and citation rules below. Let the document's purpose determine its outline: a README provides orientation and routes to material; a reference organizes lookup; an explanation develops a question. |
-| Notebook Markdown cells | Also read [Notebook presentation](references/notebooks.md) for computational units, separators, cell boundaries, and mathematics. Do not apply its equation-and-example sequence to every document. |
+| Notebook Markdown cells or explanations moved from a notebook | Also read [Notebook presentation](references/notebooks.md) for computational units, notebook/guide links, separators, cell boundaries, and mathematics. Apply its reading-dependency guidance to a moved explanation, while letting the destination guide choose its own outline. Do not impose an equation-and-example sequence on every document. |
 | Repository instructions and skill prose | Apply the common Markdown rules, preserving functional metadata, imports, paths, and examples. Formatting alone does not authorize changing triggers, scope, or behavior. |
 | Executable code | Outside this skill. Code may be read to understand an explanation; code formatting and implementation are separate work. No external coding skill is a prerequisite. |
 

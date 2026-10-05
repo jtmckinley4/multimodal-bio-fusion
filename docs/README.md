@@ -1,25 +1,49 @@
 # Research documentation
 
-This directory brings together the team's maintained research plans, bibliography, and explanations connecting biological questions, analyses, and evidence behind the multimodal-bio-fusion analyses of DNA, RNA, and protein foundation models. It supports code development, experiment planning, and manuscript writing in the [multimodal-bio-fusion Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f).
+This directory brings together the team's research plans, bibliography, and explanations connecting biological questions, analyses, and evidence for DNA, RNA, and protein foundation models. It supports code development, experiment planning, and manuscript writing in the [multimodal-bio-fusion Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f).
 
-## Find relevant material
+## Read the Stage 1 analyses
 
-Use the following starting points to connect a research question to the analysis and its evidence.
+Start with the biological question and model choices in the overview. Follow the stability experiment for the first method walkthrough, then compare it with GTEx. Each experiment links its methods, implementation, and interpretations at the relevant cells.
+
+| Question | Starting point |
+| --- | --- |
+| What biological question motivates the analysis? | The [project background](../README.md#project-background) and [Stage 1 overview](../Code/Stage1_analysis.ipynb), which holds the model context, research questions, and cross-dataset Summary. |
+| Where do I follow the mRNA stability experiment? | The [stability notebook](../Code/Stage1_stability.ipynb): input preparation, embeddings, prediction, geometry, recoding control, attention, and the BioLangFusion comparison. |
+| Where do I compare distinct DNA, transcript, and protein inputs? | The [GTEx notebook](../Code/Stage1_gtex.ipynb): expression across 30 tissues, length and composition baselines, representation comparisons, attention, and the IsoFormer comparison. |
+| What do the sequences and labels represent? | The [dataset overview](../README.md#data), [stability data preparation](../Code/Stage1_stability.ipynb#Data), [stability dataset audit](../Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons), and [GTEx data and expression labels](../Code/Stage1_gtex.ipynb#GTEx-data). Check what a row and its label mean, how the label was obtained, and which examples enter the analysis. |
+| What did Stage 1 find? | The [README results](../README.md#stage-1-results), the interpretations beside each experiment's outputs, and the overview's cross-dataset [Summary](../Code/Stage1_analysis.ipynb#Summary). Saved experiment outputs were retained from the combined notebook; they do not record new runs of the separated files. |
+| How do the frozen encoders compare with published fusion studies? | The [comparison overview](../README.md#published-comparisons-and-distinct-inputs), [BioLangFusion published-split comparison](../Code/Stage1_stability.ipynb#Published-split-comparison), and [IsoFormer published-split comparison](../Code/Stage1_gtex.ipynb#GTEx-published-split-comparison). |
+| Where are methods and results written up for the manuscript? | The [Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f), including its Stage 1 metric definitions and published-split comparisons. |
+| What does alignment mean here, and what comes next? | [Stage 2: defining alignment](../README.md#stage-2-defining-alignment), [Stage 3 fusion experiments](../README.md#next-steps-stage-3-fusion-experiments), and the Stage 2 section of the Overleaf project. |
+
+## Understand the methods
+
+The guides develop the longer explanations and derivations. The notebooks retain the experiment-specific choices, calls, and interpretations; guide links return to the relevant analysis.
+
+| Question | Guide |
+| --- | --- |
+| How do sequences become matched embedding vectors? | [From sequences to embeddings](methods/inputs-and-embeddings.md): filtering, translation, token limits, pooling, and cache reuse. |
+| How does a linear probe work, step by step? | [Linear probing](methods/linear-probing.md): standardization, ridge regression, evaluation, and the internal-validation limitation. |
+| What do the biological targets and recoding control measure? | [Biological targets and controls](methods/biological-targets-and-controls.md): length, GC, GC3, the Nussinov proxy, and synonymous recoding. |
+| How do representation comparisons differ? | [Comparing representations](methods/representation-comparison.md): CKA, neighborhoods, CCA/retrieval, composition, PCA bands, and alignment diagnostics. |
+| How are attention scores compared with candidate RNA patterns? | [Attention and candidate motifs](methods/attention-and-motifs.md): extraction, nucleotide mapping, comparisons, and permutation controls. |
+
+## Inspect or run the implementation
+
+Both experiment notebooks use the shared [mbf package](../Code/mbf/), with their own Setup sections. See [environment setup](../README.md#setup) before a new run; neither experiment requires executing the other. The overview notebook contains no executable cells.
+
+Use [Reading implementation code](../README.md#reading-implementation-code) to follow a compact source link or display a function in full with `SHOW_IMPLEMENTATION`. See the [notebook checks](../tests/README.md) for setup, source-display, and synthetic calculation checks after an edit. These checks do not reproduce research results.
+
+When interpreting a result, identify its producing notebook version, settings, inputs, outputs, baselines, and evaluation split. Check whether those observations support the claim and retain unresolved discrepancies between versions.
+
+## Find plans and literature
 
 | Question | Starting point |
 | --- | --- |
 | What are we proposing to investigate? | The [Research Canvas](Research_Canvas.pptx). |
 | What is the project schedule? | The [Gantt presentation](Research_Project_Plan_Gantt.pptx) and [editable Gantt workbook](Research_Project_Plan_Gantt.xlsx). |
 | Where is the annotated bibliography? | The [team bibliography](Annotated_Bibliography.docx). |
-| What biological question motivates the analysis? | The [project overview](../README.md) and the introduction to [Stage1_analysis.ipynb](../Code/Stage1_analysis.ipynb). |
-| What do the sequences and labels represent? | The [dataset overview](../README.md#data), [mRNA stability data](../Code/mRNA_Stability.csv), and the notebook's loading and preprocessing sections. Check what a row and its label mean, how the label was obtained, and which examples enter the analysis. |
-| Where are the Stage 1 methods, metric definitions, and results written up? | The [multimodal-bio-fusion Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f), which records what each Stage 1 metric measures and how each number was obtained. |
-| What did Stage 1 find? | The [Stage 1 results](../README.md#stage-1-results) summary in the project README, and the result notes after each output and the closing Summary in [Stage1_analysis.ipynb](../Code/Stage1_analysis.ipynb). |
-| How do the frozen encoders compare with published fusion studies and with distinct DNA input? | The [published comparisons](../README.md#published-comparisons-and-distinct-inputs) in the project README, and the published-split and GTEx sections of the Overleaf project. |
-| What does alignment mean in this project, and what comes next? | [Stage 2: defining alignment](../README.md#stage-2-defining-alignment) and the [Stage 3 next steps](../README.md#next-steps-stage-3-fusion-experiments) in the project README, and the Stage 2 section of the Overleaf project. |
-| Which readings are worth returning to? | [Selected sources and readings](sources.md), with reasons to retain them and the scope of what was read. |
-| Why use this method? | Julian's [BioLangFusion review](../Notes/Reviews/Julian/BioLangFusion.md) and [alignment paper review](../Notes/Reviews/Julian/Alignment_Theory_Paper_Review.md), read alongside the corresponding [papers](../Papers/). |
-| How is the method implemented? | The relevant section of [Stage1_analysis.ipynb](../Code/Stage1_analysis.ipynb), which displays the source of the [mbf package](../Code/mbf/) functions it calls. Identify the notebook version and settings associated with the result being discussed. |
-| What does the result establish? | Its producing notebook cells, outputs, baselines, evaluation split, and interpretation. Check whether the evidence supports the claim and retain unresolved discrepancies between versions. |
-
-Start with the biological question and dataset meaning, then follow the method into its implementation and interpretation. The notebook and paper reviews provide the initial route while the supporting biological and methodological explanations develop.
+| Where is the team's literature review? | [Literature review (PDF)](<Literature Review - Biological Foundation Models.pdf>) and [editable Word document](<Literature Review - Biological Foundation Models.docx>). |
+| Which readings are worth returning to? | [Selected sources and readings](sources.md), with reasons to retain them, reading scope, and local relevance. The [research software section](sources.md#organizing-and-checking-research-software) explains practices behind the notebook and shared-code organization. |
+| Where are the papers and contributor interpretations? | The [papers](../Papers/) and [individual reviews](../Notes/Reviews/), including Julian's [BioLangFusion review](../Notes/Reviews/Julian/BioLangFusion.md) and [alignment paper review](../Notes/Reviews/Julian/Alignment_Theory_Paper_Review.md). Read each interpretation alongside its source paper. |

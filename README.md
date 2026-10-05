@@ -6,7 +6,7 @@ A research project in the [Complex Adaptive Systems Laboratory](https://complexi
 
 The aim is to develop methods for choosing which biological modalities and pretrained models to combine, and for deciding when and how fusion is useful for a target task. The longer-term goal set with Mina Basirat is to fuse several pretrained encoders, with more than one model per modality (for example, several DNA, RNA, and protein models), and to compare those combinations. Those choices should be grounded in the biological question and the wet-lab work the predictions could inform. The [meeting slides](Notes/Mina_Meeting_Slides_2026-09-23.pptx), particularly slide 3, frame the contribution as a method for deciding whether and how to fuse.
 
-Stage 1 studies DNA, RNA, and translated protein representations from frozen encoders, beginning with mRNA stability prediction and a synonymous-recoding control. Frozen means that the encoder weights are not updated during these analyses. [Stage1_analysis.ipynb](Code/Stage1_analysis.ipynb) compares twelve encoders, four per modality. Nucleotide Transformer 500M human-ref, Nucleotide Transformer v2 100M multi-species, DNABERT-2, and HyenaDNA read each coding sequence in DNA letters; RNA-FM and RiNALMo (pretrained on non-coding RNA) and mRNA-FM and CaLM (pretrained on coding sequences, one token per codon) read the same sequence in RNA letters; and ESM-2 8M, 35M, and 150M and ProtBERT read its translation. Its final section repeats the main analyses on IsoFormer's GTEx transcript-expression data, where each encoder reads its own input: genomic DNA around the transcription start site, the transcript, or the protein. The notebook runs on any dataset and set of encoders registered in the `mbf` package. The choice of future tasks, model combinations, and evaluation criteria remains part of the research.
+Stage 1 studies DNA, RNA, and translated protein representations from frozen encoders, beginning with mRNA stability prediction and a synonymous-recoding control. Frozen means that the encoder weights are not updated during these analyses. The [Stage 1 overview](Code/Stage1_analysis.ipynb) introduces twelve encoders, four per modality, and compares the saved results from two experiment notebooks. Nucleotide Transformer 500M human-ref, Nucleotide Transformer v2 100M multi-species, DNABERT-2, and HyenaDNA read each coding sequence in DNA letters; RNA-FM and RiNALMo (pretrained on non-coding RNA) and mRNA-FM and CaLM (pretrained on coding sequences, one token per codon) read the same sequence in RNA letters; and ESM-2 8M, 35M, and 150M and ProtBERT read its translation. The [stability notebook](Code/Stage1_stability.ipynb) analyzes these derived inputs. The [GTEx notebook](Code/Stage1_gtex.ipynb) repeats the main analyses on IsoFormer's transcript-expression data, where each encoder reads its own input: genomic DNA around the transcription start site, the transcript, or the protein. Both experiment notebooks use the dataset and encoder registries in the `mbf` package. The choice of future tasks, model combinations, and evaluation criteria remains part of the research.
 
 ### Architecture priorities
 
@@ -24,7 +24,8 @@ Coupled Mamba's priority was agreed at the September 23, 2026 online meeting. Th
 | --- | --- |
 | [Code/](Code/) | Analysis notebooks, input datasets, and the script that builds the GTEx pilot; local runs also produce intermediate outputs here. |
 | [Code/mbf/](Code/mbf/) | The Python package the notebooks share: sequence utilities, encoder and dataset registries, fold assignments, embedding, and analysis functions. |
-| [docs/](docs/README.md) | Team research plans, bibliography, and shared explanations connecting biology, methods, and evidence to the notebook. |
+| [docs/](docs/README.md) | Team research plans, bibliography, selected sources, and shared method guides linked from the experiment notebooks. |
+| [tests/](tests/README.md) | Checks for notebook setup, implementation displays, and shared concatenation calculations using synthetic inputs. |
 | [Notes/Reviews/](Notes/Reviews/) | Individual paper reviews and interpretations, organized by contributor. |
 | [Notes/](Notes/) | Working notes, meeting records, and discussion slides. |
 | [Papers/](Papers/) | Reference papers informing the research. |
@@ -35,23 +36,23 @@ Agents working in this repository should start with [AGENTS.md](AGENTS.md).
 
 ## Stage 1 analysis
 
-[Stage1_analysis.ipynb](Code/Stage1_analysis.ipynb) holds the Stage 1 analyses, with explanations and an interpretation after each result. Its settings choose a dataset from `mbf.datasets` and encoders from `mbf.encoders`, and it displays the source of the `mbf` functions beside their explanations. The saved run uses twelve encoders on 981 retained mRNA stability sequences and on the GTEx pilot's 999 train and 996 test transcripts. Keep results associated with the notebook version and settings that produced them.
+Start with the [overview](Code/Stage1_analysis.ipynb) for the models, research questions, and cross-dataset summary. Read the stability notebook for the first method walkthrough, then use GTEx to compare the findings when DNA, transcript, and protein are distinct inputs.
 
-The notebook:
+| Notebook | What to read or run |
+| --- | --- |
+| [Stage1_analysis.ipynb](Code/Stage1_analysis.ipynb) | Overview and cross-dataset Summary. This file contains Markdown only. |
+| [Stage1_stability.ipynb](Code/Stage1_stability.ipynb) | Independent experiment: sequence checks, dataset audit, embeddings, stability and biological-target probes, representation comparisons, synonymous-recoding control, attention diagnostics, and the BioLangFusion published-split comparison. |
+| [Stage1_gtex.ipynb](Code/Stage1_gtex.ipynb) | Independent experiment: GTEx inputs, expression probes and baselines, concatenation, the IsoFormer published-split comparison, representation comparisons, and attention diagnostics. |
 
-1. Checks sequence length and start codons, translates nucleotide sequences, generates matched embeddings from every encoder, and audits the full stability file against the version used by BioLangFusion.
-2. Probes prediction of stability, GC content, GC3, and a base-pairing proxy from each embedding, compares stability prediction with a sequence-length baseline, and probes stability from concatenated embeddings.
-3. Compares representation geometry for every encoder pair using linear CKA, layer-wise CKA, neighborhood overlap, and CCA retrieval, repeats CKA and retrieval after removing sequence composition, compares each embedding's high-variance principal components with the rest, and visualizes embeddings with UMAP.
-4. Examines the mRFP expression dataset as a synonymous-recoding control.
-5. Explores nucleotide-encoder attention at candidate sequence patterns, with permutation nulls that keep each position's place in the sequence or its codon context, relationships between representation alignment and prediction error, and representational similarity with a Mantel permutation test.
-6. Fits the probes on rows sampled from the published train split and scores the published test split, for comparison with BioLangFusion.
-7. Repeats the main analyses on the GTEx pilot, where genomic DNA, the transcript, and the protein are distinct inputs, and compares with IsoFormer on its published split.
+Each experiment keeps its settings, analysis calls, outputs, and interpretations together. The [method guides](docs/README.md#understand-the-methods) provide the longer derivations and biological explanations; links beside the relevant notebook cells connect them to the analysis. Reusable calculations live in [Code/mbf/](Code/mbf/). See [Reading implementation code](#reading-implementation-code) to inspect a function from the notebook.
+
+Each experiment has its own Setup section and can run without executing the other. For a new run, use a fresh kernel with `Code/` as its working directory and follow that experiment from Setup onward; see [Setup](#setup). The saved outputs and execution counts were retained from the combined notebook, not produced by a new run of the separated files. They cover twelve encoders on 981 retained mRNA stability sequences and the GTEx pilot's 999 train and 996 test transcripts. Keep these results associated with the producing code version and settings.
 
 Probes use ridge regression over five folds that keep identical sequences together. A hash of each sequence pins the fold assignment, so it does not depend on the machine, and each probe is repeated over ten further fold assignments to show how much the partition moves the result. The concatenated-embedding probe uses a linear model, distinct from the concatenation + MLP reference baseline. These analyses can inform experiment design; their outputs alone do not establish which fusion method to use or validate a wet-lab application.
 
 ### Stage 1 results
 
-The main results from the saved run of [Stage1_analysis.ipynb](Code/Stage1_analysis.ipynb): 981 retained stability sequences, and the GTEx pilot's 999 train transcripts for cross-validation. Probe scores are mean $R^2$ over the five pinned folds, with the fold standard deviation, and the mean over ten further fold assignments. The notebook's result notes give the full tables and interpretations, and its Summary section draws them together.
+The main results retained in the [stability](Code/Stage1_stability.ipynb) and [GTEx](Code/Stage1_gtex.ipynb) notebooks cover 981 retained stability sequences and the GTEx pilot's 999 train transcripts for cross-validation. Probe scores are mean $R^2$ over the five pinned folds, with the fold standard deviation, and the mean over ten further fold assignments. Each experiment gives the full tables and interpretations beside its outputs; the overview's [Summary](Code/Stage1_analysis.ipynb#Summary) draws them together.
 
 | Encoder | Modality | Stability $R^2$, pinned (fold SD) | Stability $R^2$, ten further assignments | GC3 $R^2$ | Share of embedding variance explained by composition | GTEx expression $R^2$, pinned (fold SD) |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -95,7 +96,7 @@ On GTEx, four transcript-length features alone reach an expression $R^2$ of 0.24
 
 ### Published comparisons and distinct inputs
 
-[Stage1_analysis.ipynb](Code/Stage1_analysis.ipynb) compares the frozen encoders with published fusion studies in two settings: Setting A with the stability data, fitting probes on rows sampled from the published train split and scoring its test split, and Setting B in its GTEx section, whose rows carry separate DNA, transcript, and protein sequences. The Overleaf sections on the published split and on GTEx give the full comparison.
+The frozen encoders are compared with published fusion studies in two settings: [Setting A in the stability notebook](Code/Stage1_stability.ipynb#Published-split-comparison), fitting probes on rows sampled from the published train split and scoring its test split, and [Setting B in the GTEx notebook](Code/Stage1_gtex.ipynb#GTEx-published-split-comparison), whose rows carry separate DNA, transcript, and protein sequences. The Overleaf sections on the published split and on GTEx give the full comparison.
 
 | Setting | Dataset | How DNA enters | Published comparison | Frozen encoders here |
 | --- | --- | --- | --- | --- |
@@ -130,7 +131,7 @@ The input datasets are included in `Code/`:
 
 These counts describe the included CSVs before notebook filtering or subsampling.
 
-The dataset audit in [Stage1_analysis.ipynb](Code/Stage1_analysis.ipynb) records the following properties of `mRNA_Stability.csv`, which matter for comparisons with published results:
+The [dataset audit in the stability notebook](Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons) records the following properties of `mRNA_Stability.csv`, which matter for comparisons with published results:
 
 - The `Split` column assigns 45,749 rows to train, 9,803 to validation, and 9,804 to test. Of the 8,283 distinct test sequences, 5,392 also occur in training.
 - 12,844 sequences occur more than once, and 12,775 of those carry differing `Value` labels; the median standard deviation of labels within one sequence is 0.49.
@@ -147,9 +148,9 @@ When code adds or changes an output, update this inventory and its handling. Add
 
 | Generated file | Producer | Purpose | Handling |
 | --- | --- | --- | --- |
-| `Code/stage1_embeddings/<dataset>_n<rows>_seed<seed>/` | `Stage1_analysis.ipynb` | One embedding matrix per encoder for one dataset sample, saved with its checkpoint, revision, token limit, and a fingerprint of the ordered input sequences. The notebook reuses a matrix only when all of these match. | Local and ignored; delete an encoder's file to recompute it. |
-| `Code/stage1_embeddings/<dataset>_published_train<rows>_seed<seed>/` and `..._published_test<rows>_seed<seed>/` | `Stage1_analysis.ipynb` | Embeddings of the rows sampled from the published train and test splits for the published-split comparison, saved and reused as above. | Local and ignored. |
-| `Code/stage1_embeddings/gtex_pilot_train/` and `gtex_pilot_test/` | `Stage1_analysis.ipynb` | Embeddings of the two halves of `GTEx_pilot.csv`, one matrix per encoder from that encoder's own input, saved and reused as above. | Local and ignored. |
+| `Code/stage1_embeddings/<dataset>_n<rows>_seed<seed>/` | [Stability notebook](Code/Stage1_stability.ipynb) | One embedding matrix per encoder for one dataset sample, saved with its checkpoint, revision, token limit, and a fingerprint of the ordered input sequences. The notebook reuses a matrix only when all of these match. | Local and ignored; delete an encoder's file to recompute it. |
+| `Code/stage1_embeddings/<dataset>_published_train<rows>_seed<seed>/` and `..._published_test<rows>_seed<seed>/` | [Stability notebook](Code/Stage1_stability.ipynb#Published-split-comparison) | Embeddings of the rows sampled from the published train and test splits for the published-split comparison, saved and reused as above. | Local and ignored. |
+| `Code/stage1_embeddings/gtex_pilot_train/` and `gtex_pilot_test/` | [GTEx notebook](Code/Stage1_gtex.ipynb) | Embeddings of the two halves of `GTEx_pilot.csv`, one matrix per encoder from that encoder's own input, saved and reused as above. | Local and ignored. |
 | `.data-cache/GTEx_final.csv` | `Code/build_gtex_pilot.py` | IsoFormer's full GTEx table, about 645 MB, downloaded to sample the pilot. | Local and ignored; only needed to rebuild `GTEx_pilot.csv`. |
 
 ## Setup
@@ -164,11 +165,48 @@ python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biop
 
 Open notebooks with VS Code's Python and Jupyter extensions and [select the environment containing these packages as the kernel](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management). Use `Code/` as the kernel's working directory because the notebooks use relative CSV and output paths.
 
-The Stage 1 notebooks use a CUDA GPU when available, then an Apple Silicon GPU through PyTorch's MPS backend, and otherwise the CPU; on MPS they let operations the backend lacks fall back to the CPU. `multimolecule` provides RNA-FM, RiNALMo, mRNA-FM, CaLM, and HyenaDNA. Version 0.2.1 imports with `transformers` 5.14.1 and 5.15.1 but not 5.16 or later, which is why `transformers` is pinned. If `import multimolecule` fails in an Anaconda environment with an older `datasets` or `huggingface_hub`, upgrade `datasets` and `fsspec` and reinstall `huggingface_hub`.
+The Stage 1 experiment notebooks use a CUDA GPU when available, then an Apple Silicon GPU through PyTorch's MPS backend, and otherwise the CPU; on MPS they let operations the backend lacks fall back to the CPU. `multimolecule` provides RNA-FM, RiNALMo, mRNA-FM, CaLM, and HyenaDNA. Version 0.2.1 imports with `transformers` 5.14.1 and 5.15.1 but not 5.16 or later, which is why `transformers` is pinned. If `import multimolecule` fails in an Anaconda environment with an older `datasets` or `huggingface_hub`, upgrade `datasets` and `fsspec` and reinstall `huggingface_hub`.
 
-The first run of [Stage1_analysis.ipynb](Code/Stage1_analysis.ipynb) downloads the twelve encoders' checkpoints, about 8 GB in total, unless they are already cached; [encoders.py](Code/mbf/encoders.py) lists their Hugging Face identifiers. DNABERT-2's model code requires `einops`. Hugging Face normally stores these downloads in the [user's cache](https://huggingface.co/docs/transformers/installation#cache-directory); the notebooks do not configure the repository's `.model-cache/` directory.
+`PYTORCH_ENABLE_MPS_FALLBACK` must be configured before PyTorch is imported for the MPS fallback to take effect. Each experiment notebook's Imports cell uses `os.environ.setdefault` before `import torch`, setting the value to `1` only when it is absent; an existing value is preserved.
 
-This dependency list covers the imports in the Stage 1 notebook and the `mbf` package. A fresh-environment run has not been verified. The repository does not yet pin package versions other than `transformers`. Nucleotide Transformer v2, DNABERT-2, HyenaDNA, RiNALMo, CaLM, and ProtBERT have pinned model revisions; the other six encoders load the current revision of their checkpoint.
+When an encoder is needed, either experiment's loading or embedding cells download its checkpoint unless it is already cached. The default twelve encoders total about 8 GB; [encoders.py](Code/mbf/encoders.py) lists their Hugging Face identifiers. DNABERT-2's model code requires `einops`. Hugging Face normally stores these downloads in the [user's cache](https://huggingface.co/docs/transformers/installation#cache-directory); the notebooks do not configure the repository's `.model-cache/` directory.
+
+The experiment notebooks save embedding matrices separately under `Code/stage1_embeddings/`. See the [generated-file inventory](#generated-files) for their paths and the policy for preserving results before recomputation, and [embedding matrices and cache reuse](docs/methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse) for what the cache checks before reusing a matrix.
+
+This dependency list covers the imports in both Stage 1 experiment notebooks and the `mbf` package. A fresh-environment run has not been verified. The repository does not yet pin package versions other than `transformers`. Nucleotide Transformer v2, DNABERT-2, HyenaDNA, RiNALMo, CaLM, and ProtBERT have pinned model revisions; the other six encoders load the current revision of their checkpoint.
+
+### Reading implementation code
+
+The [stability](Code/Stage1_stability.ipynb#Implementation-displays) and [GTEx](Code/Stage1_gtex.ipynb#Implementation-displays) notebooks use `SHOW_IMPLEMENTATION = False` to keep implementation displays compact: each `show_source` cell lists links to the functions or classes in `Code/mbf/`, including their source lines. Both notebooks still show their analysis calls, settings, and results.
+
+To expand the implementation while studying a method, set `SHOW_IMPLEMENTATION = True`, run that setting, and rerun the relevant `show_source` cell. These display cells inspect source code; they do not load encoders or rerun analyses. Set the flag back to `False` and rerun a display cell to return to its links. Source links and expanded listings describe the code currently on disk; they do not independently verify which implementation produced a saved research result.
+
+If the source-display helper changes while a kernel is open, reload `mbf.notebook` and reimport `show_source`, or restart the kernel and rerun Setup, before using the updated helper.
+
+The [presentation helper](Code/mbf/notebook.py) keeps full listings as the default for calls without a `full` argument, preserving the behavior of other notebooks. Relative source links assume the notebook is in `Code/`. A viewer may open the file without jumping to its line anchor; the displayed function name and line number locate the definition.
+
+### Interpreting loading messages
+
+Loading through the Transformers auto classes can report checkpoint weights that do not match the instantiated model. For Nucleotide Transformer 500M and the three ESM-2 models, the reports typically include:
+
+| Parameter names in the report | Status | Meaning for this notebook |
+| --- | --- | --- |
+| `lm_head.*` | `UNEXPECTED` | The checkpoint contains language-modeling prediction-head weights that the loaded base encoder does not use. |
+| `pooler.dense.weight` and `pooler.dense.bias` | `MISSING` | These pooler parameters are absent from the checkpoint and were newly initialized. |
+
+Unused checkpoint weights and newly initialized parameters are different cases; see the Transformers [loading-warning definitions](https://huggingface.co/docs/transformers/main_classes/model). `embeddings.embed` averages `last_hidden_state` itself. It uses neither the separate `pooler_output` nor the language-modeling head, so these particular entries do not identify missing weights in the hidden-state path used here. See the [ESM output definitions](https://huggingface.co/docs/transformers/main/en/model_doc/esm).
+
+RNA-FM reports the same pooler entries and unused `lm_head.*` and `ss_head.*` weights; the latter belong to a secondary-structure prediction head. mRNA-FM, RiNALMo, CaLM, and HyenaDNA load through the same `multimolecule` package, and the same component-level interpretation applies where their reports list these entries. ProtBERT's unexpected `cls.*` weights belong to its masked-token and next-sentence prediction heads. These listed heads and poolers are not used by `embed`; a different missing or unexpected parameter requires checking which component it belongs to.
+
+Nucleotide Transformer v2 and DNABERT-2 use the compatibility loaders in [encoders.py](Code/mbf/encoders.py), which build their models and compare checkpoint weights directly. They do not print the auto-class report above: the loader raises an error if anything other than the unused pooler is missing or unexpected. A completed load confirms the weight comparison only; embedding extraction and downstream analyses require their own checks.
+
+The saved HyenaDNA CPU/MPS comparison remains in the [notebook's loading notes](Code/Stage1_stability.ipynb#Interpreting-the-loading-messages), and its [CCA results](Code/Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval) identify the pairs with convergence warnings.
+
+### Checking notebook and shared-code changes
+
+The [notebook checks](tests/README.md) explain how to check independent setup, saved source links, and shared concatenation calculations. They use synthetic inputs for computation checks and do not run the research analyses or download models. Their passing results do not establish scientific reproducibility. Follow the linked instructions from the repository root using the notebook environment.
+
+The [research software readings](docs/sources.md#organizing-and-checking-research-software) explain the modularity, testing, and provenance practices relevant to this organization, with their local uses and limits.
 
 ### Viewing project files in VS Code
 
