@@ -10,9 +10,43 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 [Diataxis in five minutes](https://diataxis.fr/start-here/), by Daniele Procida, distinguishes tutorials, how-to guides, reference, and explanation.
 
-**Why retain it:** It helps decide whether a page should teach a concept, answer a lookup question, or guide an action. It informed the separation of README navigation from fuller explanations in the shared workflow.
+**Why retain it:** It helps decide whether a page should teach a concept, answer a lookup question, or guide an action. It informed the separation of README navigation from fuller explanations in the [shared workflow](../.agents/skills/multimodal-bio-shared-documentation/SKILL.md#write-for-the-reader).
 
 **Reading scope and limits:** The introductory page was read. It offers a way to choose a document's purpose; it does not mandate this repository's folders, Markdown formatting, or scientific conclusions.
+
+### Pautasso and Purdue OWL: Writing a literature review
+
+[Pautasso (2013), Ten Simple Rules for Writing a Literature Review](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003149), especially Rule 6, and [Purdue OWL, Writing a Literature Review](https://owl.purdue.edu/owl/research_and_citation/conducting_research/writing_a_literature_review.html).
+
+**Why retain them:** They help move from explaining individual papers to comparing findings, methods, disagreements, and unanswered questions. Use them when developing the [continuing literature review](README.md#find-plans-and-literature).
+
+**Reading scope and limits:** Pautasso's Rules 4–7 and Purdue's main guidance were checked during the October 5, 2026 review. Their use informs writing; it does not establish an adopted systematic-review protocol or replace evaluation of each scientific source.
+
+### Google: Tone and tables
+
+[Google's Voice and tone](https://developers.google.com/style/tone) and [Tables](https://developers.google.com/style/tables) provide technical-writing guidance.
+
+**Why retain them:** They support clear, direct explanations and using tables for comparable information. They inform the [reader-focused workflow](../.agents/skills/multimodal-bio-shared-documentation/SKILL.md#write-for-the-reader) and its companion formatting guidance.
+
+**Reading scope and limits:** Both pages were checked on October 5, 2026 after their use in September 25 documentation discussions. The project's tone, heading, and equation-order decisions also came from user feedback; these pages do not prescribe them all.
+
+### MLA: Describing AI assistance
+
+[MLA, Beyond Citation: Describing AI Use in Your Work](https://style.mla.org/describing-ai-use/).
+
+**Why retain it:** It informed the distinction between citing underlying evidence and explaining an assistant's role in the [literature review](<Literature Review - Biological Foundation Models.docx>), under Preparation and AI Assistance.
+
+**Reading scope and limits:** The editorial guidance was checked on October 5, 2026. It is writing guidance, not biological evidence or a statement of the professor's policy. Its relevance belongs beside the disclosure, separate from the scientific Works Cited.
+
+## Planning research work
+
+### Research proposal and Gantt examples
+
+[Mélot-Chesnel's research proposal, section 4 and Gantt figure](https://journals.sagepub.com/doi/10.3233/FAIA260562), and [UQ's AGRC7617 proposal assignment](https://course-profiles.uq.edu.au/course-profiles/AGRC7617-62151-7660).
+
+**Why retain them:** These examples informed the September 27 discussion of scheduling research, interpretation, and revision. Their local use is explained in the [Gantt workbook's Details planning notes](Research_Project_Plan_Gantt.xlsx) and the [presentation's speaker notes](Research_Project_Plan_Gantt.pptx).
+
+**Reading scope and limits:** Section 4 and the figure caption, plus UQ's proposal/Gantt and AI-feedback passage, were rechecked on October 5, 2026. These examples do not establish CAP6942 deadlines or measured AI time savings; the team's schedule remains its own plan.
 
 ## Benchmarks and encoders for multimodal comparison
 
@@ -39,6 +73,24 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 **Why retain it:** The repository is the source of the stability and mRFP CSVs and hosts the codon-level CodonBERT model, a candidate mRNA encoder. Its benchmark files are needed to resolve the dataset-version question recorded in the [stability dataset audit](../Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons).
 
 **Reading scope and limits:** Only the search listing was seen on September 29, 2026. How weights are distributed and which data version BioLangFusion used remain unread leads.
+
+### Medina-Munoz et al.: Stability assay provenance lead
+
+[Medina-Muñoz et al. (2021), Crosstalk between codon optimality and cis-regulatory elements dictates mRNA stability](https://link.springer.com/article/10.1186/s13059-020-02251-5), Methods, especially Estimation of mRNA stability and Data allocation.
+
+**Why retain it:** The iCodon citation provides a lead for tracing the assay behind the stability benchmark. Use it alongside CodonBERT and the [dataset audit](../Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons) to investigate how a measured stability value became a local label.
+
+**Reading scope and limits:** Selected Methods and the iCodon citation were checked in the October 5, 2026 source review. The local CSV's units, normalization, and row mapping remain unresolved. The publication year is 2021 despite the DOI's 2020 component; this is distinct from Agarwal and Kelley (2022).
+
+## Evaluating biological predictions
+
+### DOME: Biological machine-learning validation
+
+[Walsh et al. (2021), DOME recommendations for supervised machine learning validation in biology](https://www.nature.com/articles/s41592-021-01205-4), with its [author correction](https://www.nature.com/articles/s41592-021-01304-2).
+
+**Why retain it:** Box 1 and Table 1 help examine data independence, preprocessing, baselines, model selection, and reporting in the [linear-probing evaluation](methods/linear-probing.md#evaluation-and-interpretation). This is evaluation guidance, not a claim of DOME compliance.
+
+**Reading scope and limits:** The October 5, 2026 review read the introduction, data/split discussion, Box 1, and Table 1 in the [author-hosted PDF](https://www.biofold.org/pages/documents/papers/walsh_nmeth2021.pdf), which carries a placeholder publication date. The publisher's correction notice identifies a corrected specificity equation in Figure 2; that notice was checked through search when direct retrieval failed. Consult the corrected publication before reusing that equation.
 
 ## Organizing and checking research software
 
@@ -69,6 +121,14 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 **Why retain it:** These rules address result-producing steps, executable processing, software versions, script history, intermediate results, and random seeds. They provide a starting point for designing records that connect a result to its inputs and producing code. The [generated-file policy](../README.md#generated-files) and [embedding-cache explanation](methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse) describe relevant existing practices.
 
 **Reading scope and limits:** Rules 1–6 were read on October 5, 2026. Complete run provenance remains a future design consideration; preserved outputs and regression checks do not establish that it exists. Recording a seed alone does not establish deterministic behavior across hardware and libraries.
+
+### Rule et al.: Writing and sharing Jupyter analyses
+
+[Rule et al. (2019), Ten simple rules for writing and sharing computational analyses in Jupyter Notebooks](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007007), Rules 1–3 and 7.
+
+**Why retain it:** Narrative, meaningful divisions, and reusable computation informed the September 25 notebook discussions. The [notebook presentation reference](../.agents/skills/multimodal-bio-markdown-formatting/references/notebooks.md#organize-around-computational-units) applies those ideas to purposes, inputs, outputs, and links to method explanations.
+
+**Reading scope and limits:** The introduction and named rules were checked on October 5, 2026. They support evaluating the organization, not this repository's exact folder names, heading levels, or approval batches.
 
 ### nf-core: Shared components and collaborative review
 
@@ -121,6 +181,14 @@ The remote pages in this section were checked on October 5, 2026 and were not ar
 **Why retain them:** They explain the distinction between mathematical syntax and the delimiters used by a viewer. They support the syntax discussion in the [notebook presentation reference](../.agents/skills/multimodal-bio-markdown-formatting/references/notebooks.md). The choice to retain `$...$` inline and separate-line `$$` blocks follows the notebook's existing source and Chase's requested convention. The heading definitions, notation/interpretation sequence, and cell-placement rules were developed through project feedback; the vendor documentation does not establish those editorial choices.
 
 **Reading scope and limits:** Jupyter's LaTeX-equations section and MathJax's delimiter page were read on September 25, 2026. Jupyter documents a configured application; single-dollar inline math is not a default of standalone MathJax. These references establish syntax capabilities, not identical rendering in every editor or proof that this checkout was visually tested. The remote pages were not archived.
+
+### Knuth, Larrabee and Roberts: Mathematical Writing
+
+[Mathematical Writing](https://cs.stanford.edu/~knuth/klr.html) is a reading route for explaining mathematics in prose.
+
+**Why retain it:** It was raised in September 25 discussions of mathematical explanations. It offers further study alongside the [notebook reading-dependency guidance](../.agents/skills/multimodal-bio-markdown-formatting/references/notebooks.md#order-mathematics-by-reading-dependencies).
+
+**Reading scope and limits:** The publication page was checked on October 5, 2026; the full text was not reread. The project's notation, interpretation, and worked-example sequence reflects user feedback and is not presented as a prescription from this book.
 
 ## Working with repository-aware agents
 

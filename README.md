@@ -99,7 +99,7 @@ Comparisons with published numbers should therefore use the official split, whil
 
 ## Generated files
 
-Keep routine model caches and regenerable intermediate outputs local and ignore their specific paths. Retain source datasets and notebooks in Git. Share selected results deliberately, with the producing notebook or code version, input identities, model revisions, and relevant settings so that others can interpret them. Avoid blanket ignore rules for scientific file formats.
+Keep routine model caches and regenerable intermediate outputs local and ignore their specific paths. Retain source datasets and notebooks in Git. Share selected results deliberately, with a [run record](docs/run-records.md) linking their producing code, inputs, model revisions, settings, environment, and retained outputs. Avoid blanket ignore rules for scientific file formats. [Sandve et al.'s reproducibility rules](docs/sources.md#sandve-et-al-ten-simple-rules-for-reproducible-computational-research) explain why result-producing steps, versions, intermediate data, and seeds matter; the inventory below is only part of that record.
 
 When code adds or changes an output, update this inventory and its handling. Add or adjust specific paths in [.gitignore](.gitignore) for outputs kept local. Preserve an identified copy of any result needed as evidence before rerunning code that overwrites it. Paths below assume the working directory specified in Setup.
 
@@ -114,7 +114,7 @@ When code adds or changes an output, update this inventory and its handling. Add
 
 ### Notebook dependencies
 
-Use your existing Python environment for the project. Install PyTorch using the [official installation selector](https://pytorch.org/get-started/locally/) for your operating system and CPU or CUDA configuration. Install the remaining notebook dependencies in that environment:
+Use your existing Python environment for the project. Install PyTorch using the [official installation selector](https://pytorch.org/get-started/locally/) for your operating system and available compute backend. Install the remaining notebook dependencies in that environment:
 
 ```sh
 python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biopython "transformers==5.15.1" multimolecule einops ipykernel
@@ -122,7 +122,9 @@ python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biop
 
 Open notebooks with VS Code's Python and Jupyter extensions and [select the environment containing these packages as the kernel](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management). Use `Code/` as the kernel's working directory for local package imports and embedding-cache paths. Dataset loaders resolve the supplied CSVs from the repository's `datasets/` folder independently of that working directory.
 
-The Stage 1 experiment notebooks use a CUDA GPU when available, then an Apple Silicon GPU through PyTorch's MPS backend, and otherwise the CPU; on MPS they let operations the backend lacks fall back to the CPU. `multimolecule` provides RNA-FM, RiNALMo, mRNA-FM, CaLM, and HyenaDNA. Version 0.2.1 imports with `transformers` 5.14.1 and 5.15.1 but not 5.16 or later, which is why `transformers` is pinned. If `import multimolecule` fails in an Anaconda environment with an older `datasets` or `huggingface_hub`, upgrade `datasets` and `fsspec` and reinstall `huggingface_hub`.
+The notebooks select an available backend through `encoders.select_device`: CUDA, then MPS, then CPU. This is a runtime choice for each contributor's environment. Record the device and software versions associated with shared results in [run records](docs/run-records.md), including the origin of reused embeddings.
+
+`multimolecule` provides RNA-FM, RiNALMo, mRNA-FM, CaLM, and HyenaDNA. The installation command currently pins `transformers` to 5.15.1; the [earlier compatibility report](docs/run-records.md#legacy-observations-without-complete-run-identities) records why. If an import fails, inspect its traceback and the installed package versions before choosing a dependency change.
 
 Nucleotide Transformer v2 and DNABERT-2 load custom model code written for `transformers` 4; the encoder registry, [encoders.py](Code/mbf/encoders.py), applies the small compatibility adjustments they need under `transformers` 5 and pins both to a fixed checkpoint revision.
 
@@ -146,6 +148,8 @@ The [presentation helper](Code/mbf/notebook.py) keeps full listings as the defau
 
 ### Interpreting loading messages
 
+A Hugging Face warning about unavailable Windows symlinks means downloaded files can still be cached, but storing multiple revisions can require more disk space. The warning alone does not show that a download failed. See the [Hub cache limitations](https://huggingface.co/docs/huggingface_hub/v2.1.1/guides/manage-cache#limitations), checked in the version 2.1.1 documentation on October 5, 2026; this documentation version does not identify the library installed in a notebook environment.
+
 Loading through the Transformers auto classes can report checkpoint weights that do not match the instantiated model. For Nucleotide Transformer 500M and the three ESM-2 models, the reports typically include:
 
 | Parameter names in the report | Status | Meaning for this notebook |
@@ -159,7 +163,7 @@ RNA-FM reports the same pooler entries and unused `lm_head.*` and `ss_head.*` we
 
 Nucleotide Transformer v2 and DNABERT-2 use the compatibility loaders in [encoders.py](Code/mbf/encoders.py), which build their models and compare checkpoint weights directly. They do not print the auto-class report above: the loader raises an error if anything other than the unused pooler is missing or unexpected. A completed load confirms the weight comparison only; embedding extraction and downstream analyses require their own checks.
 
-The saved HyenaDNA CPU/MPS comparison remains in the [notebook's loading notes](Code/Stage1_stability.ipynb#Interpreting-the-loading-messages), and its [CCA results](Code/Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval) identify the pairs with convergence warnings.
+Past environment observations and their evidence are listed in [run records](docs/run-records.md#legacy-observations-without-complete-run-identities). Warnings associated with a particular analysis remain beside its notebook results.
 
 ### Checking notebook and shared-code changes
 

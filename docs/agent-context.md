@@ -6,7 +6,7 @@ Use this page for interpretation pitfalls and unresolved evidence questions. [AG
 
 Chase is studying the Stage 1 pipeline and its relationship to the literature. This learning focus does not define the team's research scope. Start with the [Stage 1 overview](stage1-overview.md) for the model choices, research questions, and cross-dataset synthesis, then follow the relevant experiment in its opening table. The [project background](../README.md#project-background) and [Stage 2 definition](../README.md#stage-2-defining-alignment) describe the wider direction.
 
-Saved notebook outputs predate the file separation. Associate each result with its producing data, code, model revisions, and settings; a link to today's implementation does not identify the code that produced an older output.
+Saved notebook outputs predate the file separation. Associate each result with its producing data, code, model revisions, and settings; a link to today's implementation does not identify the code that produced an older output. [Run records](run-records.md) hold execution-specific environments and evidence gaps; shared setup guidance should remain applicable to contributors using different computers.
 
 ## Evidence and unresolved questions
 

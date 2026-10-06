@@ -1,6 +1,6 @@
 ---
 name: multimodal-bio-shared-documentation
-description: Maintain shared multimodal-bio-fusion project documents and retain reusable research sources. Use for shared documentation or source capture, not individual notes, reviews, or notebook/code changes.
+description: Maintain shared multimodal-bio-fusion project documents and retain reusable research sources. Use for shared documentation or source capture, including notebook Markdown; exclude individual notes, reviews, and executable-code changes.
 ---
 
 # Shared research documentation
@@ -16,9 +16,11 @@ Use the repository's [Markdown-formatting workflow](../multimodal-bio-markdown-f
 ## Write for the reader
 
 - Lead with purpose and concrete meaning. README files provide orientation and navigation. Keep temporary assignments, approval discussion, and review summaries in the task conversation or an explicitly requested task record. Introduce the reading route before an extensive file inventory or results table. Explain unfamiliar file roles by what the reader uses them for, including whether a preparation step is needed to use an already supplied input.
-- Match the form to the need: explanation develops understanding; reference supports lookup; instructions support an action. Do not force every page into one template.
+- Match the form to the need: explanation develops understanding; reference supports lookup; instructions support an action. Do not force every page into one template. [Diataxis](../../../docs/sources.md#diataxis-start-here) explains these reader needs.
 - Keep one maintained owner for each shared explanation or rule and link to it. Brief definitions and reminders can stay where readers need them; an earlier mention or a link does not establish understanding. Explain what a concept means in the current analysis without copying the full guide.
 - Place qualifications beside their claims. Separate published findings, contributor interpretations, notebook outputs, and accepted project decisions. A source can influence a proposal without proving it or making it an adopted requirement.
+
+[Google's tone and table guidance](../../../docs/sources.md#google-tone-and-tables) offers supporting writing advice; the repository's conventions also reflect direct contributor feedback.
 
 ## Select sources worth retaining
 
@@ -26,7 +28,7 @@ Retain a source when it supports or challenges a consequential shared claim or c
 
 Skip duplicate links, incidental lookups, and search results with no identified future use. Prefer the original paper or official documentation for technical claims; an accessible tutorial may separately be worth keeping for learning. Label an unread lead instead of treating it as assessed evidence.
 
-Use the source index for reusable readings that need a route beyond one paragraph; do not duplicate a complete record in multiple files. Update an existing entry when the same source is consulted again.
+Use the source index for reusable readings that need a route beyond one paragraph; do not duplicate a complete record in multiple files. Check where and why a retained source is used: link it beside the explanation or decision it supports, directly or through its annotated entry. Further reading and unresolved leads can remain in the index with a clear question; do not force them into evidence citations. When reconciling sources, compare work identity, revisions, and corrections before adding another entry for an alternate URL. Update an existing entry when the same work adds relevant reading scope or a new use.
 
 ## Leave enough context to reuse the source
 

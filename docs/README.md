@@ -37,7 +37,7 @@ Both experiment notebooks use the shared [mbf package](../Code/mbf/), with their
 
 Use [Reading implementation code](../README.md#reading-implementation-code) to follow a compact source link or display a function in full with `SHOW_IMPLEMENTATION`. See the [notebook checks](../tests/README.md) for setup, source-display, and synthetic calculation checks after an edit. These checks do not reproduce research results.
 
-When interpreting a result, identify its producing notebook version, settings, inputs, outputs, baselines, and evaluation split. Check whether those observations support the claim and retain unresolved discrepancies between versions.
+Use [run records](run-records.md) to connect a shared result to its producing notebook version, settings, inputs, outputs, environment, and evaluation split. Compare it with the relevant baselines. Check whether those observations support the claim and retain unresolved discrepancies between versions.
 
 ## Find plans and literature
 
@@ -47,5 +47,6 @@ When interpreting a result, identify its producing notebook version, settings, i
 | What is the project schedule? | The [Gantt presentation](Research_Project_Plan_Gantt.pptx) and [editable Gantt workbook](Research_Project_Plan_Gantt.xlsx). |
 | Where is the annotated bibliography? | The [team bibliography](Annotated_Bibliography.docx). |
 | Where is the team's literature review? | [Literature review (PDF)](<Literature Review - Biological Foundation Models.pdf>) and [editable Word document](<Literature Review - Biological Foundation Models.docx>). |
+| How do we develop a review beyond individual paper summaries? | The [review-writing guidance](sources.md#pautasso-and-purdue-owl-writing-a-literature-review) explains synthesis, critical comparison, and open questions. |
 | Which readings are worth returning to? | [Selected sources and readings](sources.md), with reasons to retain them, reading scope, and local relevance. The [research software section](sources.md#organizing-and-checking-research-software) explains practices behind the notebook and shared-code organization. |
 | Where are the papers and contributor interpretations? | The [paper catalog](../Papers/README.md) identifies core and supporting papers, retained versions, and source links. The [individual reviews](notes/Reviews/) include Julian's [BioLangFusion review](notes/Reviews/Julian/BioLangFusion.md) and [alignment paper review](notes/Reviews/Julian/Alignment_Theory_Paper_Review.md). Read each interpretation alongside its source paper. |

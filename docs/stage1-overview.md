@@ -51,7 +51,7 @@ The analyses generate evidence and hypotheses for those later stages. Choosing a
 
 ## Summary
 
-The retained outputs and execution counts come from the combined Stage 1 notebook; they do not record new runs of the separated files. The saved run covers twelve frozen encoders, four per modality, on 981 retained mRNA stability sequences, where every input derives from one coding sequence, and on the GTEx pilot, where DNA, transcript, and protein are distinct inputs (999 train and 996 test transcripts).
+The retained outputs and execution counts come from the combined Stage 1 notebook; they do not record new runs of the separated files. Their unresolved execution identities are listed in [run records](run-records.md#legacy-observations-without-complete-run-identities). The retained results summarized here cover twelve frozen encoders, four per modality, on 981 retained mRNA stability sequences, where every input derives from one coding sequence, and on the GTEx pilot, where DNA, transcript, and protein are distinct inputs (999 train and 996 test transcripts).
 
 **What the frozen embeddings make accessible.**
 

@@ -1,6 +1,6 @@
 # Notebook checks
 
-These automated software checks help detect changes in notebook setup and shared calculations. They use controlled examples to check code behavior; the experiment notebooks contain the biological analyses and their results.
+These automated software checks help detect changes in notebook setup and shared calculations. They use controlled examples to check code behavior; the experiment notebooks contain the biological analyses and their results. [Wilson et al.'s scientific-computing guidance](../docs/sources.md#wilson-et-al-best-practices-for-scientific-computing) explains the role of controlled checks and small changes.
 
 Run these checks from the repository root using the Python environment prepared for the [notebooks](../README.md#notebook-dependencies):
 

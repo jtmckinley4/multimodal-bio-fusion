@@ -4,6 +4,8 @@ Use this reference when creating or revising Markdown cells in a shared project 
 
 ## Organize around computational units
 
+[Rule et al.'s notebook-writing guidance](../../../../docs/sources.md#rule-et-al-writing-and-sharing-jupyter-analyses) supports connecting narrative, logical divisions, and reusable computation. The rules below specify how this project applies those ideas.
+
 A computational unit is one operation or analysis, potentially spanning several code cells, with identifiable inputs and an output or effect: loading an encoder, producing embeddings, fitting a probe, or calculating a comparison. Inspect the relevant code to identify that unit; a single code cell can contain more than one operation.
 
 Place purpose, inputs, prerequisites, and the mathematics or explanation links needed to understand an operation before its code. Place interpretation of the observed or saved result after the relevant output when one exists. Introduce reused concepts near their first use and link to their maintained explanation from later uses. Overview and reference cells can stand separately when their links make the connection to computation clear.
@@ -49,6 +51,8 @@ $$
 Do not replace these delimiters with alternative math environments solely for style. Backticks display literal source; they do not replace rendered mathematical notation. After programmatic edits, inspect the literal math source: an incorrectly escaped `\times` can become a tab followed by `imes`. Valid notebook JSON does not establish valid LaTeX. See the [math-formatting sources](../../../../docs/sources.md#mathematics-in-notebook-markdown) for the syntax support and its limits.
 
 ## Order mathematics by reading dependencies
+
+For further study of mathematical prose, see [Knuth, Larrabee and Roberts](../../../../docs/sources.md#knuth-larrabee-and-roberts-mathematical-writing). The specific sequence below comes from project feedback.
 
 For a calculation that needs explanation, use the following reading order. Labels identify the role of material within the same topic; they are not mandatory new headings.
 
