@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "Code"))
 # Preserve the notebook environment's NumPy-before-PyTorch import order on Windows.
 import numpy as np
 import pandas as pd
-from mbf import analysis, datasets
+from shared_code import analysis, datasets
 
 
 class MotifValidationTests(unittest.TestCase):

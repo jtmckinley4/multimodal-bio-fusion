@@ -54,7 +54,7 @@ Use a temporary sibling file, validate the required content, then replace the de
 
 `fetch_regions` retries every `Exception`, including parsing and schema failures, although its comment promises transient-error retries. Limit retries to identified recoverable failures, respect the service's rate-limit response, and report the failed batch with its cause. [AWS's retry article](sources.md#aws-retries-and-operation-identity) supplies the distinction between retryable operations and uncertain effects; it does not justify adding a distributed idempotency service to this script.
 
-In [embedding extraction](../Code/mbf/embeddings.py), `attention_profiles` already releases its model in `finally`, whereas `embed_with_cache` and `embed_layers` release it only after successful work. Apply the existing cleanup pattern to those operations. This reduces avoidable resource retention after errors; it cannot promise immediate release of every tensor still referenced by an exception or notebook state.
+In [embedding extraction](../Code/shared_code/embeddings.py), `attention_profiles` already releases its model in `finally`, whereas `embed_with_cache` and `embed_layers` release it only after successful work. Apply the existing cleanup pattern to those operations. This reduces avoidable resource retention after errors; it cannot promise immediate release of every tensor still referenced by an exception or notebook state.
 
 ### Cache identity must describe the actual computation
 
@@ -66,7 +66,7 @@ A controlled reproduction used the actual cache function with a substitute embed
 
 ### Make seed roles visible
 
-In [analysis.py](../Code/mbf/analysis.py), `probe_scores` accepts a seed, but `probe_table` and `pairwise_concatenation_scores` rely on its pinned default `42`. Repeated-assignment means deliberately use seeds `0` through `n_assignments - 1`. Notebook `SEED` also controls other operations, including sampling and CCA. Changing that visible setting therefore does not change every partition.
+In [analysis.py](../Code/shared_code/analysis.py), `probe_scores` accepts a seed, but `probe_table` and `pairwise_concatenation_scores` rely on its pinned default `42`. Repeated-assignment means deliberately use seeds `0` through `n_assignments - 1`. Notebook `SEED` also controls other operations, including sampling and CCA. Changing that visible setting therefore does not change every partition.
 
 Name these roles explicitly and pass the pinned probe seed through the relevant helpers, preserving today's defaults. Verify with synthetic scalar and multioutput targets that the default computation stays the same and a nondefault probe seed reaches both single and paired probes. Changing the actual partitions is a new experimental configuration; it should not slip into a readability refactor.
 
@@ -80,7 +80,7 @@ Compare predictions and scores with the prior construction on small scalar and 3
 
 `_strata` recognizes `"position"` and treats every other string as codon grouping. A typo can therefore select a different permutation null. Validate the two supported values at the public `motif_permutation_test` boundary before doing work. Check that valid seeded examples remain unchanged and an invalid value raises a useful error. Keep the permutation calculation together unless a named intermediate operation actually helps understanding.
 
-In [datasets.py](../Code/mbf/datasets.py), `audit` assumes a scalar `label_column`, whereas GTEx has multiple `label_columns` and an empty scalar name. Current notebooks avoid this path for GTEx. Narrow and enforce the audit's present scope rather than silently inventing a multioutput summary. Also correct the module introduction's future-tense description of the distinct-input setting, which already exists.
+In [datasets.py](../Code/shared_code/datasets.py), `audit` assumes a scalar `label_column`, whereas GTEx has multiple `label_columns` and an empty scalar name. Current notebooks avoid this path for GTEx. Narrow and enforce the audit's present scope rather than silently inventing a multioutput summary. Also correct the module introduction's future-tense description of the distinct-input setting, which already exists.
 
 ### Keep direction distinct from a symmetric display
 

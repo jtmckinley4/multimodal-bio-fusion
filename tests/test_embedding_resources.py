@@ -9,8 +9,8 @@ from unittest.mock import patch
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'Code'))
-from mbf import embeddings
-from mbf.encoders import ENCODERS
+from shared_code import embeddings
+from shared_code.encoders import ENCODERS
 
 
 class EmbeddingResourcesTests(unittest.TestCase):

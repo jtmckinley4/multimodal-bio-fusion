@@ -14,7 +14,7 @@ sys.path.insert(0, str(REPO / "Code"))
 # Preserve the notebook environment's NumPy-before-PyTorch import order on Windows.
 import numpy as np  # noqa: F401, E402
 import pandas as pd  # noqa: E402
-from mbf import datasets  # noqa: E402
+from shared_code import datasets  # noqa: E402
 
 
 @contextmanager

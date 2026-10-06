@@ -36,7 +36,7 @@ Coupled Mamba's priority was agreed at the September 23, 2026 online meeting. Th
 | --- | --- |
 | [Code/](Code/) | Analysis notebooks and the script that builds the GTEx pilot; local runs also produce intermediate outputs here. |
 | [datasets/](datasets/) | The three supplied CSV inputs; their sources and contents are described in [Data](#data). |
-| [Code/mbf/](Code/mbf/) | Reusable Python functions called by both notebooks: load datasets and encoders, prepare sequences, assign evaluation folds, extract embeddings, and calculate analyses. Follow notebook source links when you want to inspect a calculation. |
+| [Code/shared_code/](Code/shared_code/) | Reusable Python functions called by both notebooks: load datasets and encoders, prepare sequences, assign evaluation folds, extract embeddings, and calculate analyses. Follow notebook source links when you want to inspect a calculation. |
 | [docs/](docs/README.md) | The Stage 1 overview, shared method explanations, research plans, bibliography, literature review, and selected sources. |
 | [Code/build_gtex_pilot.py](Code/build_gtex_pilot.py) | Rebuilds the GTEx pilot CSV from external source data. The CSV is already included; this script is only needed to rebuild it. See [Data](#data) for its source and contents. |
 | [tests/](tests/README.md) | Automated software checks for notebook setup, dataset paths, links to function definitions, and shared calculations using controlled examples. They help detect code breakage; they do not validate biological conclusions. |
@@ -50,7 +50,7 @@ Agents working in this repository should start with [AGENTS.md](AGENTS.md).
 
 ## Stage 1 analysis
 
-Each experiment keeps its settings, analysis calls, outputs, and interpretations together. The [method guides](docs/README.md#understand-the-methods) provide the longer derivations and biological explanations; links beside the relevant notebook cells connect them to the analysis. Reusable calculations live in [Code/mbf/](Code/mbf/). See [Reading implementation code](#reading-implementation-code) to inspect a function from the notebook.
+Each experiment keeps its settings, analysis calls, outputs, and interpretations together. The [method guides](docs/README.md#understand-the-methods) provide the longer derivations and biological explanations; links beside the relevant notebook cells connect them to the analysis. Reusable calculations live in [Code/shared_code/](Code/shared_code/). See [Reading implementation code](#reading-implementation-code) to inspect a function from the notebook.
 
 The saved outputs were retained from the combined notebook. The [overview](docs/stage1-overview.md#summary) identifies the samples, evaluation protocol, and findings; follow [Setup](#setup) for a new run.
 
@@ -128,25 +128,25 @@ The notebooks select an available backend through `encoders.select_device`: CUDA
 
 `multimolecule` provides RNA-FM, RiNALMo, mRNA-FM, CaLM, and HyenaDNA. The installation command currently pins `transformers` to 5.15.1; the [earlier compatibility report](docs/run-records.md#legacy-observations-without-complete-run-identities) records why. If an import fails, inspect its traceback and the installed package versions before choosing a dependency change.
 
-Nucleotide Transformer v2 and DNABERT-2 load custom model code written for `transformers` 4; the encoder registry, [encoders.py](Code/mbf/encoders.py), applies the small compatibility adjustments they need under `transformers` 5 and pins both to a fixed checkpoint revision.
+Nucleotide Transformer v2 and DNABERT-2 load custom model code written for `transformers` 4; the encoder registry, [encoders.py](Code/shared_code/encoders.py), applies the small compatibility adjustments they need under `transformers` 5 and pins both to a fixed checkpoint revision.
 
 `PYTORCH_ENABLE_MPS_FALLBACK` must be configured before PyTorch is imported for the MPS fallback to take effect. Each experiment notebook's Imports cell uses `os.environ.setdefault` before `import torch`, setting the value to `1` only when it is absent; an existing value is preserved.
 
-When an encoder is needed, either experiment's loading or embedding cells download its checkpoint unless it is already cached. The default twelve encoders total about 8 GB; [encoders.py](Code/mbf/encoders.py) lists their Hugging Face identifiers. DNABERT-2's model code requires `einops`. Hugging Face normally stores these downloads in the [user's cache](https://huggingface.co/docs/transformers/installation#cache-directory); the notebooks do not configure the repository's `.model-cache/` directory.
+When an encoder is needed, either experiment's loading or embedding cells download its checkpoint unless it is already cached. The default twelve encoders total about 8 GB; [encoders.py](Code/shared_code/encoders.py) lists their Hugging Face identifiers. DNABERT-2's model code requires `einops`. Hugging Face normally stores these downloads in the [user's cache](https://huggingface.co/docs/transformers/installation#cache-directory); the notebooks do not configure the repository's `.model-cache/` directory.
 
 The experiment notebooks save embedding matrices separately under `Code/stage1_embeddings/`. See the [generated-file inventory](#generated-files) for their paths and the policy for preserving results before recomputation, and [embedding matrices and cache reuse](docs/methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse) for what the cache checks before reusing a matrix.
 
-This dependency list covers the imports in both Stage 1 experiment notebooks and the `mbf` package. A fresh-environment run has not been verified. The repository does not yet pin package versions other than `transformers`. Nucleotide Transformer v2, DNABERT-2, HyenaDNA, RiNALMo, CaLM, and ProtBERT have pinned model revisions; the other six encoders load the current revision of their checkpoint.
+This dependency list covers the imports in both Stage 1 experiment notebooks and the `shared_code` package. A fresh-environment run has not been verified. The repository does not yet pin package versions other than `transformers`. Nucleotide Transformer v2, DNABERT-2, HyenaDNA, RiNALMo, CaLM, and ProtBERT have pinned model revisions; the other six encoders load the current revision of their checkpoint.
 
 ### Reading implementation code
 
-The [stability](Code/Stage1_stability.ipynb#Implementation-displays) and [GTEx](Code/Stage1_gtex.ipynb#Implementation-displays) notebooks use `SHOW_IMPLEMENTATION = False` to keep implementation displays compact: each `show_source` cell lists links to the functions or classes in `Code/mbf/`, including their source lines. Both notebooks still show their analysis calls, settings, and results.
+The [stability](Code/Stage1_stability.ipynb#Implementation-displays) and [GTEx](Code/Stage1_gtex.ipynb#Implementation-displays) notebooks use `SHOW_IMPLEMENTATION = False` to keep implementation displays compact: each `show_source` cell lists links to the functions or classes in `Code/shared_code/`, including their source lines. Both notebooks still show their analysis calls, settings, and results.
 
 To expand the implementation while studying a method, set `SHOW_IMPLEMENTATION = True`, run that setting, and rerun the relevant `show_source` cell. These display cells inspect source code; they do not load encoders or rerun analyses. Set the flag back to `False` and rerun a display cell to return to its links. Source links and expanded listings describe the code currently on disk; they do not independently verify which implementation produced a saved research result.
 
-If the source-display helper changes while a kernel is open, reload `mbf.notebook` and reimport `show_source`, or restart the kernel and rerun Setup, before using the updated helper.
+If the source-display helper changes while a kernel is open, reload `shared_code.notebook` and reimport `show_source`, or restart the kernel and rerun Setup, before using the updated helper.
 
-The [presentation helper](Code/mbf/notebook.py) keeps full listings as the default for calls without a `full` argument, preserving the behavior of other notebooks. Relative source links assume the notebook is in `Code/`. A viewer may open the file without jumping to its line anchor; the displayed function name and line number locate the definition.
+The [presentation helper](Code/shared_code/notebook.py) keeps full listings as the default for calls without a `full` argument, preserving the behavior of other notebooks. Relative source links assume the notebook is in `Code/`. A viewer may open the file without jumping to its line anchor; the displayed function name and line number locate the definition.
 
 ### Interpreting loading messages
 
@@ -163,7 +163,7 @@ Unused checkpoint weights and newly initialized parameters are different cases; 
 
 RNA-FM reports the same pooler entries and unused `lm_head.*` and `ss_head.*` weights; the latter belong to a secondary-structure prediction head. mRNA-FM, RiNALMo, CaLM, and HyenaDNA load through the same `multimolecule` package, and the same component-level interpretation applies where their reports list these entries. ProtBERT's unexpected `cls.*` weights belong to its masked-token and next-sentence prediction heads. These listed heads and poolers are not used by `embed`; a different missing or unexpected parameter requires checking which component it belongs to.
 
-Nucleotide Transformer v2 and DNABERT-2 use the compatibility loaders in [encoders.py](Code/mbf/encoders.py), which build their models and compare checkpoint weights directly. They do not print the auto-class report above: the loader raises an error if anything other than the unused pooler is missing or unexpected. A completed load confirms the weight comparison only; embedding extraction and downstream analyses require their own checks.
+Nucleotide Transformer v2 and DNABERT-2 use the compatibility loaders in [encoders.py](Code/shared_code/encoders.py), which build their models and compare checkpoint weights directly. They do not print the auto-class report above: the loader raises an error if anything other than the unused pooler is missing or unexpected. A completed load confirms the weight comparison only; embedding extraction and downstream analyses require their own checks.
 
 Past environment observations and their evidence are listed in [run records](docs/run-records.md#legacy-observations-without-complete-run-identities). Warnings associated with a particular analysis remain beside its notebook results.
 

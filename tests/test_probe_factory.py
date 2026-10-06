@@ -13,8 +13,8 @@ from sklearn.preprocessing import StandardScaler
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "Code"))
-from mbf import analysis
-from mbf.splits import grouped_folds
+from shared_code import analysis
+from shared_code.splits import grouped_folds
 
 
 def _prior_pipeline(continuous=True):

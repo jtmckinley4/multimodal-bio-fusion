@@ -41,7 +41,7 @@ For example, `ATG | GCC | AAA | GCT | TTT` has five codons and a length feature 
 
 The notebook call reuses `probe_table`: it fits ridge regression and reports the mean and standard deviation of five outer-fold $R^2$ scores on the pinned folds, then the summary over further fold assignments. Passing `groups=kept_seqs` groups exact repeated sequence strings within the same outer fold. See [Linear probing](linear-probing.md) for the model and evaluation procedure, and the [current evaluation limitations](linear-probing.md#current-evaluation-limitation) for interpretation. The length calculation is deterministic and needs no additional seed.
 
-Implementation: [Dataset.lengths](../../Code/mbf/datasets.py).
+Implementation: [Dataset.lengths](../../Code/shared_code/datasets.py).
 
 ## GC-content prediction
 
@@ -72,7 +72,7 @@ For example, `GCAU` contains two G-or-C bases among four nucleotides, giving $2/
 
 The list comprehension applies `gc_content` once per retained string, and NumPy stores those values as `seq_gc` with shape `(n,)`, where `n` is the number of retained examples. `probe_table` fits one probe per encoder in `EMBEDDINGS` with this same target array, and `groups=kept_seqs` keeps exact repeated sequence strings within the same outer fold. See [Linear probing](linear-probing.md) for the ridge model, cross-validation, and ISLR references. Computing GC content is deterministic and needs no additional seed. The [current evaluation limitations](linear-probing.md#current-evaluation-limitation) still apply.
 
-Implementation: [sequence helpers](../../Code/mbf/sequences.py).
+Implementation: [sequence helpers](../../Code/shared_code/sequences.py).
 
 ## GC3 prediction
 
@@ -115,7 +115,7 @@ GC3 should also be distinguished from other codon-usage measures. The Codon Adap
 
 Finally, NumPy's `np.corrcoef(seq_gc, seq_gc3)` calculates the [Pearson correlation](https://numpy.org/doc/stable/reference/generated/numpy.corrcoef.html) between the two target arrays across retained examples. It returns a `(2, 2)` correlation matrix; `[0, 1]` selects the entry comparing overall GC with GC3, using Python's zero-based indexing. This describes their linear association, not a probe $R^2$ or representation-alignment score. Strong association indicates overlap between the composition targets; it does not establish whether GC3 adds predictive value beyond overall GC. Likewise, the notebook table's difference between GC3 and GC probe $R^2$ values compares separate target predictions; it does not fit a model testing incremental value conditional on overall GC. The [current evaluation limitations](linear-probing.md#current-evaluation-limitation) still apply to the probes.
 
-Implementation: [sequence helpers](../../Code/mbf/sequences.py).
+Implementation: [sequence helpers](../../Code/shared_code/sequences.py).
 
 ## Secondary-structure proxy: Nussinov pairing fraction
 
@@ -207,7 +207,7 @@ Only the target calculation uses the cropped prefix. The notebook cell reuses ex
 
 **Minimum-separation rule.** The candidate-pair loop enforces the minimum separation for every pair, as the recurrence above requires.
 
-Implementation: [sequence helpers](../../Code/mbf/sequences.py).
+Implementation: [sequence helpers](../../Code/shared_code/sequences.py).
 
 ## Pipeline control: synonymous recoding
 
@@ -293,4 +293,4 @@ These are illustrative numbers, not encoder outputs.
 
 Identical vectors have zero spread in exact arithmetic. Near-zero protein spread together with one distinct translated protein is consistent with the expected behavior for synonymous recodings; nonzero DNA and RNA spread shows variation among the nucleotide representations. Compare each matrix with its own centroid. Because the spaces have different dimensions and scales, their raw spread values do not form a normalized comparison of information content. This control checks this particular translation/embedding relationship, not every assumption or analysis elsewhere in the notebook.
 
-Implementation: [centroid_spread](../../Code/mbf/analysis.py).
+Implementation: [centroid_spread](../../Code/shared_code/analysis.py).

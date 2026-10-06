@@ -16,8 +16,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "Code"))
-from mbf import analysis
-from mbf.splits import grouped_folds
+from shared_code import analysis
+from shared_code.splits import grouped_folds
 
 
 def _reference_scores(X, y, groups, seed=42):

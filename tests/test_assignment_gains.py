@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "Code"))
 
 import numpy as np
 
-from mbf import analysis
+from shared_code import analysis
 
 
 class AssignmentGainTests(unittest.TestCase):
