@@ -111,7 +111,12 @@ class AuditValidationTests(unittest.TestCase):
                     "Repeated sequences with differing labels": 1,
                     # Repeated groups have sample SDs sqrt(2) and 0.
                     "Median label SD within a repeated sequence": np.sqrt(2) / 2,
+                    # Labels 1, 3, 2, 2, 9, 4 have sample variance 41.5 / 5.
+                    "Label variance": 8.3,
+                    # Squared deviations from sequence means sum to 2 over 6 rows in 4 sequences.
+                    "Pooled label variance within a sequence": 1.0,
                     "Share of rows with at most 3 nucleotides": 0.5,
+                    "Sequence-only ceiling on explained label variance": 1 - 1.0 / 8.3,
                 }, name=datasets.DATASETS[key].label, dtype=object)
                 pd.testing.assert_series_equal(actual, expected)
                 pd.testing.assert_frame_equal(fixture, original)

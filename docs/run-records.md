@@ -35,3 +35,17 @@ These entries identify existing evidence, not reconstructed executions. They wer
 - **Retained Stage 1 outputs:** The [overview](stage1-overview.md#summary) identifies outputs inherited from the combined notebook. Exact producing runs, code states, and full environments remain unassigned. Do not group all saved cells into one execution based on their current location.
 - **HyenaDNA backend comparison:** The [stability loading notes](../Code/Stage1_stability.ipynb#Interpreting-the-loading-messages), cell `9bdd4bf8`, preserve the reported CPU/MPS comparison. Its original execution date, hardware models, and complete producing environment are not established here. Keep that observation attached to its evidence rather than treating it as a requirement or a general backend guarantee.
 - **Import compatibility report:** The README at commit `81317de433938dc41ad97987350559ae27f647b9` reported `multimolecule` 0.2.1 importing with `transformers` 5.14.1 and 5.15.1, and failing with 5.16 or later. This historical report motivated the current pin; its original logs, execution date, and full environment are not linked. It does not establish compatibility for every future release or diagnose another contributor's import failure.
+
+## Recorded runs
+
+### 2026-10-06T21:20Z audit-ceiling: label-variance ceiling in the stability dataset audit
+
+- Execution: 2026-10-06, about 21:20 UTC; Claude (assistant) in a Linux cloud workspace; completed.
+- Scope: only the dataset-audit cell of [`Code/Stage1_stability.ipynb`](../Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons) (cell `7f9bf305`, `datasets.audit("mrna_stability")`), recomputed outside Jupyter and saved into that cell; its saved execution count is unchanged. No other notebook cell was run. The intended change adds the label variance, the pooled label variance within a sequence, and the sequence-only ceiling on explained label variance to the audit.
+- Code: commit `0b96d44` plus an uncommitted change to `Code/shared_code/datasets.py` (`audit`) and its expected values in `tests/test_validation.py`.
+- Inputs: `datasets/mRNA_Stability.csv`, SHA-256 `d922e7d4b07516949d316856373031136b38e9b92a06e81bb4afbafd0c00d608`; all 65,356 rows.
+- Configuration: no encoders, sampling, or folds; sequences stripped and uppercased as in `audit`.
+- Environment: Python 3.13.16, pandas 3.0.5, NumPy 2.5.3, Linux x86_64; CPU only.
+- Reuse: none.
+- Evidence: label variance 1.009355; pooled label variance within a sequence 0.418495; ceiling 0.585383; the earlier audit rows are unchanged (median label SD within a repeated sequence 0.487024). `tests.test_validation` and `tests.test_dataset_paths` pass with the updated audit.
+- Interpretation: a model that sees only the sequence can explain at most about 59% of label variance in the full file, assuming repeated sequences show the label noise of every sequence.

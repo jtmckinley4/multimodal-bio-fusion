@@ -210,9 +210,14 @@ def audit(key, data_dir=DEFAULT_DATA_DIR, length_limit=1000):
 
     Reports rows and distinct sequences, rows per published split and the distinct
     sequences shared by each pair of splits, repeated sequences and how many carry
-    differing labels, the median label SD within a repeated sequence, and the share of
-    rows no longer than length_limit nucleotides. Reject datasets without one scalar
-    label column, including multi-target GTEx, before reading the file.
+    differing labels, the median label SD within a repeated sequence, the label variance,
+    the pooled label variance within a sequence, the share of rows no longer than
+    length_limit nucleotides, and a sequence-only ceiling on explained label variance.
+    The pooled within-sequence variance is the within-group mean square over all rows
+    grouped by sequence (singletons contribute no degrees of freedom), and the ceiling is
+    one minus its ratio to the label variance. The ceiling assumes repeated sequences show
+    the label noise of every sequence. Reject datasets without one scalar label column,
+    including multi-target GTEx, before reading the file.
     """
     spec = DATASETS[key]
     if spec.label_columns or not spec.label_column:
@@ -231,5 +236,12 @@ def audit(key, data_dir=DEFAULT_DATA_DIR, length_limit=1000):
     summary["Repeated sequences"] = len(repeated)
     summary["Repeated sequences with differing labels"] = int((repeated["nunique"] > 1).sum())
     summary["Median label SD within a repeated sequence"] = repeated["std"].median()
+    labels = df[spec.label_column]
+    by_label = labels.groupby(seqs)
+    within_df = len(df) - by_label.ngroups
+    within = ((labels - by_label.transform("mean")) ** 2).sum() / within_df if within_df else np.nan
+    summary["Label variance"] = labels.var()
+    summary["Pooled label variance within a sequence"] = within
     summary[f"Share of rows with at most {length_limit:,} nucleotides"] = (seqs.str.len() <= length_limit).mean()
+    summary["Sequence-only ceiling on explained label variance"] = 1 - within / labels.var()
     return pd.Series(summary, name=spec.label, dtype=object)
