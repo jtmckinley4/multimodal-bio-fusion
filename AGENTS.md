@@ -12,6 +12,10 @@ Use the [project README](README.md) for the overview and layout. Read [research 
 - Follow the [generated-file policy](README.md#generated-files). Check whether an artifact is already tracked before changing ignore rules or proposing cleanup; preserve results needed as evidence.
 - Keep individual paper reviews in the relevant contributor's folder. Preserve attribution and existing content when reorganizing files, and update affected links.
 
+## Shared engineering
+
+For executable Python and notebook design, implementation, debugging, or review, read and apply the repository's [shared-engineering workflow](.agents/skills/multimodal-bio-shared-engineering/SKILL.md). It owns code boundaries, scientific contracts, resource recovery, and proportionate verification. Markdown-only changes use the workflows below. These routes do not extend the task's execution or publication authority.
+
 ## Shared documentation and sources
 
 For shared documentation and source retention, read and apply the repository's [shared-documentation workflow](.agents/skills/multimodal-bio-shared-documentation/SKILL.md). It owns purpose, tone, attribution, and source context.
@@ -28,7 +32,7 @@ If conflicting directions leave the intended action unclear, explain the specifi
 
 ## Agent entry points
 
-Codex discovers the workflows under `.agents/skills/`. [CLAUDE.md](CLAUDE.md) imports this file for Claude Code. The Claude entry points for [shared documentation](.claude/skills/multimodal-bio-shared-documentation/SKILL.md) and [Markdown formatting](.claude/skills/multimodal-bio-markdown-formatting/SKILL.md) direct it to the corresponding maintained workflows. Use the exact repository path when resolving a similarly named personal skill.
+Codex discovers the workflows under `.agents/skills/`. [CLAUDE.md](CLAUDE.md) imports this file for Claude Code. The Claude entry points for [shared documentation](.claude/skills/multimodal-bio-shared-documentation/SKILL.md), [Markdown formatting](.claude/skills/multimodal-bio-markdown-formatting/SKILL.md), and [shared engineering](.claude/skills/multimodal-bio-shared-engineering/SKILL.md) direct it to the corresponding maintained workflows. Use the exact repository path when resolving a similarly named personal skill.
 
 These entry points target repository-aware coding applications. Ordinary chat access to a model does not establish access to the checkout or automatic instruction loading. See the [agent documentation sources](docs/sources.md#working-with-repository-aware-agents) for loading behavior and checks.
 

@@ -39,6 +39,8 @@ Use [Reading implementation code](../README.md#reading-implementation-code) to f
 
 Use [run records](run-records.md) to connect a shared result to its producing notebook version, settings, inputs, outputs, environment, and evaluation split. Compare it with the relevant baselines. Check whether those observations support the claim and retain unresolved discrepancies between versions.
 
+The [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md) guides executable-code work for both contributors' agents. The [coding review and implementation plan](shared-coding-proposal.md) records its rationale, bounded batches, and verification status.
+
 ## Find plans and literature
 
 | Question | Starting point |

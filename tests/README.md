@@ -1,4 +1,4 @@
-# Notebook checks
+# Notebook and shared-code checks
 
 These automated software checks help detect changes in notebook setup and shared calculations. They use controlled examples to check code behavior; the experiment notebooks contain the biological analyses and their results. [Wilson et al.'s scientific-computing guidance](../docs/sources.md#wilson-et-al-best-practices-for-scientific-computing) explains the role of controlled checks and small changes.
 
@@ -21,10 +21,16 @@ The tests use Python's built-in `unittest` runner and the existing notebook depe
 
 - [Repeated-assignment checks](test_assignment_gains.py) compare per-assignment gains with the original loops on synthetic scalar and 30-output targets. They verify seed order, reuse of single-encoder scores, selection of the better single encoder within each assignment, unchanged inputs, and invalid-input errors.
 
+- [Probe construction](test_probe_factory.py) compares scalar/multioutput predictions and grouped/ungrouped scores with the prior estimator definition, including classification and independent fitted state. [Seed routing](test_probe_seeds.py) checks the retained default, nondefault single/pair correspondence, unchanged repeated assignments, explicit notebook settings, and mirroring of an asymmetric callback.
+- [Scientific-option validation](test_validation.py) rejects unsupported permutation nulls and multi-target scalar audits before work; hand-worked examples and retained seeded answers check supported behavior.
+- [Model cleanup](test_embedding_resources.py) uses substitute inference to check normal release, inference errors, interruption, and simultaneous inference/cleanup failure. It does not measure real GPU-memory release.
+- [Embedding-cache checks](test_embedding_cache.py) use tiny local NPZ files and substitute models to check effective-input identity, legacy/corrupt errors, matrix shape, deterministic archive closure, and interrupted publication. Completed fixture caches survive failed replacement; no team caches are used or migrated.
+- [GTEx coordinates](test_gtex_coordinates.py) checks strand-aware endpoints, requested length, TSS position, unchanged boundaries, and prior-expression equivalence using invented rows. [GTEx input/output](test_gtex_io.py) checks downloads, schema, response validation, bounded retry decisions, and CSV publication with local fixtures and mocked requests.
+
 The tests do not run the research bodies or update notebooks. Setup uses separate namespaces in one Python process, not separate Jupyter kernels. Passing these checks does not reproduce scientific results or verify how a notebook viewer renders or follows links. The blocked entry points guard against accidental execution; they are not a sandbox for untrusted code.
 
 ## After editing a notebook or shared code
 
-Keep each notebook's imports and settings inside its bounded `## Setup` section, followed by the next main section. The notebooks' saved reading mode uses `SHOW_IMPLEMENTATION = False`. If code moves and a source-link check fails, run Setup and only the affected `show_source` cells in the relevant notebook, then save and rerun these checks. Displaying source does not run the referenced research functions.
+Keep each notebook's imports and settings inside its bounded `## Setup` section, followed by the next main section. The notebooks' saved reading mode uses `SHOW_IMPLEMENTATION = False`. If code moves and a source-link check fails, use an isolated, guarded Setup namespace and only the affected `show_source` calls. Save only their changed implementation-display content, preserving execution counts, scientific outputs, unrelated metadata, and existing device/setup output. Displaying source does not run the referenced research functions; the setup guard in `test_notebook_setup.py` provides the bounded environment.
 
-The tests use current settings and definitions rather than fixed cell IDs, model counts, or historical notebook backups. If the display format or setup structure intentionally changes, update the affected checks alongside that change.
+Setup and source-display checks use current settings and definitions rather than fixed cell IDs, model counts, or historical notebook backups. Numerical preservation checks deliberately retain prior constructions and the agreed default seed as references; they do not independently validate the scientific method. If a configuration or contract intentionally changes, update the affected checks with that decision.

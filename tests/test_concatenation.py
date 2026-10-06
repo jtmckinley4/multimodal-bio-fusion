@@ -60,8 +60,9 @@ class ConcatenationTests(unittest.TestCase):
                 call.args[0], np.concatenate([originals[a], originals[b]], axis=1)
             )
             self.assertIs(call.args[1], y)
-            self.assertEqual(set(call.kwargs), {"groups"})
+            self.assertEqual(set(call.kwargs), {"groups", "seed"})
             self.assertIs(call.kwargs["groups"], groups)
+            self.assertEqual(call.kwargs["seed"], 42)
         expected_scores = [[np.nan, 0.6, 0.9], [0.6, np.nan, 0.5], [0.9, 0.5, np.nan]]
         expected_gains = [[np.nan, 0.3, 0.7], [0.3, np.nan, 0.2], [0.7, 0.2, np.nan]]
         for actual, values in ((scores, expected_scores), (gains, expected_gains)):

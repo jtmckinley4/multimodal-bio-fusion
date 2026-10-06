@@ -6,6 +6,8 @@ The main stability analysis starts from one coding sequence per row. DNA and RNA
 
 Read in pipeline order, or jump to [sequence checks](#sequence-checks-and-translation), [sampling](#sampling-and-retained-rows), [token limits](#tokens-and-input-limits), [loading](#loading-an-encoder), [pooling](#producing-a-sequence-embedding), or [cache reuse](#embedding-matrices-and-cache-reuse). The implementations are in [sequences.py](../../Code/mbf/sequences.py), [datasets.py](../../Code/mbf/datasets.py), [encoders.py](../../Code/mbf/encoders.py), and [embeddings.py](../../Code/mbf/embeddings.py).
 
+GTEx genomic windows are prepared separately by `transcript_regions` in [the pilot builder](../../Code/build_gtex_pilot.py). Source transcript coordinates are one-based and inclusive; the helper calculates a zero-based transcription start site (TSS), then requests one-based inclusive Ensembl regions on the transcript's strand. In the current 6,000-base window, the TSS is at zero-based index 3,000 on either strand. For example, a positive-strand TSS at source position 101 with a six-base window requests positions 98–103; a negative-strand TSS at 200 requests 198–203 in reverse-complement orientation. The extraction preserves the previous formulas, including nonpositive endpoints near chromosome boundaries; it does not clamp or redefine those windows. [Coordinate checks](../../tests/test_gtex_coordinates.py) use small known answers without requesting sequences.
+
 ## Sequence checks and translation
 
 These helpers in `mbf.sequences` prepare the sequence forms that the encoders read: the coding sequence in DNA letters for DNA encoders, the same sequence in RNA letters for RNA encoders, and an amino acid sequence for protein encoders. `datasets.is_retained` combines the length and start check with a minimum translated length of five amino acids, and `encoders.encoder_input` selects the form for each encoder from its `alphabet` in the registry.
@@ -114,17 +116,30 @@ The mean includes every returned token position, including special tokens added 
 
 `embed_with_cache` produces one matrix per encoder, with one row per supplied sequence and one column per pooled feature. In the stability analysis, the supplied strings are `kept_seqs`, and the helper converts each coding sequence through `encoder_input` before embedding. In GTEx, the caller supplies each encoder's prepared strings with `prepared=True`. Keep input, label, and group row order aligned throughout; the cache does not align labels or groups for the caller.
 
-The cache file is named for `encoder.key` in the selected output directory. Before reusing it, the helper compares four recorded values:
+The cache file is named for `encoder.key` in the selected output directory. Version 1 identifies the effective strings actually passed to the encoder, after any coding-sequence conversion:
 
-| Recorded field | What is compared |
+| Recorded field | What is checked |
 | --- | --- |
+| `cache_version` | Version 1 of the archive and current embedding calculation; change it when the schema or pooling calculation changes. |
 | `checkpoint` | The encoder's checkpoint identifier. |
-| `revision` | The registry's revision string, or an empty string when no revision is pinned. |
+| `revision` | The requested registry revision, or an empty string when no revision is pinned. |
 | `max_len` | The encoder's token limit. |
-| `fingerprint` | The first 16 hexadecimal characters of a SHA-1 hash of the newline-joined supplied sequences, in order. |
+| `fingerprint` | Full SHA-256 of the ordered effective strings serialized as a JSON list (UTF-8, no ASCII escaping, compact separators). |
+| `n_sequences` | The number of effective strings, checked against stored matrix rows. |
 
-A mismatch causes that encoder's matrix to be recomputed. The fingerprint covers the strings passed to the helper: coding sequences on the stability path, prepared encoder inputs on the GTEx path. It does not record the conversion implementation or the `prepared` flag itself.
+The helper validates scalar metadata and a real numeric, two-dimensional matrix with positive width before considering reuse. The archive closes on a hit, mismatch, or error. Equivalent effective strings can reuse a matrix even when one caller supplies prepared strings and another requests conversion; the `prepared` flag itself is not an extra identity field.
 
-**Limits of reuse.** Pooling code, conversion code, package versions, and tokenizer behavior are not separately recorded. `device` is saved when the matrix is computed and is neither checked nor rewritten on a cache hit. It records the selected creation-time backend, not the current session's backend or proof that every operation ran there. [Run records](../run-records.md) keep the producing environment separate from later cache reuse. An empty revision string does not identify the resolved checkpoint commit, so a change to an unpinned remote checkpoint is not detected by this metadata comparison. A cache match therefore establishes only that the recorded fields agree. A representation-method change can require deliberate recomputation even when those fields still match.
+| Cache state | Outcome of an explicit `embed_with_cache` call |
+| --- | --- |
+| Absent | Compute and publish a checked matrix. |
+| Valid version 1, matching identity | Reuse; return `(matrix, True)`. |
+| Valid version 1, changed input/checkpoint/revision/token limit | Compute a replacement; return `(matrix, False)`. |
+| Legacy, incompatible version, missing metadata, or damaged matrix/archive | Raise a recovery error before loading a model; preserve the existing file. |
+
+**Recovery.** Preserve an old or damaged file and its known producing evidence. For a deliberately authorized new computation, select a fresh cache directory in the notebook setup or archive the specific old file before retrying. Do not relabel an old archive as version 1: its effective inputs and producing code have not been established by that edit. Existing team caches were not migrated by this software change.
+
+New matrices are written to a unique temporary sibling, reopened and checked, then published with `os.replace`. Failure before replacement preserves the last completed cache. A cleanup failure retains the primary error and, where supported by Python, adds the temporary path as an exception note. This prevents partial publication within the helper; it is not a guarantee against filesystem failure or concurrent writers to the same destination.
+
+**Limits of reuse.** The version is a maintained calculation marker, not an automatic source-code hash. Package versions and tokenizer behavior are not separately checked. `device` is saved when computing and neither compared nor rewritten on a hit; it records the selected creation-time backend, not proof that every operation ran there. [Run records](../run-records.md) distinguish producing conditions from later reuse. An empty revision does not identify the resolved remote commit, so an unpinned checkpoint change is not detected. A matching cache is not evidence that labels, groups, biological identities, or scientific interpretations are correct.
 
 The [Generated files policy](../../README.md#generated-files) identifies output locations and their Git treatment. The [notebook embedding section](../../Code/Stage1_stability.ipynb#Embedding-the-sample-with-every-encoder) keeps the matrix-shape outputs associated with the producing run. A width disagreement with its loading check is an inconsistency to investigate; width alone does not identify its cause.

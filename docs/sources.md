@@ -58,6 +58,14 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 **Reading scope and limits:** The dataset and model cards were read through a summarizing fetch on September 29, 2026, which reported 82,205 train, 4,718 test, and 4,318 evaluation transcripts and protein-coding genes only. That source review did not read the cards in full, download data, or identify a license; it is not a description of the later pilot implementation. The current experiment records its fields and retained rows, but the earlier review did not resolve licensing.
 
+### Ensembl sequence requests and rate limits
+
+[POST sequence/region documentation](https://rest.ensembl.org/documentation/info/sequence_region_post) and [Ensembl's rate-limit guidance](https://github.com/Ensembl/ensembl-rest/wiki/Rate-Limits).
+
+**Why retain them:** They define the service contract used by [the GTEx pilot builder](../Code/build_gtex_pilot.py). The endpoint accepts at most 50 regions per POST. A 429 response supplies `Retry-After` as a floating-point number of seconds. These support batch sizing and respecting the requested delay; the builder's attempt limit and decision to stop for a delay above 120 seconds are local recovery choices, not service requirements. See [rebuilding the pilot](../README.md#data) for its role.
+
+**Reading scope and limits:** On October 5, 2026, read the endpoint parameters, request examples and resource limits, and the wiki's normal/exhausted-rate-limit response sections. No live sequence requests or dataset rebuilds were performed. These references do not verify the historical pilot's completeness, assembly, or biological correctness; they do not pin future service contents.
+
 ### RNA-FM model card
 
 [multimolecule/rnafm](https://huggingface.co/multimolecule/rnafm) on Hugging Face.
@@ -92,6 +100,8 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 **Reading scope and limits:** The October 5, 2026 review read the introduction, data/split discussion, Box 1, and Table 1 in the [author-hosted PDF](https://www.biofold.org/pages/documents/papers/walsh_nmeth2021.pdf), which carries a placeholder publication date. The publisher's correction notice identifies a corrected specificity equation in Figure 2; that notice was checked through search when direct retrieval failed. Consult the corrected publication before reusing that equation.
 
+**Coding-review follow-up:** The October 5 coding review additionally read the Optimization discussion for the [proposed data and evaluation contracts](shared-coding-proposal.md#what-research-software-engineering-adds). No corrected specificity equation was used.
+
 ## Organizing and checking research software
 
 These sources explain practices relevant to separating experiment narratives from reusable computation and checking changes in small steps. The implemented structure is described in the [Stage 1 reading route](../README.md#stage-1-analysis), [shared package](../Code/mbf/), and [notebook checks](../tests/README.md). The readings support evaluating those choices; they do not establish that every recommendation was adopted or that a source caused an earlier decision.
@@ -106,6 +116,8 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Reading scope and limits:** The sections named above were read on October 5, 2026. This is supporting rationale for the present organization, not evidence that passing tests validates a biological interpretation or reproduces saved research results.
 
+**Coding-review follow-up:** The October 5 coding review also read Make Incremental Changes, Plan for Mistakes, Optimize Software Only after It Works Correctly, and Document Design and Purpose, Not Mechanics for the [coding proposal](shared-coding-proposal.md#what-research-software-engineering-adds).
+
 ### Wilson et al.: Good enough practices in scientific computing
 
 [Wilson et al. (2017), Good enough practices in scientific computing](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510), especially Software, Collaboration, Project organization, and What we left out.
@@ -113,6 +125,8 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 **Why retain it:** It supports reusable functions, explicit dependencies, useful project overviews, and simple example checks. Its discussion of adoption costs helps assess how much structure this project needs: continuous integration and coverage tools can burden newcomers before their benefits justify the work.
 
 **Reading scope and limits:** The sections named above were read on October 5, 2026. They support keeping the [reading route](../README.md#stage-1-analysis) and [checks](../tests/README.md) proportionate. The paper does not prescribe this repository's exact folders or notebook boundaries, or require adding CI now.
+
+**Coding-review follow-up:** The October 5 coding review revisited Software (especially 2g–2i), Collaboration, and What we left out for the [proposed proportionate coding workflow](shared-coding-proposal.md#shared-skill-and-how-both-agents-use-it).
 
 ### Sandve et al.: Ten Simple Rules for Reproducible Computational Research
 
@@ -122,6 +136,8 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Reading scope and limits:** Rules 1–6 were read on October 5, 2026. Complete run provenance remains a future design consideration; preserved outputs and regression checks do not establish that it exists. Recording a seed alone does not establish deterministic behavior across hardware and libraries.
 
+**Coding-review follow-up:** The later October 5 coding review read Rules 1–3 and 5–9 for the [coding proposal](shared-coding-proposal.md#what-research-software-engineering-adds). The current [manual run-record procedure](run-records.md) is now available; its existence does not establish complete historical provenance.
+
 ### Rule et al.: Writing and sharing Jupyter analyses
 
 [Rule et al. (2019), Ten simple rules for writing and sharing computational analyses in Jupyter Notebooks](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007007), Rules 1–3 and 7.
@@ -129,6 +145,25 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 **Why retain it:** Narrative, meaningful divisions, and reusable computation informed the September 25 notebook discussions. The [notebook presentation reference](../.agents/skills/multimodal-bio-markdown-formatting/references/notebooks.md#organize-around-computational-units) applies those ideas to purposes, inputs, outputs, and links to method explanations.
 
 **Reading scope and limits:** The introduction and named rules were checked on October 5, 2026. They support evaluating the organization, not this repository's exact folder names, heading levels, or approval batches.
+
+**Coding-review follow-up:** The October 5 coding review revisited the introduction and Rules 1–3 and 6–8 for the [proposed notebook/computation boundary](shared-coding-proposal.md#what-research-software-engineering-adds).
+
+### Xie et al.: Testing when the exact answer is unknown
+
+[Xie et al. (2011), Testing and validating machine learning classifiers by metamorphic testing](https://www.cs.columbia.edu/wp-content/uploads/sites/7/2016/08/jss2011.pdf), Journal of Systems and Software 84, 544–558; DOI 10.1016/j.jss.2010.11.920.
+
+**Why retain it:** It helps distinguish required mathematical relationships from plausible statistical expectations when exact expected outputs are unavailable. It informs the [proposed scientific checks](shared-coding-proposal.md#what-research-software-engineering-adds); jointly permuting paired rows in CKA is our local application, not an experiment in this paper.
+
+**Reading scope and limits:** On October 5, 2026, the research pass read the abstract/introduction, sections 2.3, 3.1–3.2, and 4.3.1; case-study details were sampled. The classifier study does not validate this repository's metrics. A surprising result is not automatically a coding fault unless the violated relation is a necessary property. The remote PDF was not archived.
+
+### National Academies: Reproducibility and replicability
+
+[National Academies of Sciences, Engineering, and Medicine (2019), Reproducibility and Replicability in Science, chapter 3](https://www.nationalacademies.org/read/25303/chapter/6), especially pages 43–47 and Conclusion 3-1.
+
+**Why retain it:** Its convention distinguishes computational consistency with the same data/code/conditions from a new study using newly obtained data. This informs the [proposal's evidence distinctions](shared-coding-proposal.md#what-research-software-engineering-adds) and interpretation of [run records](run-records.md). Repeated folds are not new biological observations.
+
+**Reading scope and limits:** The terminology discussion and Conclusion 3-1 were read on October 5, 2026. Terminology differs across communities; these definitions should be stated when needed, not assumed universal. Reproducing an output does not establish the method's validity. The remote chapter was not archived.
+
 
 ### nf-core: Shared components and collaborative review
 
@@ -172,6 +207,47 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 The remote pages in this section were checked on October 5, 2026 and were not archived.
 
+## Choosing code boundaries
+
+These sources inform the [coding review](shared-coding-proposal.md) and the adopted [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md). The proposal adapts Chase's personal Shared Engineering criteria for this research repository without requiring that personal installation. The sources below were read on October 5, 2026; remote pages were not archived.
+
+### Fowler: YAGNI
+
+[Martin Fowler, Yagni](https://martinfowler.com/bliki/Yagni.html), May 26, 2015.
+
+**Use and scope:** Read the article's discussion of speculative features, abstraction costs, refactoring, and inexpensive preparation. It informs the proposal to defer an experiment framework while allowing changes that improve current readability. It is a design argument, not proof that all preparation is wasteful or a reason to omit present reliability needs.
+
+### Thomas and Hunt: Duplication of knowledge
+
+[Dave Thomas and Andy Hunt, The Pragmatic Programmer: The Evils of Duplication](https://media.pragprog.com/titles/tpp20/dry.pdf), 20th Anniversary Edition excerpt.
+
+**Use and scope:** Read “DRY is More Than Code” and “Not All Code Duplication is Knowledge Duplication,” PDF pages 7 and 9–10. These distinguish shared intent from matching text. They inform sharing the ridge definition while preserving different dataset evaluations in the [proposal](shared-coding-proposal.md#share-the-ridge-definition-without-hiding-the-experiment). They do not require eliminating independent test expectations.
+
+### Martin: SOLID as responsibility and interface guidance
+
+[Robert C. Martin, Solid Relevance](https://blog.cleancoder.com/uncle-bob/2020/10/18/Solid-Relevance.html), October 18, 2020.
+
+**Use and scope:** Read the five principle discussions. Responsibility, substitution, and dependency boundaries inform the proposal's separation of calculations from external operations. Applying those questions to functions and modules is our project interpretation; the article does not prescribe Python class hierarchies or this repository's layout.
+
+### C++ Core Guidelines: Meaningful functions and related data
+
+[C++ Core Guidelines, F.1–F.2](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#f1-package-meaningful-operations-as-carefully-named-functions) and [C.1–C.2](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c1-organize-related-data-into-structures-structs-or-classes).
+
+**Use and scope:** Read those sections' rationales and examples. They inform the [function/record/class decision table](shared-coding-proposal.md#choosing-between-inline-code-a-function-and-a-class): name meaningful operations and represent genuinely related state. These are C++ guidelines; its class/struct distinction and language mechanics are not Python requirements. No numerical function-length limit is adopted.
+
+### Google: Reviewing complexity and useful tests
+
+[Google Engineering Practices, What to look for in a code review](https://google.github.io/eng-practices/review/reviewer/looking-for.html#complexity).
+
+**Use and scope:** Read Design, Complexity, Tests, Naming, Comments, and Context. Reader comprehension, present needs, and tests that can detect realistic failures inform the [proposal's review criteria](shared-coding-proposal.md#what-the-shared-skill-should-accomplish). This is Google review guidance, not a mandate to import all its process or infrastructure.
+
+### AWS: Retries and operation identity
+
+[Malcolm Featonby, Making retries safe with idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/), AWS Builders' Library.
+
+**Use and scope:** Read Retrying and side effects, Reducing client complexity, Late arriving requests, Same client request ID/different intent, and the conclusion. It informs the [builder recovery proposal](shared-coding-proposal.md#recoverable-files-and-model-cleanup), especially preserving operation intent and distinguishing retryable failures. The article concerns service contracts; it neither establishes Ensembl's API behavior nor calls for distributed coordination here. Publication date was not established.
+
+
 ## Mathematics in notebook Markdown
 
 ### Jupyter and MathJax: LaTeX syntax and delimiters
@@ -208,6 +284,8 @@ The remote pages in this section were checked on October 5, 2026 and were not ar
 
 **Reading scope and limits:** Discovery, naming, invocation, and supporting-file sections were read. A personal skill can take precedence over a project skill with the same name, which motivates the distinctive project name and explicit path. The two-entry-point arrangement is this project's design, not a vendor-provided integration recipe.
 
+**Coding-review follow-up:** Project skill locations, description-based selection, explicit invocation, supporting files, and name precedence were rechecked on October 5, 2026 for the [shared coding proposal](shared-coding-proposal.md#shared-skill-and-how-both-agents-use-it). Julian's actual application discovery was not tested.
+
 ### Claude Code: Repository access and the Desktop Code surface
 
 [How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works#what-claude-can-access) and [Desktop shared configuration](https://code.claude.com/docs/en/desktop#shared-configuration).
@@ -232,8 +310,10 @@ The remote pages in this section were checked on October 5, 2026 and were not ar
 
 **Reading scope and limits:** Discovery, invocation, and local locations were read. Same-named skills are not merged, so a personal installation should not be assumed to replace or reproduce the repository workflow.
 
+**Coding-review follow-up:** Discovery and explicit/implicit invocation were rechecked on October 5, 2026 for the [proposed shared coding skill](shared-coding-proposal.md#shared-skill-and-how-both-agents-use-it). That initial research pass did not install an entry point; the subsequently authorized implementation added the shared workflow and thin Claude route.
+
 ## Checking a teammate's setup
 
-In a fresh session opened on this checkout, ask the agent to identify the repository instructions and the source path of the skill relevant to the task: shared documentation or Markdown formatting. In Claude Code, `/context` lists loaded memory files; `/multimodal-bio-shared-documentation` and `/multimodal-bio-markdown-formatting` explicitly invoke their respective entry points. If discovery differs, either workflow can still be read through its repository path when the application has file access.
+In a fresh session opened on this checkout, ask the agent to identify the repository instructions and the source path of the skill relevant to the task: shared engineering for executable code, shared documentation for purpose and evidence, or Markdown formatting for presentation. In Claude Code, `/context` lists loaded memory files; `/multimodal-bio-shared-engineering`, `/multimodal-bio-shared-documentation`, and `/multimodal-bio-markdown-formatting` explicitly invoke their respective entry points. If discovery differs, the relevant workflow can still be read through its repository path when the application has file access.
 
 The repository-agent references above were checked on September 25, 2026; the remote pages were not archived. File and link checks can validate this repository's structure. Actual skill discovery and behavior must also be checked in the teammate's application.

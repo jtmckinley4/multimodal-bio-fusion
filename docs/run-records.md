@@ -26,7 +26,7 @@ This is a manually maintained record that a researcher or an assistant can updat
 
 ## What the current cache records
 
-The current [`embed_with_cache` format](methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse) records a checkpoint, requested revision, token limit, ordered-input fingerprint, and the selected device when a matrix is computed. A cache hit does not rewrite that device. A new session's selected backend therefore cannot identify where reused embeddings were produced; fallback may also execute some operations on a different backend. This format does not record code/package versions, execution time, seeds, or label/split identity. Older artifacts may lack even these cache fields.
+The current [`embed_with_cache` format](methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse) records a cache/calculation version, checkpoint, requested revision, token limit, effective-input fingerprint, row count, and the selected device when a matrix is computed. A cache hit does not rewrite that device. A new session's selected backend therefore cannot identify where reused embeddings were produced; fallback may also execute some operations on a different backend. This format does not record code/package versions, execution time, seeds, or label/split identity. Older artifacts may lack even these cache fields.
 
 ## Legacy observations without complete run identities
 
