@@ -1,11 +1,11 @@
 """Registry of labeled sequence datasets, and the inputs each encoder reads from them.
 
-Every entry names its file, sequence and label columns, task, published split column,
+Every entry names its file, sequence and target columns, task, published split column,
 and setting. In the "derived" setting (Setting A in the README), each row holds one
 coding sequence: DNA encoders read it in DNA letters, RNA encoders read it in RNA
-letters, and protein encoders read its translation. Datasets whose rows carry separate
-DNA, transcript, and protein sequences, such as IsoFormer's GTEx data (Setting B), will
-add a second setting.
+letters, and protein encoders read its translation. In the "distinct" setting (Setting B),
+GTEx rows carry separate genomic DNA, transcript, coding sequence, and protein columns,
+with expression targets for 30 tissues and gene identifiers for grouped evaluation.
 """
 
 from __future__ import annotations
@@ -13,6 +13,7 @@ from __future__ import annotations
 import itertools
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -22,12 +23,16 @@ from .sequences import dna_to_rna, rna_to_dna
 from .sequences import is_in_frame_and_starts_correctly, translate_cds
 
 
+DEFAULT_DATA_DIR = Path(__file__).resolve().parents[2] / "datasets"
+
+
 @dataclass(frozen=True)
 class DatasetSpec:
     """A labeled sequence dataset and where its encoder inputs come from.
 
-    path is relative to the Code directory. split_column names the column holding the
-    published train, validation, and test assignment, when the file has one.
+    path is a filename within the selected data directory, which defaults to the
+    repository's datasets folder. split_column names the column holding the published
+    train, validation, and test assignment, when the file has one.
 
     In the "derived" setting every encoder input comes from sequence_column, one coding
     sequence. In the "distinct" setting, input_columns names separate columns: "dna"
@@ -143,12 +148,12 @@ class Dataset:
         return [protein_input(encoder, s) for s in self.column("protein")]
 
 
-def sample_rows(key, n_rows=None, seed=42, data_dir="."):
+def sample_rows(key, n_rows=None, seed=42, data_dir=DEFAULT_DATA_DIR):
     """Return a registered dataset's rows with a sequence, sampled before any filtering.
 
     With n_rows, n_rows rows are drawn without replacement using seed; otherwise every
-    row is returned. data_dir is the directory holding the files, the Code directory by
-    default.
+    row is returned. data_dir defaults to the repository's datasets folder, regardless
+    of the working directory. An explicit relative data_dir uses the working directory.
     """
     spec = DATASETS[key]
     df = pd.read_csv(os.path.join(data_dir, spec.path)).dropna(subset=[spec.sequence_column])
@@ -177,12 +182,12 @@ def retain(spec, df):
     )
 
 
-def load_dataset(key, n_rows=None, seed=42, data_dir="."):
+def load_dataset(key, n_rows=None, seed=42, data_dir=DEFAULT_DATA_DIR):
     """Load a registered dataset, sample it, and keep the rows that pass the Stage 1 filters."""
     return retain(DATASETS[key], sample_rows(key, n_rows, seed, data_dir))
 
 
-def official_split_sample(key, n_train, n_test, seed=42, data_dir="."):
+def official_split_sample(key, n_train, n_test, seed=42, data_dir=DEFAULT_DATA_DIR):
     """Sample rows from a dataset's published train and test splits and apply the filters.
 
     Returns (train, test) Datasets. Each split is sampled before filtering, with n_train
@@ -200,15 +205,18 @@ def official_split_sample(key, n_train, n_test, seed=42, data_dir="."):
     return tuple(parts)
 
 
-def audit(key, data_dir=".", length_limit=1000):
-    """Summarize properties of the whole file that matter for comparisons with published results.
+def audit(key, data_dir=DEFAULT_DATA_DIR, length_limit=1000):
+    """Summarize a scalar-label dataset's whole file for comparisons with published results.
 
     Reports rows and distinct sequences, rows per published split and the distinct
     sequences shared by each pair of splits, repeated sequences and how many carry
     differing labels, the median label SD within a repeated sequence, and the share of
-    rows no longer than length_limit nucleotides.
+    rows no longer than length_limit nucleotides. Reject datasets without one scalar
+    label column, including multi-target GTEx, before reading the file.
     """
     spec = DATASETS[key]
+    if spec.label_columns or not spec.label_column:
+        raise ValueError("audit requires one scalar label column; multi-target datasets are unsupported.")
     df = pd.read_csv(os.path.join(data_dir, spec.path))
     seqs = df[spec.sequence_column].astype(str).str.strip().str.upper()
     summary = {"Rows": len(df), "Distinct sequences": seqs.nunique()}

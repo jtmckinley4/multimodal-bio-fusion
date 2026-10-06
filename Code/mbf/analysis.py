@@ -30,6 +30,14 @@ from .splits import grouped_folds
 # Probes
 # ---------------------------------------------------------------------------
 
+def _ridge_pipeline():
+    """Return a fresh standardized ridge probe for an independent fit."""
+    return Pipeline([
+        ("scale", StandardScaler()),
+        ("model", RidgeCV(alphas=np.logspace(-3, 5, 20))),
+    ])
+
+
 def probe_scores(X, y, groups=None, continuous=True, seed=42):
     """Return the five held-out fold scores of a standardized linear probe.
 
@@ -40,10 +48,10 @@ def probe_scores(X, y, groups=None, continuous=True, seed=42):
     default seed is the pinned assignment.
     """
     if continuous:
-        model, scoring = RidgeCV(alphas=np.logspace(-3, 5, 20)), "r2"
+        pipeline, scoring = _ridge_pipeline(), "r2"
     else:
         model, scoring = LogisticRegression(max_iter=2000), "accuracy"
-    pipeline = Pipeline([("scale", StandardScaler()), ("model", model)])
+        pipeline = Pipeline([("scale", StandardScaler()), ("model", model)])
     if groups is not None:
         return cross_val_score(pipeline, X, y, cv=grouped_folds(groups, seed=seed), scoring=scoring)
     return cross_val_score(pipeline, X, y, cv=5, scoring=scoring)
@@ -62,19 +70,21 @@ def probe_assignment_means(X, y, groups, n_assignments=10, continuous=True):
     ])
 
 
-def probe_table(embeddings, targets, groups, n_assignments=10):
+def probe_table(embeddings, targets, groups, n_assignments=10, *, seed=42):
     """Return probe R^2 for every (embedding, target) combination.
 
     embeddings: {name: matrix}; targets: {target name: vector, or matrix with one
     column per output}. For each target, the table gives the mean and fold SD on the
-    pinned folds, then the mean and SD of the five-fold means over n_assignments
-    further fold assignments (omitted when 0).
+    pinned folds selected by seed, then the mean and SD of the five-fold means over
+    n_assignments further fold assignments (omitted when 0). With groups, seed
+    selects the pinned assignment; further assignments always use seeds 0 through
+    n_assignments - 1. Without groups, the unshuffled folds do not depend on seed.
     """
     rows = []
     for name, X in embeddings.items():
         row = {"encoder": name}
         for target, y in targets.items():
-            scores = probe_scores(X, y, groups=groups)
+            scores = probe_scores(X, y, groups=groups, seed=seed)
             row[f"{target} R2"] = scores.mean()
             row[f"{target} SD"] = scores.std()
             if n_assignments:
@@ -85,13 +95,134 @@ def probe_table(embeddings, targets, groups, n_assignments=10):
     return pd.DataFrame(rows).set_index("encoder")
 
 
+def _embedding_matrices(embeddings, keys):
+    """Validate the selected feature matrices without changing their row order."""
+    keys = list(keys)
+    if not keys or len(set(keys)) != len(keys):
+        raise ValueError("Select at least one encoder, with no duplicate keys.")
+    matrices = [np.asarray(embeddings[key]) for key in keys]
+    if any(matrix.ndim != 2 for matrix in matrices):
+        raise ValueError("Each embedding matrix must be two-dimensional.")
+    if len({matrix.shape[0] for matrix in matrices}) != 1:
+        raise ValueError("Embedding matrices must have the same number of rows.")
+    return matrices
+
+
+def concatenate_embeddings(embeddings, keys):
+    """Join the selected encoders' feature columns in the given key order.
+
+    embeddings maps encoder keys to two-dimensional arrays. Select at least one
+    unique key; unequal feature widths are allowed. Missing keys raise KeyError;
+    duplicate/empty selections or mismatched dimensions/row counts raise ValueError.
+    The caller must ensure that rows represent the same examples in the same order:
+    matching shapes cannot establish this biological correspondence.
+    """
+    return np.hstack(_embedding_matrices(embeddings, keys))
+
+
+def pairwise_concatenation_scores(embeddings, keys, y, single_r2, groups=None, *, seed=42):
+    """Return (pair R^2, gain over the better single encoder) on pinned folds.
+
+    keys selects at least two unique encoders and orders both DataFrame axes.
+    Matrices are symmetric with NaN diagonals. y is a vector or a multioutput
+    matrix; groups, when provided, has one label per row. All selected matrices,
+    targets and groups must contain the same examples in the same row order.
+
+    single_r2 maps each selected key to its already-computed, finite scalar mean
+    R^2 on the same targets, rows, groups and pinned folds selected by seed. This
+    correspondence is the caller's responsibility; scores are not recomputed here.
+    A gain is the pair's five-fold mean minus max(single_r2[a], single_r2[b]).
+
+    probe_scores owns scaling, ridge fitting and multioutput scoring. seed selects
+    the grouped pinned assignment; ungrouped folds do not depend on it. Callers
+    must pass a notebook seed explicitly if desired. No rows are filtered here.
+    Missing embedding/baseline keys raise KeyError; invalid shapes, selections or
+    baselines raise ValueError before any probes run.
+    """
+    keys = list(keys)
+    matrices = _embedding_matrices(embeddings, keys)
+    if len(keys) < 2:
+        raise ValueError("Pairwise concatenation requires at least two encoders.")
+    n_rows = matrices[0].shape[0]
+    if np.ndim(y) not in (1, 2) or np.shape(y)[0] != n_rows:
+        raise ValueError("Targets must be a vector or matrix with one row per example.")
+    if groups is not None and (np.ndim(groups) != 1 or len(groups) != n_rows):
+        raise ValueError("Groups must have one label per example.")
+    baselines = [single_r2[key] for key in keys]
+    try:
+        valid_baselines = (all(np.ndim(score) == 0 for score in baselines)
+                           and np.isrealobj(baselines) and np.isfinite(baselines).all())
+    except (TypeError, ValueError):
+        valid_baselines = False
+    if not valid_baselines:
+        raise ValueError("Single-encoder baselines must be finite scalar mean R^2 scores.")
+
+    scores = pairwise_matrix(
+        keys,
+        lambda a, b: probe_scores(
+            concatenate_embeddings(embeddings, [a, b]), y, groups=groups, seed=seed
+        ).mean(),
+    )
+    gains = pairwise_matrix(
+        keys, lambda a, b: scores.loc[a, b] - max(single_r2[a], single_r2[b])
+    )
+    return scores, gains
+
+
+def pairwise_assignment_gains(embeddings, keys, y, groups, n_assignments=10):
+    """Return each encoder pair's gain array over further grouped fold assignments.
+
+    keys selects at least two distinct encoders. Each (a, b) key follows their
+    combinations order; its array has one gain per assignment, using seeds 0
+    through n_assignments - 1 via probe_assignment_means. For each assignment,
+    subtract the better single encoder's five-fold mean from the concatenation's
+    five-fold mean. The better single encoder can differ between assignments.
+    Each selected single encoder and each pair is evaluated once per assignment.
+
+    Embeddings, y (a vector or multioutput matrix), and groups must have matching
+    rows. Callers must ensure the same examples and row order, which shapes alone
+    cannot establish. Groups are required: ungrouped probe_scores does not change
+    its folds with the seed. n_assignments must be a positive integer, not bool.
+    Missing keys raise KeyError; invalid selections, shapes, groups or assignment
+    counts raise ValueError before probing. Inputs are neither filtered nor mutated.
+
+    Notebook callers own encoder labels, modality descriptions, pinned gains and
+    table summaries. Assignment gains reuse the same examples; their spread is
+    sensitivity to partitioning, not a standard error.
+    """
+    keys = list(keys)
+    matrices = _embedding_matrices(embeddings, keys)
+    if len(keys) < 2:
+        raise ValueError("Pairwise gains require at least two encoders.")
+    n_rows = matrices[0].shape[0]
+    if np.ndim(y) not in (1, 2) or np.shape(y)[0] != n_rows:
+        raise ValueError("Targets must be a vector or matrix with one row per example.")
+    if groups is None or np.ndim(groups) != 1 or len(groups) != n_rows:
+        raise ValueError("Grouped fold assignments require one group label per example.")
+    if (isinstance(n_assignments, (bool, np.bool_))
+            or not isinstance(n_assignments, (int, np.integer)) or n_assignments < 1):
+        raise ValueError("n_assignments must be a positive integer.")
+
+    single_means = {
+        key: probe_assignment_means(embeddings[key], y, groups, n_assignments)
+        for key in keys
+    }
+    gains = {}
+    for a, b in itertools.combinations(keys, 2):
+        combined = probe_assignment_means(
+            concatenate_embeddings(embeddings, [a, b]), y, groups, n_assignments
+        )
+        gains[a, b] = combined - np.maximum(single_means[a], single_means[b])
+    return gains
+
+
 def fit_predict(X_train, y_train, X_test):
     """Fit the standardized ridge probe on training rows and return its test predictions.
 
     This is the probe of probe_scores, fit once on a given training set, for evaluations
     on a fixed published split.
     """
-    pipeline = Pipeline([("scale", StandardScaler()), ("model", RidgeCV(alphas=np.logspace(-3, 5, 20)))])
+    pipeline = _ridge_pipeline()
     return pipeline.fit(X_train, y_train).predict(X_test)
 
 
@@ -211,9 +342,11 @@ def mantel_p_value(embeddings_a, embeddings_b, n_permutations=499, seed=42):
 
 
 def pairwise_matrix(names, function):
-    """Return a symmetric DataFrame of function(a, b) over every pair of names.
+    """Evaluate each pair once in names order and mirror it into a DataFrame.
 
-    The diagonal is left empty because each metric compares two different encoders.
+    For each pair, a precedes b in names. function(a, b) may be asymmetric: this
+    helper copies that one value into both positions without evaluating function(b, a).
+    The diagonal remains NaN because the callback is not called on a name with itself.
     """
     matrix = pd.DataFrame(np.nan, index=names, columns=names)
     for a, b in itertools.combinations(names, 2):
@@ -361,6 +494,8 @@ def motif_permutation_test(profiles, seqs, motif=None, strata="position", n_perm
     the null as well as in the observed gap. The test statistic is the gap averaged over
     sequences, and p = (1 + null averages at least as large) / (n_permutations + 1).
     """
+    if strata not in ("position", "codon"):
+        raise ValueError("strata must be 'position' or 'codon'.")
     rng = np.random.default_rng(seed)
     prepared = []
     for attention, seq in zip(profiles, seqs):
