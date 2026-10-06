@@ -1,6 +1,6 @@
 # Stage 1 overview: DNA, RNA, and protein representations
 
-Stage 1 investigates what pretrained DNA, RNA, and protein encoders represent and how their representations relate to one another. This overview holds the shared model context and cross-dataset summary. The analyses run independently in two notebooks, each with its own setup and saved results, using the `mbf.datasets` and `mbf.encoders` registries. The saved run uses twelve encoders, four per modality.
+Stage 1 investigates what pretrained DNA, RNA, and protein encoders represent and how their representations relate to one another. This overview holds the shared model context and cross-dataset summary. The analyses run independently in two notebooks, each with its own setup and saved results, using the `shared_code.datasets` and `shared_code.encoders` registries. The saved run uses twelve encoders, four per modality.
 
 | Notebook | Inputs and target | Contents |
 | --- | --- | --- |
@@ -45,7 +45,7 @@ Stage 1 characterizes the representations available from the frozen encoders. It
 
 The analyses generate evidence and hypotheses for those later stages. Choosing an alignment objective or fusion architecture requires further controlled comparisons, such as the trained fusion architectures of BioLangFusion and IsoFormer on the same inputs.
 
-**Reading and running.** Follow the questions, code, and results in the experiment notebook you choose. Use [From sequences to embeddings](methods/inputs-and-embeddings.md) for the preparation walkthrough and [Linear probing](methods/linear-probing.md) for probe mathematics; each experiment links to the relevant explanation where it is needed. See [Setup](../README.md#setup) for dependencies, the `Code/` working directory, and checkpoint downloads. The cells using `show_source` link to the maintained functions in `Code/mbf/`; [the display setting in stability](../Code/Stage1_stability.ipynb#Implementation-displays) or [GTEx](../Code/Stage1_gtex.ipynb#Implementation-displays) controls whether their full source is shown.
+**Reading and running.** Follow the questions, code, and results in the experiment notebook you choose. Use [From sequences to embeddings](methods/inputs-and-embeddings.md) for the preparation walkthrough and [Linear probing](methods/linear-probing.md) for probe mathematics; each experiment links to the relevant explanation where it is needed. See [Setup](../README.md#setup) for dependencies, the `Code/` working directory, and checkpoint downloads. The cells using `show_source` link to the maintained functions in `Code/shared_code/`; [the display setting in stability](../Code/Stage1_stability.ipynb#Implementation-displays) or [GTEx](../Code/Stage1_gtex.ipynb#Implementation-displays) controls whether their full source is shown.
 
 ---
 

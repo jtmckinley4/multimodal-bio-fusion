@@ -24,7 +24,7 @@ os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
 import numpy as np
 import pandas as pd
 import torch
-from mbf import analysis, datasets, embeddings, encoders
+from shared_code import analysis, datasets, embeddings, encoders
 
 NOTEBOOKS = ("Stage1_stability.ipynb", "Stage1_gtex.ipynb")
 

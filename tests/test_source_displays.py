@@ -16,8 +16,8 @@ sys.path.insert(0, str(CODE))
 
 # Preserve the notebook environment's NumPy-before-PyTorch import order on Windows.
 import numpy as np  # noqa: F401, E402
-from mbf import embeddings, encoders, sequences  # noqa: E402
-from mbf.notebook import show_source  # noqa: E402
+from shared_code import embeddings, encoders, sequences  # noqa: E402
+from shared_code.notebook import show_source  # noqa: E402
 
 
 def _outside_package():
@@ -74,7 +74,7 @@ class SourceDisplayTests(unittest.TestCase):
         for obj in self.targets:
             path = CODE.joinpath(*obj.__module__.split(".")).with_suffix(".py")
             line, _ = _definition(path, obj.__qualname__)
-            name = f"{obj.__module__.removeprefix('mbf.')}.{obj.__qualname__}"
+            name = f"{obj.__module__.removeprefix('shared_code.')}.{obj.__qualname__}"
             url = quote(path.relative_to(CODE).as_posix())
             links.append(f"[`{name}` (line {line})]({url}#L{line})")
         self.assertEqual(self.capture(*self.targets, full=False),
@@ -107,7 +107,7 @@ class SavedSourceLinkTests(unittest.TestCase):
                 if not calls:
                     continue
                 with self.subTest(notebook=notebook_name, cell=index):
-                    expected_names = [ast.unparse(arg).removeprefix("mbf.")
+                    expected_names = [ast.unparse(arg).removeprefix("shared_code.")
                                       for call in calls for arg in call.args]
                     saved = [_markdown(output.get("data", {}).get("text/markdown", ""))
                              for output in cell.get("outputs", [])]
@@ -117,8 +117,8 @@ class SavedSourceLinkTests(unittest.TestCase):
                     self.assertEqual([link[0] for link in links], expected_names)
                     for name, label_line, url, anchor_line in links:
                         path = (CODE / unquote(url)).resolve()
-                        self.assertTrue(path.is_relative_to((CODE / "mbf").resolve()))
-                        module = ".".join(path.relative_to(CODE / "mbf").with_suffix("").parts)
+                        self.assertTrue(path.is_relative_to((CODE / "shared_code").resolve()))
+                        module = ".".join(path.relative_to(CODE / "shared_code").with_suffix("").parts)
                         self.assertTrue(name.startswith(module + "."), f"Wrong source file for {name}.")
                         line, _ = _definition(path, name[len(module) + 1:])
                         self.assertEqual(int(label_line), line, f"Stale source label for {name}.")

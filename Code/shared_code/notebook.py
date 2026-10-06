@@ -8,12 +8,12 @@ from urllib.parse import quote
 
 
 def show_source(*objects, full=True):
-    """Display mbf functions/classes as Python source, or compact source links.
+    """Display shared_code functions/classes as Python source, or compact source links.
 
     full=True preserves the original source-block display. With full=False, links
     are relative to a notebook in Code/ and use #L anchors for source line numbers;
     jumping to those lines depends on the notebook viewer. Compact mode requires
-    readable Python source inside this mbf package and raises for unsupported
+    readable Python source inside this shared_code package and raises for unsupported
     objects or sources rather than displaying a misleading link.
     """
     from IPython.display import Markdown, display
@@ -26,7 +26,7 @@ def show_source(*objects, full=True):
         links = []
         for obj in objects:
             if not (inspect.isfunction(obj) or inspect.isclass(obj)):
-                raise TypeError("Compact source links require functions or classes from mbf.")
+                raise TypeError("Compact source links require functions or classes from shared_code.")
             try:
                 source = inspect.unwrap(obj)
                 path = Path(inspect.getsourcefile(source)).resolve()
@@ -34,9 +34,9 @@ def show_source(*objects, full=True):
                 _, line = inspect.getsourcelines(source)
             except (OSError, TypeError, ValueError) as error:
                 raise ValueError(
-                    f"Cannot link {obj.__qualname__}: source must be a readable file in mbf."
+                    f"Cannot link {obj.__qualname__}: source must be a readable file in shared_code."
                 ) from error
-            name = f"{obj.__module__.removeprefix('mbf.')}.{obj.__qualname__}"
-            links.append(f"[`{name}` (line {line})](mbf/{quote(relative.as_posix())}#L{line})")
+            name = f"{obj.__module__.removeprefix('shared_code.')}.{obj.__qualname__}"
+            links.append(f"[`{name}` (line {line})](shared_code/{quote(relative.as_posix())}#L{line})")
         text = "Implementation: " + ", ".join(links) if links else ""
     display(Markdown(text))

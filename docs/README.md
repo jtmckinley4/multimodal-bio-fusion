@@ -33,7 +33,7 @@ The guides develop the longer explanations and derivations. The notebooks retain
 
 ## Inspect or run the implementation
 
-Both experiment notebooks use the shared [mbf package](../Code/mbf/), with their own Setup sections. See [environment setup](../README.md#setup) before a new run; neither experiment requires executing the other. The overview is a Markdown document for reading the shared context and cross-dataset summary.
+Both experiment notebooks use the shared [shared_code package](../Code/shared_code/), with their own Setup sections. See [environment setup](../README.md#setup) before a new run; neither experiment requires executing the other. The overview is a Markdown document for reading the shared context and cross-dataset summary.
 
 Use [Reading implementation code](../README.md#reading-implementation-code) to follow a compact source link or display a function in full with `SHOW_IMPLEMENTATION`. See the [notebook checks](../tests/README.md) for setup, source-display, and synthetic calculation checks after an edit. These checks do not reproduce research results.
 

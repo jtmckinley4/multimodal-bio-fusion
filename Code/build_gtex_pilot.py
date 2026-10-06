@@ -32,7 +32,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from mbf.datasets import GTEX_TISSUES
+from shared_code.datasets import GTEX_TISSUES
 
 SOURCE_URL = (
     "https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/"

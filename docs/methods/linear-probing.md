@@ -1,6 +1,6 @@
 # Linear probing
 
-This guide explains the standardization, ridge regression, and evaluation used in the [stability notebook](../../Code/Stage1_stability.ipynb#Linear-probing) and the [GTEx expression probes](../../Code/Stage1_gtex.ipynb#Expression-prediction-with-linear-probes). Start with the respective notebook for its biological target, experiment settings, and saved results; use this page for the derivations and worked example. The maintained implementation is in [analysis.py](../../Code/mbf/analysis.py) and the group assignment is in [splits.py](../../Code/mbf/splits.py).
+This guide explains the standardization, ridge regression, and evaluation used in the [stability notebook](../../Code/Stage1_stability.ipynb#Linear-probing) and the [GTEx expression probes](../../Code/Stage1_gtex.ipynb#Expression-prediction-with-linear-probes). Start with the respective notebook for its biological target, experiment settings, and saved results; use this page for the derivations and worked example. The maintained implementation is in [analysis.py](../../Code/shared_code/analysis.py) and the group assignment is in [splits.py](../../Code/shared_code/splits.py).
 
 A linear probe tests whether a target can be predicted from an embedding with a simple fitted model. The main inputs are embeddings produced by the frozen encoders; the probe functions also accept simpler feature matrices, such as sequence length. Fitting a probe does not update the encoders.
 
@@ -187,4 +187,4 @@ Grouping addresses exact duplicate strings, not independence among related seque
 - UCF Machine Learning, *Data Preprocessing for Machine Learning*, slide 5: the role of feature scaling.
 - UCF Capstone general lecture, *Overfitting and Regularization* (Yousefi, 2020), slides 19-20: the ridge penalty and selecting its strength by cross-validation.
 
-The course decks provide explanatory context; linked library documentation explains the API behavior, and the [notebook](../../Code/Stage1_stability.ipynb#Linear-probing) and [probe implementation](../../Code/mbf/analysis.py) specify the arguments used. Library documentation alone does not identify the environment or producing run of a saved result.
+The course decks provide explanatory context; linked library documentation explains the API behavior, and the [notebook](../../Code/Stage1_stability.ipynb#Linear-probing) and [probe implementation](../../Code/shared_code/analysis.py) specify the arguments used. Library documentation alone does not identify the environment or producing run of a saved result.

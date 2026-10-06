@@ -2,7 +2,7 @@
 
 This guide develops the attention extraction, token-to-nucleotide mapping, candidate-pattern scan, and comparisons used in [Stage1_stability.ipynb](../../Code/Stage1_stability.ipynb#Track-C:-Attention-and-exploratory-diagnostics). The notebook keeps the execution settings, code calls, saved outputs, and result interpretations; this page retains the mathematical walkthroughs, worked examples, implementation details, and sources. Attention is a model behavior, and a sequence match is a candidate annotation: neither is a direct assay of regulatory function.
 
-The maintained implementation is in [embeddings.py](../../Code/mbf/embeddings.py), [analysis.py](../../Code/mbf/analysis.py), [sequences.py](../../Code/mbf/sequences.py), and the [encoder registry and loader](../../Code/mbf/encoders.py). The [input and embedding guide](inputs-and-embeddings.md) supplies the earlier biological-input and tokenization context.
+The maintained implementation is in [embeddings.py](../../Code/shared_code/embeddings.py), [analysis.py](../../Code/shared_code/analysis.py), [sequences.py](../../Code/shared_code/sequences.py), and the [encoder registry and loader](../../Code/shared_code/encoders.py). The [input and embedding guide](inputs-and-embeddings.md) supplies the earlier biological-input and tokenization context.
 
 | Step | Walkthrough |
 | --- | --- |

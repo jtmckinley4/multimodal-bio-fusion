@@ -20,7 +20,7 @@ Saved notebook outputs predate the file separation. Associate each result with i
 
 ## Implementation and verification routes
 
-Inspect the relevant helper and its callers in [Code/mbf/](../Code/mbf/) before changing shared behavior: both experiments may use it. The [implementation-reading instructions](../README.md#reading-implementation-code) explain source displays, and [tests/README.md](../tests/README.md) owns verification procedures. Scientific conclusions require checking the producing evidence beyond those software checks.
+Inspect the relevant helper and its callers in [Code/shared_code/](../Code/shared_code/) before changing shared behavior: both experiments may use it. The [implementation-reading instructions](../README.md#reading-implementation-code) explain source displays, and [tests/README.md](../tests/README.md) owns verification procedures. Scientific conclusions require checking the producing evidence beyond those software checks.
 
 ## Shared context across sessions
 

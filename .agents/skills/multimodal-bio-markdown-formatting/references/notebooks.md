@@ -26,7 +26,7 @@ When moving an explanation, keep its definitions, assumptions, worked examples, 
 
 ## Place separators and Markdown cell boundaries
 
-Use a horizontal rule when the outline changes between workflow phases or analysis families. In the experiment notebooks, examples include Setup to data preparation, data preparation to encoders and embeddings, producing embeddings to analyzing them, and decodability to cross-modal geometry. A transition from method preparation to running that analysis can also warrant a rule. Moving from sequence-length prediction to GC-content prediction stays within one family and does not require a rule. Follow the actual workflow; the shared helper functions live in `Code/mbf/` and do not require an in-notebook definitions phase.
+Use a horizontal rule when the outline changes between workflow phases or analysis families. In the experiment notebooks, examples include Setup to data preparation, data preparation to encoders and embeddings, producing embeddings to analyzing them, and decodability to cross-modal geometry. A transition from method preparation to running that analysis can also warrant a rule. Moving from sequence-length prediction to GC-content prediction stays within one family and does not require a rule. Follow the actual workflow; the shared helper functions live in `Code/shared_code/` and do not require an in-notebook definitions phase.
 
 Place `---` at the beginning of the Markdown cell introducing the new phase or family, followed by a blank line and its heading. Do not place it between an equation and its explanation or between output and its result interpretation. Editing batches and visual boundaries are different decisions.
 

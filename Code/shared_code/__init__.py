@@ -9,6 +9,6 @@ Modules:
     analysis    probes, representation similarity, composition control, tables, figures
     notebook    showing shared source code inside notebooks
 
-Importing the package does not import PyTorch. Only mbf.embeddings and the model-loading
-functions in mbf.encoders need it.
+Importing the package does not import PyTorch. Only shared_code.embeddings and the model-loading
+functions in shared_code.encoders need it.
 """

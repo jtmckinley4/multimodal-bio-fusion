@@ -72,7 +72,7 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 **Why retain it:** RNA-FM is BioLangFusion's RNA encoder. The card states that it was pretrained on non-coding RNA from RNAcentral and has 640-dimensional embeddings, which matters when it reads coding sequences in the stability benchmark. The same collection lists an mRNA-trained variant, mRNA-FM, as a candidate additional RNA encoder.
 
-**Reading scope and limits:** The card was read through a summarizing fetch on September 29, 2026; maximum input length was not identified there. At that review, loading through `multimolecule` had not been tested. For the current loader and environment requirements, see the [encoder registry](../Code/mbf/encoders.py) and [notebook setup](../README.md#notebook-dependencies).
+**Reading scope and limits:** The card was read through a summarizing fetch on September 29, 2026; maximum input length was not identified there. At that review, loading through `multimolecule` had not been tested. For the current loader and environment requirements, see the [encoder registry](../Code/shared_code/encoders.py) and [notebook setup](../README.md#notebook-dependencies).
 
 ### CodonBERT repository
 
@@ -104,7 +104,7 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 ## Organizing and checking research software
 
-These sources explain practices relevant to separating experiment narratives from reusable computation and checking changes in small steps. The implemented structure is described in the [Stage 1 reading route](../README.md#stage-1-analysis), [shared package](../Code/mbf/), and [notebook checks](../tests/README.md). The readings support evaluating those choices; they do not establish that every recommendation was adopted or that a source caused an earlier decision.
+These sources explain practices relevant to separating experiment narratives from reusable computation and checking changes in small steps. The implemented structure is described in the [Stage 1 reading route](../README.md#stage-1-analysis), [shared package](../Code/shared_code/), and [notebook checks](../tests/README.md). The readings support evaluating those choices; they do not establish that every recommendation was adopted or that a source caused an earlier decision.
 
 For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for more detailed practices, and Sandve et al. for reproducibility. The nf-core and ROOT examples help assess future infrastructure as the project grows.
 
@@ -112,7 +112,7 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 [Wilson et al. (2014), Best Practices for Scientific Computing](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745), especially Box 1 and the sections on incremental changes, duplication, testing, and documentation.
 
-**Why retain it:** It supports small refactoring steps, reusable computational functions, automated regression checks, and explanations of purpose. These practices help explain the current division between experiment notebooks, [shared calculations](../Code/mbf/analysis.py), [method guides](README.md#understand-the-methods), and [tests](../tests/README.md).
+**Why retain it:** It supports small refactoring steps, reusable computational functions, automated regression checks, and explanations of purpose. These practices help explain the current division between experiment notebooks, [shared calculations](../Code/shared_code/analysis.py), [method guides](README.md#understand-the-methods), and [tests](../tests/README.md).
 
 **Reading scope and limits:** The sections named above were read on October 5, 2026. This is supporting rationale for the present organization, not evidence that passing tests validates a biological interpretation or reproduces saved research results.
 
@@ -169,7 +169,7 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 [nf-core, Contributing overview](https://nf-co.re/docs/contributing/overview), especially Pipelines, Components, Configs, Documentation, and Reviewing pull requests.
 
-**Why retain it:** This is a concrete bioinformatics example of shared modules and subworkflows, environment-specific configuration, and collaborative review. It gives context for the use of reusable functions in [Code/mbf/](../Code/mbf/) while the notebooks retain their experiment-specific choices and interpretations.
+**Why retain it:** This is a concrete bioinformatics example of shared modules and subworkflows, environment-specific configuration, and collaborative review. It gives context for the use of reusable functions in [Code/shared_code/](../Code/shared_code/) while the notebooks retain their experiment-specific choices and interpretations.
 
 **Reading scope and limits:** The sections named above were read on October 5, 2026. They provide an example, not a requirement to adopt Nextflow, nf-core governance, or its full pipeline architecture here.
 
