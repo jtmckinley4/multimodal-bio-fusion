@@ -1,0 +1,197 @@
+{
+  "created_utc": "2026-10-07T14:46:00.134786+00:00",
+  "dataset": "mrna_stability",
+  "execution_basis": "saved completed result snapshot; plotting only",
+  "counts": {
+    "retained": 981,
+    "train": 690,
+    "test": 291,
+    "layer": 194
+  },
+  "seed": 42,
+  "probe_seed": 42,
+  "further_assignment_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "pca_top_k": 10,
+  "colors": {
+    "DNA": "#2879C2",
+    "RNA": "#079B77",
+    "protein": "#E06430"
+  },
+  "figures": {
+    "01_raw_selected_pairs": {
+      "files": [
+        "01_raw_selected_pairs.svg",
+        "01_raw_selected_pairs.png",
+        "01_raw_selected_pairs.csv"
+      ],
+      "rows": 6,
+      "source_cells": [
+        "e4469563",
+        "ebd60140",
+        "9f84a593"
+      ],
+      "notes": "Separate raw metrics; directed CCA retrieval in registry order; selected examples."
+    },
+    "02_codon_pair_comparison": {
+      "files": [
+        "02_codon_pair_comparison.svg",
+        "02_codon_pair_comparison.png",
+        "02_codon_pair_comparison.csv"
+      ],
+      "rows": 2,
+      "source_cells": [
+        "caf0327d",
+        "36d4eb42",
+        "6b0d549b"
+      ],
+      "notes": "Residual preprocessing uses all rows; gains use raw embeddings, not residuals; ranges are not CIs."
+    },
+    "03_pca_variance_composition_probe": {
+      "files": [
+        "03_pca_variance_composition_probe.svg",
+        "03_pca_variance_composition_probe.png",
+        "03_pca_variance_composition_probe.csv"
+      ],
+      "rows": 12,
+      "source_cells": [
+        "db5b5fab",
+        "732df182"
+      ],
+      "notes": "Top/rest PCA fitted on all rows; three panels have distinct denominators and evaluation meanings."
+    },
+    "04_layerwise_codon_heatmaps": {
+      "files": [
+        "04_layerwise_codon_heatmaps.svg",
+        "04_layerwise_codon_heatmaps.png",
+        "04_layerwise_codon_heatmaps.csv"
+      ],
+      "rows": 507,
+      "source_cells": [
+        "56570936",
+        "73cf256d"
+      ],
+      "notes": "Full matrices, shared 0\u20131 scale; state 0 included; smaller layer sample."
+    },
+    "05_all_encoder_probes": {
+      "files": [
+        "05_all_encoder_probes.svg",
+        "05_all_encoder_probes.png",
+        "05_all_encoder_probes.csv"
+      ],
+      "rows": 12,
+      "source_cells": [
+        "732df182",
+        "83264c83"
+      ],
+      "notes": "No uncertainty bars; full assignment SD and pinned fold SD retained as distinct CSV columns."
+    },
+    "06_all_pairs_composition_control": {
+      "files": [
+        "06_all_pairs_composition_control.svg",
+        "06_all_pairs_composition_control.png",
+        "06_all_pairs_composition_control.csv"
+      ],
+      "rows": 66,
+      "source_cells": [
+        "e4469563",
+        "9f84a593",
+        "caf0327d"
+      ],
+      "notes": "All 66 unordered pair identities; retrieval remains directional. Raw x versus residual y; no significance inference."
+    },
+    "07_geometry_and_concatenation_gain": {
+      "files": [
+        "07_geometry_and_concatenation_gain.svg",
+        "07_geometry_and_concatenation_gain.png",
+        "07_geometry_and_concatenation_gain.csv"
+      ],
+      "rows": 66,
+      "source_cells": [
+        "e4469563",
+        "9f84a593",
+        "6b0d549b"
+      ],
+      "notes": "All 66 pairs, raw geometry/retrieval and matched raw-embedding probe gains. No regression or significance calculation."
+    },
+    "08_whole_composition_vs_stability": {
+      "files": [
+        "08_whole_composition_vs_stability.svg",
+        "08_whole_composition_vs_stability.png",
+        "08_whole_composition_vs_stability.csv"
+      ],
+      "rows": 12,
+      "source_cells": [
+        "42aec048",
+        "732df182"
+      ],
+      "notes": "Whole-embedding fractions at three-decimal retained precision; pinned probe scores; no correlation calculation."
+    }
+  },
+  "limits": [
+    "Retrieval is one direction in encoder registry order, not a bidirectional mean.",
+    "Composition residualization fits all retained rows before CCA evaluation.",
+    "PCA bands fit all retained rows before probe evaluation.",
+    "Assignment ranges are min-max partition sensitivity, not confidence intervals.",
+    "Saved retrieval outputs contain convergence warnings without pair identifiers.",
+    "Layerwise CKA uses a smaller sample; compare layers within that sample."
+  ],
+  "capture_utc": "2026-10-07T14:15:23.831469+00:00",
+  "snapshot_sha256": "54241667101bfa84059ae766be5a69924000e7285fef43b19dbbc14df0e386a6",
+  "snapshot_file": "results.json",
+  "source_notebook": "Code/Stage1_stability.ipynb",
+  "comparison_limit": "Earlier saved controls and some PCA values differ; numerical cause unresolved.",
+  "plot_notebook": "Code/Stage1_stability.ipynb",
+  "plot_cell_ids": [
+    "fig3-settings",
+    "fig3-export-tools",
+    "fig3-raw-pairs",
+    "fig3-codon-focus",
+    "fig3-pca-bands",
+    "fig3-layer-matrices",
+    "fig3-all-probes",
+    "fig3-all-controls",
+    "fig3-geometry-gains",
+    "fig4-composition-vs-stability"
+  ],
+  "plot_source_sha256": "c0da6a49219ed6f54dc570d2d9a9fd674a0be7b0980da2dfe36737c661ae2e45",
+  "artifact_sha256": {
+    "01_raw_selected_pairs.csv": "ada5099f56fc7f5d793e189b54ad1c539ed31d1851055611ee39eb6388b616a4",
+    "01_raw_selected_pairs.png": "1b54bb37e5ac1accf61d49c2fc6b0b1929c8f423989713995e82a6bffae2f964",
+    "01_raw_selected_pairs.svg": "915cb95fe49a20a3ba2863a9ea3decc8f1ab0d35b73abbc3ed88624f2bbba189",
+    "02_codon_pair_comparison.csv": "cd36865a1ddb7fa29ce09a0b150f7ba82c8b609aa1ed9df6d4daef74708bf321",
+    "02_codon_pair_comparison.png": "a71a0329586c7852e7b73df50103f96e7e1c95bc5046517a1507a0d42c353ccc",
+    "02_codon_pair_comparison.svg": "895e0991709b538a537ce3c5f4f48138f185a6111e49223031b31535d0318d52",
+    "03_pca_variance_composition_probe.csv": "5f46b98a93724b3e986d67a77c44b9232d8a02a4ec45cbe7faac145191fa81a4",
+    "03_pca_variance_composition_probe.png": "905d80f3d67cb67875613240a6dd1fc4e4602105841db2a8d5cfe8108b4cda3d",
+    "03_pca_variance_composition_probe.svg": "1a43d506cea1b1347a3f7d1945154f0c0c3df65a013d504fe5a4df5cb53b367c",
+    "04_layerwise_codon_heatmaps.csv": "9074ff36c3a7028ae20420edb7f237994ff576f873a0d1034e6dce31cbfdff3d",
+    "04_layerwise_codon_heatmaps.png": "ab516a0c187937bb4b3adea2526915f6a9dec6940e7dcb1574c241d3f0425b94",
+    "04_layerwise_codon_heatmaps.svg": "c3ecfd7b81fd01bb38b3ca281d12b3ee4d0d63860d04a31a8113a82bdbc5b887",
+    "05_all_encoder_probes.csv": "844c08ac2afbdb0bb5de170066a9d0e6da84c74e69c32339ee65a32a009be2eb",
+    "05_all_encoder_probes.png": "8161dcdf564494a7ad8a5d76106d5284cdc6b0c9a5e34f90bcf20798b29035b1",
+    "05_all_encoder_probes.svg": "b978e34d323a7d892eaaae55279f267301cb3fc6ede00a4090e4220a95d177a6",
+    "06_all_pairs_composition_control.csv": "5028dca795bdd3c84019ce7ecedff809da74ad7283cda4cfa9a408383654e8c9",
+    "06_all_pairs_composition_control.png": "f6035313e96b5835860041e85c49b17eed32df5253124e40118921b8a04283b1",
+    "06_all_pairs_composition_control.svg": "30b844b78489db80bc616a5deca890cfa5ce6178d60dbda87d35995943aae180",
+    "07_geometry_and_concatenation_gain.csv": "da9ad61b552c833fbf1c7546b683ebe8106e4e2d5eb77993cfb1728d8b9c2b06",
+    "07_geometry_and_concatenation_gain.png": "fde4ed1301c175056308de283d0527311f221744efc9a9dc00839a8997e8dc68",
+    "07_geometry_and_concatenation_gain.svg": "a988b55eb9b16b2f62eb08073f64e904fea57d08d5e0fb2955d43dab26f5cf7c",
+    "08_whole_composition_vs_stability.csv": "062a8f0966481e1c0909f69a86f66c35eb2ff164c2bc65ba293479c84958cda4",
+    "08_whole_composition_vs_stability.png": "1907dafd4375db5c56c344da09e00a6e1dd099136d92a9746075bd2276e9bde8",
+    "08_whole_composition_vs_stability.svg": "95975a5b1258bb71016fc2deadfc99ac121d8f4f2ab01ad65d42bbd23a365ad5",
+    "assignment_gains_all.csv": "76253113912a5faf9ac1305e1a81e45c4f1a0153cbf59a9b8925dadad344c6d6",
+    "earlier-saved-vs-local.csv": "bd888f196ca49c6512ae83f6727df98c52b23abfe01538bd1d5d15a678e4b25d",
+    "pair_metrics_all.csv": "5028dca795bdd3c84019ce7ecedff809da74ad7283cda4cfa9a408383654e8c9"
+  }
+}

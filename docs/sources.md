@@ -317,3 +317,14 @@ These sources inform the [coding review](shared-coding-proposal.md) and the adop
 In a fresh session opened on this checkout, ask the agent to identify the repository instructions and the source path of the skill relevant to the task: shared engineering for executable code, shared documentation for purpose and evidence, or Markdown formatting for presentation. In Claude Code, `/context` lists loaded memory files; `/multimodal-bio-shared-engineering`, `/multimodal-bio-shared-documentation`, and `/multimodal-bio-markdown-formatting` explicitly invoke their respective entry points. If discovery differs, the relevant workflow can still be read through its repository path when the application has file access.
 
 The repository-agent references above were checked on September 25, 2026; the remote pages were not archived. File and link checks can validate this repository's structure. Actual skill discovery and behavior must also be checked in the teammate's application.
+
+
+## Numerical reproducibility across computers
+
+### PyTorch and NumPy: reproducibility limits and numerical diagnostics
+
+[PyTorch reproducibility](https://docs.pytorch.org/docs/2.14/notes/randomness.html), [NumPy least squares and rank cutoff](https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html), and [NumPy runtime reporting](https://numpy.org/doc/stable/reference/generated/numpy.show_runtime.html).
+
+**Why retain them:** They distinguish seed control from guarantees across platforms and explain rank thresholds and the BLAS/LAPACK environment. They inform the cross-run comparison and diagnostic limits in the [October 7 run record](run-records.md), rather than prescribing identical hardware for all contributors.
+
+**Reading scope and limits:** Reproducibility/platform qualifications, least-squares `rcond`, rank and singular-value outputs, and `show_runtime` were checked on October 7, 2026. The local composition designs have a large gap at the current rank cutoff; that finding does not establish why an earlier result differs. No rank threshold, solver, precision or scientific calculation was changed by the figure-export work.

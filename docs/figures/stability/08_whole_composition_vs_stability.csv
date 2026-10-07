@@ -1,0 +1,13 @@
+encoder,modality,share of variance explained by composition,Stability R2,composition precision
+NT 500M human-ref,DNA,0.57999999999999996,0.032098657611142611,three decimal places from retained output
+NT v2 100M multi-species,DNA,0.79100000000000004,0.079773359419359327,three decimal places from retained output
+DNABERT-2,DNA,0.57899999999999996,0.054028366903262001,three decimal places from retained output
+HyenaDNA large,DNA,0.91600000000000004,0.025738075176080955,three decimal places from retained output
+RNA-FM,RNA,0.59899999999999998,0.0518425567668074,three decimal places from retained output
+RiNALMo 150M,RNA,0.60299999999999998,0.077531881629066296,three decimal places from retained output
+mRNA-FM,RNA,0.156,0.12723703733722808,three decimal places from retained output
+CaLM,RNA,0.42099999999999999,0.12729553897715271,three decimal places from retained output
+ESM-2 8M,protein,0.34300000000000003,0.12662358435063328,three decimal places from retained output
+ESM-2 35M,protein,0.30399999999999999,0.11435805379571032,three decimal places from retained output
+ESM-2 150M,protein,0.38,0.14364996072541483,three decimal places from retained output
+ProtBERT,protein,0.34799999999999998,0.14326151137867968,three decimal places from retained output
