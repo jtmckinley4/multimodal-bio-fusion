@@ -52,7 +52,7 @@ Agents working in this repository should start with [AGENTS.md](AGENTS.md).
 
 Each experiment keeps its settings, analysis calls, outputs, and interpretations together. The [method guides](docs/README.md#understand-the-methods) provide the longer derivations and biological explanations; links beside the relevant notebook cells connect them to the analysis. Reusable calculations live in [Code/shared_code/](Code/shared_code/). See [Reading implementation code](#reading-implementation-code) to inspect a function from the notebook.
 
-The saved outputs were retained from the combined notebook. The [overview](docs/stage1-overview.md#summary) identifies the samples, evaluation protocol, and findings; follow [Setup](#setup) for a new run.
+The saved outputs come from a top-to-bottom run of each notebook, identified in the [run records](docs/run-records.md#recorded-runs). The [overview](docs/stage1-overview.md#summary) identifies the samples, evaluation protocol, and findings; follow [Setup](#setup) for a new run.
 
 ### Stage 1 results
 
@@ -67,7 +67,7 @@ The overview's [published comparisons](docs/stage1-overview.md#published-compari
 Stage 2 is a decision rather than a computation, so it has no notebook. It is recorded in the Overleaf section "Stage 2: Defining Alignment" and in the [project notes](docs/notes/Mina_Project_Notes.docx), and the [October 7, 2026 meeting slides](docs/notes/Mina_Meeting_Slides_2026-10-07.pptx) present it. Any code it calls for is built and tested in Stage 3.
 
 - **Definition.** Two encoders are aligned to the extent that their representations of corresponding inputs agree on held-out examples after the composition control. Agreement that letter, codon, and amino-acid frequencies reproduce is reported but not counted as alignment, and alignment is reported separately from predictive complementarity (the concatenation gain).
-- **No explicit alignment loss in the first fusion models.** Per-sequence alignment does not track prediction error on either dataset, and most cross-modal agreement is composition, so the fusion architecture learns any useful interaction. An alignment-loss ablation on CaLM with a protein encoder, the one cross-modal pairing whose agreement survives the control, stays a conditional Stage 3 experiment.
+- **No explicit alignment loss in the first fusion models.** Per-sequence alignment does not track prediction error on either dataset, and most cross-modal agreement is composition, so the fusion architecture learns any useful interaction. An alignment-loss ablation on CaLM with a protein encoder, the one cross-modal pairing whose agreement survives the control, is a conditional Stage 4 experiment.
 - **Positional correspondence only where the biology supplies it.** On the stability data, DNA, RNA, and protein tokens can share one codon grid, the step grid Coupled Mamba needs. On GTEx, the DNA window, transcript, and protein have no position-by-position correspondence, so fusion there uses cross-attention or pooled representations.
 - **One encoder per redundant family.** One ESM-2 model represents that family; ProtBERT is a separate candidate.
 - **First pairings.** A codon-level RNA encoder (mRNA-FM or CaLM) with a protein encoder (ESM-2 150M or ProtBERT) on the stability data, and RNA with protein, adding the DNA window, on GTEx, where every comparison includes the length baseline.

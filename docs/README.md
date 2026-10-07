@@ -17,7 +17,7 @@ Start with the biological question and model choices in the overview. Follow the
 | Where are methods and results written up for the manuscript? | The [Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f), including its Stage 1 metric definitions and published-split comparisons. |
 | What does alignment mean here, and what comes next? | [Stage 2: defining alignment](../README.md#stage-2-defining-alignment), [Stage 3 fusion experiments](../README.md#next-steps-stage-3-fusion-experiments), and the Stage 2 section of the Overleaf project. |
 
-The [project notes](notes/Mina_Project_Notes.docx) and the October 3 comparison entry in the [Gantt workbook](Research_Project_Plan_Gantt.xlsx) retain `Stage1_analysis.ipynb` as the historical source of saved results. Slide 2 of the [October 7 meeting deck](notes/Mina_Meeting_Slides_2026-10-07.pptx) also names that retired notebook. Use the overview and two experiment notebooks linked above for current navigation.
+The October 3 comparison entry in the [Gantt workbook](Research_Project_Plan_Gantt.xlsx) names `Stage1_analysis.ipynb`, the single notebook the two experiment notebooks replaced. Use the overview and the two experiment notebooks linked above for current navigation.
 
 ## Understand the methods
 

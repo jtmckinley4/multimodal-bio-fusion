@@ -32,11 +32,23 @@ The current [`embed_with_cache` format](methods/inputs-and-embeddings.md#embeddi
 
 These entries identify existing evidence, not reconstructed executions. They were located on October 5, 2026; that is not their execution date.
 
-- **Retained Stage 1 outputs:** The [overview](stage1-overview.md#summary) identifies outputs inherited from the combined notebook. Exact producing runs, code states, and full environments remain unassigned. Do not group all saved cells into one execution based on their current location.
+- **Retained Stage 1 outputs:** The separated notebooks no longer carry outputs from the combined notebook; their saved outputs come from the [October 6 runs](#2026-10-06-stage1-full-runs-complete-runs-of-both-stage-1-notebooks).
 - **HyenaDNA backend comparison:** The [stability loading notes](../Code/Stage1_stability.ipynb#Interpreting-the-loading-messages), cell `9bdd4bf8`, preserve the reported CPU/MPS comparison. Its original execution date, hardware models, and complete producing environment are not established here. Keep that observation attached to its evidence rather than treating it as a requirement or a general backend guarantee.
 - **Import compatibility report:** The README at commit `81317de433938dc41ad97987350559ae27f647b9` reported `multimolecule` 0.2.1 importing with `transformers` 5.14.1 and 5.15.1, and failing with 5.16 or later. This historical report motivated the current pin; its original logs, execution date, and full environment are not linked. It does not establish compatibility for every future release or diagnose another contributor's import failure.
 
 ## Recorded runs
+
+### 2026-10-06 stage1-full-runs: complete runs of both Stage 1 notebooks
+
+- Execution: 2026-10-06, Julian McKinley's Mac. `Code/Stage1_stability.ipynb` started about 14:57 and `Code/Stage1_gtex.ipynb` about 17:20 local time (EDT), going by the earliest logged warning in each; each completed top to bottom in one kernel session (execution counts 1 to 66 and 1 to 29).
+- Scope: every cell of both notebooks. The stability dataset-audit cell was afterwards replaced by the audit-ceiling recomputation below.
+- Code: producing commit unknown; the saved notebooks are committed in `a038413`.
+- Inputs: `datasets/mRNA_Stability.csv` (hash in the audit-ceiling entry) and `datasets/GTEx_pilot.csv` (hash unknown); samples and splits as set in each notebook's settings cells.
+- Configuration: `SEED = 42`, `PROBE_SEED = 42`, ten further fold assignments; encoder checkpoints and requested revisions as listed in each notebook's encoder table (resolved revisions of the six `latest` checkpoints unknown).
+- Environment: Python 3.12.7 (Anaconda `base` kernel); PyTorch MPS backend on an Apple GPU; package versions unknown.
+- Reuse: the main stability and GTEx embeddings were loaded from the `Code/stage1_embeddings/` caches; the layer-wise states, attention maps, synonymous-recoding control embeddings, and published-split embeddings were computed in the run, as their progress output shows.
+- Evidence: the saved outputs at `a038413`, which truncate the 66-pair tables. On 2026-10-06 a read-only recomputation of those tables from the same cached embeddings (Linux, CPU, scikit-learn 1.9.1) matched every pair value the saved outputs show, for geometry and concatenation gains on both datasets, and every group range the overview reports. Against the Overleaf per-pair tables it differed only in GTEx Recall@1 for RNA-FM with ESM-2 35M (0.097 against 0.100, one held-out query) and one mutual k-NN value at a rounding boundary.
+- Interpretation: these are the outputs the overview, README, notes, slides, and literature review report.
 
 ### 2026-10-06T21:20Z audit-ceiling: label-variance ceiling in the stability dataset audit
 
