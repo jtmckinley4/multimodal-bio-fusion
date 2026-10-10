@@ -2,6 +2,12 @@
 
 Use the [project README](README.md) for the overview and layout. Read [research context](docs/agent-context.md) when a task needs notebook background or unresolved questions, and [selected sources](docs/sources.md) for readings worth revisiting.
 
+## Research planning
+
+Before proposing or sequencing research work, and before implementing a research task, read the relevant entries in the [Gantt workbook](docs/Research_Project_Plan_Gantt.xlsx). The `Gantt` sheet gives task IDs, recorded status and scheduled windows; `Details` gives prerequisites and expected outputs or review conditions. Follow the existing plan within the user's authorized scope, and cite the sheet and task ID when recommending next steps or reporting progress. The [human planning route](docs/README.md#follow-the-research-plan) explains how to use the workbook and presentation together.
+
+Treat recorded status as a dated statement; dates alone do not establish completion. If newer instructions or findings require a different priority, identify the affected task and explain the proposed change. Do not silently replace the plan or treat a proposed window as authorization to execute it.
+
 ## Working with shared files
 
 - Inspect the requested files and current Git changes before editing. Preserve other contributors' work and keep changes within the agreed scope.

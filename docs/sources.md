@@ -138,6 +138,14 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Coding-review follow-up:** The later October 5 coding review read Rules 1–3 and 5–9 for the [coding proposal](shared-coding-proposal.md#what-research-software-engineering-adds). The current [manual run-record procedure](run-records.md) is now available; its existence does not establish complete historical provenance.
 
+### Git and GitHub: Version history and plan-change review
+
+[Pro Git, Viewing the Commit History](https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History), [Pro Git, Git Attributes: Diffing Binary Files](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#_diffing_binary_files), and [GitHub, Pull requests](https://docs.github.com/en/pull-requests/reference/pull-requests).
+
+**Why retain them:** They support evaluating Git history and GitHub review as part of research-plan provenance: commits identify saved versions, while a written rationale can explain a change to the [Gantt plan](README.md#follow-the-research-plan). Office files can be versioned, but ordinary binary diffs do not explain their content changes. Existing [run records](run-records.md) separately describe producing executions.
+
+**Reading scope and limits:** On October 10, 2026, read the commit-history examples and author/committer fields, the binary-diff and Word text-conversion example, and the pull-request conversation, commits, checks and changed-files descriptions. These informed the provenance discussion; a plan-change record and a review workflow remain proposals. No text-conversion driver or automatic tracking was configured. Git metadata does not by itself establish a run's producer, scientific verification or advisor approval.
+
 ### Rule et al.: Writing and sharing Jupyter analyses
 
 [Rule et al. (2019), Ten simple rules for writing and sharing computational analyses in Jupyter Notebooks](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007007), Rules 1–3 and 7.

@@ -10,6 +10,8 @@ A research project in the [Complex Adaptive Systems Laboratory](https://complexi
 
 The saved notebooks can be studied without running their cells. When ready to execute an experiment, follow [Setup](#setup), select the notebook's Python environment, and use a fresh kernel with `Code/` as its working directory. Each experiment runs independently; reading stability first is a learning route, not an execution dependency.
 
+For planning and next steps, use the [research plan](docs/README.md#follow-the-research-plan): the Gantt workbook records task IDs, scheduled windows, prerequisites and expected outputs, and the presentation provides a meeting overview. Use those entries when connecting a proposed experiment or manuscript addition to the team's existing work.
+
 For a specific question, go directly to the [method guides](docs/README.md#understand-the-methods), [Stage 1 results](#stage-1-results), [dataset descriptions](#data), or [Stage 2 alignment definition](#stage-2-defining-alignment). The [documentation index](docs/README.md#find-plans-and-literature) links the research canvas, schedule, bibliography, and literature review.
 
 ## Project background

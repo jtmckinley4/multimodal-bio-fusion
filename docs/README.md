@@ -42,12 +42,18 @@ Use [run records](run-records.md) to connect a shared result to its producing no
 
 The [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md) guides executable-code work for both contributors' agents. The [coding review and implementation plan](shared-coding-proposal.md) records its rationale, bounded batches, and verification status.
 
+## Follow the research plan
+
+Open the [Gantt workbook](Research_Project_Plan_Gantt.xlsx) to follow the team's research sequence. In `Gantt`, locate the task ID, recorded status and scheduled window; then find the same ID in `Details` for its prerequisites and expected output or review condition. The [Gantt presentation](Research_Project_Plan_Gantt.pptx) provides an overview for meetings. Cite the task ID when explaining how a notebook, literature finding or manuscript addition relates to the plan.
+
+The plan distinguishes initial input mapping and published-split probes from later trained fusion comparisons: see `Details` task 9, task 17 for BioLangFusion-style comparisons, and conditional task 25 for IsoFormer-style fusion. Read the plan's as-of date and check current evidence before relying on a recorded status. The [agent planning instructions](../AGENTS.md#research-planning) explain how agents follow the plan and surface proposed changes.
+
 ## Find plans and literature
 
 | Question | Starting point |
 | --- | --- |
 | What are we proposing to investigate? | The [Research Canvas](Research_Canvas.pptx). |
-| What is the project schedule? | The [Gantt presentation](Research_Project_Plan_Gantt.pptx) and [editable Gantt workbook](Research_Project_Plan_Gantt.xlsx). |
+| What is the project schedule? | Start with [Follow the research plan](#follow-the-research-plan), then use the [Gantt presentation](Research_Project_Plan_Gantt.pptx) or [editable Gantt workbook](Research_Project_Plan_Gantt.xlsx). |
 | Where is the annotated bibliography? | The [team bibliography](Annotated_Bibliography.docx). |
 | Where is the team's literature review? | [Literature review (PDF)](<Literature Review - Biological Foundation Models.pdf>) and [editable Word document](<Literature Review - Biological Foundation Models.docx>). |
 | How do we develop a review beyond individual paper summaries? | The [review-writing guidance](sources.md#pautasso-and-purdue-owl-writing-a-literature-review) explains synthesis, critical comparison, and open questions. |
