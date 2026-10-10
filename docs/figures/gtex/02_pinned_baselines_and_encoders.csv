@@ -1,0 +1,5 @@
+representation,pinned_mean_r2,precision,source,color
+Lengths (4 features),0.24199999999999999,"retained Out[14], rounded to 3 decimals",1ec3fde2 / Out[14],#526577
+Composition (92 features),0.23899999999999999,"retained Out[14], rounded to 3 decimals",1ec3fde2 / Out[14],#526577
+Best single: mRNA-FM,0.17162919999360887,full-precision captured named result,2b098a7f / gtex_expression_probes,#079B77
+All 12 encoders concatenated,0.2391663582417384,full-precision captured named result,58dad62b / gtex_group_probes,#735AA5

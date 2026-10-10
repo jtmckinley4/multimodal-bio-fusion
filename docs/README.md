@@ -13,6 +13,7 @@ Start with the biological question and model choices in the overview. Follow the
 | Where do I compare distinct DNA, transcript, and protein inputs? | The [GTEx notebook](../Code/Stage1_gtex.ipynb): expression across 30 tissues, length and composition baselines, representation comparisons, attention, and the IsoFormer comparison. |
 | What do the sequences and labels represent? | The [dataset overview](../README.md#data), [stability data preparation](../Code/Stage1_stability.ipynb#Data), [stability dataset audit](../Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons), and [GTEx data and expression labels](../Code/Stage1_gtex.ipynb#GTEx-data). Check what a row and its label mean, how the label was obtained, and which examples enter the analysis. |
 | What did Stage 1 find? | The overview's [Summary](stage1-overview.md#summary) and [result tables](stage1-overview.md#result-tables), with the producing outputs and local interpretations in each experiment notebook. |
+| Where are the saved figures and their numeric inputs? | The [figure guide](figures/README.md), with stability/GTEx panels, result snapshots and commands that regenerate figures without rerunning models. |
 | How do the frozen encoders compare with published fusion studies? | The [comparison overview](stage1-overview.md#published-comparisons-and-distinct-inputs), [BioLangFusion published-split comparison](../Code/Stage1_stability.ipynb#Published-split-comparison), and [IsoFormer published-split comparison](../Code/Stage1_gtex.ipynb#GTEx-published-split-comparison). |
 | Where are methods and results written up for the manuscript? | The [Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f), including its Stage 1 metric definitions and published-split comparisons. |
 | What does alignment mean here, and what comes next? | [Stage 2: defining alignment](../README.md#stage-2-defining-alignment), [Stage 3 fusion experiments](../README.md#next-steps-stage-3-fusion-experiments), and the Stage 2 section of the Overleaf project. |
@@ -41,12 +42,18 @@ Use [run records](run-records.md) to connect a shared result to its producing no
 
 The [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md) guides executable-code work for both contributors' agents. The [coding review and implementation plan](shared-coding-proposal.md) records its rationale, bounded batches, and verification status.
 
+## Follow the research plan
+
+Open the [Gantt workbook](Research_Project_Plan_Gantt.xlsx) to follow the team's research sequence. In `Gantt`, locate the task ID, recorded status and scheduled window; then find the same ID in `Details` for its prerequisites and expected output or review condition. The [Gantt presentation](Research_Project_Plan_Gantt.pptx) provides an overview for meetings. Cite the task ID when explaining how a notebook, literature finding or manuscript addition relates to the plan.
+
+The plan distinguishes initial input mapping and published-split probes from later trained fusion comparisons: see `Details` task 9, task 17 for BioLangFusion-style comparisons, and conditional task 25 for IsoFormer-style fusion. Read the plan's as-of date and check current evidence before relying on a recorded status. The [agent planning instructions](../AGENTS.md#research-planning) explain how agents follow the plan and surface proposed changes.
+
 ## Find plans and literature
 
 | Question | Starting point |
 | --- | --- |
 | What are we proposing to investigate? | The [Research Canvas](Research_Canvas.pptx). |
-| What is the project schedule? | The [Gantt presentation](Research_Project_Plan_Gantt.pptx) and [editable Gantt workbook](Research_Project_Plan_Gantt.xlsx). |
+| What is the project schedule? | Start with [Follow the research plan](#follow-the-research-plan), then use the [Gantt presentation](Research_Project_Plan_Gantt.pptx) or [editable Gantt workbook](Research_Project_Plan_Gantt.xlsx). |
 | Where is the annotated bibliography? | The [team bibliography](Annotated_Bibliography.docx). |
 | Where is the team's literature review? | [Literature review (PDF)](<Literature Review - Biological Foundation Models.pdf>) and [editable Word document](<Literature Review - Biological Foundation Models.docx>). |
 | How do we develop a review beyond individual paper summaries? | The [review-writing guidance](sources.md#pautasso-and-purdue-owl-writing-a-literature-review) explains synthesis, critical comparison, and open questions. |

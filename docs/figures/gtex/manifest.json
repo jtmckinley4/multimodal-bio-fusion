@@ -1,0 +1,155 @@
+{
+  "created_utc": "2026-10-07T14:46:00.135192+00:00",
+  "dataset": "gtex_pilot",
+  "snapshot_file": "results.json",
+  "snapshot_sha256": "098af46ce3c81651c3846c560bb764cd20b257c71769e937c3eb0d2f311c19b9",
+  "execution_basis": "Plot cells only, using the captured GTEx result dictionary; no research function rerun.",
+  "capture_utc": "2026-10-07T14:12:12.927934+00:00",
+  "source_notebook": "d:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\Stage1_gtex.ipynb",
+  "source_notebook_sha256_at_capture": "1f73d1171f901d15ec772de80ed80cd8fb5381af6595324387e832eb52ef01fa",
+  "sequence_order_sha256": "2434ae4bbff6751d1497324d40acb9c54a9efbc7757bc23acd17c7110905b265",
+  "groups_order_sha256": "ea761000dd4dbca91414909f7c23ed6133613f0061e5edf4e368a9f9d8120aef",
+  "counts": {
+    "train": 999,
+    "test": 996,
+    "train_genes": 951,
+    "test_genes": 558,
+    "genes_in_both": 0,
+    "tissues": 30,
+    "cca_fit": 680,
+    "cca_test": 319,
+    "utr_attention": 100
+  },
+  "seed": 42,
+  "probe_seed": 42,
+  "further_assignment_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "cell_history_matches": 29,
+  "cell_history_total": 29,
+  "producer_limit": "Input-history matches identify submitted code; they do not identify the producing run of reused embedding caches.",
+  "source_versions": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "numpy": "2.3.5",
+    "pandas": "2.3.3",
+    "sklearn": "1.7.2",
+    "torch": "2.10.0+cu126",
+    "device": "cuda"
+  },
+  "baseline_provenance": {
+    "source_cell": "1ec3fde2",
+    "retained_output": "Out[14]",
+    "decimal_places": 3,
+    "note": "The captured anonymous baseline table was rounded by the research cell before display."
+  },
+  "colors": {
+    "DNA": "#2879C2",
+    "RNA": "#079B77",
+    "protein": "#E06430"
+  },
+  "figures": {
+    "01_all_encoder_expression_probes": {
+      "files": [
+        "01_all_encoder_expression_probes.svg",
+        "01_all_encoder_expression_probes.png",
+        "01_all_encoder_expression_probes.csv"
+      ],
+      "rows": 12,
+      "source_cells": [
+        "2b098a7f"
+      ],
+      "notes": "Full-precision named probe table; repeated-assignment means and pinned-fold means are separate markers."
+    },
+    "02_pinned_baselines_and_encoders": {
+      "files": [
+        "02_pinned_baselines_and_encoders.svg",
+        "02_pinned_baselines_and_encoders.png",
+        "02_pinned_baselines_and_encoders.csv"
+      ],
+      "rows": 4,
+      "source_cells": [
+        "1ec3fde2",
+        "2b098a7f",
+        "58dad62b"
+      ],
+      "notes": "Same pinned fold column throughout; baseline rows have only three-decimal retained precision; no uncertainty bars."
+    },
+    "03_all_pairs_composition_control": {
+      "files": [
+        "03_all_pairs_composition_control.svg",
+        "03_all_pairs_composition_control.png",
+        "03_all_pairs_composition_control.csv"
+      ],
+      "rows": 66,
+      "source_cells": [
+        "3d7e618b",
+        "573cf835",
+        "9c177b94",
+        "205ebbdc"
+      ],
+      "notes": "All 66 pairs; raw x and residual y; directed retrieval; full training-half residual preprocessing."
+    },
+    "04_geometry_and_concatenation_gain": {
+      "files": [
+        "04_geometry_and_concatenation_gain.svg",
+        "04_geometry_and_concatenation_gain.png",
+        "04_geometry_and_concatenation_gain.csv"
+      ],
+      "rows": 66,
+      "source_cells": [
+        "3d7e618b",
+        "573cf835",
+        "cda51afe"
+      ],
+      "notes": "Raw metrics and matched raw-embedding gains for 66 pairs; ranges summarize existing assignments, not uncertainty intervals."
+    }
+  },
+  "artifact_sha256": {
+    "01_all_encoder_expression_probes.csv": "d2b503a7a1da64f223a819c7d23454db7329ff463b810b0c12a5188a39452b86",
+    "01_all_encoder_expression_probes.png": "bbca214e10104af88ed36a1b38e2ecca06b875cac9c13f91f1e6695257a05cae",
+    "01_all_encoder_expression_probes.svg": "afe1843f4341c63f13a65cebbe2653ba7df2c57c567f3e017abede93bc6a69b9",
+    "02_pinned_baselines_and_encoders.csv": "ffd5db04716e4892d8d2825855d289914c475cc5ddbb7ee2aa2c8bdc1cd0aa1e",
+    "02_pinned_baselines_and_encoders.png": "b804054de95a68ca9448e3cc0fcd331e4a65f6904af065d226008fb711cdbdad",
+    "02_pinned_baselines_and_encoders.svg": "9804786c2040639655d4c1e3447d06fc651cd2ebeda1e2e435c429d6a415f567",
+    "03_all_pairs_composition_control.csv": "f77ea258c4e09e788e5f6c2709ba57ed124f452903f83a8e3aad20e7e865a2cb",
+    "03_all_pairs_composition_control.png": "993dd2bb9f28c1d28062728aaf4917013c89a9eb5bde715208582833e73c1291",
+    "03_all_pairs_composition_control.svg": "0c1d3e308a6634682cd42b03323c29163e8f336486afa813137df82b896290f6",
+    "04_geometry_and_concatenation_gain.csv": "9b83ed5edff92917509d81fcf7baaa77a15d1e391a8863c740fa13a25bd5f909",
+    "04_geometry_and_concatenation_gain.png": "a0c3538fa8ba92158fca3384e437562b58ffc7ed4821ddfc64393b74b139bba2",
+    "04_geometry_and_concatenation_gain.svg": "9b40e1df29959a322705b0e3503dad5360a1f8912359fe862c79685c6779493a",
+    "assignment_gains_all.csv": "39900cb7dca009cc397900c71d73826ae3c0b2eb2dace4cd63d9a6173079eb25",
+    "pair_metrics_all.csv": "f77ea258c4e09e788e5f6c2709ba57ed124f452903f83a8e3aad20e7e865a2cb"
+  },
+  "complete_pair_tables": [
+    "pair_metrics_all.csv",
+    "assignment_gains_all.csv"
+  ],
+  "limits": [
+    "The baseline rows in figure 02 come from retained Out[14], already rounded to three decimals.",
+    "Pinned fold means, repeated-assignment means, fold SD and assignment SD have distinct meanings.",
+    "Pair retrieval is directional in encoder registry order, not a bidirectional average.",
+    "Composition residualization fits all training-half rows before subsequent retrieval evaluation.",
+    "Assignment ranges describe partition sensitivity, not confidence intervals.",
+    "The 319 retrieval test rows are separate from the 996-transcript published test half.",
+    "Pair scatterplots do not fit a trend or establish significance or causality."
+  ],
+  "plot_notebook": "Code/Stage1_gtex.ipynb",
+  "plot_cell_ids": [
+    "gfig4-settings",
+    "gfig4-export-tools",
+    "gfig4-expression-probes",
+    "gfig4-baseline-comparison",
+    "gfig4-all-controls",
+    "gfig4-geometry-gain"
+  ],
+  "plot_source_sha256": "1ad132d34277d7565ba2e5ac6489f80efd65b95c32b464cc32c15ffd38a4f4dc"
+}

@@ -16,7 +16,7 @@ Associate each saved result with its producing data, code, model revisions, and 
 - **Evaluation:** Which rows are retained, how are training and test examples selected, and what generalization claim does the split support? Check the producing code and settings rather than inferring the evaluation from a dataset column.
 - **Result provenance:** If prose, outputs, reviews, or slides disagree, identify their producing versions and retain the disagreement until evidence resolves it.
 - **Meaning of alignment:** Distinguish biological sequence correspondence, representation similarity, and predictive complementarity. Use the [Stage 2 definition](../README.md#stage-2-defining-alignment) and the overview's [composition-control findings](stage1-overview.md#summary); compare contributor interpretations with their [source papers](../Papers/README.md).
-- **Further experiments:** What comparison would distinguish the proposed explanation from alternatives? Use the [architecture priorities](../README.md#architecture-priorities) and [Stage 3 plan](../README.md#next-steps-stage-3-fusion-experiments). Keep literature ideas, meeting preferences, and implemented methods distinct.
+- **Further experiments:** What comparison would distinguish the proposed explanation from alternatives? Follow the [agent planning instructions](../AGENTS.md#research-planning) and [Gantt reading route](README.md#follow-the-research-plan) to identify the relevant task and prerequisites. Use the [architecture priorities](../README.md#architecture-priorities) and [Stage 3 description](../README.md#next-steps-stage-3-fusion-experiments) for technical context. Keep literature ideas, meeting preferences, and implemented methods distinct.
 
 ## Implementation and verification routes
 

@@ -206,6 +206,14 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Coding-review follow-up:** The later October 5 coding review read Rules 1–3 and 5–9 for the [coding proposal](shared-coding-proposal.md#what-research-software-engineering-adds). The current [manual run-record procedure](run-records.md) is now available; its existence does not establish complete historical provenance.
 
+### Git and GitHub: Version history and plan-change review
+
+[Pro Git, Viewing the Commit History](https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History), [Pro Git, Git Attributes: Diffing Binary Files](https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#_diffing_binary_files), and [GitHub, Pull requests](https://docs.github.com/en/pull-requests/reference/pull-requests).
+
+**Why retain them:** They support evaluating Git history and GitHub review as part of research-plan provenance: commits identify saved versions, while a written rationale can explain a change to the [Gantt plan](README.md#follow-the-research-plan). Office files can be versioned, but ordinary binary diffs do not explain their content changes. Existing [run records](run-records.md) separately describe producing executions.
+
+**Reading scope and limits:** On October 10, 2026, read the commit-history examples and author/committer fields, the binary-diff and Word text-conversion example, and the pull-request conversation, commits, checks and changed-files descriptions. These informed the provenance discussion; a plan-change record and a review workflow remain proposals. No text-conversion driver or automatic tracking was configured. Git metadata does not by itself establish a run's producer, scientific verification or advisor approval.
+
 ### Rule et al.: Writing and sharing Jupyter analyses
 
 [Rule et al. (2019), Ten simple rules for writing and sharing computational analyses in Jupyter Notebooks](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007007), Rules 1–3 and 7.
@@ -385,3 +393,14 @@ These sources inform the [coding review](shared-coding-proposal.md) and the adop
 In a fresh session opened on this checkout, ask the agent to identify the repository instructions and the source path of the skill relevant to the task: shared engineering for executable code, shared documentation for purpose and evidence, or Markdown formatting for presentation. In Claude Code, `/context` lists loaded memory files; `/multimodal-bio-shared-engineering`, `/multimodal-bio-shared-documentation`, and `/multimodal-bio-markdown-formatting` explicitly invoke their respective entry points. If discovery differs, the relevant workflow can still be read through its repository path when the application has file access.
 
 The repository-agent references above were checked on September 25, 2026; the remote pages were not archived. File and link checks can validate this repository's structure. Actual skill discovery and behavior must also be checked in the teammate's application.
+
+
+## Numerical reproducibility across computers
+
+### PyTorch and NumPy: reproducibility limits and numerical diagnostics
+
+[PyTorch reproducibility](https://docs.pytorch.org/docs/2.14/notes/randomness.html), [NumPy least squares and rank cutoff](https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html), and [NumPy runtime reporting](https://numpy.org/doc/stable/reference/generated/numpy.show_runtime.html).
+
+**Why retain them:** They distinguish seed control from guarantees across platforms and explain rank thresholds and the BLAS/LAPACK environment. They inform the cross-run comparison and diagnostic limits in the [October 7 run record](run-records.md), rather than prescribing identical hardware for all contributors.
+
+**Reading scope and limits:** Reproducibility/platform qualifications, least-squares `rcond`, rank and singular-value outputs, and `show_runtime` were checked on October 7, 2026. The local composition designs have a large gap at the current rank cutoff; that finding does not establish why an earlier result differs. No rank threshold, solver, precision or scientific calculation was changed by the figure-export work.

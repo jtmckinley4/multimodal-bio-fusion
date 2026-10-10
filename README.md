@@ -10,6 +10,8 @@ A research project in the [Complex Adaptive Systems Laboratory](https://complexi
 
 The saved notebooks can be studied without running their cells. When ready to execute an experiment, follow [Setup](#setup), select the notebook's Python environment, and use a fresh kernel with `Code/` as its working directory. Each experiment runs independently; reading stability first is a learning route, not an execution dependency.
 
+For planning and next steps, use the [research plan](docs/README.md#follow-the-research-plan): the Gantt workbook records task IDs, scheduled windows, prerequisites and expected outputs, and the presentation provides a meeting overview. Use those entries when connecting a proposed experiment or manuscript addition to the team's existing work.
+
 For a specific question, go directly to the [method guides](docs/README.md#understand-the-methods), [Stage 1 results](#stage-1-results), [dataset descriptions](#data), or [Stage 2 alignment definition](#stage-2-defining-alignment). The [documentation index](docs/README.md#find-plans-and-literature) links the research canvas, schedule, bibliography, and literature review.
 
 ## Project background
@@ -111,6 +113,7 @@ When code adds or changes an output, update this inventory and its handling. Add
 | `Code/stage1_embeddings/<dataset>_published_train<rows>_seed<seed>/` and `..._published_test<rows>_seed<seed>/` | [Stability notebook](Code/Stage1_stability.ipynb#Published-split-comparison) | Embeddings of the rows sampled from the published train and test splits for the published-split comparison, saved and reused as above. | Local and ignored. |
 | `Code/stage1_embeddings/gtex_pilot_train/` and `gtex_pilot_test/` | [GTEx notebook](Code/Stage1_gtex.ipynb) | Embeddings of the two halves of `GTEx_pilot.csv`, one matrix per encoder from that encoder's own input, saved and reused as above. | Local and ignored. |
 | `.data-cache/GTEx_final.csv` | `Code/build_gtex_pilot.py` | IsoFormer's full GTEx table, about 645 MB, downloaded to sample the pilot. | Local and ignored; only needed to rebuild `GTEx_pilot.csv`. |
+| `docs/figures/stability/` and `docs/figures/gtex/` | Tagged figure cells in each notebook; [model-free exporter](Code/export_figures.py) | SVG/PNG, numeric CSVs, completed-result JSON and manifests. Regenerate from the saved snapshot without loading encoders or rerunning analyses. | Deliberately shared in Git; see the [figure guide](docs/figures/README.md) for commands and result-state limits. Writing these files does not commit or push them. |
 
 ## Setup
 
