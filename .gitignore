@@ -24,3 +24,6 @@ Claude outputs/
 /Code/stage1_multimodel_embeddings/
 /Code/stage1_embeddings/
 /Code/stage1_embeddings_legacy/
+
+# R history
+.Rhistory

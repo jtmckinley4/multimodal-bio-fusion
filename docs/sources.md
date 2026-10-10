@@ -48,6 +48,74 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 **Reading scope and limits:** Section 4 and the figure caption, plus UQ's proposal/Gantt and AI-feedback passage, were rechecked on October 5, 2026. These examples do not establish CAP6942 deadlines or measured AI time savings; the team's schedule remains its own plan.
 
+## Papers raised in October 2026 (fusion evaluation, alignment, multi-omics benchmarks)
+
+Eight papers came in by email on October 9 and 10 (three from Chase, five from Mina). Each is placed by role in the Overleaf related-work table and in Section 6.6 of the project notes; this index records why each is retained.
+
+### Rheude, Eils and Wild: Fusion or Confusion
+
+[arXiv 2512.22991](https://arxiv.org/abs/2512.22991) and the [simple baseline repository](https://github.com/TillmannRheude/simple_mml_baseline).
+
+**Why retain it:** Nineteen multimodal methods reimplemented on nine datasets under standardized tuning, initialization, subject-wise cross-validation and statistical tests; no method consistently beats a simple per-modality-projection baseline, and several fall below the best single modality. It supplies the Stage 4 evaluation rules (identical heads, tuned baselines, grouped cross-validation, mean and SD, a statistical comparison) and the reason the baseline hierarchy exists.
+
+**Reading scope and limits:** Abstract and the methods and results summary were read on October 10, 2026. Its datasets are not biological sequences; it guides fair comparison, not biological conclusions.
+
+### mRNABench
+
+[bioRxiv 2025.07.05.662870](https://www.biorxiv.org/content/10.1101/2025.07.05.662870v1) and the [repository](https://github.com/morrislab/mRNABench).
+
+**Why retain it:** Ten mature-mRNA datasets and 59 subtasks with homology-aware splits, and evidence that random splits overestimate generalization. Supplies the half-life and translation-efficiency tasks (research plan add-on 4) and the grouped evaluation in the common rules.
+
+**Reading scope and limits:** Abstract and task catalog read on October 10, 2026; the dataset gates (UTRs, coding-sequence coordinates, grouped splits) still have to be verified on the files before any run.
+
+### Krzakala et al.: MSAlign
+
+[arXiv 2605.19752](https://arxiv.org/abs/2605.19752) and the [repository](https://github.com/KrzakalaPaul/MSAlign-NeurIPS2026).
+
+**Why retain it:** Alignment between two frozen encoders made operational as a retrieval task through learned projections, plus a measure of distribution shift between splits. Enters Stage 2 as a learned-projection retrieval diagnostic beside the frozen CCA retrieval, and the split-shift measure enters the common rules.
+
+**Reading scope and limits:** Abstract read on October 10, 2026; the loss and metrics were not confirmed from the full text.
+
+### Golkar et al.: MIMIC
+
+[arXiv 2604.24506](https://arxiv.org/abs/2604.24506), [repository](https://github.com/PolymathicAI/MIMIC), [model](https://huggingface.co/polymathic-ai/MIMIC).
+
+**Why retain it:** A generative multimodal model conditioned across biomolecules, evaluated on mRNABench tasks. Motivates the full-transcript tasks; it is not evidence that fusing separately pretrained encoders helps.
+
+**Reading scope and limits:** Abstract and author list read on October 10, 2026.
+
+### Ren et al.: COMET
+
+[arXiv 2412.10347](https://arxiv.org/abs/2412.10347).
+
+**Why retain it:** Seventeen DNA, RNA, protein, cross-molecule and multi-molecule tasks, evaluated with single-omics models, their pairs, LucaOne and CaLM; multi-molecule tasks remain hard for all of them. Supplies distinct-molecule tasks with published combinations for Stage 4 tests 5 and 8.
+
+**Reading scope and limits:** The full text was summarized on October 10, 2026; dataset sizes are in its Table 1 and were not re-verified.
+
+### He et al.: LucaOne
+
+[bioRxiv 2024.05.10.592927](https://www.biorxiv.org/content/10.1101/2024.05.10.592927v1), [model](https://github.com/LucaOne/LucaOne), [embedding app](https://github.com/LucaOne/LucaOneApp).
+
+**Why retain it:** One encoder and one vocabulary for nucleic acid and protein; 1,280-token limit; inputs embedded separately. The jointly pretrained baseline (add-on 3).
+
+**Reading scope and limits:** Full text summarized on October 10, 2026; the input limit has to be checked against the stability and GTEx files before extraction.
+
+### Chen et al.: Structure-Aligned Protein Language Model
+
+[arXiv 2505.16896](https://arxiv.org/abs/2505.16896).
+
+**Why retain it:** Contrastive alignment of a protein language model's residue states to a structure encoder; a different sense of alignment (sequence to structure within one molecule), named in the Overleaf so it is not confused with alignment across molecules; a candidate structure feature for add-on 6.
+
+**Reading scope and limits:** Abstract read on October 10, 2026.
+
+### Yang, Chen and Li: OmniGenome
+
+[arXiv 2407.11242](https://arxiv.org/abs/2407.11242), AAAI 2025.
+
+**Why retain it:** Sequence-structure alignment in an RNA foundation model with bidirectional mappings; the same sense of alignment on the RNA side; a candidate RNA encoder and structure source for add-on 6.
+
+**Reading scope and limits:** Abstract read on October 10, 2026.
+
 ## Benchmarks and encoders for multimodal comparison
 
 ### IsoFormer dataset and model cards
