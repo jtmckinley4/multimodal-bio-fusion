@@ -1,6 +1,6 @@
 """Build datasets/GTEx_pilot.csv, the input of Stage1_gtex.ipynb.
 
-Run from the repository root: python Code/build_gtex_pilot.py
+Run from the repository root: python Code/stage1/build_gtex_pilot.py
 Input-cache and output paths are anchored to this script, not the working directory.
 
 1. Download IsoFormer's GTEx table (about 645 MB) unless it is already in DOWNLOAD_DIR:
@@ -32,13 +32,15 @@ from pathlib import Path
 
 import pandas as pd
 
-from shared_code.datasets import GTEX_TISSUES
+# Code/shared_code is one level up from this script in Code/stage1
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from shared_code.datasets import GTEX_TISSUES  # noqa: E402
 
 SOURCE_URL = (
     "https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/"
     "resolve/main/transcript_expression/GTEx_final.csv"
 )
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 DOWNLOAD_DIR = REPO_ROOT / ".data-cache"
 OUTPUT = REPO_ROOT / "datasets" / "GTEx_pilot.csv"
 WINDOW = 6000

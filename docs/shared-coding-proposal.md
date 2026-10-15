@@ -48,7 +48,7 @@ These are proposed decision criteria, not a size quota. A longer function can be
 
 ### Recoverable files and model cleanup
 
-In [the GTEx builder](../Code/build_gtex_pilot.py), `source_table` writes the download directly to its final filename and subsequently reuses it based on existence. An interrupted download can leave a partial file that is then treated as available; a truncated CSV may either fail parsing or contain an incomplete but parseable table. `main` similarly writes the final pilot directly. This is a concrete interruption hazard, not evidence that the retained dataset is corrupt.
+In [the GTEx builder](../Code/stage1/build_gtex_pilot.py), `source_table` writes the download directly to its final filename and subsequently reuses it based on existence. An interrupted download can leave a partial file that is then treated as available; a truncated CSV may either fail parsing or contain an incomplete but parseable table. `main` similarly writes the final pilot directly. This is a concrete interruption hazard, not evidence that the retained dataset is corrupt.
 
 Use a temporary sibling file, validate the required content, then replace the destination after success. Check the expected tissue column names/order rather than relying only on `df.columns[9:39]`. A tiny interrupted-download fixture can verify that the previous complete file survives and an incomplete file is not accepted. No research download is needed for that check.
 

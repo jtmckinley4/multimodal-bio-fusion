@@ -16,10 +16,14 @@ Claude outputs/
 # model cache
 .model-cache/
 
-# Downloaded source data for Code/build_gtex_pilot.py
+# Downloaded source data for Code/stage1/build_gtex_pilot.py
 .data-cache/
 
-# Locally generated Stage 1 embeddings
+# Locally generated embeddings: Stage 1 caches, and any token-level embeddings
+# kept outside cluster scratch by later stages
+/Code/*/embeddings/
+/Code/*/embeddings_legacy/
+# Pre-October 15 locations, in case an older checkout still has them
 /Code/stage1_main_embeddings.npz
 /Code/stage1_multimodel_embeddings/
 /Code/stage1_embeddings/

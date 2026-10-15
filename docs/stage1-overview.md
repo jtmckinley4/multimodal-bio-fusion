@@ -4,8 +4,8 @@ Stage 1 investigates what pretrained DNA, RNA, and protein encoders represent an
 
 | Notebook | Inputs and target | Contents |
 | --- | --- | --- |
-| [mRNA stability](../Code/Stage1_stability.ipynb) | Coding sequences and stability labels from `mRNA_Stability.csv` | Input checks, embeddings, Tracks A–C, synonymous-recoding control, and the BioLangFusion published-split comparison |
-| [GTEx transcript expression](../Code/Stage1_gtex.ipynb) | Genomic DNA, transcripts, proteins, and expression in 30 tissues from `GTEx_pilot.csv` | Independent setup, input checks, embeddings, Tracks A–C, and the IsoFormer published-split comparison |
+| [mRNA stability](../Code/stage1/Stage1_stability.ipynb) | Coding sequences and stability labels from `mRNA_Stability.csv` | Input checks, embeddings, Tracks A–C, synonymous-recoding control, and the BioLangFusion published-split comparison |
+| [GTEx transcript expression](../Code/stage1/Stage1_gtex.ipynb) | Genomic DNA, transcripts, proteins, and expression in 30 tissues from `GTEx_pilot.csv` | Independent setup, input checks, embeddings, Tracks A–C, and the IsoFormer published-split comparison |
 
 Start with the stability notebook for the first method walkthrough. The GTEx notebook links to the same method guides and can run without executing stability. The [Summary](#summary) compares their retained results.
 
@@ -30,7 +30,7 @@ In the stability experiment, each retained coding sequence supplies one input pe
 
 The stability inputs share one coding-sequence origin. DNA/RNA letter conversion preserves the nucleotide sequence, while translation loses synonymous codon distinctions, so the protein input does not retain all nucleotide information. The comparison therefore examines how pretrained encoders, trained on different corpora with different tokenizers and at different sizes, represent related biological information. This follows the modality definition used by [BioLangFusion](../Papers/core/BioLangFusion.pdf), Section 2.1, which gives the same coding sequence to DNA, RNA, and protein language models. The stability dataset carries no gene or transcript identifiers, so genomic DNA around each gene, such as promoters or introns, is not available here.
 
-The registry records each dataset's setting. The stability notebook uses this derived setting. [GTEx transcript expression](../Code/Stage1_gtex.ipynb#Distinct-inputs:-GTEx-transcript-expression) repeats the main analyses in the distinct setting, on IsoFormer's GTEx data, where DNA encoders read genomic DNA around the transcription start site, the single-nucleotide RNA encoders read the transcript, the codon-level RNA encoders read its coding sequence, and protein encoders read the protein.
+The registry records each dataset's setting. The stability notebook uses this derived setting. [GTEx transcript expression](../Code/stage1/Stage1_gtex.ipynb#Distinct-inputs:-GTEx-transcript-expression) repeats the main analyses in the distinct setting, on IsoFormer's GTEx data, where DNA encoders read genomic DNA around the transcription start site, the single-nucleotide RNA encoders read the transcript, the codon-level RNA encoders read its coding sequence, and protein encoders read the protein.
 
 ## Research questions
 
@@ -45,7 +45,7 @@ Stage 1 characterizes the representations available from the frozen encoders. It
 
 The analyses generate evidence and hypotheses for those later stages. Choosing an alignment objective or fusion architecture requires further controlled comparisons, such as the trained fusion architectures of BioLangFusion and IsoFormer on the same inputs.
 
-**Reading and running.** Follow the questions, code, and results in the experiment notebook you choose. Use [From sequences to embeddings](methods/inputs-and-embeddings.md) for the preparation walkthrough and [Linear probing](methods/linear-probing.md) for probe mathematics; each experiment links to the relevant explanation where it is needed. See [Setup](../README.md#setup) for dependencies, the `Code/` working directory, and checkpoint downloads. The cells using `show_source` link to the maintained functions in `Code/shared_code/`; [the display setting in stability](../Code/Stage1_stability.ipynb#Implementation-displays) or [GTEx](../Code/Stage1_gtex.ipynb#Implementation-displays) controls whether their full source is shown.
+**Reading and running.** Follow the questions, code, and results in the experiment notebook you choose. Use [From sequences to embeddings](methods/inputs-and-embeddings.md) for the preparation walkthrough and [Linear probing](methods/linear-probing.md) for probe mathematics; each experiment links to the relevant explanation where it is needed. See [Setup](../README.md#setup) for dependencies, the `Code/stage1/` working directory, and checkpoint downloads. The cells using `show_source` link to the maintained functions in `Code/shared_code/`; [the display setting in stability](../Code/stage1/Stage1_stability.ipynb#Implementation-displays) or [GTEx](../Code/stage1/Stage1_gtex.ipynb#Implementation-displays) controls whether their full source is shown.
 
 ---
 
@@ -120,7 +120,7 @@ On GTEx, four transcript-length features alone reach an expression $R^2$ of 0.24
 
 ### Published comparisons and distinct inputs
 
-The frozen encoders are compared with published fusion studies in two settings: [Setting A in the stability notebook](../Code/Stage1_stability.ipynb#Published-split-comparison), fitting probes on rows sampled from the published train split and scoring its test split, and [Setting B in the GTEx notebook](../Code/Stage1_gtex.ipynb#GTEx-published-split-comparison), whose rows carry separate DNA, transcript, and protein sequences. The Overleaf sections on the published split and on GTEx give the full comparison.
+The frozen encoders are compared with published fusion studies in two settings: [Setting A in the stability notebook](../Code/stage1/Stage1_stability.ipynb#Published-split-comparison), fitting probes on rows sampled from the published train split and scoring its test split, and [Setting B in the GTEx notebook](../Code/stage1/Stage1_gtex.ipynb#GTEx-published-split-comparison), whose rows carry separate DNA, transcript, and protein sequences. The Overleaf sections on the published split and on GTEx give the full comparison.
 
 | Setting | Dataset | How DNA enters | Published comparison | Frozen encoders here |
 | --- | --- | --- | --- | --- |

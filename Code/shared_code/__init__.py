@@ -8,6 +8,7 @@ Modules:
     embeddings  frozen-encoder embeddings, with a cache
     analysis    probes, representation similarity, composition control, tables, figures
     notebook    showing shared source code inside notebooks
+    fusion      Stage 3 fusion models (subpackage; empty until the Stage 3 build)
 
 Importing the package does not import PyTorch. Only shared_code.embeddings and the model-loading
 functions in shared_code.encoders need it.

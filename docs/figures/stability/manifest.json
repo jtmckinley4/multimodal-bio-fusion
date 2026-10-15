@@ -149,9 +149,9 @@
   "capture_utc": "2026-10-07T14:15:23.831469+00:00",
   "snapshot_sha256": "54241667101bfa84059ae766be5a69924000e7285fef43b19dbbc14df0e386a6",
   "snapshot_file": "results.json",
-  "source_notebook": "Code/Stage1_stability.ipynb",
+  "source_notebook": "Code/stage1/Stage1_stability.ipynb",
   "comparison_limit": "Earlier saved controls and some PCA values differ; numerical cause unresolved.",
-  "plot_notebook": "Code/Stage1_stability.ipynb",
+  "plot_notebook": "Code/stage1/Stage1_stability.ipynb",
   "plot_cell_ids": [
     "fig3-settings",
     "fig3-export-tools",
@@ -164,7 +164,7 @@
     "fig3-geometry-gains",
     "fig4-composition-vs-stability"
   ],
-  "plot_source_sha256": "c0da6a49219ed6f54dc570d2d9a9fd674a0be7b0980da2dfe36737c661ae2e45",
+  "plot_source_sha256": "41ef557367b31381eecd4c169529ea0bf3bf7cb117b2b89bf0a8ac33b3c81ffc",
   "artifact_sha256": {
     "01_raw_selected_pairs.csv": "ada5099f56fc7f5d793e189b54ad1c539ed31d1851055611ee39eb6388b616a4",
     "01_raw_selected_pairs.png": "1b54bb37e5ac1accf61d49c2fc6b0b1929c8f423989713995e82a6bffae2f964",

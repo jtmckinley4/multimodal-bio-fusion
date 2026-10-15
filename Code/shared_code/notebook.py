@@ -11,7 +11,8 @@ def show_source(*objects, full=True):
     """Display shared_code functions/classes as Python source, or compact source links.
 
     full=True preserves the original source-block display. With full=False, links
-    are relative to a notebook in Code/ and use #L anchors for source line numbers;
+    are relative to a notebook in a stage folder (Code/stage1/, Code/stage3/,
+    Code/stage4/) and use #L anchors for source line numbers;
     jumping to those lines depends on the notebook viewer. Compact mode requires
     readable Python source inside this shared_code package and raises for unsupported
     objects or sources rather than displaying a misleading link.
@@ -37,6 +38,6 @@ def show_source(*objects, full=True):
                     f"Cannot link {obj.__qualname__}: source must be a readable file in shared_code."
                 ) from error
             name = f"{obj.__module__.removeprefix('shared_code.')}.{obj.__qualname__}"
-            links.append(f"[`{name}` (line {line})](shared_code/{quote(relative.as_posix())}#L{line})")
+            links.append(f"[`{name}` (line {line})](../shared_code/{quote(relative.as_posix())}#L{line})")
         text = "Implementation: " + ", ".join(links) if links else ""
     display(Markdown(text))

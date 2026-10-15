@@ -30,7 +30,7 @@ NOTEBOOKS = ("Stage1_stability.ipynb", "Stage1_gtex.ipynb")
 
 
 def read_notebook(name):
-    return json.loads((CODE / name).read_text(encoding="utf-8"))["cells"]
+    return json.loads((CODE / "stage1" / name).read_text(encoding="utf-8"))["cells"]
 
 
 def source(cell):

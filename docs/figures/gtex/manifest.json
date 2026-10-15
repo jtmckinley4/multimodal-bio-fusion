@@ -142,7 +142,7 @@
     "The 319 retrieval test rows are separate from the 996-transcript published test half.",
     "Pair scatterplots do not fit a trend or establish significance or causality."
   ],
-  "plot_notebook": "Code/Stage1_gtex.ipynb",
+  "plot_notebook": "Code/stage1/Stage1_gtex.ipynb",
   "plot_cell_ids": [
     "gfig4-settings",
     "gfig4-export-tools",

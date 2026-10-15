@@ -46,12 +46,12 @@ python make_alignment_figure.py paper
 `make_paper_figures.py` re-renders for the manuscript; run on its own
 (`python make_figures.py out`) it writes versions with an embedded title and
 caption to a separate folder. Needs matplotlib, numpy, pandas and scipy. `figdata.py` holds the per-encoder
-values, all of them saved outputs of `Code/Stage1_stability.ipynb` and
-`Code/Stage1_gtex.ipynb` from the October 6 runs in
+values, all of them saved outputs of `Code/stage1/Stage1_stability.ipynb` and
+`Code/stage1/Stage1_gtex.ipynb` from the October 6 runs in
 [run records](../../run-records.md#recorded-runs). The `*_geom.csv`,
 `*_gain.csv` and `*_share.csv` tables carry the full 66-pair results, which the
 saved notebook outputs truncate; they were recomputed read-only from the cached
-embeddings in `Code/stage1_embeddings/` and reproduce every value the notebooks
+embeddings in `Code/stage1/embeddings/` and reproduce every value the notebooks
 print.
 
 ## Paper figures

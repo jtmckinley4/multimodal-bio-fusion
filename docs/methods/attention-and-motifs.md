@@ -1,6 +1,6 @@
 # Attention and candidate motifs
 
-This guide develops the attention extraction, token-to-nucleotide mapping, candidate-pattern scan, and comparisons used in [Stage1_stability.ipynb](../../Code/Stage1_stability.ipynb#Track-C:-Attention-and-exploratory-diagnostics). The notebook keeps the execution settings, code calls, saved outputs, and result interpretations; this page retains the mathematical walkthroughs, worked examples, implementation details, and sources. Attention is a model behavior, and a sequence match is a candidate annotation: neither is a direct assay of regulatory function.
+This guide develops the attention extraction, token-to-nucleotide mapping, candidate-pattern scan, and comparisons used in [Stage1_stability.ipynb](../../Code/stage1/Stage1_stability.ipynb#Track-C:-Attention-and-exploratory-diagnostics). The notebook keeps the execution settings, code calls, saved outputs, and result interpretations; this page retains the mathematical walkthroughs, worked examples, implementation details, and sources. Attention is a model behavior, and a sequence match is a candidate annotation: neither is a direct assay of regulatory function.
 
 The maintained implementation is in [embeddings.py](../../Code/shared_code/embeddings.py), [analysis.py](../../Code/shared_code/analysis.py), [sequences.py](../../Code/shared_code/sequences.py), and the [encoder registry and loader](../../Code/shared_code/encoders.py). The [input and embedding guide](inputs-and-embeddings.md) supplies the earlier biological-input and tokenization context.
 
@@ -15,9 +15,9 @@ The maintained implementation is in [embeddings.py](../../Code/shared_code/embed
 
 ## Extracting self-attention from the frozen nucleotide encoders
 
-Return to [Extracting self-attention from the frozen nucleotide encoders](../../Code/Stage1_stability.ipynb#Extracting-self-attention-from-the-frozen-nucleotide-encoders) in the notebook.
+Return to [Extracting self-attention from the frozen nucleotide encoders](../../Code/stage1/Stage1_stability.ipynb#Extracting-self-attention-from-the-frozen-nucleotide-encoders) in the notebook.
 
-The notebook's [representation comparisons](../../Code/Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) use extracted representations, including those from intermediate layers. Here, `embeddings.attention_maps` requests `output_attentions=True` for one nucleotide sequence from one encoder at a time. These are **self-attention** weights: query and key positions belong to the same sequence and the same encoder, rather than to separate modalities.
+The notebook's [representation comparisons](../../Code/stage1/Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) use extracted representations, including those from intermediate layers. Here, `embeddings.attention_maps` requests `output_attentions=True` for one nucleotide sequence from one encoder at a time. These are **self-attention** weights: query and key positions belong to the same sequence and the same encoder, rather than to separate modalities.
 
 Each layer returns an array with shape `(1, H, T, T)`. The leading 1 is the one-sequence batch size. Removing that axis leaves `(H, T, T)`: heads, query positions and key positions.
 
@@ -35,11 +35,11 @@ In this notation:
 Each loaded model is placed in evaluation mode, and inference runs inside `torch.no_grad()`. No parameter update is performed. Tokenization uses `truncation=True` with the same token limit as embedding extraction, the encoder's `max_len` in the registry. The returned token list describes this model call's processed input and may cover less than the full sequence; its coverage must be checked rather than assumed to match earlier extraction.
 
 
-Loading an encoder with eager attention can print the same kind of weight report described in [Interpreting the loading messages](../../Code/Stage1_stability.ipynb#Interpreting-the-loading-messages). Pooler parameters reported as newly initialized do not affect this analysis, which reads `outputs.attentions` and does not use a pooled output. The report should be interpreted in relation to the outputs consumed here, rather than treated as a general confirmation that every model component has pretrained weights.
+Loading an encoder with eager attention can print the same kind of weight report described in [Interpreting the loading messages](../../Code/stage1/Stage1_stability.ipynb#Interpreting-the-loading-messages). Pooler parameters reported as newly initialized do not affect this analysis, which reads `outputs.attentions` and does not use a pooled output. The report should be interpreted in relation to the outputs consumed here, rather than treated as a general confirmation that every model component has pretrained weights.
 
 ## Summarizing attention and mapping tokens to nucleotides
 
-Return to [Summarizing attention and mapping tokens to nucleotides](../../Code/Stage1_stability.ipynb#Summarizing-attention-and-mapping-tokens-to-nucleotides) in the notebook.
+Return to [Summarizing attention and mapping tokens to nucleotides](../../Code/stage1/Stage1_stability.ipynb#Summarizing-attention-and-mapping-tokens-to-nucleotides) in the notebook.
 
 `analysis.aggregate_attention` turns one layer's `(H, T, T)` array into one score per token. With `mode="incoming"`, the score summarizes how much attention a key position receives from all query positions after averaging heads. `embeddings.nucleotide_attention` requests the original model's final layer with `layers=[-1]`, then calls `aggregate_attention(..., layer=0)` on the returned one-element list. The index 0 therefore selects that already extracted final layer, not the model's first layer. This is the current analysis choice, not evidence that the final layer is the most informative one.
 
@@ -110,7 +110,7 @@ The mapping assumes the retained token strings spell the covered nucleotides in 
 
 ## Scanning candidate RNA stability-associated patterns
 
-Return to [Scanning candidate RNA stability-associated patterns](../../Code/Stage1_stability.ipynb#Scanning-candidate-RNA-stability-associated-patterns) in the notebook.
+Return to [Scanning candidate RNA stability-associated patterns](../../Code/stage1/Stage1_stability.ipynb#Scanning-candidate-RNA-stability-associated-patterns) in the notebook.
 
 The scan creates **candidate sequence-pattern annotations** for the attention comparison. It searches the input sequence for three RNA-relevant patterns; it does not measure binding, modification, or a change in stability.
 
@@ -128,7 +128,7 @@ These annotations depend only on sequence and require no external database call.
 
 ## Comparing attention at matched and other positions
 
-Return to [Comparing attention at matched and other positions](../../Code/Stage1_stability.ipynb#Comparing-attention-at-matched-and-other-positions) in the notebook.
+Return to [Comparing attention at matched and other positions](../../Code/stage1/Stage1_stability.ipynb#Comparing-attention-at-matched-and-other-positions) in the notebook.
 
 `analysis.attention_motif_overlap` compares expanded attention scores at candidate-pattern positions with scores at the other covered positions in the same sequence. It forms the union of matched spans for the pooled comparison, counting each position once, then repeats the comparison separately for each pattern name. Match ends are clipped to the attention array's length. For a per-pattern comparison, the other-position group can include positions matching a different pattern.
 
@@ -193,7 +193,7 @@ Treat the p-values as **nominal**: they are the test's reported values without c
 
 ## Running the attention-motif analysis
 
-Return to [Running the attention-motif analysis](../../Code/Stage1_stability.ipynb#Running-the-attention-motif-analysis) in the notebook.
+Return to [Running the attention-motif analysis](../../Code/stage1/Stage1_stability.ipynb#Running-the-attention-motif-analysis) in the notebook.
 
 The first execution follows one retained sequence through the complete pipeline for each nucleotide encoder in `ATTENTION_ENCODERS`: convert its alphabet for that encoder, extract attention, summarize the final layer, expand token scores, scan candidate patterns, compare groups, and plot the result. `embeddings.nucleotide_attention` performs the first four steps. The printed sequence and attention-array lengths help inspect coverage, but they are not an assertion that the coordinates agree for every input.
 
@@ -242,7 +242,7 @@ The table's label “fraction with nominal p < 0.05” refers only to crossing t
 
 ## Controlling the attention test for position and codons
 
-Return to [Controlling the attention test for position and codons](../../Code/Stage1_stability.ipynb#Controlling-the-attention-test-for-position-and-codons) in the notebook.
+Return to [Controlling the attention test for position and codons](../../Code/stage1/Stage1_stability.ipynb#Controlling-the-attention-test-for-position-and-codons) in the notebook.
 
 The per-sequence rank test compares matched positions with every other position. Two properties of the attention arrays can make that comparison favor matches without any link to the patterns themselves: attention can depend on position, for example by concentrating near the start of a sequence, and codon-level encoders give all three nucleotides of a codon one shared score, while a pattern such as DRACH overlaps only some codons. `analysis.motif_permutation_test` shuffles matched labels within groups that preserve the number of matched positions in each 100-nucleotide bin or each identical fixed-triplet-and-offset group. These preserve selected counts, not arbitrary positional or contextual token effects.
 
@@ -282,6 +282,6 @@ The table reports $G$, the mean of the shuffled statistics, their difference (th
 
 ## Reusing the method on untranslated regions
 
-The notebook's [GTEx attention analysis](../../Code/Stage1_gtex.ipynb#Attention-at-candidate-patterns-in-3'-untranslated-regions) applies the same summary, pattern scan, comparison, and permutation functions to selected 3' untranslated regions using the single-nucleotide RNA encoders. The notebook owns its selection settings and saved results.
+The notebook's [GTEx attention analysis](../../Code/stage1/Stage1_gtex.ipynb#Attention-at-candidate-patterns-in-3'-untranslated-regions) applies the same summary, pattern scan, comparison, and permutation functions to selected 3' untranslated regions using the single-nucleotide RNA encoders. The notebook owns its selection settings and saved results.
 
 The `strata="codon"` option still groups positions by the same nonoverlapping three-nucleotide block and offset within that block, beginning at the region's first nucleotide. Because these are untranslated regions, those blocks are sequence-context groups rather than biological codons or reading frames. The position null still uses 100-nucleotide bins; all coverage and permutation assumptions above continue to apply.

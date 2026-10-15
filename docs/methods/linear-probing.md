@@ -1,6 +1,6 @@
 # Linear probing
 
-This guide explains the standardization, ridge regression, and evaluation used in the [stability notebook](../../Code/Stage1_stability.ipynb#Linear-probing) and the [GTEx expression probes](../../Code/Stage1_gtex.ipynb#Expression-prediction-with-linear-probes). Start with the respective notebook for its biological target, experiment settings, and saved results; use this page for the derivations and worked example. The maintained implementation is in [analysis.py](../../Code/shared_code/analysis.py) and the group assignment is in [splits.py](../../Code/shared_code/splits.py).
+This guide explains the standardization, ridge regression, and evaluation used in the [stability notebook](../../Code/stage1/Stage1_stability.ipynb#Linear-probing) and the [GTEx expression probes](../../Code/stage1/Stage1_gtex.ipynb#Expression-prediction-with-linear-probes). Start with the respective notebook for its biological target, experiment settings, and saved results; use this page for the derivations and worked example. The maintained implementation is in [analysis.py](../../Code/shared_code/analysis.py) and the group assignment is in [splits.py](../../Code/shared_code/splits.py).
 
 A linear probe tests whether a target can be predicted from an embedding with a simple fitted model. The main inputs are embeddings produced by the frozen encoders; the probe functions also accept simpler feature matrices, such as sequence length. Fitting a probe does not update the encoders.
 
@@ -178,7 +178,7 @@ The current pipeline prevents outer held-out rows from setting the scaler statis
 
 The internal alpha-selection procedure has a narrower boundary: the scaler is fit once on the whole outer training subset before `RidgeCV` performs its internal leave-one-out calculation, and this code does not supply sequence groups to that internal calculation. This follows from the helper's ordering and the documented [Pipeline fitting sequence](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline.fit). Thus preprocessing is not refit for each internal held-out row, and internal model selection is not grouped by sequence. Outer held-out rows remain excluded from fitting; the pipeline should not be described as refitting preprocessing and enforcing groups at every level of cross-validation. The numerical effect of changing the internal procedure has not been measured here.
 
-Grouping addresses exact duplicate strings, not independence among related sequences. The probes do not deduplicate rows. The [notebook's evaluation limitation](../../Code/Stage1_stability.ipynb#Current-evaluation-limitation) retains the dataset counts and unresolved provenance questions associated with its saved analysis.
+Grouping addresses exact duplicate strings, not independence among related sequences. The probes do not deduplicate rows. The [notebook's evaluation limitation](../../Code/stage1/Stage1_stability.ipynb#Current-evaluation-limitation) retains the dataset counts and unresolved provenance questions associated with its saved analysis.
 
 ## Statistical and course references
 
@@ -187,4 +187,4 @@ Grouping addresses exact duplicate strings, not independence among related seque
 - UCF Machine Learning, *Data Preprocessing for Machine Learning*, slide 5: the role of feature scaling.
 - UCF Capstone general lecture, *Overfitting and Regularization* (Yousefi, 2020), slides 19-20: the ridge penalty and selecting its strength by cross-validation.
 
-The course decks provide explanatory context; linked library documentation explains the API behavior, and the [notebook](../../Code/Stage1_stability.ipynb#Linear-probing) and [probe implementation](../../Code/shared_code/analysis.py) specify the arguments used. Library documentation alone does not identify the environment or producing run of a saved result.
+The course decks provide explanatory context; linked library documentation explains the API behavior, and the [notebook](../../Code/stage1/Stage1_stability.ipynb#Linear-probing) and [probe implementation](../../Code/shared_code/analysis.py) specify the arguments used. Library documentation alone does not identify the environment or producing run of a saved result.

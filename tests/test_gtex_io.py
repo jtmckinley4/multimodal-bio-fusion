@@ -17,6 +17,7 @@ from unittest.mock import call, patch
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "Code"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "Code" / "stage1"))
 with patch("urllib.request.urlopen", side_effect=AssertionError("No requests on import")), \
      patch("urllib.request.urlretrieve", side_effect=AssertionError("No downloads on import")), \
      patch.object(pd, "read_csv", side_effect=AssertionError("No research CSV reads")):

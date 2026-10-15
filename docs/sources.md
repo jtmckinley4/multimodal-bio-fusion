@@ -122,7 +122,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [InstaDeepAI/multi_omics_transcript_expression](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression) and [InstaDeepAI/isoformer](https://huggingface.co/InstaDeepAI/isoformer) on Hugging Face.
 
-**Why retain them:** The dataset supplies GTEx transcript expression with a genomic DNA sequence, the transcript, and the protein for each example, and a fixed gene-level split. It was retained as a candidate for Setting B, where DNA is a distinct input rather than a rewriting of the coding sequence. The current [GTEx experiment](../Code/Stage1_gtex.ipynb) uses a pilot of this dataset; the [dataset overview](../README.md#data) identifies the local file and its producer.
+**Why retain them:** The dataset supplies GTEx transcript expression with a genomic DNA sequence, the transcript, and the protein for each example, and a fixed gene-level split. It was retained as a candidate for Setting B, where DNA is a distinct input rather than a rewriting of the coding sequence. The current [GTEx experiment](../Code/stage1/Stage1_gtex.ipynb) uses a pilot of this dataset; the [dataset overview](../README.md#data) identifies the local file and its producer.
 
 **Reading scope and limits:** The dataset and model cards were read through a summarizing fetch on September 29, 2026, which reported 82,205 train, 4,718 test, and 4,318 evaluation transcripts and protein-coding genes only. That source review did not read the cards in full, download data, or identify a license; it is not a description of the later pilot implementation. The current experiment records its fields and retained rows, but the earlier review did not resolve licensing.
 
@@ -130,7 +130,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [POST sequence/region documentation](https://rest.ensembl.org/documentation/info/sequence_region_post) and [Ensembl's rate-limit guidance](https://github.com/Ensembl/ensembl-rest/wiki/Rate-Limits).
 
-**Why retain them:** They define the service contract used by [the GTEx pilot builder](../Code/build_gtex_pilot.py). The endpoint accepts at most 50 regions per POST. A 429 response supplies `Retry-After` as a floating-point number of seconds. These support batch sizing and respecting the requested delay; the builder's attempt limit and decision to stop for a delay above 120 seconds are local recovery choices, not service requirements. See [rebuilding the pilot](../README.md#data) for its role.
+**Why retain them:** They define the service contract used by [the GTEx pilot builder](../Code/stage1/build_gtex_pilot.py). The endpoint accepts at most 50 regions per POST. A 429 response supplies `Retry-After` as a floating-point number of seconds. These support batch sizing and respecting the requested delay; the builder's attempt limit and decision to stop for a delay above 120 seconds are local recovery choices, not service requirements. See [rebuilding the pilot](../README.md#data) for its role.
 
 **Reading scope and limits:** On October 5, 2026, read the endpoint parameters, request examples and resource limits, and the wiki's normal/exhausted-rate-limit response sections. No live sequence requests or dataset rebuilds were performed. These references do not verify the historical pilot's completeness, assembly, or biological correctness; they do not pin future service contents.
 
@@ -146,7 +146,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [Sanofi-Public/CodonBERT](https://github.com/Sanofi-Public/CodonBERT), including its [embedding-extraction script](https://github.com/Sanofi-Public/CodonBERT/blob/master/benchmarks/CodonBERT/extract_embed.py).
 
-**Why retain it:** The repository is the source of the stability and mRFP CSVs and hosts the codon-level CodonBERT model, a candidate mRNA encoder. Its benchmark files are needed to resolve the dataset-version question recorded in the [stability dataset audit](../Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons).
+**Why retain it:** The repository is the source of the stability and mRFP CSVs and hosts the codon-level CodonBERT model, a candidate mRNA encoder. Its benchmark files are needed to resolve the dataset-version question recorded in the [stability dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons).
 
 **Reading scope and limits:** Only the search listing was seen on September 29, 2026. How weights are distributed and which data version BioLangFusion used remain unread leads.
 
@@ -154,7 +154,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [Medina-Muñoz et al. (2021), Crosstalk between codon optimality and cis-regulatory elements dictates mRNA stability](https://link.springer.com/article/10.1186/s13059-020-02251-5), Methods, especially Estimation of mRNA stability and Data allocation.
 
-**Why retain it:** The iCodon citation provides a lead for tracing the assay behind the stability benchmark. Use it alongside CodonBERT and the [dataset audit](../Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons) to investigate how a measured stability value became a local label.
+**Why retain it:** The iCodon citation provides a lead for tracing the assay behind the stability benchmark. Use it alongside CodonBERT and the [dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons) to investigate how a measured stability value became a local label.
 
 **Reading scope and limits:** Selected Methods and the iCodon citation were checked in the October 5, 2026 source review. The local CSV's units, normalization, and row mapping remain unresolved. The publication year is 2021 despite the DOI's 2020 component; this is distinct from Agarwal and Kelley (2022).
 

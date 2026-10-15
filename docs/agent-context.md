@@ -10,7 +10,7 @@ Associate each saved result with its producing data, code, model revisions, and 
 
 ## Evidence and unresolved questions
 
-- **Dataset version:** Does the supplied stability CSV match BioLangFusion's version and filtering? The [dataset overview](../README.md#data) records the differing counts and overlap between train and test; inspect the [notebook audit](../Code/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons) before a comparison.
+- **Dataset version:** Does the supplied stability CSV match BioLangFusion's version and filtering? The [dataset overview](../README.md#data) records the differing counts and overlap between train and test; inspect the [notebook audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons) before a comparison.
 - **Modality definition:** When DNA, RNA, and protein inputs derive from one coding sequence, what does an encoder difference measure? The overview's [input settings](stage1-overview.md#models-and-input-settings) distinguish that construction from GTEx's distinct inputs.
 - **Dataset meaning:** What does `Value` in [mRNA_Stability.csv](../datasets/mRNA_Stability.csv) represent, how was it measured, and which sequence regions are included? The CSV header alone does not establish assay or label meaning.
 - **Evaluation:** Which rows are retained, how are training and test examples selected, and what generalization claim does the split support? Check the producing code and settings rather than inferring the evaluation from a dataset column.

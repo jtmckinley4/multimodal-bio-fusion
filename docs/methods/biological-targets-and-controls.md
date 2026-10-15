@@ -2,7 +2,7 @@
 
 These methods answer different questions. The sequence-length baseline predicts the dataset's stability label. GC, GC3, and Nussinov pairing fraction are targets calculated from nucleotide strings, used to ask what the embeddings make recoverable. The synonymous-recoding control checks a translation/embedding relationship through descriptive spread, without fitting a probe.
 
-This guide retains the definitions, mathematical development, worked examples, and implementation connections. The [stability notebook](../../Code/Stage1_stability.ipynb) owns the calls, saved outputs, and result interpretation; each section links directly back to its calculation.
+This guide retains the definitions, mathematical development, worked examples, and implementation connections. The [stability notebook](../../Code/stage1/Stage1_stability.ipynb) owns the calls, saved outputs, and result interpretation; each section links directly back to its calculation.
 
 | Reader question | Method |
 | --- | --- |
@@ -16,7 +16,7 @@ The first four methods reuse the [linear-probe procedure](linear-probing.md), in
 
 ## Sequence-length baseline
 
-Return to the [notebook calculation](../../Code/Stage1_stability.ipynb#Sequence-length-baseline).
+Return to the [notebook calculation](../../Code/stage1/Stage1_stability.ipynb#Sequence-length-baseline).
 
 This baseline predicts stability from one feature: the full input-sequence length in nucleotides. Comparing it with the encoder probes asks how much predictive value is available from this simple sequence property alone. The inputs are the retained sequences and their stability `labels`.
 
@@ -45,7 +45,7 @@ Implementation: [Dataset.lengths](../../Code/shared_code/datasets.py).
 
 ## GC-content prediction
 
-Return to the [notebook calculation](../../Code/Stage1_stability.ipynb#GC-content-prediction).
+Return to the [notebook calculation](../../Code/stage1/Stage1_stability.ipynb#GC-content-prediction).
 
 These probes ask how well each encoder's embedding predicts the GC fraction of its source nucleotide sequence. The inputs are the matched embedding matrices and the corresponding strings in `kept_seqs`. The target is calculated directly from each string; it is not the dataset's stability label.
 
@@ -76,7 +76,7 @@ Implementation: [sequence helpers](../../Code/shared_code/sequences.py).
 
 ## GC3 prediction
 
-Return to the [notebook calculation](../../Code/Stage1_stability.ipynb#GC3-prediction).
+Return to the [notebook calculation](../../Code/stage1/Stage1_stability.ipynb#GC3-prediction).
 
 This probe asks whether the embeddings make third-position nucleotide composition linearly recoverable. Its inputs are the matched embedding matrices and the corresponding strings in `kept_seqs`. GC3 is the fraction of complete codons whose third base is G or C. It is related to synonymous codon usage, but it is not a complete measure of codon bias, codon optimality, or translation efficiency. There is no universal 50% GC3 reference against which bias can be declared.
 
@@ -119,7 +119,7 @@ Implementation: [sequence helpers](../../Code/shared_code/sequences.py).
 
 ## Secondary-structure proxy: Nussinov pairing fraction
 
-Return to the [notebook calculation](../../Code/Stage1_stability.ipynb#Secondary-structure-proxy:-Nussinov-pairing-fraction).
+Return to the [notebook calculation](../../Code/stage1/Stage1_stability.ipynb#Secondary-structure-proxy:-Nussinov-pairing-fraction).
 
 This probe predicts a simplified folding score: the largest fraction of nucleotides that can participate in permitted, noncrossing pairs within a sequence prefix. Its targets come from cropped strings in `kept_seqs`; its features are the already computed DNA, RNA, or protein embeddings for the same selected rows. The Nussinov-style calculation maximizes a pair count. It does not estimate thermodynamic free energy or measure an experimental structure. See [Nussinov and Jacobson (1980)](https://pubmed.ncbi.nlm.nih.gov/6161375/).
 
@@ -211,7 +211,7 @@ Implementation: [sequence helpers](../../Code/shared_code/sequences.py).
 
 ## Pipeline control: synonymous recoding
 
-Return to the [notebook calculation](../../Code/Stage1_stability.ipynb#Pipeline-control:-synonymous-recoding).
+Return to the [notebook calculation](../../Code/stage1/Stage1_stability.ipynb#Pipeline-control:-synonymous-recoding).
 
 The `mRFP_Expression` control asks whether the pipeline behaves as expected when different nucleotide sequences encode the same protein. A synonymous recoding changes codons while retaining the amino-acid sequence. Identical translated strings should therefore give every protein encoder the same input, while distinct nucleotide strings can give the DNA and RNA encoders different inputs, subject to their input limits.
 

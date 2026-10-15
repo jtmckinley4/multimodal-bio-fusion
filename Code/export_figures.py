@@ -25,7 +25,7 @@ def main():
     source = (args.source or repo / 'docs' / 'figures' / args.dataset / 'results.json').resolve()
     if not source.is_file():
         parser.error(f'Saved results not found: {source}. No models or analyses were run.')
-    notebook = repo / 'Code' / f'Stage1_{args.dataset}.ipynb'
+    notebook = repo / 'Code' / 'stage1' / f'Stage1_{args.dataset}.ipynb'
     document = json.loads(notebook.read_text(encoding='utf-8'))
     tag = f'{args.dataset}-figure-export'
     plot_cells = [cell for cell in document['cells']

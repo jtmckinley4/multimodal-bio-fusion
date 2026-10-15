@@ -75,7 +75,7 @@ class SourceDisplayTests(unittest.TestCase):
             path = CODE.joinpath(*obj.__module__.split(".")).with_suffix(".py")
             line, _ = _definition(path, obj.__qualname__)
             name = f"{obj.__module__.removeprefix('shared_code.')}.{obj.__qualname__}"
-            url = quote(path.relative_to(CODE).as_posix())
+            url = "../" + quote(path.relative_to(CODE).as_posix())
             links.append(f"[`{name}` (line {line})]({url}#L{line})")
         self.assertEqual(self.capture(*self.targets, full=False),
                          "Implementation: " + ", ".join(links))
@@ -96,7 +96,7 @@ class SavedSourceLinkTests(unittest.TestCase):
     def test_saved_compact_links_still_identify_the_displayed_definitions(self):
         pattern = re.compile(r"\[`([^`]+)` \(line (\d+)\)\]\(([^)]+)#L(\d+)\)")
         for notebook_name in ("Stage1_stability.ipynb", "Stage1_gtex.ipynb"):
-            notebook = json.loads((CODE / notebook_name).read_text(encoding="utf-8"))
+            notebook = json.loads((CODE / "stage1" / notebook_name).read_text(encoding="utf-8"))
             checked = 0
             for index, cell in enumerate(notebook["cells"]):
                 if cell["cell_type"] != "code":
@@ -116,7 +116,7 @@ class SavedSourceLinkTests(unittest.TestCase):
                     links = [match for text in compact for match in pattern.findall(text)]
                     self.assertEqual([link[0] for link in links], expected_names)
                     for name, label_line, url, anchor_line in links:
-                        path = (CODE / unquote(url)).resolve()
+                        path = (CODE / "stage1" / unquote(url)).resolve()
                         self.assertTrue(path.is_relative_to((CODE / "shared_code").resolve()))
                         module = ".".join(path.relative_to(CODE / "shared_code").with_suffix("").parts)
                         self.assertTrue(name.startswith(module + "."), f"Wrong source file for {name}.")

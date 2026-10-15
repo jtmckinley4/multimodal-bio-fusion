@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "Code"))
+sys.path.insert(0, str(REPO / "Code" / "stage1"))
 
 import pandas as pd  # noqa: E402
 

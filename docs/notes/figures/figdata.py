@@ -1,9 +1,9 @@
 """Stage 1 values used by the figure scripts.
 
-Every number here is a saved output of Code/Stage1_stability.ipynb or
-Code/Stage1_gtex.ipynb (the October 6 runs recorded in docs/run-records.md).
+Every number here is a saved output of Code/stage1/Stage1_stability.ipynb or
+Code/stage1/Stage1_gtex.ipynb (the October 6 runs recorded in docs/run-records.md).
 The 66-pair tables are read from CSVs recomputed read-only from the cached
-embeddings in Code/stage1_embeddings/; they reproduce the saved outputs.
+embeddings in Code/stage1/embeddings/; they reproduce the saved outputs.
 """
 import os
 import pandas as pd

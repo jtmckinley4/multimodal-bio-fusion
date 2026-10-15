@@ -1,6 +1,6 @@
 # Comparing representations
 
-Use this guide for the equations, notation, worked examples, and implementation details behind the [stability representation comparisons](../../Code/Stage1_stability.ipynb#Track-B:-Cross-modal-geometry). GTEx reuses these methods in [Track B](../../Code/Stage1_gtex.ipynb#GTEx-Track-B:-Cross-modal-geometry) and its [alignment and similarity diagnostics](../../Code/Stage1_gtex.ipynb#Alignment,-prediction-error,-and-representational-similarity-on-GTEx). The notebooks keep their experiment settings, outputs, and interpretations. Section return links lead to the stability walkthrough unless explicitly labeled GTEx; references to notebook cells and tables mean those linked cells, unless an explanatory table appears here.
+Use this guide for the equations, notation, worked examples, and implementation details behind the [stability representation comparisons](../../Code/stage1/Stage1_stability.ipynb#Track-B:-Cross-modal-geometry). GTEx reuses these methods in [Track B](../../Code/stage1/Stage1_gtex.ipynb#GTEx-Track-B:-Cross-modal-geometry) and its [alignment and similarity diagnostics](../../Code/stage1/Stage1_gtex.ipynb#Alignment,-prediction-error,-and-representational-similarity-on-GTEx). The notebooks keep their experiment settings, outputs, and interpretations. Section return links lead to the stability walkthrough unless explicitly labeled GTEx; references to notebook cells and tables mean those linked cells, unless an explanatory table appears here.
 
 All comparisons require corresponding rows to identify the same examples. Two encoders may have different feature widths. Similarity, fitted correspondence, and predictive benefit answer different questions; a high score on one does not establish the others. The [linear-probing guide](linear-probing.md) explains target prediction, and [From sequences to embeddings](inputs-and-embeddings.md) explains the inputs and pooling.
 
@@ -17,7 +17,7 @@ All comparisons require corresponding rows to identify the same examples. Two en
 
 ## Final-layer representation similarity: linear CKA
 
-Return to [Final-layer representation similarity: linear CKA](../../Code/Stage1_stability.ipynb#Final-layer-representation-similarity:-linear-CKA) in the notebook.
+Return to [Final-layer representation similarity: linear CKA](../../Code/stage1/Stage1_stability.ipynb#Final-layer-representation-similarity:-linear-CKA) in the notebook.
 
 Linear centered kernel alignment (CKA) compares the final-layer mean-pooled representations of the same retained examples, one pair of encoders at a time, for every pair in `PAIRS`. Corresponding rows refer to the same example, while the feature counts can differ.
 
@@ -118,7 +118,7 @@ If either centered representation is entirely zero, the denominator is zero and 
 
 ## Layerwise representation similarity: linear CKA
 
-Return to [Layerwise representation similarity: linear CKA](../../Code/Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) in the notebook.
+Return to [Layerwise representation similarity: linear CKA](../../Code/stage1/Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) in the notebook.
 
 The final-layer comparison gives one summary of representation similarity. This analysis asks whether that similarity changes with encoder depth by comparing every returned hidden state of one encoder with every returned hidden state of another, for every pair of encoders. A hidden state is the model's numerical representation at a particular point in its computation; it still contains one vector per token before pooling.
 
@@ -157,7 +157,7 @@ The slice `matrix[:, 1:]` keeps every state of the first encoder, including its 
 
 ## Neighborhood overlap across representations
 
-Return to [Neighborhood overlap across representations](../../Code/Stage1_stability.ipynb#Neighborhood-overlap-across-representations) in the notebook.
+Return to [Neighborhood overlap across representations](../../Code/stage1/Stage1_stability.ipynb#Neighborhood-overlap-across-representations) in the notebook.
 
 CKA summarizes similarity across representation matrices. Neighborhood overlap asks a more local question: for a particular retained row, are the examples nearest to it in one representation also nearest to it in another? The notebook computes it for every pair of encoders. Neighbor identities refer to the same paired rows in both matrices, not to equal feature coordinates.
 
@@ -199,7 +199,7 @@ The helper uses the default Euclidean distance of [`NearestNeighbors`](https://s
 
 ## Canonical correlation and cross-modal retrieval
 
-Return to [Canonical correlation and cross-modal retrieval](../../Code/Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval) in the notebook.
+Return to [Canonical correlation and cross-modal retrieval](../../Code/stage1/Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval) in the notebook.
 
 The previous metrics compare the representations without learning a cross-modal projection. Canonical correlation analysis (CCA) instead fits linear combinations of features that vary together across matched examples of two representations. The notebook fits a separate CCA for every pair of encoders, querying with the encoder that comes first in `ENCODER_KEYS` and searching the second; the matrices show each pair's value in both positions. The explanation below uses the first encoder's representation as $X$ and the second's as $Y$. It can reveal correspondence in selected directions even when a whole-matrix comparison is modest.
 
@@ -298,9 +298,9 @@ Training the transformations only on training rows avoids fitting those transfor
 
 ## Composition control
 
-Return to [Composition control](../../Code/Stage1_stability.ipynb#Composition-control) in the notebook.
+Return to [Composition control](../../Code/stage1/Stage1_stability.ipynb#Composition-control) in the notebook.
 
-The [layer-wise CKA](../../Code/Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) and [GC-content](../../Code/Stage1_stability.ipynb#GC-content-prediction) results suggest a hypothesis: the representations may agree largely because each tracks sequence composition. This analysis tests that hypothesis by removing composition from every embedding and repeating two of the preceding notebook comparisons.
+The [layer-wise CKA](../../Code/stage1/Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) and [GC-content](../../Code/stage1/Stage1_stability.ipynb#GC-content-prediction) results suggest a hypothesis: the representations may agree largely because each tracks sequence composition. This analysis tests that hypothesis by removing composition from every embedding and repeating two of the preceding notebook comparisons.
 
 **1. Describe each sequence by its composition.**
 
@@ -311,7 +311,7 @@ $$
 In this notation:
 
 - $s$ is one retained coding sequence, and $L(s)$ is its length in nucleotides.
-- $\mathrm{GC}(s)$ and $\mathrm{GC3}(s)$ are the GC fractions over the whole sequence and over third codon positions, as defined in [GC-content prediction](../../Code/Stage1_stability.ipynb#GC-content-prediction) and [GC3 prediction](../../Code/Stage1_stability.ipynb#GC3-prediction).
+- $\mathrm{GC}(s)$ and $\mathrm{GC3}(s)$ are the GC fractions over the whole sequence and over third codon positions, as defined in [GC-content prediction](../../Code/stage1/Stage1_stability.ipynb#GC-content-prediction) and [GC3 prediction](../../Code/stage1/Stage1_stability.ipynb#GC3-prediction).
 - $\log$ is the natural logarithm.
 - $c_k(s)$ is the frequency of codon $k$, for the 64 possible codons in a fixed order, among the sequence's complete codons. The 64 frequencies sum to 1 when every counted codon contains only A, C, G, and T; the preliminary sequence filter does not itself establish that alphabet condition.
 - $a_m(s)$ is the frequency of amino acid $m$, for the 20 standard amino acids, in the translated protein.
@@ -344,7 +344,7 @@ where $\lVert\cdot\rVert_F^2$ sums the squares of every entry and $\bar X$ repea
 
 **3. Repeat the comparisons on the residuals.**
 
-For every pair of encoders, the cell reports linear CKA and CCA Recall@1 before and after residualization. Recall@1 uses the same PCA-CCA pipeline and the same `train_idx` and `test_idx` rows as [Canonical correlation and cross-modal retrieval](#canonical-correlation-and-cross-modal-retrieval), so its "before" value should match the Recall@1 printed in the [earlier notebook retrieval output](../../Code/Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval).
+For every pair of encoders, the cell reports linear CKA and CCA Recall@1 before and after residualization. Recall@1 uses the same PCA-CCA pipeline and the same `train_idx` and `test_idx` rows as [Canonical correlation and cross-modal retrieval](#canonical-correlation-and-cross-modal-retrieval), so its "before" value should match the Recall@1 printed in the [earlier notebook retrieval output](../../Code/stage1/Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval).
 
 **Interpretation.** Residualization removes the fitted linear component associated with the specified features on these rows. A decrease shows that the comparison is sensitive to removing that component. Nonlinear composition effects and other shared influences can remain, so residual agreement alone does not identify a biological mechanism.
 
@@ -354,7 +354,7 @@ For every pair of encoders, the cell reports linear CKA and CCA Recall@1 before 
 
 ## High- and low-variance directions
 
-Return to [High- and low-variance directions](../../Code/Stage1_stability.ipynb#High--and-low-variance-directions) in the notebook.
+Return to [High- and low-variance directions](../../Code/stage1/Stage1_stability.ipynb#High--and-low-variance-directions) in the notebook.
 
 An embedding's variance is usually concentrated in a few directions. This analysis asks whether agreement between encoders, composition, and stability signal sit in those dominant directions or in the many low-variance ones. The protein encoders are the main case: they agree strongly with each other, even after the composition control, and the question is which directions carry that agreement.
 
@@ -381,11 +381,11 @@ The PCA is fit on all rows without the stability labels, so held-out rows help c
 
 ## Sample-level alignment and prediction error
 
-Return to [Sample-level alignment and prediction error](../../Code/Stage1_stability.ipynb#Sample-level-alignment-and-prediction-error) in the notebook.
+Return to [Sample-level alignment and prediction error](../../Code/stage1/Stage1_stability.ipynb#Sample-level-alignment-and-prediction-error) in the notebook.
 
 This diagnostic asks whether examples whose representations in two modalities are more similar also tend to be easier to predict. It is run once for every pair of encoders. It is an **exploratory sample-level adaptation** inspired by [Tjandrasuwita et al. (ICML 2025), Sections 5-6](https://proceedings.mlr.press/v267/tjandrasuwita25a.html). The paper studies relationships across models/configurations and a contrastive-training intervention; this code compares examples from one fixed encoder pair at a time. It does not reproduce those experiments.
 
-For each pair `(a, b)`, the call in [Run and interpret the alignment diagnostics](../../Code/Stage1_stability.ipynb#Run-and-interpret-the-alignment-diagnostics) supplies the two coordinate matrices stored in `cca_results[(a, b)]["test_coords"]` and `labels[test_idx]`: matched CCA coordinates and stability labels from the earlier CCA test subset. Corresponding rows must identify the same examples. The encoder weights and the earlier fitted PCA/CCA transformations remain fixed here; the new models fitted in this diagnostic are ordinary linear regressions.
+For each pair `(a, b)`, the call in [Run and interpret the alignment diagnostics](../../Code/stage1/Stage1_stability.ipynb#Run-and-interpret-the-alignment-diagnostics) supplies the two coordinate matrices stored in `cca_results[(a, b)]["test_coords"]` and `labels[test_idx]`: matched CCA coordinates and stability labels from the earlier CCA test subset. Corresponding rows must identify the same examples. The encoder weights and the earlier fitted PCA/CCA transformations remain fixed here; the new models fitted in this diagnostic are ordinary linear regressions.
 
 **1. Compare the directions of each example's paired CCA vectors.**
 
@@ -462,9 +462,9 @@ The earlier stability CCA split groups identical sequence strings; the GTEx CCA 
 
 ## Representational similarity analysis
 
-Return to [Representational similarity analysis](../../Code/Stage1_stability.ipynb#Representational-similarity-analysis) in the notebook.
+Return to [Representational similarity analysis](../../Code/stage1/Stage1_stability.ipynb#Representational-similarity-analysis) in the notebook.
 
-Representational similarity analysis (RSA) asks whether pairs of examples that are dissimilar within one representation also tend to be dissimilar within the other. For every pair of encoders, the call in [Run and interpret the alignment diagnostics](../../Code/Stage1_stability.ipynb#Run-and-interpret-the-alignment-diagnostics) supplies the two original final-layer matrices from `EMBEDDINGS`, rather than the CCA projections. Corresponding rows must identify the same examples in the same order; the feature counts can differ. This diagnostic fits no predictor or projection.
+Representational similarity analysis (RSA) asks whether pairs of examples that are dissimilar within one representation also tend to be dissimilar within the other. For every pair of encoders, the call in [Run and interpret the alignment diagnostics](../../Code/stage1/Stage1_stability.ipynb#Run-and-interpret-the-alignment-diagnostics) supplies the two original final-layer matrices from `EMBEDDINGS`, rather than the CCA projections. Corresponding rows must identify the same examples in the same order; the feature counts can differ. This diagnostic fits no predictor or projection.
 
 **1. Center each example across its own features.**
 
