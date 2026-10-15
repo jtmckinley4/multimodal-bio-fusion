@@ -34,7 +34,7 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 [MLA, Beyond Citation: Describing AI Use in Your Work](https://style.mla.org/describing-ai-use/).
 
-**Why retain it:** It informed the distinction between citing underlying evidence and explaining an assistant's role in the [literature review](<Literature Review - Biological Foundation Models.docx>), under Preparation and AI Assistance.
+**Why retain it:** It informed the distinction between citing underlying evidence and explaining an assistant's role in the [literature review](<annotated-Literature Review - Biological Foundation Models-2.pdf>), under Preparation and AI Assistance.
 
 **Reading scope and limits:** The editorial guidance was checked on October 5, 2026. It is writing guidance, not biological evidence or a statement of the professor's policy. Its relevance belongs beside the disclosure, separate from the scientific Works Cited.
 
@@ -64,7 +64,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [bioRxiv 2025.07.05.662870](https://www.biorxiv.org/content/10.1101/2025.07.05.662870v1) and the [repository](https://github.com/morrislab/mRNABench).
 
-**Why retain it:** Ten mature-mRNA datasets and 59 subtasks with homology-aware splits, and evidence that random splits overestimate generalization. Supplies the half-life and translation-efficiency tasks (research plan add-on 4) and the grouped evaluation in the common rules.
+**Why retain it:** Ten mature-mRNA datasets and 59 subtasks with homology-aware splits, and evidence that random splits overestimate generalization. Supplies the half-life and translation-efficiency tasks (research plan items 3 and 4) and the grouped evaluation in the common rules.
 
 **Reading scope and limits:** Abstract and task catalog read on October 10, 2026; the dataset gates (UTRs, coding-sequence coordinates, grouped splits) still have to be verified on the files before any run.
 
@@ -96,7 +96,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [bioRxiv 2024.05.10.592927](https://www.biorxiv.org/content/10.1101/2024.05.10.592927v1), [model](https://github.com/LucaOne/LucaOne), [embedding app](https://github.com/LucaOne/LucaOneApp).
 
-**Why retain it:** One encoder and one vocabulary for nucleic acid and protein; 1,280-token limit; inputs embedded separately. The jointly pretrained baseline (add-on 3).
+**Why retain it:** One encoder and one vocabulary for nucleic acid and protein; 1,280-token limit; inputs embedded separately. The jointly pretrained baseline (research plan item 2).
 
 **Reading scope and limits:** Full text summarized on October 10, 2026; the input limit has to be checked against the stability and GTEx files before extraction.
 
@@ -104,7 +104,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [arXiv 2505.16896](https://arxiv.org/abs/2505.16896).
 
-**Why retain it:** Contrastive alignment of a protein language model's residue states to a structure encoder; a different sense of alignment (sequence to structure within one molecule), named in the Overleaf so it is not confused with alignment across molecules; a candidate structure feature for add-on 6.
+**Why retain it:** Contrastive alignment of a protein language model's residue states to a structure encoder; a different sense of alignment (sequence to structure within one molecule), named in the Overleaf so it is not confused with alignment across molecules; a candidate structure feature for research plan item 6.
 
 **Reading scope and limits:** Abstract read on October 10, 2026.
 
@@ -112,7 +112,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [arXiv 2407.11242](https://arxiv.org/abs/2407.11242), AAAI 2025.
 
-**Why retain it:** Sequence-structure alignment in an RNA foundation model with bidirectional mappings; the same sense of alignment on the RNA side; a candidate RNA encoder and structure source for add-on 6.
+**Why retain it:** Sequence-structure alignment in an RNA foundation model with bidirectional mappings; the same sense of alignment on the RNA side; a candidate RNA encoder and structure source for research plan item 6.
 
 **Reading scope and limits:** Abstract read on October 10, 2026.
 

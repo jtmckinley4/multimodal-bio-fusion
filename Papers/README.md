@@ -1,6 +1,6 @@
 # Research paper library
 
-Start with BioLangFusion and IsoFormer to understand the two central fusion approaches, then use the papers below to follow their models, measurements, and biological assumptions. The [literature review](<../docs/Literature Review - Biological Foundation Models.docx>) develops the cross-paper discussion; the [annotated bibliography](../docs/Annotated_Bibliography.docx) retains formal citation and annotation detail.
+Start with BioLangFusion and IsoFormer to understand the two central fusion approaches, then use the papers below to follow their models, measurements, and biological assumptions. The [literature review](<../docs/annotated-Literature Review - Biological Foundation Models-2.pdf>) develops the cross-paper discussion; the [annotated bibliography](../docs/Annotated_Bibliography.docx) retains formal citation and annotation detail.
 
 **Core** groups the original project readings and encoders named in the [research canvas](../docs/Research_Canvas.pptx). **Supporting** groups background, methods, and benchmarks used in the literature review. These categories describe project roles, not a ranking of scientific validity or a requirement to read everything in order.
 

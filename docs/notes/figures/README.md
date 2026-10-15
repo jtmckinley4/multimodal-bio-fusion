@@ -1,7 +1,7 @@
 # Stage 1 figures
 
-Six figures covering the Stage 1 results, as PDF (vector, for Overleaf) and PNG
-(220 dpi, for slides). `all_figures.pdf` holds all six in order.
+Every figure the Overleaf manuscript includes is in `paper/`, as PDF (vector,
+for Overleaf) and PNG (for slides). Six of them cover the main Stage 1 results:
 
 | File | What it shows |
 | --- | --- |
@@ -37,10 +37,15 @@ Six figures covering the Stage 1 results, as PDF (vector, for Overleaf) and PNG
 
 ```bash
 cd docs/notes/figures
-python make_figures.py out
+python make_paper_figures.py paper
+python make_task_figure.py paper
+python make_alignment_figure.py paper
 ```
 
-Needs matplotlib, numpy, pandas and scipy. `figdata.py` holds the per-encoder
+`make_figures.py` holds the plotting code for the six figures above, which
+`make_paper_figures.py` re-renders for the manuscript; run on its own
+(`python make_figures.py out`) it writes versions with an embedded title and
+caption to a separate folder. Needs matplotlib, numpy, pandas and scipy. `figdata.py` holds the per-encoder
 values, all of them saved outputs of `Code/Stage1_stability.ipynb` and
 `Code/Stage1_gtex.ipynb` from the October 6 runs in
 [run records](../../run-records.md#recorded-runs). The `*_geom.csv`,
@@ -51,17 +56,9 @@ print.
 
 ## Paper figures
 
-`paper/` holds the figures the Overleaf manuscript includes, built by
-`make_paper_figures.py` from the same values and tables as the six above:
-
-```bash
-cd docs/notes/figures
-python make_paper_figures.py paper
-```
-
-The six figures above are re-rendered there without their embedded title and
-caption (the LaTeX caption carries that text) and with larger type, so they
-stay legible at the text width of a letter page. Fourteen further figures come from
+In `paper/` the six figures above have no embedded title or caption (the LaTeX
+caption carries that text) and larger type, so they stay legible at the text
+width of a letter page. Fifteen further figures come from
 the 66-pair tables and from values recorded in the manuscript:
 
 | File | What it shows |
@@ -76,8 +73,8 @@ the 66-pair tables and from values recorded in the manuscript:
 | `alignment_vs_error` | Spearman rho between per-sequence alignment and prediction error for all 66 pairs on both datasets. |
 | `codon_grid` | Schematic of positional alignment: the codon grid on the stability data and its absence on GTEx. |
 | `fusion_architectures` | Schematic of the three Stage 3 designs: concatenation + MLP, Coupled Mamba on the codon grid (priority 1), cross-attention (priority 2). |
-| `blf_pipeline` | The research plan's add-on baseline: the BioLangFusion architecture (codon grid, three heads, TextCNN) reproduced then run with swapped encoders; pooled or region-aware fusion where no grid exists; LucaOne and the Stage 3 designs it is compared with. |
-| `project_logic` | The chain of stages: the question each stage asks, what it found or will test, and what that forces next, with the research plan's add-ons and the October papers placed in the chain. |
-| `research_plan` | The research plan's seven add-ons (BioLangFusion reproduction, encoder swaps, LucaOne, full-transcript tasks, the mRFP control, structure, distillation) and where each slots into the tiers and the Gantt chart. |
+| `blf_pipeline` | Research plan item 1: the BioLangFusion architecture (codon grid, three heads, TextCNN) reproduced then run with swapped encoders; pooled or region-aware fusion where no grid exists; LucaOne and the Stage 3 designs it is compared with. |
+| `project_logic` | The chain of stages: the question each stage asks, what it found or will test, and what that forces next, with the research plan's seven items and the October papers placed in the chain. |
+| `research_plan` | The research plan's seven items under its own numbers (1 BioLangFusion reproduction and encoder swaps, 2 LucaOne, 3 half-life, 4 translation efficiency, 5 the mRFP control, 6 structure, 7 distillation) and where each slots into the tiers and the Gantt chart. |
 | `task_coverage` | Candidate Stage 4 datasets grouped by the question they answer, the regions, molecules, and design properties each provides, and the research plan's priority for each, including COMET's multi-molecule and cross-molecule tasks (built by `make_task_figure.py`). |
 | `alignment_in_biology` | Conceptual figure for Stage 2: alignment in machine learning, the central dogma's one-way information loss, and what follows for alignment (built by `make_alignment_figure.py`). |

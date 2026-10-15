@@ -719,7 +719,7 @@ def fig_architectures():
     return fig
 
 
-# --------------------------------------------- BioLangFusion reproduction pipeline (add-on baseline)
+# --------------------------------------------- BioLangFusion reproduction pipeline (research plan item 1)
 def fig_blf_pipeline():
     fig, axes = plt.subplots(1, 3, figsize=(11.4, 5.0), gridspec_kw={"width_ratios": [1.45, 1.0, 0.75]})
     fig.subplots_adjust(left=0.01, right=0.99, top=0.90, bottom=0.02, wspace=0.05)
@@ -738,7 +738,7 @@ def fig_blf_pipeline():
         ax.set_xlim(0, 100); ax.set_ylim(0, 100); ax.axis("off")
 
     ax = axes[0]
-    panel_title(ax, "a   BioLangFusion, reproduced then encoders swapped")
+    panel_title(ax, "a   Plan item 1: reproduce BioLangFusion, then swap encoders")
     cols = ((2, "DNA", DNA, "NT v2 100M\n6-mer tokens", "swap: NT 500M,\nDNABERT-2, HyenaDNA", "TConv k=2, s=2\n(2 codons per token)"),
             (35, "mRNA", RNA, "RNA-FM\nnucleotide tokens", "swap: CaLM,\nmRNA-FM, RiNALMo", "AvgPool k=3, s=3\n(3 tokens per codon)"),
             (68, "protein", PROT, "ESM-2 8M\namino-acid tokens", "swap: ESM-2 150M,\nProtBERT", "identity\n(1 residue per codon)"))
@@ -781,7 +781,7 @@ def fig_blf_pipeline():
 
     ax = axes[2]
     panel_title(ax, "c   Compared with")
-    box(ax, 6, 70, 88, 20, "LucaOne (add-on baseline)\none model, shared 39-token vocabulary\nfor nucleic acid and protein;\nembeds each input separately,\n1,280-token limit", fs=6.3, ec=INK, colour=INK)
+    box(ax, 6, 70, 88, 20, "LucaOne (plan item 2)\none model, shared 39-token vocabulary\nfor nucleic acid and protein;\nembeds each input separately,\n1,280-token limit", fs=6.3, ec=INK, colour=INK)
     ax.text(50, 60, "jointly pretrained alternative to\nfusing separately pretrained encoders",
             ha="center", va="center", fontsize=6.3, color=MUTED, style="italic", linespacing=1.3)
     box(ax, 6, 30, 88, 20, "the Stage 3 designs (Figure 17)\nCoupled Mamba on the codon grid\n(priority 1, Gantt 20 to 21);\nIsoFormer-style cross-attention\n(priority 2, Gantt 25)", fs=6.3, ec=INK, colour=INK)
@@ -824,11 +824,11 @@ def fig_logic():
          "Forces: architectures that let modalities\ninteract without forcing similarity.")
     card(xs[2], top, w, h, "Stage 3  Fusion design",
          "How do we combine the encoders,\ngiven the Stage 2 decision?",
-         "Floor: concatenation + MLP.\nPriority 1: Coupled Mamba on the codon grid\n(coding sequence; interaction through the\nrecurrence, nothing forces similarity).\nPriority 2: IsoFormer-style cross-attention\n(GTEx; learns correspondence, no grid).\nAdd-on baselines: BioLangFusion reproduced\nexactly (the published system on identical\nsplits; its attention head is the simple\nfusion baseline of Fusion or Confusion);\nLucaOne (joint pretraining instead of fusion).",
+         "Floor: concatenation + MLP.\nArchitecture priority 1: Coupled Mamba on\nthe codon grid (coding sequence; interaction\nthrough the recurrence, no forced similarity).\nArchitecture priority 2: IsoFormer-style\ncross-attention (GTEx; no grid needed).\nResearch plan baselines: item 1, BioLangFusion\nreproduced exactly (the published system on\nidentical splits; its attention head is the\nsimple fusion baseline of Fusion or Confusion);\nitem 2, LucaOne (joint pretraining, not fusion).",
          "Forces: every design is scored against\nthe reproduced heads on identical splits.")
     card(xs[3], top, w, h, "Stage 4  Experiments, benchmarking",
          "Does fusion help, for which task, and\ncould Stage 1 have told us in advance?",
-         "In order: baselines and controls (mRFP);\nBioLangFusion reproduction; Coupled Mamba\nvs the reproduced heads; ablations (encoder\nswaps, alignment loss, grid); the task set,\neach dataset isolating one question; the\nmethod test: do Stage 1 metrics predict\nΔfusion?\n\"Which RNA with which DNA for which task\" =\nencoder swaps under a fixed architecture\nacross that task set. COMET adds multi-\nmolecule tasks with published combinations;\nmRNABench adds homology-aware splits.",
+         "The research plan's items in its order:\n(1) BioLangFusion reproduced, then encoder\nswaps; (2) LucaOne; (3) half-life; (4)\ntranslation efficiency; (5) mRFP control;\n(6) structure, optional; (7) distillation,\nexploratory. Around them: baselines,\nCoupled Mamba vs the reproduced heads,\nablations (alignment loss, grid), the task\nset, and the method test: do Stage 1\nmetrics predict Δfusion? COMET adds multi-\nmolecule tasks with published combinations;\nmRNABench adds homology-aware splits.",
          "Delivers: a tested decision method, or\nevidence that frozen geometry does not\ntransfer.")
     for i in range(3):
         arrow(xs[i] + w, top + h / 2, xs[i + 1], top + h / 2)
@@ -853,27 +853,29 @@ def fig_plan():
         ax.add_patch(FancyArrowPatch((x1, y1), (x2, y2), arrowstyle="-|>", mutation_scale=10, color=c, lw=1.0,
                                      shrinkA=1, shrinkB=1, zorder=1))
 
-    top = 58; h = 40; w = 22.4; gap = 2.0
-    xs = [1.0 + i * (w + gap) for i in range(4)]
-    card(xs[0], top, w, h, "Add-on 1  Reproduce BioLangFusion",
-         "Phase A. Its encoders (NT v2 100M,\nRNA-FM, ESM-2 8M), codon grid, three\nheads, TextCNN; published splits and\nrecipe. Five benchmarks: Fungal,\nE. coli, mRNA stability, Ab1, CoV-Vac.\nGate: match the published scores or\nrecord each deviation.\nSlots into Tier 2, Gantt 17.")
-    card(xs[1], top, w, h, "Add-on 2  Change encoders only",
-         "Phase B. Same splits, grid, heads, head\nand evaluation; one encoder swapped at\na time (CaLM, mRNA-FM, ProtBERT, other\nDNA encoders), then triples.\nReport: published, reproduced, best\nsingle, each head, each swap, gain.\nStage 1 says which swaps should gain.\nSlots into Tier 3, Gantt 24 (now planned).")
-    card(xs[2], top, w, h, "Add-on 3  LucaOne, jointly pretrained",
-         "One model for nucleic acid and protein,\nfrozen; same folds and head on stability\nand GTEx. Verify input limits (1,280\ntokens) and sequence types first.\nCompare against the best single encoder\nand the best fusion; report cost and\ntruncation.\nSlots into Tier 2, beside Gantt 16 and 17.")
-    card(xs[3], top, w, h, "Add-on 4  Full-transcript tasks",
-         "Half-life (Saluki human, mouse; LBKWK)\nand translation efficiency (TE human,\nmouse; MRL Sugimoto). Gates: UTRs and\nCDS coordinates present, labels distinct,\ngrouped non-leaking splits. Compare\nCDS-only, CDS + 3' UTR, full transcript,\n+ protein; gain over the best full-\ntranscript baseline. Tier 4, Gantt 38.")
-    for i in range(3):
+    top = 60; h = 36; w = 18.0; gap = 2.0
+    xs = [1.0 + i * (w + gap) for i in range(5)]
+    card(xs[0], top, w, h, "Item 1  Priority 1, Phase A",
+         "Reproduce BioLangFusion exactly:\nits encoders (NT v2 100M, RNA-FM,\nESM-2 8M), codon grid, three heads,\nTextCNN; published splits, recipe.\nFungal, E. coli, mRNA stability,\nAb1, CoV-Vac. Gate: match the\npublished scores or record each\ndeviation. Tier 2, Gantt 17.", fs=6.1)
+    card(xs[1], top, w, h, "Item 1  Priority 1, Phase B",
+         "Change the encoders only: same\nsplits, grid, heads, TextCNN and\nevaluation; one encoder swapped\nat a time (CaLM or other codon\nmodels, mRNA-FM, ProtBERT, other\nDNA encoders), then triples, on\nFungal, E. coli, mRNA stability,\nAb1 (CoV-Vac if feasible). Gantt 24.", fs=6.1)
+    card(xs[2], top, w, h, "Item 2  Priority 2",
+         "LucaOne, jointly pretrained and\nfrozen; same folds and head on\nstability and GTEx. Verify the\n1,280-token limit and sequence\ntypes first. Compare with the best\nsingle encoder and the best fusion;\nreport cost and truncation.\nTier 2, Gantt 41.", fs=6.1)
+    card(xs[3], top, w, h, "Item 3  Priority 3",
+         "Full-transcript half-life (Saluki\nhuman, mouse; LBKWK half-life).\nGate: UTRs, CDS coordinates,\nlabels, grouped splits. CDS only\nvs CDS + 3' UTR vs full transcript,\n+ protein for the CDS; length and\ncomposition baselines.\nTier 4, Gantt 42, conditional.", fs=6.1)
+    card(xs[4], top, w, h, "Item 4  Priority 4",
+         "Translation efficiency (TE human,\nmouse; MRL Sugimoto; LBKWK MRL),\neach target on its own split.\n5' UTR, CDS, full transcript,\n+ protein, three-encoder fusion;\nRiboNN as external benchmark;\ngain over best full transcript.\nTier 4, Gantt 42, conditional.", fs=6.1)
+    for i in range(4):
         arrow(xs[i] + w, top + h / 2, xs[i + 1], top + h / 2)
 
-    bot = 16; hb = 37
-    card(1.0, bot, 30.5, hb, "Add-on 5, parallel  mRFP control",
+    bot = 18; hb = 35
+    card(1.0, bot, 30.5, hb, "Item 5  Low-cost control, in parallel: mRFP",
          "Cached embeddings and labels in hand. Protein\nis identical by construction, so protein encoders\nare an invariant negative control; nucleotide\nencoders against GC3, codon-use and structure\nproxies. Tests representation specificity, not\nfusion. Tier 1, Gantt 18.", ec=AXIS)
-    card(33.5, bot, 30.5, hb, "Add-on 6, later  Structure features",
-         "Only on a task where structure plausibly acts.\nProtein: sequence vs + ESMFold vs + AlphaFold2\nfeatures. RNA: sequence vs + predicted pairing\n(RNAfold thermodynamic vs EternaFold, MXfold2).\nReport gains over sequence-only and over simple\nstructure features. Conditional, Gantt 38.", ec=AXIS)
-    card(66.0, bot, 33.0, hb, "Add-on 7, exploratory  Multi-teacher distillation",
-         "Distill the DNA, RNA and protein teachers into one\ncompact student per modality with a relational loss\n(match each teacher's cosine-similarity matrix through\nits own projection), then fuse the students. A new\nhypothesis; not implemented before the core work.\nStage 1 bears on it: much teacher similarity is\ncomposition.", ec=AXIS, ls=(0, (3, 2)))
-    ax.text(50, 6.5, "Add-ons to the Stage 3 and 4 design and to the Gantt chart (as of October 3; dates subject to change). Coupled Mamba stays the priority architecture (Gantt 20 to 21).\nEvery result reports Δfusion = Perf(fused) minus the best single encoder, confidence intervals, and the baselines B0 to B5.",
+    card(33.5, bot, 30.5, hb, "Item 6  Optional extension: structure",
+         "After the core benchmarks, only on a task where\nstructure plausibly acts. Protein: sequence vs\n+ ESMFold vs + AlphaFold2 features. RNA: sequence\nvs + predicted pairing (RNAfold vs EternaFold,\nMXfold2). Gains over sequence-only and simple\nstructure features. Gantt 38, conditional.", ec=AXIS)
+    card(66.0, bot, 33.0, hb, "Item 7  Exploratory: multi-teacher distillation",
+         "Six DNA, five RNA and four protein teachers (the\ntwelve Stage 1 encoders plus two DNA and one RNA)\ndistilled into one compact student per modality by\nmatching each teacher's cosine-similarity matrix\nthrough its own projection, then the students fused.\nThink it through now; Gantt 43, conditional.", ec=AXIS, ls=(0, (3, 2)))
+    ax.text(50, 6.0, "The research plan's seven items in its own order, on top of the Stage 3 and 4 design (Gantt chart as of October 15; dates subject to change). Coupled Mamba stays the priority architecture (Gantt 20 to 21).\nEvery result reports Δfusion = Perf(fused) minus the best single encoder, confidence intervals, and the baselines B0 to B5.",
             ha="center", va="center", fontsize=6.8, color=MUTED, style="italic", linespacing=1.4)
     return fig
 
