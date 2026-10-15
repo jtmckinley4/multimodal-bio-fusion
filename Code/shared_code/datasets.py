@@ -79,6 +79,13 @@ DATASETS = {
         DatasetSpec("mrfp_expression", "mRFP expression (synonymous-recoding control)",
                     "mRFP_Expression.csv", "Sequence", "Value",
                     task="regression", setting="derived", split_column="Split", source=_CODONBERT),
+        DatasetSpec("fungal_expression", "Fungal expression", "Fungal_expression.csv", "Sequence", "Value",
+                    task="regression", setting="derived", split_column="Split", source=_CODONBERT),
+        DatasetSpec("ecoli_proteins", "E. coli protein expression (low, medium, high)", "E.Coli_proteins.csv",
+                    "Sequence", "Value",
+                    task="classification", setting="derived", split_column="Split", source=_CODONBERT),
+        DatasetSpec("cov_vac_degradation", "CoV-Vac degradation", "CoV_Vaccine_Degradation.csv", "Sequence", "Value",
+                    task="regression", setting="derived", split_column="Split", source=_CODONBERT),
         DatasetSpec("gtex_pilot", "GTEx transcript expression, 2,000-transcript pilot", "GTEx_pilot.csv",
                     "CDS", "", task="regression", setting="distinct", split_column="split",
                     source=_ISOFORMER, label_columns=GTEX_TISSUES, group_column="gene_id",
@@ -86,6 +93,45 @@ DATASETS = {
                                    "utr5": "5UTR", "utr3": "3UTR"}),
     ]
 }
+
+
+# BioLangFusion's five benchmarks. Ab1 is not registered: its file is not in the public
+# CodonBERT release, and Code/stage3/01_blf_datasets.ipynb records what is known about it.
+BLF_BENCHMARKS = ("fungal_expression", "ecoli_proteins", "mrna_stability", "cov_vac_degradation")
+
+# BioLangFusion states a 1,000-token input limit for its encoders. Keeping sequences of at
+# most 999 nucleotides reproduces its reported "used" counts exactly on all four registered
+# benchmarks (3,138 fungal, 4,450 E. coli, 23,929 mRNA stability, 2,400 CoV-Vac), so the
+# limit is read as 999 nucleotides plus one start token, and longer sequences are dropped
+# rather than truncated.
+BLF_LENGTH_LIMIT = 999
+
+
+def blf_benchmark_rows(key, split=None, data_dir=DEFAULT_DATA_DIR, length_limit=BLF_LENGTH_LIMIT):
+    """Return one BioLangFusion benchmark's rows under its published preprocessing.
+
+    Keeps the file's own ``Split`` assignment and drops sequences longer than length_limit
+    nucleotides; with split, returns only that split's rows. The returned frame carries the
+    original file index, the stripped uppercase sequence in a ``sequence`` column, and its
+    ``length``.
+
+    The Stage 1 filters of is_retained are deliberately not applied: they require an in-frame
+    ATG start, which holds for only 1.6% of the 81-nucleotide CoV-Vac fragments, so applying
+    them would discard a benchmark BioLangFusion reports. How each stream reaches the codon
+    grid, including the protein stream for sequences without a start codon, is decided in the
+    reproduction itself rather than here.
+    """
+    if key not in BLF_BENCHMARKS:
+        raise ValueError(f"{key} is not one of the registered BioLangFusion benchmarks: {BLF_BENCHMARKS}")
+    spec = DATASETS[key]
+    df = pd.read_csv(os.path.join(data_dir, spec.path)).dropna(subset=[spec.sequence_column])
+    df = df.assign(sequence=df[spec.sequence_column].astype(str).str.strip().str.upper())
+    df = df.assign(length=df["sequence"].str.len())
+    if split is not None:
+        if split not in set(df[spec.split_column]):
+            raise ValueError(f"{key} has no {split!r} split; it has {sorted(set(df[spec.split_column]))}")
+        df = df[df[spec.split_column] == split]
+    return df[df["length"] <= length_limit]
 
 
 def is_retained(seq):

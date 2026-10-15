@@ -39,7 +39,7 @@ Mina's [research plan](<docs/Multimodal_Research Plan .docx>) comes first. Its b
 | Location | Contents |
 | --- | --- |
 | [Code/](Code/) | One folder per stage. [stage1/](Code/stage1/README.md) holds the two Stage 1 notebooks, the script that builds the GTEx pilot, and the local embedding caches; [stage3/](Code/stage3/README.md) builds and checks the fusion models; [stage4/](Code/stage4/README.md) runs the experiments. Stage 2 was a decision and has no code. |
-| [datasets/](datasets/) | The three supplied CSV inputs; their sources and contents are described in [Data](#data). |
+| [datasets/](datasets/) | The six supplied CSV inputs: the five CodonBERT benchmark files and the GTEx pilot. Their sources and contents are described in [Data](#data). |
 | [Code/shared_code/](Code/shared_code/) | Reusable Python functions called by every stage's notebooks: load datasets and encoders, prepare sequences, assign evaluation folds, extract embeddings, and calculate analyses. Follow notebook source links when you want to inspect a calculation. Stage 3's fusion models go in [Code/shared_code/fusion/](Code/shared_code/fusion/). |
 | [docs/](docs/README.md) | The Stage 1 overview, shared method explanations, research plans, bibliography, literature review, and selected sources. |
 | [Code/stage1/build_gtex_pilot.py](Code/stage1/build_gtex_pilot.py) | Rebuilds the GTEx pilot CSV from external source data. The CSV is already included; this script is only needed to rebuild it. See [Data](#data) for its source and contents. |
@@ -86,6 +86,9 @@ The input datasets are included as CSV tables in `datasets/`. The notebooks load
 
 - [mRFP_Expression.csv](datasets/mRFP_Expression.csv): 1,459 rows containing 1,455 distinct sequence strings, from synonymous codon randomization of one gene.
 - [mRNA_Stability.csv](datasets/mRNA_Stability.csv): 65,356 rows containing 29,949 distinct sequence strings.
+- [Fungal_expression.csv](datasets/Fungal_expression.csv): 7,089 coding sequences with an expression label, the first BioLangFusion benchmark.
+- [E.Coli_proteins.csv](datasets/E.Coli_proteins.csv): 6,348 coding sequences labeled low, medium, or high expression; the one classification benchmark.
+- [CoV_Vaccine_Degradation.csv](datasets/CoV_Vaccine_Degradation.csv): 2,400 fixed-length 81-nucleotide vaccine-construct fragments with a degradation label.
 - [GTEx_pilot.csv](datasets/GTEx_pilot.csv): 2,000 protein-coding human transcripts from [IsoFormer's GTEx transcript-expression table](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression), 1,000 from its published train split and 1,000 from its test split, each with its expression in 30 tissues. Each row holds the transcript, its untranslated regions and coding sequence, its protein, and 6,000 nucleotides of GRCh38 DNA centered on its transcription start site. [build_gtex_pilot.py](Code/stage1/build_gtex_pilot.py) produced it: it downloads IsoFormer's table, samples the transcripts, and reads the DNA windows from the [Ensembl REST service](https://rest.ensembl.org/documentation/info/sequence_region_post).
 
 These counts describe the included CSVs before notebook filtering or subsampling.
@@ -99,7 +102,7 @@ The [dataset audit in the stability notebook](Code/stage1/Stage1_stability.ipynb
 - The `Split` column assigns 45,749 rows to train, 9,803 to validation, and 9,804 to test. Of the 8,283 distinct test sequences, 5,392 also occur in training.
 - 12,844 sequences occur more than once, and 12,775 of those carry differing `Value` labels; the median standard deviation of labels within one sequence is 0.49.
 - 37% of rows are at most 1,000 nucleotides, so single-nucleotide encoders with a limit near 1,000 tokens see truncated input for most sequences.
-- [BioLangFusion](Papers/core/BioLangFusion.pdf), Appendix A.2, reports 41,123 raw and 23,929 used mRNA stability sequences with the CodonBERT splits. Whether this file is the same version, and which filtering produced 23,929, is unresolved.
+- [BioLangFusion](Papers/core/BioLangFusion.pdf), Appendix A.2, reports 41,123 raw and 23,929 used mRNA stability sequences with the CodonBERT splits. [The Stage 3 dataset step](Code/stage3/01_blf_datasets.ipynb) resolves the filtering: keeping sequences of at most 999 nucleotides reproduces 23,929 here, and the same rule reproduces the used counts of the three other benchmarks. The raw counts still disagree (41,123 reported against 65,356 here), so this file is a different release of the benchmark; that part is unresolved.
 
 Comparisons with published numbers should therefore use the official split, while leakage-free estimates need a deduplicated, sequence-disjoint split. The CSVs were sourced from the fine-tuning benchmark data in [Sanofi-Public/CodonBERT](https://github.com/Sanofi-Public/CodonBERT/tree/master/benchmarks/CodonBERT/data/fine-tune). Their inclusion supplies the notebook inputs; interpreting a prediction still requires checking the source assay, labels, and retained sequence regions.
 
