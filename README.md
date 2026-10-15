@@ -32,6 +32,8 @@ The two experiments supply different biological context. In the stability experi
 
 Coupled Mamba's priority was agreed at the September 23, 2026 online meeting. The [meeting slides](docs/notes/Mina_Meeting_Slides_2026-09-23.pptx), slide 6, list the primary and fallback architectures. Concatenation + MLP is the reference baseline in the research design.
 
+Mina's [research plan](<docs/Multimodal_Research Plan .docx>) comes first. Its baselines (BioLangFusion reproduced exactly, then its encoders swapped; LucaOne; IsoFormer reproduced on GTEx beside them) and its datasets (full-transcript half-life, translation efficiency, the mRFP control) are in place before Coupled Mamba and cross-attention are trained, from January 2027. The [Gantt chart](docs/Research_Project_Plan_Gantt.xlsx) gives the dates.
+
 ## Repo structure
 
 | Location | Contents |
@@ -76,7 +78,7 @@ Stage 2 is a decision rather than a computation, so it has no notebook. It is re
 
 ### Next steps: Stage 3 fusion experiments
 
-Stage 3 trains fusion models on the encoder pairings above and compares each with the best single encoder, the concatenation + MLP reference baseline, and, on GTEx, the length baseline. It needs token-level embeddings rather than the pooled vectors Stage 1 uses, and Coupled Mamba remains the priority architecture. Each Stage 3 fusion result is read against the Stage 1 alignment and complementarity measurements for the same pair.
+Stage 3 trains fusion models on the encoder pairings above and compares each with the best single encoder, the concatenation + MLP reference baseline, and, on GTEx, the length baseline. It needs token-level embeddings rather than the pooled vectors Stage 1 uses, and the research plan's baselines and datasets come first; Coupled Mamba and cross-attention follow them. Each Stage 3 fusion result is read against the Stage 1 alignment and complementarity measurements for the same pair.
 
 ## Data
 
