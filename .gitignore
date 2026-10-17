@@ -23,6 +23,11 @@ Claude outputs/
 # kept outside cluster scratch by later stages
 /Code/*/embeddings/
 /Code/*/embeddings_legacy/
+
+# Training checkpoints: ~100 MB each, and the JSON result beside them is the record.
+# Matched anywhere, because results are nested one level per benchmark.
+*.checkpoint
+*.checkpoint.partial
 # Pre-October 15 locations, in case an older checkout still has them
 /Code/stage1_main_embeddings.npz
 /Code/stage1_multimodel_embeddings/

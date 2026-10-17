@@ -21,13 +21,23 @@ STUB = Encoder(key="stub", label="Stub", modality="RNA", checkpoint="stub/checkp
 
 
 class StubTokenizer:
-    """One token per character, wrapped in a start and an end special token."""
+    """One token per character, wrapped in a start and an end framing token.
+
+    overlong_mask mimics Nucleotide Transformer v2, whose special_tokens_mask comes back
+    one element longer than its own input_ids. Nothing should depend on that mask.
+    """
+
+    cls_token_id, eos_token_id, pad_token_id = 0, 1, 2
+    unk_token_id = 3
+
+    def __init__(self, overlong_mask=False):
+        self.overlong_mask = overlong_mask
 
     def __call__(self, text, return_tensors=None, return_special_tokens_mask=False, **kwargs):
-        ids = [0] + [ord(c) for c in text] + [1]
+        ids = [self.cls_token_id] + [ord(c) for c in text] + [self.eos_token_id]
         encoded = {"input_ids": torch.tensor([ids])}
         if return_special_tokens_mask:
-            mask = [1] + [0] * len(text) + [1]
+            mask = [1] + [0] * len(text) + [1] + ([1] if self.overlong_mask else [])
             encoded["special_tokens_mask"] = torch.tensor([mask])
         return encoded
 
@@ -119,12 +129,32 @@ class TokenCacheTests(unittest.TestCase):
         self.assertEqual(cache.meta["bytes"], sum(len(t) for t in self.texts) * WIDTH * 2)
         self.assertEqual(json.loads((self.cache / "meta.json").read_text())["encoder"], "stub")
 
+    def test_a_tokenizer_whose_mask_is_too_long_is_still_handled(self):
+        """Nucleotide Transformer v2 returns a mask longer than its own input_ids."""
+        def loader(encoder, device, **kwargs):
+            return StubTokenizer(overlong_mask=True), StubModel()
+        with patch.object(TE, "load_encoder", loader):
+            cache, _ = TE.extract(STUB, self.texts, self.cache, "cpu", chunk_size=2, progress=None)
+        self.assertEqual(list(cache.lengths), [len(t) for t in self.texts])
+        for i, text in enumerate(self.texts):
+            row = cache[i]
+            self.assertTrue(np.array_equal(row[:, 0], np.array([ord(c) for c in text], dtype=row.dtype)))
+
+    def test_an_unknown_token_is_kept_rather_than_stripped(self):
+        """Dropping <unk> would silently shorten a row; only framing tokens are removed."""
+        tokenizer = StubTokenizer()
+        self.assertEqual(TE.structural_token_ids(tokenizer), {0, 1, 2})
+        self.assertNotIn(tokenizer.unk_token_id, TE.structural_token_ids(tokenizer))
+
     def test_expected_tokens_counts_from_the_coding_sequence(self):
         from shared_code.encoders import ENCODERS
         cds = "A" * 999                                  # 999 nucleotides, 333 codons
         self.assertEqual(TE.expected_tokens(ENCODERS["rnafm"], cds), 999)      # per nucleotide
         self.assertEqual(TE.expected_tokens(ENCODERS["calm"], cds), 333)       # per codon
-        self.assertEqual(TE.expected_tokens(ENCODERS["ntv2_100m"], cds), 167)  # per 6-mer, last partial
+        # A k-mer encoder falls back to single nucleotides for a partial final k-mer:
+        # 999 = 166 six-mers + 3 singles = 169 tokens, not the 167 of a plain division.
+        self.assertEqual(TE.expected_tokens(ENCODERS["ntv2_100m"], cds), 169)
+        self.assertEqual(TE.expected_tokens(ENCODERS["ntv2_100m"], "A" * 996), 166)  # exact fit
         self.assertEqual(TE.expected_tokens(ENCODERS["esm2_8m"], cds), 333)    # per residue
         # ProtBERT reads a spaced alphabet, so a character count would be wrong.
         self.assertEqual(TE.expected_tokens(ENCODERS["protbert"], cds), 333)

@@ -25,7 +25,8 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass
+import zipfile
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
@@ -39,27 +40,49 @@ SHARD_VERSION = 1
 DEFAULT_CHUNK = 256
 
 
+def structural_token_ids(tokenizer):
+    """The ids of tokens that frame a sequence rather than stand for part of it.
+
+    Only the framing tokens are listed: start, separator, end, and padding. The unknown
+    and mask ids are deliberately left out, because an unknown token sits where a real
+    character was and dropping it would silently shorten the row.
+    """
+    named = ("cls_token_id", "bos_token_id", "sep_token_id", "eos_token_id", "pad_token_id")
+    return {i for i in (getattr(tokenizer, name, None) for name in named) if i is not None}
+
+
 @torch.no_grad()
 def token_states(text, tokenizer, model, max_len, dtype=np.float16):
     """Return one sequence's content-token final hidden states as a (tokens, width) array.
 
-    Special tokens are dropped using the tokenizer's own mask, so the row holds only
-    tokens standing for the sequence. Raises when the input would be truncated: a
-    truncated coding sequence loses its 3' end, and the streams would stop aligning.
+    Framing tokens are found in the token ids the model actually consumed, not in the
+    tokenizer's ``special_tokens_mask``. That mask cannot be trusted: Nucleotide
+    Transformer v2 returns a mask one element longer than its own ``input_ids``, built as
+    though a trailing end token were present when it is not, which silently misaligns
+    every row if it is used as a filter.
+
+    Raises when the input would be truncated: a truncated coding sequence loses its 3' end,
+    and the streams would stop aligning on the codon grid.
     """
-    encoded = tokenizer(text, return_tensors="pt", return_special_tokens_mask=True)
-    n_tokens = encoded["input_ids"].shape[1]
-    if n_tokens > max_len:
+    encoded = tokenizer(text, return_tensors="pt")
+    ids = encoded["input_ids"]
+    if ids.shape[1] > max_len:
         raise ValueError(
-            f"{n_tokens} tokens exceeds the {max_len}-token limit for an input of "
+            f"{ids.shape[1]} tokens exceeds the {max_len}-token limit for an input of "
             f"{len(text)} characters; the benchmark rows are filtered to fit, so this "
             "signals the wrong rows or the wrong encoder."
         )
-    special = encoded.pop("special_tokens_mask")[0].numpy().astype(bool)
+    framing = structural_token_ids(tokenizer)
+    keep = np.array([int(i) not in framing for i in ids[0]], dtype=bool)
     device = next(model.parameters()).device
     out = model(**{k: v.to(device) for k, v in encoded.items()})
     states = out[0][0].float().cpu().numpy()
-    return states[~special].astype(dtype, copy=False)
+    if states.shape[0] != keep.shape[0]:
+        raise ValueError(
+            f"the model returned {states.shape[0]} states for {keep.shape[0]} token ids; "
+            "this encoder changes sequence length inside the model and needs its own handling."
+        )
+    return states[keep].astype(dtype, copy=False)
 
 
 def _meta_path(cache_dir):
@@ -78,6 +101,38 @@ def _write_shard(path, rows):
         np.savez(handle, tokens=np.concatenate(rows, axis=0),
                  lengths=np.array([len(r) for r in rows], dtype=np.int32))
     os.replace(tmp, path)
+
+
+def open_shard(path):
+    """Memory-map a shard's arrays instead of reading them, and return them by name.
+
+    ``np.load`` ignores ``mmap_mode`` for a ``.npz``: asking for one of its arrays reads the
+    whole member, which is 180 MB for an RNA-FM shard and a fifth of a second. Training reads
+    single rows tens of thousands of times, so the members are mapped in place instead. A
+    shard written by ``np.savez`` is an uncompressed zip of ``.npy`` members, so each member's
+    data begins at a known offset in the file and maps directly; a compressed archive has no
+    such offset and is read the ordinary way.
+    """
+    with zipfile.ZipFile(path) as archive:
+        infos = archive.infolist()
+        if any(info.compress_type != zipfile.ZIP_STORED for info in infos):
+            with np.load(path) as loaded:
+                return {name: loaded[name] for name in loaded.files}
+        mapped = {}
+        with open(path, "rb") as handle:
+            for info in infos:
+                handle.seek(info.header_offset + 26)
+                name_len, extra_len = np.frombuffer(handle.read(4), dtype="<u2")
+                handle.seek(info.header_offset + 30 + int(name_len) + int(extra_len))
+                major, _ = np.lib.format.read_magic(handle)
+                reader = (np.lib.format.read_array_header_1_0 if major == 1
+                          else np.lib.format.read_array_header_2_0)
+                shape, fortran_order, dtype = reader(handle)
+                if fortran_order:
+                    raise ValueError(f"{path} stores {info.filename} in Fortran order.")
+                mapped[info.filename.removesuffix(".npy")] = np.memmap(
+                    path, dtype=dtype, mode="r", offset=handle.tell(), shape=shape)
+    return mapped
 
 
 def extract(encoder, texts, cache_dir, device, chunk_size=DEFAULT_CHUNK, dtype=np.float16,
@@ -152,6 +207,8 @@ class TokenCache:
     lengths: np.ndarray
     shard_of: np.ndarray
     row_in_shard: np.ndarray
+    row_start: np.ndarray
+    _mapped: dict = field(default_factory=dict, repr=False)
 
     def __len__(self):
         return len(self.lengths)
@@ -160,44 +217,61 @@ class TokenCache:
     def width(self):
         return int(self.meta["width"])
 
+    def tokens_of_shard(self, index):
+        """The token array of one shard, mapped on first use and kept for later rows."""
+        mapped = self._mapped.get(index)
+        if mapped is None:
+            mapped = open_shard(_shard_path(self.cache_dir, index))["tokens"]
+            self._mapped[index] = mapped
+        return mapped
+
+    def close(self):
+        """Release the mapped shards. One file stays open per shard until this is called."""
+        self._mapped.clear()
+
     def __getitem__(self, i):
-        shard = np.load(_shard_path(self.cache_dir, int(self.shard_of[i])), mmap_mode="r")
-        starts = np.concatenate([[0], np.cumsum(shard["lengths"])])
-        row = int(self.row_in_shard[i])
-        return np.asarray(shard["tokens"][starts[row]:starts[row + 1]])
+        start = int(self.row_start[i])
+        return np.asarray(
+            self.tokens_of_shard(int(self.shard_of[i]))[start:start + int(self.lengths[i])])
 
 
 def summarize(cache_dir):
     """Read the shard lengths and return a TokenCache describing the whole extraction."""
     cache_dir = Path(cache_dir)
     meta = json.loads(_meta_path(cache_dir).read_text()) if _meta_path(cache_dir).exists() else {}
-    lengths, shard_of, row_in_shard, width = [], [], [], None
+    lengths, shard_of, row_in_shard, row_start, width = [], [], [], [], None
     for index in range(meta.get("n_shards", 0)):
         path = _shard_path(cache_dir, index)
         if not path.exists():
             raise FileNotFoundError(f"{path} is missing; rerun extract to finish this cache.")
-        with np.load(path, mmap_mode="r") as shard:
-            counts = np.asarray(shard["lengths"])
-            width = shard["tokens"].shape[1]
+        shard = open_shard(path)
+        counts = np.asarray(shard["lengths"])
+        width = shard["tokens"].shape[1]
         lengths.append(counts)
         shard_of.append(np.full(len(counts), index, dtype=np.int32))
         row_in_shard.append(np.arange(len(counts), dtype=np.int32))
+        row_start.append(np.concatenate([[0], np.cumsum(counts)[:-1]]).astype(np.int64))
     lengths = np.concatenate(lengths) if lengths else np.zeros(0, dtype=np.int32)
     meta = {**meta, "width": int(width or 0),
             "total_tokens": int(lengths.sum()),
             "bytes": int(lengths.sum()) * int(width or 0) * np.dtype(meta.get("dtype", "float16")).itemsize}
     return TokenCache(cache_dir, meta, lengths,
                       np.concatenate(shard_of) if shard_of else np.zeros(0, dtype=np.int32),
-                      np.concatenate(row_in_shard) if row_in_shard else np.zeros(0, dtype=np.int32))
+                      np.concatenate(row_in_shard) if row_in_shard else np.zeros(0, dtype=np.int32),
+                      np.concatenate(row_start) if row_start else np.zeros(0, dtype=np.int64))
 
 
-# Nucleotides per token for the encoders with a fixed tokenization rate. A byte-pair
+# Nucleotides per token for the encoders that consume a fixed number of them. A byte-pair
 # vocabulary such as DNABERT-2's has no fixed rate and is deliberately absent.
 NUCLEOTIDES_PER_TOKEN = {
     "rnafm": 1, "rinalmo": 1,      # one token per nucleotide
     "mrnafm": 3, "calm": 3,        # one token per codon
-    "ntv2_100m": 6, "nt500m": 6,   # one token per 6-mer
 }
+
+# k-mer encoders, which tokenize greedily and fall back to single nucleotides for whatever
+# does not fill a final k-mer: 999 nucleotides is 166 six-mers plus 3 single tokens, 169 in
+# all, not the 167 a plain division would suggest.
+KMER_SIZE = {"ntv2_100m": 6, "nt500m": 6}
 
 
 def expected_tokens(encoder, seq):
@@ -210,6 +284,9 @@ def expected_tokens(encoder, seq):
     """
     if encoder.modality == "protein":
         return len(seq) // 3
+    k = KMER_SIZE.get(encoder.key)
+    if k is not None:
+        return len(seq) // k + len(seq) % k
     per_token = NUCLEOTIDES_PER_TOKEN.get(encoder.key)
     return None if per_token is None else -(-len(seq) // per_token)
 
