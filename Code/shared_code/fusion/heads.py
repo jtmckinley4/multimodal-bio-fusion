@@ -5,7 +5,7 @@ the mask of real codons, and returns a fused (batch, T', out_width) stream toget
 whatever the training loop needs from it: the gated head also returns its modality
 weights, which carry the entropy term in the loss and the attention figure in the paper.
 
-* ConcatFusion, Section 2.2.1. A learned projection takes the DNA stream down, the three
+* ConcatFusion, Section 2.2.1. A learned projection changes the DNA width, the three
   streams are concatenated at each codon, and the result is projected once more before the
   prediction head.
 * GatedMILFusion, Section 2.2.2. Each stream is projected to a shared width, each is
@@ -21,9 +21,9 @@ Two choices the paper leaves open are made explicit.
 d'_DNA "since d_DNA is significantly larger than d_RNA and d_Prot". That ordering comes
 from Table 3, which gives the Nucleotide Transformer an embedding dimension of 4,107.
 4,107 is the checkpoint's vocabulary size, not its hidden size: the model writes 512-wide
-states, so the DNA stream is in fact the narrowest of the three, and the imbalance the
-projection was introduced to fix does not arise. The projection is kept, because it is in
-the architecture, at the only width the paper names anywhere, 600.
+states, between RNA-FM's 640 and ESM-2 (8M)'s 320. The stated large-DNA-width rationale
+therefore does not describe these checkpoints. The projection is kept as part of the
+architecture, using the paper's named common width of 600; here it expands DNA features.
 
 **The mean in gated attention is taken over real codons only.** The paper writes the
 summary as an unweighted mean over T' positions. Rows are padded to the longest in the

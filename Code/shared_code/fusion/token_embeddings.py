@@ -23,6 +23,7 @@ BioLangFusion applies to those streams belongs to the fusion model, not to this 
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import zipfile
@@ -38,6 +39,25 @@ from ..sequences import rna_to_dna
 # Bump when the shard layout or the stored calculation changes.
 SHARD_VERSION = 1
 DEFAULT_CHUNK = 256
+
+
+def input_fingerprint(texts):
+    """Hash exact encoder input strings in order, including unambiguous row boundaries."""
+    digest = hashlib.sha256()
+    for text in texts:
+        encoded = text.encode("utf-8")
+        digest.update(len(encoded).to_bytes(8, "big"))
+        digest.update(encoded)
+    return digest.hexdigest()
+
+
+def file_fingerprint(path):
+    """Hash a file in bounded memory, including large token-cache shards."""
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(8 * 1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def structural_token_ids(tokenizer):
@@ -140,15 +160,22 @@ def extract(encoder, texts, cache_dir, device, chunk_size=DEFAULT_CHUNK, dtype=n
     """Embed texts token by token into a resumable shard cache, and return its summary.
 
     texts are the strings this encoder reads, as Dataset.inputs_for or encoder_input
-    supplies them. Shards already on disk are kept, so calling this again after an
-    interruption only does the work that is left. The encoder is loaded only when at
-    least one shard is missing.
+    supplies them. A manifest binds their exact order to the extraction before any shard
+    is written. Existing legacy caches remain readable, but cannot be resumed without
+    that evidence; use a new directory. No provenance is inferred for old shards.
+
+    This is an input/order and local extraction-code guard, not a complete producer record.
+    A missing encoder revision remains unpinned; resolved weights, encoder-loader source,
+    and the extraction environment are not captured here. Keep the same verified producer
+    when continuing an extraction; the manifest alone cannot establish that equivalence.
     """
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
     texts = list(texts)
     if not texts:
         raise ValueError("Token extraction requires at least one input sequence.")
+    if chunk_size < 1:
+        raise ValueError("chunk_size must be positive.")
 
     chunks = [texts[i:i + chunk_size] for i in range(0, len(texts), chunk_size)]
     expected = {
@@ -161,6 +188,8 @@ def extract(encoder, texts, cache_dir, device, chunk_size=DEFAULT_CHUNK, dtype=n
         "n_sequences": len(texts),
         "chunk_size": chunk_size,
         "n_shards": len(chunks),
+        "input_sha256": input_fingerprint(texts),
+        "extraction_code_sha256": file_fingerprint(__file__),
     }
     saved = json.loads(_meta_path(cache_dir).read_text()) if _meta_path(cache_dir).exists() else None
     if saved is not None and {k: saved.get(k) for k in expected} != expected:
@@ -169,6 +198,13 @@ def extract(encoder, texts, cache_dir, device, chunk_size=DEFAULT_CHUNK, dtype=n
             f"{cache_dir} holds a different extraction (differs in: {', '.join(differing)}). "
             "Use a new directory rather than mixing two runs in one cache."
         )
+    if saved is None and any(cache_dir.glob("shard_*.npz")):
+        raise ValueError(f"{cache_dir} has shards without an input manifest; use a new directory.")
+    if saved is None:
+        # Record identity first, so even an interruption in the first shard is attributable.
+        temporary = _meta_path(cache_dir).with_suffix(".json.partial")
+        temporary.write_text(json.dumps(expected, indent=2) + "\n")
+        os.replace(temporary, _meta_path(cache_dir))
 
     missing = [i for i in range(len(chunks)) if not _shard_path(cache_dir, i).exists()]
     if missing:
@@ -189,7 +225,6 @@ def extract(encoder, texts, cache_dir, device, chunk_size=DEFAULT_CHUNK, dtype=n
             elif str(device).startswith("cuda"):
                 torch.cuda.empty_cache()
 
-    _meta_path(cache_dir).write_text(json.dumps(expected, indent=2) + "\n")
     return summarize(cache_dir), bool(missing)
 
 
@@ -294,15 +329,16 @@ def expected_tokens(encoder, seq):
 def grid_protein(seq):
     """Translate every complete codon, so the stream has exactly len(seq)//3 tokens.
 
-    Stage 1's translation (sequences.translate_cds) stops at the first stop codon, which
-    is right for a pooled vector of a protein but wrong for the codon grid: the grid needs
+    Stage 1's translation (sequences.translate_cds) stops at the first stop codon. That
+    models termination from the chosen origin, while this grid convention needs
     one protein token per codon, and a clean coding sequence would otherwise be one token
     short while a fragment with an internal stop would be far shorter. Stop codons become
     "X", which every protein encoder's vocabulary accepts.
 
     This matters most on CoV-Vac, whose 81-nucleotide fragments are cut from a construct
     rather than being coding sequences: under the stop-at-first-stop rule only 0.7% of them
-    translate to a full reading frame and 6.2% translate to nothing at all. The choice is
+    retain the full fragment length and 6.2% translate to nothing at all. These proportions
+    do not identify a biological reading frame. The choice is
     recorded as a deviation in Code/stage3/01_blf_datasets.ipynb; BioLangFusion does not
     state how it fed such fragments to its protein encoder.
     """

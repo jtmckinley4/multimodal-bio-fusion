@@ -1,9 +1,10 @@
 """BioLangFusion assembled: the cached token streams, the codon grid, a head, a prediction.
 
-The model is the paper's: resample the three streams onto the codon grid, fuse them one of
-three ways, and read the fused stream with a fixed TextCNN head. Unimodal baselines are the
-same head on one stream at its own resolution, which is what "single-modal baseline" has to
-mean when no alignment is needed.
+This implementation follows the paper's overall structure: resample the three streams
+onto the codon grid, fuse them one of three ways, and read the fused stream with a shared
+TextCNN architecture. Here, unimodal baselines use that head on one stream at its native
+token resolution. This is our explicit baseline choice; the paper does not fully specify
+the corresponding unimodal input treatment. The prediction head remains trainable.
 
 Reading the streams is the part the paper does not describe. The caches written in
 Code/stage3/02_token_embeddings.ipynb hold one row per benchmark sequence, in the file's
@@ -15,7 +16,10 @@ grid resamples to and what the mask is built from.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+import warnings
+from dataclasses import dataclass, field
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -23,10 +27,11 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from .. import datasets as datasets_module
+from ..encoders import ENCODERS
 from .codon_grid import CODON_LENGTH, CodonGrid, mask_of
 from .heads import FUSIONS, SHARED_WIDTH
 from .textcnn import DEFAULT_CHANNELS, TextCNN
-from .token_embeddings import summarize
+from .token_embeddings import file_fingerprint, input_fingerprint, inputs_for_rows, summarize
 
 # BioLangFusion's own three encoders, in the order the fusion heads expect them.
 ENCODER_OF_MODALITY = {"dna": "ntv2_100m", "rna": "rnafm", "prot": "esm2_8m"}
@@ -43,17 +48,107 @@ class BenchmarkStreams:
     task: str
     label_column: str = "Value"
     split_column: str = "Split"
+    allow_legacy_cache: bool = False
+    _file_hashes: dict = field(default_factory=dict, init=False, repr=False)
 
     @classmethod
-    def open(cls, key, cache_root, encoder_of_modality=None):
+    def open(cls, key, cache_root, encoder_of_modality=None, allow_legacy_cache=False):
         encoder_of_modality = encoder_of_modality or ENCODER_OF_MODALITY
         spec = datasets_module.DATASETS[key]
         rows = datasets_module.blf_benchmark_rows(key)
-        caches = {m: summarize(f"{cache_root}/{key}/{encoder}")
-                  for m, encoder in encoder_of_modality.items()}
-        streams = cls(key, rows, caches, spec.task, spec.label_column, spec.split_column)
-        streams.check()
+        caches = {}
+        try:
+            for modality, encoder in encoder_of_modality.items():
+                cache_dir = Path(cache_root) / key / encoder
+                metadata_path = cache_dir / "meta.json"
+                # Check availability before interpreting an absent cache as zero rows.
+                if not metadata_path.is_file():
+                    raise FileNotFoundError(
+                        f"Token-cache metadata is missing: {metadata_path.resolve()}. "
+                        "Complete Step 2 (02_token_embeddings.ipynb) for this benchmark, "
+                        "or point CACHE_ROOT to an existing complete token cache.")
+                try:
+                    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+                except json.JSONDecodeError as error:
+                    raise ValueError(f"Invalid JSON in token-cache metadata: "
+                                     f"{metadata_path.resolve()}.") from error
+                if not isinstance(metadata, dict):
+                    raise ValueError(f"Token-cache metadata must be a JSON object: "
+                                     f"{metadata_path.resolve()}.")
+                shard_count = metadata.get("n_shards")
+                if type(shard_count) is not int or shard_count <= 0:
+                    raise ValueError(f"Token-cache metadata requires a positive integer "
+                                     f"n_shards: {metadata_path.resolve()}.")
+                caches[modality] = summarize(cache_dir)
+            streams = cls(key, rows, caches, spec.task, spec.label_column, spec.split_column,
+                          allow_legacy_cache=allow_legacy_cache)
+            streams.check()
+            status = streams.check_input_identity()
+        except BaseException:
+            for cache in caches.values():
+                cache.close()
+            raise
+        if status == "unverified_legacy":
+            warnings.warn("Legacy token caches accepted explicitly: their original input order "
+                          "is unverified. New run identities do not establish that provenance.",
+                          RuntimeWarning, stacklevel=2)
         return streams
+
+    def check_input_identity(self):
+        """Compare current effective inputs with producer-recorded hashes, when present."""
+        status = "recorded_inputs"
+        for modality, cache in self.caches.items():
+            recorded = cache.meta.get("input_sha256")
+            if recorded is None:
+                if not self.allow_legacy_cache:
+                    raise ValueError(f"{self.key}/{modality}: legacy cache has no ordered-input "
+                                     "identity. Use a new extraction directory, or explicitly "
+                                     "open with allow_legacy_cache=True for unverified use.")
+                status = "unverified_legacy"
+                continue
+            encoder = ENCODERS[cache.meta["encoder"]]
+            expected = input_fingerprint(inputs_for_rows(encoder, self.rows["sequence"]))
+            if recorded != expected:
+                raise ValueError(f"{self.key}/{modality}: cached inputs differ from current "
+                                 "sequences or row order; equal lengths are not sufficient.")
+        return status
+
+    def identity(self):
+        """Current rows plus exact cache files; legacy provenance stays explicitly unknown.
+
+        Large shards are hashed once per open object. A size/mtime change requires reopening
+        the streams, because an existing memory map may otherwise refer to old content.
+        Treat caches as read-only while streams are open; this is not a file lock.
+        """
+        self.check()
+        input_status = self.check_input_identity()
+        columns = ["sequence", "length", self.label_column, self.split_column]
+        row_texts = (json.dumps(row, ensure_ascii=False, separators=(",", ":"),
+                               default=lambda value: value.item())
+                     for row in self.rows[columns].itertuples(index=False, name=None))
+        cache_files = {}
+        for modality, cache in self.caches.items():
+            paths = [cache.cache_dir / "meta.json"]
+            paths += [cache.cache_dir / f"shard_{index:05d}.npz"
+                      for index in range(cache.meta["n_shards"])]
+            hashes = {}
+            for path in paths:
+                stat = path.stat()
+                signature = (stat.st_size, stat.st_mtime_ns)
+                previous = self._file_hashes.get(path)
+                if previous is not None and previous[0] != signature:
+                    raise RuntimeError(f"{path} changed while streams were open; close and reopen.")
+                if previous is None:
+                    digest = file_fingerprint(path)
+                    after = path.stat()
+                    if (after.st_size, after.st_mtime_ns) != signature:
+                        raise RuntimeError(f"{path} changed while being fingerprinted.")
+                    self._file_hashes[path] = (signature, digest)
+                hashes[path.name] = self._file_hashes[path][1]
+            cache_files[modality] = hashes
+        return {"benchmark": self.key, "task": self.task, "row_columns": columns,
+                "rows_sha256": input_fingerprint(row_texts), "cache_files": cache_files,
+                "input_identity_status": input_status}
 
     def check(self):
         """Every cache must hold one row per sequence, with the token count its length implies."""

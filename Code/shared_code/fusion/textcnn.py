@@ -1,6 +1,6 @@
 """The fixed TextCNN prediction head every BioLangFusion variant shares.
 
-Parallel one-dimensional convolutions of width 3, 4, and 5 run over the codon axis, each
+Parallel one-dimensional convolutions of width 3, 4, and 5 run over the input position axis, each
 followed by ReLU and a max over time; the three pooled vectors are concatenated, dropped
 out at 0.2, and sent through one fully connected layer to the task output (BioLangFusion
 Appendix A.4, List 1 and List 2).
@@ -9,11 +9,13 @@ The paper calls this head fixed, "the same fixed TextCNN prediction head to ensu
 comparison", but gives it two different widths: List 1 states 1,280 output channels for
 the MIL variant and List 2 states 100 for the cross-attention variant. The two differ by
 more than a factor of twelve in the head's capacity, so the width is a parameter here. The
-default is 100: the narrower of the two, and the only one of them that every variant can
-share, which is what a fair comparison means. The build check runs the gated head at List
-1's 1,280 as well, but only if the narrow head falls short of the published score.
+default is 100: the narrower setting makes a common-capacity comparison less expensive.
+Either width can be shared; this choice does not resolve the paper's conflicting settings.
+The build-check notebook offers an optional 1,280-channel MIL sensitivity run, disabled
+by default. Fusion models supply codon positions; unimodal baselines supply native tokens,
+so the same kernel width need not cover the same nucleotide span.
 
-Max pooling ignores padded positions. A convolution of width k over a row of L codons has
+Max pooling ignores padded positions. A convolution of width k over a row of L positions has
 L - k + 1 real outputs, and positions past that are built from padding, so they are set to
 negative infinity before the max rather than left to compete with real activations.
 """
@@ -29,7 +31,7 @@ DEFAULT_DROPOUT = 0.2
 
 
 class TextCNN(nn.Module):
-    """Convolve over the codon axis, pool over time, and predict.
+    """Convolve over the input position axis, pool over time, and predict.
 
     forward takes a (batch, time, width) stream and the boolean mask marking real
     positions, and returns (batch, n_outputs).

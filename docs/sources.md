@@ -52,9 +52,11 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 Eight papers came in by email on October 9 and 10 (three from Chase, five from Mina). Each is placed by role in the Overleaf related-work table and in Section 6.6 of the project notes; this index records why each is retained.
 
+**Identity and availability check, 19 October 2026:** First pages and abstracts were checked for the seven locally held manuscripts below other than LucaOne. The [paper catalog](../Papers/README.md) records the exact versions, license evidence, five retained PDFs, and the source-only status of COMET and OmniGenome. This check does not replace the dated reading scopes below or constitute a full rereading.
+
 ### Rheude, Eils and Wild: Fusion or Confusion
 
-[arXiv 2512.22991](https://arxiv.org/abs/2512.22991) and the [simple baseline repository](https://github.com/TillmannRheude/simple_mml_baseline).
+[arXiv 2512.22991v3](https://arxiv.org/abs/2512.22991v3), [retained PDF](../Papers/supporting/Fusion_or_Confusion_arxiv_v3.pdf), and the [simple baseline repository](https://github.com/TillmannRheude/simple_mml_baseline).
 
 **Why retain it:** Nineteen multimodal methods reimplemented on nine datasets under standardized tuning, initialization, subject-wise cross-validation and statistical tests; no method consistently beats a simple per-modality-projection baseline, and several fall below the best single modality. It supplies the Stage 4 evaluation rules (identical heads, tuned baselines, grouped cross-validation, mean and SD, a statistical comparison) and the reason the baseline hierarchy exists.
 
@@ -62,7 +64,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### mRNABench
 
-[bioRxiv 2025.07.05.662870](https://www.biorxiv.org/content/10.1101/2025.07.05.662870v1) and the [repository](https://github.com/morrislab/mRNABench).
+[bioRxiv 2025.07.05.662870v1](https://www.biorxiv.org/content/10.1101/2025.07.05.662870v1), [retained PDF](../Papers/supporting/mRNABench_biorxiv_v1.pdf), and the [repository](https://github.com/morrislab/mRNABench).
 
 **Why retain it:** Ten mature-mRNA datasets and 59 subtasks with homology-aware splits, and evidence that random splits overestimate generalization. Supplies the half-life and translation-efficiency tasks (research plan items 3 and 4) and the grouped evaluation in the common rules.
 
@@ -70,15 +72,17 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### Krzakala et al.: MSAlign
 
-[arXiv 2605.19752](https://arxiv.org/abs/2605.19752) and the [repository](https://github.com/KrzakalaPaul/MSAlign-NeurIPS2026).
+[arXiv 2605.19752v2](https://arxiv.org/abs/2605.19752v2), [retained PDF](../Papers/supporting/MSAlign_arxiv_v2.pdf), and the [repository](https://github.com/KrzakalaPaul/MSAlign-NeurIPS2026).
 
-**Why retain it:** Alignment between two frozen encoders made operational as a retrieval task through learned projections, plus a measure of distribution shift between splits. Enters Stage 2 as a learned-projection retrieval diagnostic beside the frozen CCA retrieval, and the split-shift measure enters the common rules.
+**Why retain it:** MSAlign addresses metabolite identification by retrieving molecular structures from tandem mass spectra, aligning representations from frozen DreaMS and MolDeBERTa encoders through learned projections. Its relevance here is methodological: retrieval-based evaluation and the trade-off between leakage prevention and distribution shift when constructing splits. It does not directly validate DNA–RNA–protein alignment. Adapting these ideas to Stage 2 remains a proposed application; this source record does not establish implementation.
 
 **Reading scope and limits:** Abstract read on October 10, 2026; the loss and metrics were not confirmed from the full text.
 
+**Clarification, 19 October 2026:** The v2 first page and abstract identify the modalities and retrieval task above. The earlier wording that the diagnostic and split-shift measure "enter" the project is replaced with a proposed application to distinguish source relevance from adoption. This check does not resolve the earlier full-text limitations.
+
 ### Golkar et al.: MIMIC
 
-[arXiv 2604.24506](https://arxiv.org/abs/2604.24506), [repository](https://github.com/PolymathicAI/MIMIC), [model](https://huggingface.co/polymathic-ai/MIMIC).
+[arXiv 2604.24506v1](https://arxiv.org/abs/2604.24506v1), [retained PDF](../Papers/supporting/MIMIC_arxiv_v1.pdf), [repository](https://github.com/PolymathicAI/MIMIC), and [model](https://huggingface.co/polymathic-ai/MIMIC).
 
 **Why retain it:** A generative multimodal model conditioned across biomolecules, evaluated on mRNABench tasks. Motivates the full-transcript tasks; it is not evidence that fusing separately pretrained encoders helps.
 
@@ -86,7 +90,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### Ren et al.: COMET
 
-[arXiv 2412.10347](https://arxiv.org/abs/2412.10347).
+[arXiv 2412.10347v1](https://arxiv.org/abs/2412.10347v1). Repository availability is recorded in the [source-only catalog](../Papers/README.md#source-links-without-repository-pdfs).
 
 **Why retain it:** Seventeen DNA, RNA, protein, cross-molecule and multi-molecule tasks, evaluated with single-omics models, their pairs, LucaOne and CaLM; multi-molecule tasks remain hard for all of them. Supplies distinct-molecule tasks with published combinations for Stage 4 tests 5 and 8.
 
@@ -102,7 +106,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### Chen et al.: Structure-Aligned Protein Language Model
 
-[arXiv 2505.16896](https://arxiv.org/abs/2505.16896).
+[arXiv 2505.16896v2](https://arxiv.org/abs/2505.16896v2) and [retained PDF](../Papers/supporting/Structure_Aligned_Protein_Language_Model_arxiv_v2.pdf).
 
 **Why retain it:** Contrastive alignment of a protein language model's residue states to a structure encoder; a different sense of alignment (sequence to structure within one molecule), named in the Overleaf so it is not confused with alignment across molecules; a candidate structure feature for research plan item 6.
 
@@ -110,7 +114,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### Yang, Chen and Li: OmniGenome
 
-[arXiv 2407.11242](https://arxiv.org/abs/2407.11242), AAAI 2025.
+[Bridging Sequence-Structure Alignment in RNA Foundation Models, AAAI 2025 proceedings](https://doi.org/10.1609/aaai.v39i20.35500), by Yang, Chen and Li, introduces OmniGenome. The [arXiv manuscript](https://arxiv.org/abs/2407.11242) is a separate version; the [source-only catalog](../Papers/README.md#source-links-without-repository-pdfs) identifies the proceedings copy checked on 19 October 2026.
 
 **Why retain it:** Sequence-structure alignment in an RNA foundation model with bidirectional mappings; the same sense of alignment on the RNA side; a candidate RNA encoder and structure source for research plan item 6.
 
