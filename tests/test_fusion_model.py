@@ -210,6 +210,94 @@ class PipelineTests(unittest.TestCase):
         self.assertIsNotNone(train.fit(blf.build(streams, "mil", channels=3), streams,
                                        config, "cpu", log=None).alpha)
 
+    def test_a_paired_bootstrap_resamples_the_difference_between_two_runs(self):
+        """Two models are scored on the same rows, so the difference is what to resample."""
+        truth = [float(i) for i in range(30)]
+
+        def stored(name, prediction):
+            return train.Result(variant=name, benchmark="stub", config={}, epochs=1,
+                                best_epoch=0, val_score=0.0, test_score=0.0, seconds=0.0,
+                                test_truth=truth, test_prediction=prediction)
+
+        out = train.paired_bootstrap(stored("rising", truth), stored("falling", truth[::-1]),
+                                     "regression", draws=200)
+        self.assertAlmostEqual(out["difference"], 2.0, places=6)
+        self.assertEqual(out["first_wins"], 1.0)
+        self.assertGreater(out["ci_low"], 1.9)
+
+    def test_a_paired_bootstrap_refuses_runs_it_cannot_compare(self):
+        truth = [float(i) for i in range(30)]
+        with_rows = train.Result(variant="a", benchmark="stub", config={}, epochs=1,
+                                 best_epoch=0, val_score=0.0, test_score=0.0, seconds=0.0,
+                                 test_truth=truth, test_prediction=truth)
+        without = train.Result(variant="b", benchmark="stub", config={}, epochs=1,
+                               best_epoch=0, val_score=0.0, test_score=0.0, seconds=0.0)
+        other_rows = train.Result(variant="c", benchmark="stub", config={}, epochs=1,
+                                  best_epoch=0, val_score=0.0, test_score=0.0, seconds=0.0,
+                                  test_truth=truth[:20], test_prediction=truth[:20])
+        with self.assertRaises(ValueError):
+            train.paired_bootstrap(with_rows, without, "regression", draws=10)
+        with self.assertRaises(ValueError):
+            train.paired_bootstrap(with_rows, other_rows, "regression", draws=10)
+
+    def test_missing_predictions_never_retrain_or_overwrite_a_completed_result(self):
+        streams = self.streams()
+        streams.allow_legacy_cache = True
+        with tempfile.TemporaryDirectory() as directory:
+            config = train.TrainConfig(max_epochs=1, batch_size=2, channels=3,
+                                       early_stopping_patience=1)
+            self.assertIsNotNone(
+                train.run(streams, "concat", config, "cpu", directory, log=None).test_prediction)
+            path = next(Path(directory).glob("*.json"))
+            old = json.loads(path.read_text())
+            for missing in ("test_truth", "test_prediction"):
+                with self.subTest(missing=missing):
+                    incomplete = {**old, missing: None}
+                    path.write_text(json.dumps(incomplete))
+                    before = path.read_bytes()
+                    with mock.patch.object(train, "build") as building, \
+                            mock.patch.object(train, "fit") as fitting:
+                        # A score-only result remains usable for ordinary review.
+                        result = train.run(streams, "concat", config, "cpu", directory,
+                                           log=None)
+                        self.assertIsNone(getattr(result, missing))
+                        with self.assertRaisesRegex(ValueError, "per-row predictions"):
+                            train.run(streams, "concat", config, "cpu", directory,
+                                      log=None, require_predictions=True)
+                        building.assert_not_called()
+                        fitting.assert_not_called()
+                    self.assertEqual(before, path.read_bytes())
+
+    def test_custom_training_contract_is_rejected_before_build_or_fit(self):
+        """Receiving IsoFormer code does not establish its input or recovery identity."""
+        streams = self.streams()
+        streams.allow_legacy_cache = True
+        config = train.TrainConfig(max_epochs=1, channels=3)
+        custom_builder = mock.Mock()
+        for options in ({"builder": custom_builder}, {"loaders": {}}):
+            with self.subTest(options=tuple(options)), tempfile.TemporaryDirectory() as directory:
+                destination = Path(directory) / "must-not-be-created"
+                with mock.patch.object(train, "build") as building, \
+                        mock.patch.object(train, "fit") as fitting:
+                    with self.assertRaisesRegex(ValueError, "(?i)custom"):
+                        train.run(streams, "concat", config, "cpu", destination,
+                                  log=None, **options)
+                    building.assert_not_called()
+                    fitting.assert_not_called()
+                    custom_builder.assert_not_called()
+                self.assertFalse(destination.exists())
+
+    def test_checkpointed_custom_loaders_fail_before_model_execution(self):
+        config = train.TrainConfig(max_epochs=1, channels=3)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "unsupported.checkpoint"
+            model = mock.Mock()
+            with self.assertRaisesRegex(ValueError, "(?i)custom"):
+                train.fit(model, self.streams(), config, "cpu", log=None,
+                          checkpoint=path, identity={"fixture": "unsupported"}, loaders={})
+            self.assertEqual(model.mock_calls, [])
+            self.assertFalse(path.exists())
+
     def test_an_interrupted_run_resumes_from_its_checkpoint(self):
         """Resume preserves dropout, row order, scheduler state, and the final model on CPU."""
         streams = self.streams()
@@ -487,17 +575,34 @@ class ShardReaderTests(unittest.TestCase):
 
 
 class ResultPersistenceTests(unittest.TestCase):
-    def test_legacy_result_remains_readable_without_inventing_identity(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "legacy.json"
-            path.write_text(json.dumps({"variant": "concat", "benchmark": "fixture",
-                "config": {}, "epochs": 1, "best_epoch": 0, "val_score": 0.5,
-                "test_score": 0.4, "seconds": 2.0}))
-            before = path.read_bytes()
-            result = train.Result.load(path)
-            self.assertIsNone(result.identity)
-            self.assertEqual(result.test_score, 0.4)
-            self.assertEqual(before, path.read_bytes())
+    def test_all_result_formats_load_without_inventing_missing_evidence(self):
+        formats = {
+            "score_only": {},
+            "identity_only": {"identity": {"version": 1, "fixture": "recorded producer"}},
+            "predictions_only": {"test_truth": [0.1, 0.2, 0.3],
+                                 "test_prediction": [0.2, 0.1, 0.3]},
+        }
+        for name, evidence in formats.items():
+            with self.subTest(format=name), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / f"{name}.json"
+                record = {"variant": "concat", "benchmark": "fixture", "config": {},
+                          "epochs": 1, "best_epoch": 0, "val_score": 0.5,
+                          "test_score": 0.4, "seconds": 2.0, **evidence,
+                          "producer_note": {"reviewed": False, "label": "keep this context"}}
+                path.write_text(json.dumps(record))
+                before = path.read_bytes()
+                result = train.Result.load(path)
+                for field in ("identity", "test_truth", "test_prediction"):
+                    self.assertEqual(getattr(result, field), evidence.get(field), field)
+                self.assertEqual(result.test_score, 0.4)
+                self.assertEqual(result.extra_fields["producer_note"], record["producer_note"])
+                # Serialization to a new path must retain unfamiliar producer context.
+                copy = Path(directory) / "copy.json"
+                result.save(copy)
+                reloaded = json.loads(copy.read_text())
+                for field, value in record.items():
+                    self.assertEqual(reloaded[field], value, field)
+                self.assertEqual(before, path.read_bytes())
 
     def test_failed_publication_preserves_the_previous_result(self):
         with tempfile.TemporaryDirectory() as directory:

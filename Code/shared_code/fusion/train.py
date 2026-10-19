@@ -36,7 +36,7 @@ import os
 import platform
 import random
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
 import numpy as np
@@ -67,14 +67,72 @@ class TrainConfig:
 
 
 def loss_function(task):
-    return nn.MSELoss() if task == "regression" else nn.CrossEntropyLoss()
+    """Mean squared error for one or many continuous outputs, cross-entropy for classes."""
+    return nn.CrossEntropyLoss() if task == "classification" else nn.MSELoss()
 
 
 def score(task, truth, prediction):
-    """Spearman correlation for regression, accuracy for classification."""
+    """Spearman for regression, accuracy for classification, mean Spearman per output for
+    an expression panel. The panel is averaged because IsoFormer reports one number for
+    "Spearman correlation across tissues" over its thirty tissues."""
     if task == "regression":
         return float(spearmanr(truth, prediction).statistic)
+    if task == "expression":
+        return float(np.mean([spearmanr(truth[:, i], prediction[:, i]).statistic
+                              for i in range(truth.shape[1])]))
     return float((truth == prediction.argmax(axis=1)).mean())
+
+
+def r_squared(truth, prediction):
+    """Mean coefficient of determination over the columns of an expression panel."""
+    residual = ((truth - prediction) ** 2).sum(axis=0)
+    total = ((truth - truth.mean(axis=0)) ** 2).sum(axis=0)
+    return float(np.mean(1 - residual / np.where(total == 0, np.nan, total)))
+
+
+def score_rows(task, truth, prediction):
+    """The same score from stored per-row predictions, which are already class ids."""
+    if task == "classification":
+        return float((truth == prediction).mean())
+    return score(task, truth, prediction)
+
+
+def paired_bootstrap(first, second, task, draws=2000, seed=0):
+    """Resample the test rows and ask how often one run scores above another.
+
+    Two models scored on the same rows are a paired comparison, so whether their separately
+    computed confidence intervals overlap says little: the question is the distribution of
+    the difference, and that is what this resamples. Returns the observed difference, a 95%
+    interval for it, and the share of resamples the first run wins.
+
+    Both runs need stored labels and predictions in the same row order. Matching labels
+    are a necessary check, not proof of row identity: the caller must verify the test-row
+    correspondence and evaluation protocol before using this comparison.
+    """
+    if any(values is None for result in (first, second)
+           for values in (result.test_truth, result.test_prediction)):
+        raise ValueError("Both runs need stored labels and per-row predictions; preserve "
+                         "score-only results and explicitly plan any additional fits.")
+    if first.benchmark != second.benchmark:
+        raise ValueError("The two runs name different benchmarks.")
+    if first.test_truth != second.test_truth:
+        raise ValueError("The stored test labels differ; check the test rows and their order.")
+    truth = np.asarray(first.test_truth)
+    a, b = np.asarray(first.test_prediction), np.asarray(second.test_prediction)
+    if len(truth) == 0 or a.shape != truth.shape or b.shape != truth.shape:
+        raise ValueError("Stored predictions must match the nonempty test-label array.")
+    if not isinstance(draws, int) or draws < 1:
+        raise ValueError("draws must be a positive integer.")
+    rng = np.random.default_rng(seed)
+    spread = np.empty(draws)
+    for i in range(draws):
+        pick = rng.integers(0, len(truth), len(truth))
+        spread[i] = (score_rows(task, truth[pick], a[pick])
+                     - score_rows(task, truth[pick], b[pick]))
+    low, high = np.percentile(spread, [2.5, 97.5])
+    return {"difference": score_rows(task, truth, a) - score_rows(task, truth, b),
+            "ci_low": float(low), "ci_high": float(high),
+            "first_wins": float((spread > 0).mean())}
 
 
 def predict(model, batches, device, task):
@@ -88,6 +146,8 @@ def predict(model, batches, device, task):
             truth.append(batch.labels.cpu().numpy())
             predicted.append(output.squeeze(-1).cpu().numpy() if task == "regression"
                              else output.cpu().numpy())
+            # A classification output keeps its class axis for argmax; an expression panel
+            # keeps its tissue axis; only single-output regression is squeezed.
             if "alpha" in aux:
                 weights.append(aux["alpha"].cpu().numpy())
     alpha = np.concatenate(weights).mean(axis=0) if weights else None
@@ -109,21 +169,36 @@ class Result:
     history: list = field(default_factory=list)
     alpha: dict | None = None
     identity: dict | None = None
+    test_truth: list | None = None
+    test_prediction: list | None = None
+    extra_fields: dict = field(default_factory=dict, repr=False)
 
     def save(self, path):
+        # Keep unfamiliar fields from another writer at their original JSON keys.
+        values = asdict(self)
+        payload = values.pop("extra_fields")
+        payload.update(values)
         path = Path(path)
         temporary = path.with_name(path.name + ".partial")
-        temporary.write_text(json.dumps(asdict(self), indent=2) + "\n")
+        temporary.write_text(json.dumps(payload, indent=2) + "\n")
         os.replace(temporary, path)
 
     @staticmethod
     def load(path):
-        # Historical JSONs lack identity; they remain readable, but cannot be reused.
-        return Result(**json.loads(Path(path).read_text()))
+        # Older records may lack identity, predictions, or both. Loading them does not
+        # establish reuse eligibility; run() checks that separately before any fitting.
+        payload = json.loads(Path(path).read_text())
+        known = {item.name for item in fields(Result)} - {"extra_fields"}
+        return Result(**{key: value for key, value in payload.items() if key in known},
+                      extra_fields={key: value for key, value in payload.items()
+                                    if key not in known})
 
 
 def run_identity(streams, variant, config, device, model_kwargs):
     """The requested computation, its exact inputs, and its current execution environment."""
+    if not callable(getattr(streams, "identity", None)):
+        raise ValueError("These streams do not provide a run identity. Their input and "
+                         "split identity must be supported before checkpointed training.")
     package = Path(__file__).resolve().parent
     source_names = ("train.py", "blf.py", "codon_grid.py", "heads.py", "textcnn.py",
                     "token_embeddings.py", "../datasets.py", "../sequences.py", "../encoders.py")
@@ -194,24 +269,32 @@ def _save_checkpoint(path, epoch, model, optimiser, schedule, train_generator,
 
 
 def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_every=10,
-        identity=None, remove_checkpoint=True):
+        identity=None, remove_checkpoint=True, loaders=None):
     """Train to the early stop, restore the best epoch, and score the test split.
 
     With a checkpoint path, the run is written there every checkpoint_every epochs and
     resumed only when its identity matches. run() retains the final checkpoint until the
     result is published. Direct callers own model initialisation; run() seeds before build.
+    Custom loaders support direct, noncheckpointed fits only: their split identity and
+    sampler recovery are not yet part of the checkpoint contract.
     """
     if config.max_epochs < 1 or checkpoint_every < 1:
         raise ValueError("max_epochs and checkpoint_every must be positive.")
+    if checkpoint and loaders is not None:
+        raise ValueError("Custom loaders do not yet support checkpoint recovery or split "
+                         "identity. Use them only for an explicit noncheckpointed fit.")
     if checkpoint and identity is None:
         raise ValueError("Checkpointed fit requires an explicit run identity; use run().")
     random.seed(config.seed)
     np.random.seed(config.seed)
     torch.manual_seed(config.seed)
     task = streams.task
-    splits = {name: loader(streams, name, batch_size=config.batch_size, seed=config.seed)
-              for name in ("train", "val", "test")}
-    train_generator = splits["train"].generator
+    splits = (loaders if loaders is not None else {
+        name: loader(streams, name, batch_size=config.batch_size, seed=config.seed)
+        for name in ("train", "val", "test")})
+    if set(splits) != {"train", "val", "test"}:
+        raise ValueError("loaders must provide exactly the train, val, and test splits.")
+    train_generator = splits["train"].generator if loaders is None else None
     if checkpoint:
         _random_state(device, train_generator)  # Fail before training on unsupported devices.
     criterion = loss_function(task)
@@ -247,14 +330,17 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
             batch = batch.to(device)
             optimiser.zero_grad()
             output, aux = model(batch)
-            target = batch.labels if task == "classification" else batch.labels.view(-1, 1)
+            target = (batch.labels if task in ("classification", "expression")
+                      else batch.labels.view(-1, 1))
             loss = criterion(output, target)
             if config.entropy_lambda and "alpha" in aux:
                 alpha = aux["alpha"].clamp_min(1e-12)
                 loss = loss + config.entropy_lambda * (-(alpha * alpha.log()).sum(1).mean())
             loss.backward()
             optimiser.step()
-            running += float(loss.detach()) * len(batch.codons)
+            # len(labels), not len(codons): the same loop trains the codon-grid models
+            # and the expression panel, and only one of those batches has codons.
+            running += float(loss.detach()) * len(batch.labels)
 
         truth, predicted, _ = predict(model, splits["val"], device, task)
         val = score(task, truth, predicted)
@@ -293,32 +379,48 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
         seconds=before + time.perf_counter() - started,
         history=history,
         identity=identity,
-        alpha=None if alpha is None else dict(zip(MODALITIES, [float(a) for a in alpha])))
+        alpha=None if alpha is None else dict(zip(MODALITIES, [float(a) for a in alpha])),
+        # tolist handles a column of values and a panel of them alike; a classification
+        # run stores the predicted class rather than its logits.
+        test_truth=np.asarray(truth).tolist(),
+        test_prediction=([int(v) for v in predicted.argmax(axis=1)]
+                         if task == "classification" else np.asarray(predicted).tolist()))
     if remove_checkpoint and checkpoint and checkpoint.exists():
         checkpoint.unlink()
     return result
 
 
-def run(streams, variant, config, device, results_dir, log=print, **model_kwargs):
+def run(streams, variant, config, device, results_dir, log=print,
+        require_predictions=False, builder=None, loaders=None, tag=None, **model_kwargs):
     """Train one variant, reusing only an exactly matching recorded computation.
 
     Filenames are readable labels, not proof of identity. A legacy or mismatched file is
     preserved and rejected; select a new results directory to start a separate experiment.
+    require_predictions rejects score-only records; it never authorizes replacing them.
+    Custom builders and loaders are reserved until their code, inputs, splits, and sampler
+    state can participate in the same identity and checkpoint checks.
     """
+    if builder is not None or loaders is not None:
+        raise ValueError("Custom builders/loaders are not yet supported by run(): their "
+                         "identity and checkpoint recovery need validation before training.")
     results_dir = Path(results_dir)
-    results_dir.mkdir(parents=True, exist_ok=True)
-    tag = (f"{streams.key}__{variant.replace(':', '-')}__lambda{config.entropy_lambda}"
-           f"__ch{config.channels}__{config.tconv}__seed{config.seed}")
+    tag = tag or (f"{streams.key}__{variant.replace(':', '-')}__lambda{config.entropy_lambda}"
+                  f"__ch{config.channels}__{config.tconv}__seed{config.seed}")
     path = results_dir / f"{tag}.json"
+    done = Result.load(path) if path.exists() else None
+    if done is not None and require_predictions and (
+            done.test_truth is None or done.test_prediction is None):
+        raise ValueError(f"{path} has no complete per-row predictions; preserve it and "
+                         "explicitly plan any additional fit in a new results directory.")
     identity = run_identity(streams, variant, config, device, model_kwargs)
-    if path.exists():
-        done = Result.load(path)
+    if done is not None:
         if done.identity != identity:
             raise ValueError(f"{path} is legacy or incompatible with this computation; "
                              "preserve it and use a new results directory.")
         if log:
             log(f"  {tag}: already run, test {done.test_score:.4f}")
         return done
+    results_dir.mkdir(parents=True, exist_ok=True)
     if log:
         log(f"  {tag}: training")
     # Initial weights are part of the run. Seeding only inside fit() is too late.

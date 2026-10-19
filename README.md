@@ -80,6 +80,8 @@ Stage 2 is a decision rather than a computation, so it has no notebook. It is re
 
 Stage 3 trains fusion models on the encoder pairings above and compares each with the best single encoder, the concatenation + MLP reference baseline, and, on GTEx, the length baseline. It needs token-level embeddings rather than the pooled vectors Stage 1 uses, and the research plan's baselines and datasets come first; Coupled Mamba and cross-attention follow them. Each Stage 3 fusion result is read against the Stage 1 alignment and complementarity measurements for the same pair.
 
+**Status, October 19.** The first round of Stage 3 is built and run. Notebooks 01 to 04 in [Code/stage3/](Code/stage3/README.md) load the four BioLangFusion benchmarks in hand, write their token-level embeddings, check the BioLangFusion reproduction on fungal expression, measure LucaOne's input limit, and run IsoFormer's aggregator on the GTEx pilot with frozen encoders. Each result and its caveats are in the [run records](docs/run-records.md). Stage 4 starts with the mRFP control and the rest of Phase A.
+
 ## Data
 
 The input datasets are included as CSV tables in `datasets/`. The notebooks load these tables; you can use the existing files without running a data-building script:
