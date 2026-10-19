@@ -5,6 +5,7 @@ codon frame is T/3, the DNA stream is upsampled from T/6 tokens, the RNA stream 
 three to one, and the gated head produces one weight per modality per sequence.
 """
 
+import json
 import sys
 import tempfile
 import unittest
@@ -204,6 +205,54 @@ class PipelineTests(unittest.TestCase):
             self.assertTrue(np.isfinite(result.test_score), variant)
         self.assertIsNotNone(train.fit(blf.build(streams, "mil", channels=3), streams,
                                        config, "cpu", log=None).alpha)
+
+    def test_a_paired_bootstrap_resamples_the_difference_between_two_runs(self):
+        """Two models are scored on the same rows, so the difference is what to resample."""
+        truth = [float(i) for i in range(30)]
+
+        def stored(name, prediction):
+            return train.Result(variant=name, benchmark="stub", config={}, epochs=1,
+                                best_epoch=0, val_score=0.0, test_score=0.0, seconds=0.0,
+                                test_truth=truth, test_prediction=prediction)
+
+        out = train.paired_bootstrap(stored("rising", truth), stored("falling", truth[::-1]),
+                                     "regression", draws=200)
+        self.assertAlmostEqual(out["difference"], 2.0, places=6)
+        self.assertEqual(out["first_wins"], 1.0)
+        self.assertGreater(out["ci_low"], 1.9)
+
+    def test_a_paired_bootstrap_refuses_runs_it_cannot_compare(self):
+        truth = [float(i) for i in range(30)]
+        with_rows = train.Result(variant="a", benchmark="stub", config={}, epochs=1,
+                                 best_epoch=0, val_score=0.0, test_score=0.0, seconds=0.0,
+                                 test_truth=truth, test_prediction=truth)
+        without = train.Result(variant="b", benchmark="stub", config={}, epochs=1,
+                               best_epoch=0, val_score=0.0, test_score=0.0, seconds=0.0)
+        other_rows = train.Result(variant="c", benchmark="stub", config={}, epochs=1,
+                                  best_epoch=0, val_score=0.0, test_score=0.0, seconds=0.0,
+                                  test_truth=truth[:20], test_prediction=truth[:20])
+        with self.assertRaises(ValueError):
+            train.paired_bootstrap(with_rows, without, "regression", draws=10)
+        with self.assertRaises(ValueError):
+            train.paired_bootstrap(with_rows, other_rows, "regression", draws=10)
+
+    def test_require_predictions_retrains_a_result_that_predates_them(self):
+        streams = self.streams()
+        with tempfile.TemporaryDirectory() as directory:
+            config = train.TrainConfig(max_epochs=1, batch_size=2, channels=3,
+                                       early_stopping_patience=1)
+            self.assertIsNotNone(
+                train.run(streams, "concat", config, "cpu", directory, log=None).test_prediction)
+            path = next(Path(directory).glob("*.json"))
+            old = json.loads(path.read_text())
+            old["test_truth"] = old["test_prediction"] = None
+            path.write_text(json.dumps(old))
+            # Without the flag the incomplete record is handed back untouched.
+            self.assertIsNone(
+                train.run(streams, "concat", config, "cpu", directory, log=None).test_prediction)
+            self.assertIsNotNone(
+                train.run(streams, "concat", config, "cpu", directory, log=None,
+                          require_predictions=True).test_prediction)
 
     def test_an_interrupted_run_resumes_from_its_checkpoint(self):
         """Stopping after a few epochs and restarting must continue, not start over."""

@@ -61,14 +61,62 @@ class TrainConfig:
 
 
 def loss_function(task):
-    return nn.MSELoss() if task == "regression" else nn.CrossEntropyLoss()
+    """Mean squared error for one or many continuous outputs, cross-entropy for classes."""
+    return nn.CrossEntropyLoss() if task == "classification" else nn.MSELoss()
 
 
 def score(task, truth, prediction):
-    """Spearman correlation for regression, accuracy for classification."""
+    """Spearman for regression, accuracy for classification, mean Spearman per output for
+    an expression panel. The panel is averaged because IsoFormer reports one number for
+    "Spearman correlation across tissues" over its thirty tissues."""
     if task == "regression":
         return float(spearmanr(truth, prediction).statistic)
+    if task == "expression":
+        return float(np.mean([spearmanr(truth[:, i], prediction[:, i]).statistic
+                              for i in range(truth.shape[1])]))
     return float((truth == prediction.argmax(axis=1)).mean())
+
+
+def r_squared(truth, prediction):
+    """Mean coefficient of determination over the columns of an expression panel."""
+    residual = ((truth - prediction) ** 2).sum(axis=0)
+    total = ((truth - truth.mean(axis=0)) ** 2).sum(axis=0)
+    return float(np.mean(1 - residual / np.where(total == 0, np.nan, total)))
+
+
+def score_rows(task, truth, prediction):
+    """The same score from stored per-row predictions, which are already class ids."""
+    if task == "classification":
+        return float((truth == prediction).mean())
+    return score(task, truth, prediction)
+
+
+def paired_bootstrap(first, second, task, draws=2000, seed=0):
+    """Resample the test rows and ask how often one run scores above another.
+
+    Two models scored on the same rows are a paired comparison, so whether their separately
+    computed confidence intervals overlap says little: the question is the distribution of
+    the difference, and that is what this resamples. Returns the observed difference, a 95%
+    interval for it, and the share of resamples the first run wins.
+
+    Both runs need per-row predictions, which results written before 2026-10-18 do not have.
+    """
+    if first.test_prediction is None or second.test_prediction is None:
+        raise ValueError("both runs need per-row predictions; rerun with require_predictions")
+    if first.test_truth != second.test_truth:
+        raise ValueError("the two runs were not scored on the same rows")
+    truth = np.asarray(first.test_truth)
+    a, b = np.asarray(first.test_prediction), np.asarray(second.test_prediction)
+    rng = np.random.default_rng(seed)
+    spread = np.empty(draws)
+    for i in range(draws):
+        pick = rng.integers(0, len(truth), len(truth))
+        spread[i] = (score_rows(task, truth[pick], a[pick])
+                     - score_rows(task, truth[pick], b[pick]))
+    low, high = np.percentile(spread, [2.5, 97.5])
+    return {"difference": score_rows(task, truth, a) - score_rows(task, truth, b),
+            "ci_low": float(low), "ci_high": float(high),
+            "first_wins": float((spread > 0).mean())}
 
 
 def predict(model, batches, device, task):
@@ -82,6 +130,8 @@ def predict(model, batches, device, task):
             truth.append(batch.labels.cpu().numpy())
             predicted.append(output.squeeze(-1).cpu().numpy() if task == "regression"
                              else output.cpu().numpy())
+            # A classification output keeps its class axis for argmax; an expression panel
+            # keeps its tissue axis; only single-output regression is squeezed.
             if "alpha" in aux:
                 weights.append(aux["alpha"].cpu().numpy())
     alpha = np.concatenate(weights).mean(axis=0) if weights else None
@@ -102,6 +152,8 @@ class Result:
     seconds: float
     history: list = field(default_factory=list)
     alpha: dict | None = None
+    test_truth: list | None = None
+    test_prediction: list | None = None
 
     def save(self, path):
         Path(path).write_text(json.dumps(asdict(self), indent=2) + "\n")
@@ -120,7 +172,8 @@ def _save_checkpoint(path, epoch, model, optimiser, best, history, elapsed):
     os.replace(temporary, path)
 
 
-def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_every=10):
+def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_every=10,
+        loaders=None):
     """Train to the early stop, restore the best epoch, and score the test split.
 
     With a checkpoint path, the run is written there every checkpoint_every epochs and
@@ -128,8 +181,9 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
     """
     torch.manual_seed(config.seed)
     task = streams.task
-    splits = {name: loader(streams, name, batch_size=config.batch_size, seed=config.seed)
-              for name in ("train", "val", "test")}
+    splits = loaders or {
+        name: loader(streams, name, batch_size=config.batch_size, seed=config.seed)
+        for name in ("train", "val", "test")}
     criterion = loss_function(task)
     optimiser = torch.optim.Adam(model.parameters(), lr=config.lr,
                                  weight_decay=config.weight_decay)
@@ -155,14 +209,17 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
             batch = batch.to(device)
             optimiser.zero_grad()
             output, aux = model(batch)
-            target = batch.labels if task == "classification" else batch.labels.view(-1, 1)
+            target = (batch.labels if task in ("classification", "expression")
+                      else batch.labels.view(-1, 1))
             loss = criterion(output, target)
             if config.entropy_lambda and "alpha" in aux:
                 alpha = aux["alpha"].clamp_min(1e-12)
                 loss = loss + config.entropy_lambda * (-(alpha * alpha.log()).sum(1).mean())
             loss.backward()
             optimiser.step()
-            running += float(loss.detach()) * len(batch.codons)
+            # len(labels), not len(codons): the same loop trains the codon-grid models
+            # and the expression panel, and only one of those batches has codons.
+            running += float(loss.detach()) * len(batch.labels)
 
         truth, predicted, _ = predict(model, splits["val"], device, task)
         val = score(task, truth, predicted)
@@ -195,29 +252,43 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
         test_score=score(task, truth, predicted),
         seconds=before + time.perf_counter() - started,
         history=history,
-        alpha=None if alpha is None else dict(zip(MODALITIES, [float(a) for a in alpha])))
+        alpha=None if alpha is None else dict(zip(MODALITIES, [float(a) for a in alpha])),
+        # tolist handles a column of values and a panel of them alike; a classification
+        # run stores the predicted class rather than its logits.
+        test_truth=np.asarray(truth).tolist(),
+        test_prediction=([int(v) for v in predicted.argmax(axis=1)]
+                         if task == "classification" else np.asarray(predicted).tolist()))
     if checkpoint and checkpoint.exists():
         checkpoint.unlink()
     return result
 
 
-def run(streams, variant, config, device, results_dir, log=print, **model_kwargs):
-    """Train one variant, or return the run already on disk under the same settings."""
+def run(streams, variant, config, device, results_dir, log=print,
+        require_predictions=False, builder=None, loaders=None, tag=None, **model_kwargs):
+    """Train one variant, or return the run already on disk under the same settings.
+
+    require_predictions retrains a stored run that predates per-row predictions, which a
+    paired bootstrap needs. It is off by default, so reading back an old sweep stays free.
+    """
     results_dir = Path(results_dir)
     results_dir.mkdir(parents=True, exist_ok=True)
-    tag = (f"{streams.key}__{variant.replace(':', '-')}__lambda{config.entropy_lambda}"
-           f"__ch{config.channels}__{config.tconv}__seed{config.seed}")
+    tag = tag or (f"{streams.key}__{variant.replace(':', '-')}__lambda{config.entropy_lambda}"
+                  f"__ch{config.channels}__{config.tconv}__seed{config.seed}")
     path = results_dir / f"{tag}.json"
     if path.exists():
         done = Result.load(path)
+        if not (require_predictions and done.test_prediction is None):
+            if log:
+                log(f"  {tag}: already run, test {done.test_score:.4f}")
+            return done
         if log:
-            log(f"  {tag}: already run, test {done.test_score:.4f}")
-        return done
+            log(f"  {tag}: retraining, the stored result has no per-row predictions")
     if log:
         log(f"  {tag}: training")
-    model = build(streams, variant, channels=config.channels, tconv=config.tconv,
-                  **model_kwargs)
-    result = fit(model, streams, config, device, log=log,
+    model = (builder(streams, variant, config, **model_kwargs) if builder
+             else build(streams, variant, channels=config.channels, tconv=config.tconv,
+                        **model_kwargs))
+    result = fit(model, streams, config, device, log=log, loaders=loaders,
                  checkpoint=results_dir / f"{tag}.checkpoint")
     result.save(path)
     if log:
