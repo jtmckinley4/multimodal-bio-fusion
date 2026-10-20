@@ -52,9 +52,11 @@ A citation that already serves a specific claim can stay in its owning page. Thi
 
 Eight papers came in by email on October 9 and 10 (three from Chase, five from Mina). Each is placed by role in the Overleaf related-work table and in Section 6.6 of the project notes; this index records why each is retained.
 
+**Identity and availability check, 19 October 2026:** First pages and abstracts were checked for the seven locally held manuscripts below other than LucaOne. The [paper catalog](../Papers/README.md) records the exact versions, license evidence, five retained PDFs, and the source-only status of COMET and OmniGenome. This check does not replace the dated reading scopes below or constitute a full rereading.
+
 ### Rheude, Eils and Wild: Fusion or Confusion
 
-[arXiv 2512.22991](https://arxiv.org/abs/2512.22991) and the [simple baseline repository](https://github.com/TillmannRheude/simple_mml_baseline).
+[arXiv 2512.22991v3](https://arxiv.org/abs/2512.22991v3), [retained PDF](../Papers/supporting/Fusion_or_Confusion_arxiv_v3.pdf), and the [simple baseline repository](https://github.com/TillmannRheude/simple_mml_baseline).
 
 **Why retain it:** Nineteen multimodal methods reimplemented on nine datasets under standardized tuning, initialization, subject-wise cross-validation and statistical tests; no method consistently beats a simple per-modality-projection baseline, and several fall below the best single modality. It supplies the Stage 4 evaluation rules (identical heads, tuned baselines, grouped cross-validation, mean and SD, a statistical comparison) and the reason the baseline hierarchy exists.
 
@@ -62,7 +64,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### mRNABench
 
-[bioRxiv 2025.07.05.662870](https://www.biorxiv.org/content/10.1101/2025.07.05.662870v1) and the [repository](https://github.com/morrislab/mRNABench).
+[bioRxiv 2025.07.05.662870v1](https://www.biorxiv.org/content/10.1101/2025.07.05.662870v1), [retained PDF](../Papers/supporting/mRNABench_biorxiv_v1.pdf), and the [repository](https://github.com/morrislab/mRNABench).
 
 **Why retain it:** Ten mature-mRNA datasets and 59 subtasks with homology-aware splits, and evidence that random splits overestimate generalization. Supplies the half-life and translation-efficiency tasks (research plan items 3 and 4) and the grouped evaluation in the common rules.
 
@@ -70,15 +72,17 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### Krzakala et al.: MSAlign
 
-[arXiv 2605.19752](https://arxiv.org/abs/2605.19752) and the [repository](https://github.com/KrzakalaPaul/MSAlign-NeurIPS2026).
+[arXiv 2605.19752v2](https://arxiv.org/abs/2605.19752v2), [retained PDF](../Papers/supporting/MSAlign_arxiv_v2.pdf), and the [repository](https://github.com/KrzakalaPaul/MSAlign-NeurIPS2026).
 
-**Why retain it:** Alignment between two frozen encoders made operational as a retrieval task through learned projections, plus a measure of distribution shift between splits. Enters Stage 2 as a learned-projection retrieval diagnostic beside the frozen CCA retrieval, and the split-shift measure enters the common rules.
+**Why retain it:** MSAlign addresses metabolite identification by retrieving molecular structures from tandem mass spectra, aligning representations from frozen DreaMS and MolDeBERTa encoders through learned projections. Its relevance here is methodological: retrieval-based evaluation and the trade-off between leakage prevention and distribution shift when constructing splits. It does not directly validate DNA–RNA–protein alignment. Adapting these ideas to Stage 2 remains a proposed application; this source record does not establish implementation.
 
 **Reading scope and limits:** Abstract read on October 10, 2026; the loss and metrics were not confirmed from the full text.
 
+**Clarification, 19 October 2026:** The v2 first page and abstract identify the modalities and retrieval task above. The earlier wording that the diagnostic and split-shift measure "enter" the project is replaced with a proposed application to distinguish source relevance from adoption. This check does not resolve the earlier full-text limitations.
+
 ### Golkar et al.: MIMIC
 
-[arXiv 2604.24506](https://arxiv.org/abs/2604.24506), [repository](https://github.com/PolymathicAI/MIMIC), [model](https://huggingface.co/polymathic-ai/MIMIC).
+[arXiv 2604.24506v1](https://arxiv.org/abs/2604.24506v1), [retained PDF](../Papers/supporting/MIMIC_arxiv_v1.pdf), [repository](https://github.com/PolymathicAI/MIMIC), and [model](https://huggingface.co/polymathic-ai/MIMIC).
 
 **Why retain it:** A generative multimodal model conditioned across biomolecules, evaluated on mRNABench tasks. Motivates the full-transcript tasks; it is not evidence that fusing separately pretrained encoders helps.
 
@@ -86,7 +90,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### Ren et al.: COMET
 
-[arXiv 2412.10347](https://arxiv.org/abs/2412.10347).
+[arXiv 2412.10347v1](https://arxiv.org/abs/2412.10347v1). Repository availability is recorded in the [source-only catalog](../Papers/README.md#source-links-without-repository-pdfs).
 
 **Why retain it:** Seventeen DNA, RNA, protein, cross-molecule and multi-molecule tasks, evaluated with single-omics models, their pairs, LucaOne and CaLM; multi-molecule tasks remain hard for all of them. Supplies distinct-molecule tasks with published combinations for Stage 4 tests 5 and 8.
 
@@ -102,7 +106,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### Chen et al.: Structure-Aligned Protein Language Model
 
-[arXiv 2505.16896](https://arxiv.org/abs/2505.16896).
+[arXiv 2505.16896v2](https://arxiv.org/abs/2505.16896v2) and [retained PDF](../Papers/supporting/Structure_Aligned_Protein_Language_Model_arxiv_v2.pdf).
 
 **Why retain it:** Contrastive alignment of a protein language model's residue states to a structure encoder; a different sense of alignment (sequence to structure within one molecule), named in the Overleaf so it is not confused with alignment across molecules; a candidate structure feature for research plan item 6.
 
@@ -110,7 +114,7 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 ### Yang, Chen and Li: OmniGenome
 
-[arXiv 2407.11242](https://arxiv.org/abs/2407.11242), AAAI 2025.
+[Bridging Sequence-Structure Alignment in RNA Foundation Models, AAAI 2025 proceedings](https://doi.org/10.1609/aaai.v39i20.35500), by Yang, Chen and Li, introduces OmniGenome. The [arXiv manuscript](https://arxiv.org/abs/2407.11242) is a separate version; the [source-only catalog](../Papers/README.md#source-links-without-repository-pdfs) identifies the proceedings copy checked on 19 October 2026.
 
 **Why retain it:** Sequence-structure alignment in an RNA foundation model with bidirectional mappings; the same sense of alignment on the RNA side; a candidate RNA encoder and structure source for research plan item 6.
 
@@ -146,9 +150,27 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [Sanofi-Public/CodonBERT](https://github.com/Sanofi-Public/CodonBERT), including its [embedding-extraction script](https://github.com/Sanofi-Public/CodonBERT/blob/master/benchmarks/CodonBERT/extract_embed.py).
 
-**Why retain it:** The repository is the source of the stability and mRFP CSVs and hosts the codon-level CodonBERT model, a candidate mRNA encoder. Its benchmark files are needed to resolve the dataset-version question recorded in the [stability dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons).
+**Why retain it:** The repository distributes the benchmark CSVs cited through CodonBERT, including fungal expression and E. coli proteins, and hosts the codon-level CodonBERT model. It provides a source-tracing route for the [benchmark target guide](methods/biological-targets-and-controls.md#fungal-and-e-coli-benchmark-targets) and the dataset-version question in the [stability dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons). Release availability does not establish which bytes an earlier model run used.
 
 **Reading scope and limits:** Only the search listing was seen on September 29, 2026. How weights are distributed and which data version BioLangFusion used remain unread leads.
+
+**October 20, 2026 benchmark review:** Read the Dataset section of the [README at commit `451a1b1`](https://github.com/Sanofi-Public/CodonBERT/blob/451a1b167c06028dfbf2ff7aa2cfdea46fbcc4f4/README.md) and the [fine-tuning loader](https://github.com/Sanofi-Public/CodonBERT/blob/451a1b167c06028dfbf2ff7aa2cfdea46fbcc4f4/benchmarks/CodonBERT/finetune.py#L110-L148), alongside Li et al.'s [published CodonBERT article](https://pmc.ncbi.nlm.nih.gov/articles/PMC11368176/), supervised-task description and Table 1, inspected through its [publisher-supplied XML](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11368176/fullTextXML). The paper describes fungal CDS expression regression, E. coli low/medium/high classification and 70/15/15 splits. The inspected loader reads `Value` and `Split`; it does not supply the upstream fungal target transformation or the E. coli numeric-label dictionary. This review informed the guide's source chain and qualifications. It did not match local rows against downloaded releases, reconstruct CSV generation or verify the historical BioLangFusion input version. No new PDF or dataset copy was added.
+
+### Wint et al.: Fungal expression and tRNA context
+
+[Wint, Salamov and Grigoriev (2022), Kingdom-Wide Analysis of Fungal Protein-Coding and tRNA Genes Reveals Conserved Patterns of Adaptive Evolution](https://pmc.ncbi.nlm.nih.gov/articles/PMC8826637/), especially the expression-linked codon-usage analysis and Methods: Genomic Data Acquisition, RNA sequencing, tRNA gene prediction, and Data Set Collection and Preprocessing.
+
+**Why retain it:** It separates RNA-seq expression evidence from the study's tRNA-copy analysis, informing the [fungal target explanation](methods/biological-targets-and-controls.md#fungal-expression). Neither a broad paper title nor its species total establishes the contents of the downstream CSV.
+
+**Reading scope and limits:** Those sections were read on October 20, 2026 through the [publisher-supplied XML](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8826637/fullTextXML). The [author's Codon2Vec preprocessing](https://github.com/rhondene/Codon2Vec/blob/1d3e5df41425753502076927b3bf2f0aa9e927a5/Codon2Vec/filterExprs.py#L42-L57) was also inspected: it selects expression extremes for a separate binary task, so its protocol does not identify the continuous CodonBERT labels. Exact local units, transformation, species composition and assay-to-row mapping remain unresolved. Remote full text was inspected without adding a repository copy.
+
+### Boël and Ding: E. coli expression assay and label groups
+
+[Boël et al. (2016), Codon influence on protein expression in E. coli correlates with mRNA levels](https://pmc.ncbi.nlm.nih.gov/articles/PMC5054687/), Large-scale protein-expression dataset and Methods on the dataset's proteins and scoring; and [Ding et al. (2022), MPEPE](https://pmc.ncbi.nlm.nih.gov/articles/PMC8913310/), Section 2.1 and Table 1.
+
+**Why retain them:** Boël identifies the original host system and ordinal whole-cell gel assay. Ding explains the subsequent grouping used before CodonBERT's three-class task. They support the [E. coli target explanation](methods/biological-targets-and-controls.md#protein-expression-in-e-coli) and prevent conflating host organism, gene origin, soluble yield and native abundance.
+
+**Reading scope and limits:** The named sections and Ding's evaluation description were read on October 20, 2026. Ding's prose reports 6,438 proteins, whereas its listed groups total 6,348, matching Boël and CodonBERT; this discrepancy is retained rather than silently selecting a new local count. No supplementary-row mapping was performed. The local `0/1/2` dictionary, filtered organism membership and construct-level correspondence remain unverified. Remote articles were inspected without adding repository copies.
 
 ### Medina-Munoz et al.: Stability assay provenance lead
 

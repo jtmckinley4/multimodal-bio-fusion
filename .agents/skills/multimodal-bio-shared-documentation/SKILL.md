@@ -22,6 +22,12 @@ Use the repository's [Markdown-formatting workflow](../multimodal-bio-markdown-f
 
 [Google's tone and table guidance](../../../docs/sources.md#google-tone-and-tables) offers supporting writing advice; the repository's conventions also reflect direct contributor feedback.
 
+## Preserve decisions and interpretations
+
+When recording results or revising a scientific interpretation, follow the [provenance workflow](../../../docs/run-records.md#apply-the-provenance-workflow). Connect the question, consulted evidence, decision, implementation or analysis version, result and interpretation through the existing owning documents and records. Preserve who proposed or interpreted an idea, the alternatives actually considered, the reason for a consequential change, and the human decision where known. Keep an AI proposal, authorization to investigate, an observed result, a software check and scientific acceptance as separate facts.
+
+Retain an earlier interpretation with its evidence and add a linked correction or qualification when the conclusion changes. Identify affected figures, summaries or claims, or state that their dependency review is incomplete; do not silently rewrite history or claim every dependent artifact was checked. Keep reusable explanations in notebooks and execution-specific narrative in run records. Use the existing method, source and planning documents for decisions that belong there, linking the applicable version rather than copying full histories into agent context. The guide defines when an update needs a new analysis record and what routine edits do not need one.
+
 ## Select sources worth retaining
 
 Retain a source when it supports or challenges a consequential shared claim or choice, offers an explanation likely to be useful again, or is a promising lead with a specific unanswered question. Keep relevant contrary evidence. Do not equate frequency of retrieval, popularity, or model confidence with importance.

@@ -25,9 +25,24 @@ The tests use Python's built-in `unittest` runner and the existing notebook depe
 - [Scientific-option validation](test_validation.py) rejects unsupported permutation nulls and multi-target scalar audits before work; hand-worked examples and retained seeded answers check supported behavior.
 - [Model cleanup](test_embedding_resources.py) uses substitute inference to check normal release, inference errors, interruption, and simultaneous inference/cleanup failure. It does not measure real GPU-memory release.
 - [Embedding-cache checks](test_embedding_cache.py) use tiny local NPZ files and substitute models to check effective-input identity, legacy/corrupt errors, matrix shape, deterministic archive closure, and interrupted publication. Completed fixture caches survive failed replacement; no team caches are used or migrated.
+- [Fusion checks](test_fusion_model.py) cover model shapes, CPU training fixtures, seeded construction, interrupted checkpoint continuation, result publication, and older result formats. They also check paired-bootstrap inputs and reject requests that would replace existing results to obtain missing predictions.
+- [IsoFormer checks](test_isoformer.py) cover the aggregator, expression-panel scoring, budgeted batches, and small noncheckpointed fits with synthetic inputs. They do not validate the research notebook's custom training/checkpoint path; that path is explicitly rejected until input identity and sampler recovery are supported.
 - [GTEx coordinates](test_gtex_coordinates.py) checks strand-aware endpoints, requested length, TSS position, unchanged boundaries, and prior-expression equivalence using invented rows. [GTEx input/output](test_gtex_io.py) checks downloads, schema, response validation, bounded retry decisions, and CSV publication with local fixtures and mocked requests.
 
 The tests do not run the research bodies or update notebooks. Setup uses separate namespaces in one Python process, not separate Jupyter kernels. Passing these checks does not reproduce scientific results or verify how a notebook viewer renders or follows links. The blocked entry points guard against accidental execution; they are not a sandbox for untrusted code.
+
+## Forward-only codon-grid checks
+
+From the repository root, select only the codon-grid and TextCNN forward checks:
+
+```shell
+python -B -m unittest discover -s tests -p test_fusion_model.py -k CodonGridTests -k TextCNNTests -v
+```
+
+These checks use small CPU tensors. Hand-derived impulses verify Equation 1's actual kernel 2, stride 2, padding 0 and positional values before and after length fitting for complete 6-mers. RNA fixtures check triplet means, dropped incomplete triplets, masks, and nonzero batch padding; per-row invariance covers both convolution settings. TextCNN checks cover padded inputs and short sequences. No optimizer, backward pass, research data, cache opening, checkpoint access, or pretrained model is needed; codon-grid fixtures also block training and artifact entry points.
+
+This command does not run the training tests elsewhere in `test_fusion_model.py`. It does not validate biological reading frames or the placement of NT remainder tokens, compare trained convolution variants, or implement the pending standalone codon-pooled RNA baseline. Julian's reported standalone baseline needs source inspection, integration, and its own acceptance checks.
+
 
 ## After editing a notebook or shared code
 

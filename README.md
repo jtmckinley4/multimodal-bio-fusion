@@ -90,6 +90,8 @@ The input datasets are included as CSV tables in `datasets/`. The notebooks load
 - [mRNA_Stability.csv](datasets/mRNA_Stability.csv): 65,356 rows containing 29,949 distinct sequence strings.
 - [Fungal_expression.csv](datasets/Fungal_expression.csv): 7,089 coding sequences with an expression label, the first BioLangFusion benchmark.
 - [E.Coli_proteins.csv](datasets/E.Coli_proteins.csv): 6,348 coding sequences labeled low, medium, or high expression; the one classification benchmark.
+
+The [fungal and E. coli target guide](docs/methods/biological-targets-and-controls.md#fungal-and-e-coli-benchmark-targets) traces the assays behind both labels and what the local files do and do not record about them.
 - [CoV_Vaccine_Degradation.csv](datasets/CoV_Vaccine_Degradation.csv): 2,400 fixed-length 81-nucleotide vaccine-construct fragments with a degradation label.
 - [GTEx_pilot.csv](datasets/GTEx_pilot.csv): 2,000 protein-coding human transcripts from [IsoFormer's GTEx transcript-expression table](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression), 1,000 from its published train split and 1,000 from its test split, each with its expression in 30 tissues. Each row holds the transcript, its untranslated regions and coding sequence, its protein, and 6,000 nucleotides of GRCh38 DNA centered on its transcription start site. [build_gtex_pilot.py](Code/stage1/build_gtex_pilot.py) produced it: it downloads IsoFormer's table, samples the transcripts, and reads the DNA windows from the [Ensembl REST service](https://rest.ensembl.org/documentation/info/sequence_region_post).
 
@@ -122,6 +124,8 @@ When code adds or changes an output, update this inventory and its handling. Add
 | `Code/stage1/embeddings_legacy/` | Earlier runs of the Stage 1 notebooks, before October 6 | Older embedding caches and `stage1_main_embeddings.npz`, kept for reference; the current notebooks do not read them. | Local and ignored. |
 | `.data-cache/GTEx_final.csv` | `Code/stage1/build_gtex_pilot.py` | IsoFormer's full GTEx table, about 645 MB, downloaded to sample the pilot. | Local and ignored; only needed to rebuild `GTEx_pilot.csv`. |
 | `docs/figures/stability/` and `docs/figures/gtex/` | Tagged figure cells in each notebook; [model-free exporter](Code/export_figures.py) | SVG/PNG, numeric CSVs, completed-result JSON and manifests. Regenerate from the saved snapshot without loading encoders or rerunning analyses. | Deliberately shared in Git; see the [figure guide](docs/figures/README.md) for commands and result-state limits. Writing these files does not commit or push them. |
+| `Code/stage3/results/<benchmark>/` and `Code/stage4/results/<notebook>/` | The Stage 3 and Stage 4 notebooks | One small JSON per training run with its settings, score and per-row test predictions; CSV tables for the probe notebooks. | Tracked; the `*.checkpoint` files beside them and everything under `Code/*/embeddings/` are ignored. |
+| `Code/stage4/results/blf_phaseA/ecoli_proteins/` and `Code/stage3/results/fungal_expression/reproducible/` | Chase's Phase A runner and his Step 3 reruns, Windows, October 19 to 20 | His appendix-convolution E. coli cohort with its provenance records, and his seed-0 fungal fits; see the [run records](docs/run-records.md). | Tracked. Their runner and verifier scripts were written against a trainer refactor that is not on this branch. |
 
 ## Setup
 

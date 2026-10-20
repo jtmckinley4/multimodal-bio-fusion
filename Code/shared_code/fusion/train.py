@@ -32,7 +32,7 @@ from __future__ import annotations
 import json
 import os
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
 import numpy as np
@@ -210,13 +210,22 @@ class Result:
     alpha: dict | None = None
     test_truth: list | None = None
     test_prediction: list | None = None
+    # Keys another writer added (for example a run identity); kept so that reading and
+    # rewriting a file never drops them, and never interpreted here.
+    extra_fields: dict = field(default_factory=dict, repr=False)
 
     def save(self, path):
-        Path(path).write_text(json.dumps(asdict(self), indent=2) + "\n")
+        values = asdict(self)
+        payload = dict(values.pop("extra_fields"))
+        payload.update(values)
+        Path(path).write_text(json.dumps(payload, indent=2) + "\n")
 
     @staticmethod
     def load(path):
-        return Result(**json.loads(Path(path).read_text()))
+        payload = json.loads(Path(path).read_text())
+        known = {f.name for f in fields(Result)} - {"extra_fields"}
+        return Result(**{k: v for k, v in payload.items() if k in known},
+                      extra_fields={k: v for k, v in payload.items() if k not in known})
 
 
 def _save_checkpoint(path, epoch, model, optimiser, best, history, elapsed):

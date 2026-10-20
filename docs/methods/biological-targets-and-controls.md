@@ -1,18 +1,55 @@
 # Biological targets and controls
 
-These methods answer different questions. The sequence-length baseline predicts the dataset's stability label. GC, GC3, and Nussinov pairing fraction are targets calculated from nucleotide strings, used to ask what the embeddings make recoverable. The synonymous-recoding control checks a translation/embedding relationship through descriptive spread, without fitting a probe.
+Start by identifying what a target measures: a supplied experimental label and a property calculated from a sequence answer different questions. The fungal and E. coli benchmarks below illustrate why the word *expression* needs an assay-specific explanation. In Stage 1, the sequence-length baseline predicts the dataset's stability label. GC, GC3, and Nussinov pairing fraction are targets calculated from nucleotide strings, used to ask what the embeddings make recoverable. The synonymous-recoding control checks a translation/embedding relationship through descriptive spread, without fitting a probe.
 
-This guide retains the definitions, mathematical development, worked examples, and implementation connections. The [stability notebook](../../Code/stage1/Stage1_stability.ipynb) owns the calls, saved outputs, and result interpretation; each section links directly back to its calculation.
+This guide retains target definitions, mathematical development, worked examples, and implementation connections. The [Stage 3 dataset audit](../../Code/stage3/01_blf_datasets.ipynb) owns the benchmark inspection; the [stability notebook](../../Code/stage1/Stage1_stability.ipynb) owns the Stage 1 calls and saved outputs. Each calculation section links back to its notebook, and [run records](../run-records.md) retain execution-specific interpretations.
 
 | Reader question | Method |
 | --- | --- |
+| What do the fungal and E. coli labels mean biologically? | [Benchmark targets and evaluation scope](#fungal-and-e-coli-benchmark-targets) |
 | How much does sequence length alone predict stability? | [Sequence-length baseline](#sequence-length-baseline) |
 | Can embeddings predict overall nucleotide composition? | [GC-content prediction](#gc-content-prediction) |
 | Can they predict composition at third codon positions? | [GC3 prediction](#gc3-prediction) |
 | Can they predict a simplified maximum-pairing score? | [Nussinov pairing fraction](#secondary-structure-proxy-nussinov-pairing-fraction) |
 | Do synonymous inputs behave as expected after translation and embedding? | [Synonymous-recoding control](#pipeline-control-synonymous-recoding) |
 
-The first four methods reuse the [linear-probe procedure](linear-probing.md), including its [evaluation limitations](linear-probing.md#current-evaluation-limitation). Sequence retention and encoder inputs are explained in [From sequences to embeddings](inputs-and-embeddings.md).
+The sequence-length, GC, GC3 and Nussinov methods reuse the [linear-probe procedure](linear-probing.md), including its [evaluation limitations](linear-probing.md#current-evaluation-limitation). Sequence retention and encoder inputs are explained in [From sequences to embeddings](inputs-and-embeddings.md).
+
+## Fungal and E. coli benchmark targets
+
+Training fits the supplied `Value` column. Understanding what that value represents determines what a good score can tell us biologically. In both local CSVs, a row is a sequence–label observation with a supplied split assignment; it is not automatically a distinct gene, organism or independent experimental replicate. Their four fields, `Sequence`, `Value`, `Dataset` and `Split`, contain no accession, organism or assay identifier.
+
+[BioLangFusion, Appendix A.2 and Table 2](../../Papers/core/BioLangFusion.pdf), obtains these benchmarks through CodonBERT. The [CodonBERT release](../sources.md#codonbert-repository) identifies Wint et al. for fungal expression and Ding et al.'s MPEPE study for E. coli. This establishes the cited source chain; it does not by itself identify the original assay record behind every local row.
+
+### Fungal expression
+
+**Source-level meaning.** Wint et al.'s expression evidence comes from RNA sequencing, available for 420 of the 459 fungal species in its broader study. Most transcriptomes pool material across conditions. Protein-coding sequences and predicted tRNA genes are analyzed separately; the latter's copy numbers serve as a proxy for tRNA abundance. Thus this source does not establish direct protein-yield measurements or tRNA rows in the downstream regression benchmark. See [Wint et al., expression analysis and Methods](https://pmc.ncbi.nlm.nih.gov/articles/PMC8826637/).
+
+**What the local target establishes.** CodonBERT describes a CDS-based expression task. The exact species subset, units, normalization or other transformation of local `Value`, and the mapping to original RNA-seq observations remain unresolved. Do not label these values TPM, FPKM, log expression, protein abundance or a verified 459-species collection. The original study's annotated CDS requirements also do not certify every downstream row's boundaries or reading frame. The [source review](../sources.md#wint-et-al-fungal-expression-and-trna-context) records what was inspected and the missing connection.
+
+**Interpretation.** Spearman correlation assesses how well predictions order the released expression labels. A strong score can support benchmark prediction under the evaluated split; it does not establish accurate protein production, transfer to unseen fungal species, or a causal effect of codon choice. Those claims require additional target metadata or a different evaluation design.
+
+### Protein expression in E. coli
+
+**Source-level meaning.** Boël et al.'s original collection comprises 6,348 genes from 171 organisms expressed in *E. coli* BL21(DE3) carrying pMGK, which supplies an `argU` tRNA gene, using a T7/pET system. Expression was induced overnight at 18 °C and scored visually from whole-cell Coomassie-stained SDS-PAGE gels on an ordinal 0–5 scale. These are coarse production scores, not concentration units or a measurement restricted to the soluble fraction. *E. coli* names the expression host, not every gene's source organism. See [Boël et al., Large-scale protein-expression dataset and Methods](https://pmc.ncbi.nlm.nih.gov/articles/PMC5054687/).
+
+Ding et al. describes the six expression levels on a 1–6 scale: levels 1–3 form its low group, level 6 its high group, and levels 4–5 an intermediate validation group. CodonBERT subsequently describes a three-class low/medium/high benchmark. These are distinct learning tasks; MPEPE's binary training and validation protocol should not be imported into this reproduction. See [Ding et al., Section 2.1 and Table 1](https://pmc.ncbi.nlm.nih.gov/articles/PMC8913310/) and [CodonBERT's supervised-task description](https://pmc.ncbi.nlm.nih.gov/articles/PMC11368176/).
+
+**What remains unresolved.** The local integers `0`, `1` and `2` have no verified mapping to those semantic groups in the inspected transformation evidence. Their order must not be assumed. Nor do the local fields identify the source organisms retained after filtering or establish a row-level match to the original constructs. Ordinal score boundaries should not be presented as concentration thresholds.
+
+**Interpretation.** Accuracy remains a valid comparison of predictions against the stored class IDs when the same coding is used consistently. Class-specific biological interpretation needs the missing label dictionary. Overall accuracy does not directly measure translation efficiency, soluble yield, native gene abundance or the benefit of an engineered sequence change. The [assay reading route](../sources.md#bo%C3%ABl-and-ding-e-coli-expression-assay-and-label-groups) distinguishes these uses.
+
+### Splits, preprocessing and the claim being tested
+
+CodonBERT reports a 70%/15%/15% training/validation/test split, and BioLangFusion says it follows the supplied splits. These statements do not establish species-disjoint or gene-family-disjoint evaluation, or recover the exact released split-generation procedure. The [published specification and release loader](../sources.md#codonbert-repository) are separate evidence: the inspected loader consumes the stored assignments.
+
+Our [`blf_benchmark_rows`](../../Code/shared_code/datasets.py) keeps those assignments, removes missing sequences and drops sequences longer than 999 nucleotides. This is a project filtering choice. BioLangFusion describes truncation; the [saved preprocessing audit](../../Code/stage3/01_blf_datasets.ipynb#Checking-BioLangFusion's-preprocessing) finds matching retained totals at several nearby cutoffs and a fungal raw-count discrepancy. Neither matching counts nor the helper's existing “published preprocessing” wording proves identical author preprocessing or row identity.
+
+The [saved split audit](../../Code/stage3/01_blf_datasets.ipynb#Published-splits,-and-how-much-the-test-split-reuses) finds no exact normalized sequence crossing splits in fungal expression or E. coli. Fungal expression nevertheless contains six repeated-sequence groups with differing labels within splits. Relatedness, organism membership and assay dependence have not been established for the local rows. Report the exact-overlap finding rather than calling the splits “clean” or biologically independent.
+
+For the protein stream, [`grid_protein`](../../Code/shared_code/fusion/token_embeddings.py) translates complete triplets from the first supplied base and represents stops with `X`. Preserving one position per triplet does not verify biological reading frame, the original construct's boundaries, or the authors' protein-input policy. The [sequence checks](../../Code/stage3/01_blf_datasets.ipynb#Sequence-checks) explain that implementation choice without changing the supplied benchmark.
+
+The resulting comparisons test prediction on the retained benchmark rows under the declared input and evaluation rules. Keep missing source identities and biological qualifications beside the claims. This source review changes the interpretation boundary, not the labels, splits, saved metrics or completed fits.
 
 ## Sequence-length baseline
 

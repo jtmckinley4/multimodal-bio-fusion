@@ -1,0 +1,517 @@
+{
+  "purpose": "Verify saved fungal Equation 1 numbers; no training or encoder inference.",
+  "started_utc": "2026-10-20T03:42:06.817909+00:00",
+  "status": "passed_internal_consistency_only",
+  "errors": [],
+  "inputs": [
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:dna",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 0
+      },
+      "sha256": "2bef0487b0de4a06e9536be8d6c999e5a39c3364a6bf1372485143a4947cf53d",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.8125047802662453,
+      "recomputed_test_score": 0.8125047802662453,
+      "score_absolute_error": 0.0,
+      "epochs": 85,
+      "best_epoch": 64,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed1.json",
+      "variant": "unimodal:dna",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 1
+      },
+      "sha256": "5153459f8507896413a516ff0b275c008705ac7e2efc667f291ab805e46c9e99",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.8010201423014885,
+      "recomputed_test_score": 0.8010201423014885,
+      "score_absolute_error": 0.0,
+      "epochs": 86,
+      "best_epoch": 65,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2.json",
+      "variant": "unimodal:dna",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 2
+      },
+      "sha256": "fffa21eedf7d35bd6cf1ab9573bed68e42b1a11972c4e4bebbb1bbdee9a42cea",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.8061176087934024,
+      "recomputed_test_score": 0.8061176087934024,
+      "score_absolute_error": 0.0,
+      "epochs": 97,
+      "best_epoch": 76,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 0
+      },
+      "sha256": "0eefbec823b3c63175b03d85a715f907522aaeb6d33567ef26a1067a0cb9acfc",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.7925875545733445,
+      "recomputed_test_score": 0.7925875545733445,
+      "score_absolute_error": 0.0,
+      "epochs": 33,
+      "best_epoch": 12,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__concat__lambda0.0__ch100__equation__seed1.json",
+      "variant": "concat",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 1
+      },
+      "sha256": "97ed9b6b9b208fb628c6cfaf69a533e94666cb7774f3ae2c0df9cc3ef75d3d2d",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.7925687636698775,
+      "recomputed_test_score": 0.7925687636698775,
+      "score_absolute_error": 0.0,
+      "epochs": 34,
+      "best_epoch": 13,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__concat__lambda0.0__ch100__equation__seed2.json",
+      "variant": "concat",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 2
+      },
+      "sha256": "a3744d7421672d2ad190c304c033b4742f05fafea6df9951b801012f4f727ecd",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.788923781190131,
+      "recomputed_test_score": 0.788923781190131,
+      "score_absolute_error": 0.0,
+      "epochs": 33,
+      "best_epoch": 12,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.01,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 0
+      },
+      "sha256": "635682e3786332ab9952bce9ca865285723d4d8a6479dc0706aaf4c976376e11",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.8018037758018962,
+      "recomputed_test_score": 0.8018037758018962,
+      "score_absolute_error": 0.0,
+      "epochs": 36,
+      "best_epoch": 15,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__mil__lambda0.01__ch100__equation__seed1.json",
+      "variant": "mil",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.01,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 1
+      },
+      "sha256": "54a7107212b2eddf603aca413ad367588b99b8c04bab378cadee786894996d49",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.8044179753480847,
+      "recomputed_test_score": 0.8044179753480847,
+      "score_absolute_error": 0.0,
+      "epochs": 34,
+      "best_epoch": 13,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__mil__lambda0.01__ch100__equation__seed2.json",
+      "variant": "mil",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.01,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 2
+      },
+      "sha256": "ab114b476efccc2a2d43651bd1eda545974aa9cfeffca1a100a41df86a1e4d23",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.7969766266441947,
+      "recomputed_test_score": 0.7969766266441947,
+      "score_absolute_error": 0.0,
+      "epochs": 34,
+      "best_epoch": 13,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 0
+      },
+      "sha256": "6890eae9dfb80ae74d03171ba66f4b12fde3312349dcc827b3d3ad73f12d5899",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.8235228906597847,
+      "recomputed_test_score": 0.8235228906597847,
+      "score_absolute_error": 0.0,
+      "epochs": 34,
+      "best_epoch": 13,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__cross__lambda0.0__ch100__equation__seed1.json",
+      "variant": "cross",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 1
+      },
+      "sha256": "109c7e13d2b9a1b1b113617fae1a57d8d66a2fd683594ad6621909c9d1147ea8",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.8141080442990034,
+      "recomputed_test_score": 0.8141080442990034,
+      "score_absolute_error": 0.0,
+      "epochs": 24,
+      "best_epoch": 3,
+      "execution_identity_present": false
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__cross__lambda0.0__ch100__equation__seed2.json",
+      "variant": "cross",
+      "config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 2
+      },
+      "sha256": "650386292605cb729b45096ab12333a857f4864741950b01990c55125f49b482",
+      "status": "passed",
+      "rows": 430,
+      "stored_test_score": 0.8308061391919341,
+      "recomputed_test_score": 0.8308061391919341,
+      "score_absolute_error": 0.0,
+      "epochs": 38,
+      "best_epoch": 17,
+      "execution_identity_present": false
+    }
+  ],
+  "comparisons": [
+    {
+      "first": "concat",
+      "second": "unimodal:dna",
+      "difference": -0.015187477309261066,
+      "ci_low": -0.04909418533671072,
+      "ci_high": 0.017202773800407484,
+      "fraction_above_zero": 0.18425,
+      "historically_reported_rounded": [
+        -0.015,
+        -0.049,
+        0.017
+      ],
+      "matches_reported_at_three_decimals": true
+    },
+    {
+      "first": "mil",
+      "second": "unimodal:dna",
+      "difference": -0.005481384522320054,
+      "ci_low": -0.0409225214206127,
+      "ci_high": 0.031120008192667418,
+      "fraction_above_zero": 0.39325,
+      "historically_reported_rounded": [
+        -0.005,
+        -0.041,
+        0.031
+      ],
+      "matches_reported_at_three_decimals": true
+    },
+    {
+      "first": "cross",
+      "second": "unimodal:dna",
+      "difference": 0.016264847596528798,
+      "ci_low": -0.013757473280865195,
+      "ci_high": 0.047923019201218685,
+      "fraction_above_zero": 0.86,
+      "historically_reported_rounded": [
+        0.016,
+        -0.014,
+        0.048
+      ],
+      "matches_reported_at_three_decimals": true
+    },
+    {
+      "first": "cross",
+      "second": "mil",
+      "difference": 0.02174623211884885,
+      "ci_low": 0.008827680062268625,
+      "ci_high": 0.03646170082476604,
+      "fraction_above_zero": 0.99975,
+      "historically_reported_rounded": [
+        0.022,
+        0.009,
+        0.036
+      ],
+      "matches_reported_at_three_decimals": true
+    },
+    {
+      "first": "cross",
+      "second": "concat",
+      "difference": 0.031452324905789864,
+      "ci_low": 0.012153387324406122,
+      "ci_high": 0.05274849796030582,
+      "fraction_above_zero": 0.999,
+      "historically_reported_rounded": [
+        0.031,
+        0.012,
+        0.053
+      ],
+      "matches_reported_at_three_decimals": true
+    },
+    {
+      "first": "mil",
+      "second": "concat",
+      "difference": 0.009706092786941012,
+      "ci_low": -0.010760645501175387,
+      "ci_high": 0.03069136804015043,
+      "fraction_above_zero": 0.82675
+    }
+  ],
+  "strict_execution_resume_qualified": false,
+  "limits": [
+    "Matching target values does not prove sequence-row identity when labels repeat.",
+    "Dataset and ordered-row hashes are measured now, not historical producer identities.",
+    "Saved Git source is not proof of the execution-time code or environment.",
+    "History consistency does not prove predictions came from the best checkpoint.",
+    "These records lack execution identities; encoder/cache/producer provenance stays unknown.",
+    "Intervals condition on this split, fixed configurations and three fitted seeds.",
+    "Rows, not seeds, are resampled; training uncertainty is not eliminated or fully estimated.",
+    "The historical row bootstrap does not account for biological relatedness among rows.",
+    "Six comparisons use unadjusted percentile intervals; the positive fraction is not a p-value.",
+    "Comparison is against DNA; this verification does not certify a best-baseline selection rule."
+  ],
+  "analysis_code": {
+    "head": "69f8604ec37b48506a53ddb12668271ae38cd3b9",
+    "working_tree_changes": "M Code/stage4/README.md\n M docs/agent-context.md\n M tests/README.md\n M tests/test_fusion_model.py\n?? Code/stage3/results/fungal_expression/records/",
+    "sources": {
+      "Code/stage3/results/fungal_expression/records/verify_equation_results.py": "47443fe6638df8f195698e5ea6cea11f15ca977323371951cccb4e6c33df9a68",
+      "Code/stage4/run_blf_phaseA.py": "c3d8dae4ac3929c127952e1f0f761916ca38943014a140a8f7c419e3df6eaa04",
+      "Code/shared_code/datasets.py": "2ed0c1129bd14d53e03a67d23541fadfafa78708acac3286371442027b61aeac",
+      "Code/shared_code/fusion/train.py": "42a9e26a66f09227dd8b3a01bb0c3c6bb0fcbdfb9160d85dd888333887000646"
+    }
+  },
+  "versions": {
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.3.5",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3",
+    "torch_imported_for_existing_validators": "2.10.0+cu126"
+  },
+  "historical_method": {
+    "commit": "8b8dd12cc24ee9a59257c7910921f92d24fa120e",
+    "path": "Code/stage3/03_blf_build_check.ipynb",
+    "cells": [
+      {
+        "id": "tconv4",
+        "source_sha256": "aa2278f87579a5bd40cbd901e5c320d7c04dd58defe8f56d72d5a75428a58ac2",
+        "saved_outputs_sha256": "94e1ec37629576fa39087a63c22a950df9230fdabaa4e995bf6555e281d2fc79"
+      },
+      {
+        "id": "noise2",
+        "source_sha256": "e8b7fc93ca8e4c50de6bcbf5d6e6b457eff2fbe2de958701bb4fb29aaea2874e",
+        "saved_outputs_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "id": "noise3",
+        "source_sha256": "dd280f53f213584e39705b930d8c6a762c364b80256186e8098debb809980f38",
+        "saved_outputs_sha256": "e22482bf8e78dd84b0c99fdd54a7dfaa0f96c9fde6ef1f12d6184ddc54b3e5c4"
+      },
+      {
+        "id": "noise4",
+        "source_sha256": "12a91f5b235939309303888a5fc8abc56a75db6e1bd7ff4d5587292b9c3fff28",
+        "saved_outputs_sha256": "568e157684e708aee19d517c4c66cc19be7195574d8287f04c4313d39dec673c"
+      }
+    ],
+    "draws": 4000,
+    "random_seed": 0,
+    "percentiles": [
+      2.5,
+      97.5
+    ],
+    "seed_order": [
+      0,
+      1,
+      2
+    ],
+    "statistic": "Mean of per-seed Spearman scores, then difference between models.",
+    "source_output_mismatch": "noise4 source averages scores across seeds, but its saved interval table is per-seed. This report executes the saved method independently; it does not refresh that notebook."
+  },
+  "selection_evidence": {
+    "mil": "tconv4 source selects the highest validation score among positive weights, and its saved output reports Equation lambda=0.01. noise3 fixes that weight across seeds. Prediction reruns replaced selected seed-0 files; the original lambda=0.01 validation value is absent from the inspected 86c942e and 8b8dd12 snapshots.",
+    "baseline": "noise3 hard-codes DNA. Original native validation scores rank DNA above protein and RNA, but the earlier verdict uses test scores for best_single. A validation-only selection procedure is not established.",
+    "reading_route": "docs/run-records.md#fungal-equation-1-saved-result-verification"
+  },
+  "dataset": {
+    "path": "datasets/Fungal_expression.csv",
+    "sha256": "062ae05475ca565763dc5c72951580afc85340cabfbc1c4c0329cd0640b068bb",
+    "test_rows": 430,
+    "rules": "Registry file order; nonmissing, stripped uppercase sequence; <=999 nt; Split=test.",
+    "target_dtype": "float32",
+    "ordered_rows_sha256": "43181dc522bb29ff7981aa4880eac4d26a8f04e9a12122d31a9230a74ca2165c",
+    "ordered_rows_fields": [
+      "original_csv_dataframe_index",
+      "sequence",
+      "Value",
+      "Split"
+    ]
+  },
+  "seed_scores": {
+    "unimodal:dna": {
+      "scores": [
+        0.8125047802662453,
+        0.8010201423014885,
+        0.8061176087934024
+      ],
+      "mean": 0.806547510453712,
+      "sample_sd": 0.005754375628470538
+    },
+    "concat": {
+      "scores": [
+        0.7925875545733445,
+        0.7925687636698775,
+        0.788923781190131
+      ],
+      "mean": 0.7913600331444509,
+      "sample_sd": 0.0021098770019148992
+    },
+    "mil": {
+      "scores": [
+        0.8018037758018962,
+        0.8044179753480847,
+        0.7969766266441947
+      ],
+      "mean": 0.8010661259313919,
+      "sample_sd": 0.003775117631519941
+    },
+    "cross": {
+      "scores": [
+        0.8235228906597847,
+        0.8141080442990034,
+        0.8308061391919341
+      ],
+      "mean": 0.8228123580502408,
+      "sample_sd": 0.008371692523334143
+    }
+  },
+  "consulted_files_unchanged": true,
+  "finished_utc": "2026-10-20T03:42:36.791309+00:00"
+}

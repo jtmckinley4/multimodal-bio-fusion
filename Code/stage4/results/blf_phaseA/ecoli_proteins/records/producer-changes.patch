@@ -1,0 +1,30 @@
+diff --git a/Code/shared_code/fusion/train.py b/Code/shared_code/fusion/train.py
+index da87176..2dc9b3a 100644
+--- a/Code/shared_code/fusion/train.py
++++ b/Code/shared_code/fusion/train.py
+@@ -121,16 +121,23 @@ def paired_bootstrap(first, second, task, draws=2000, seed=0):
+     a, b = np.asarray(first.test_prediction), np.asarray(second.test_prediction)
+     if len(truth) == 0 or a.shape != truth.shape or b.shape != truth.shape:
+         raise ValueError("Stored predictions must match the nonempty test-label array.")
+-    if not isinstance(draws, int) or draws < 1:
++    if not all(np.isfinite(values).all() for values in (truth, a, b)):
++        raise ValueError("Stored test labels and predictions must be finite.")
++    if type(draws) is not int or draws < 1:
+         raise ValueError("draws must be a positive integer.")
++    difference = score_rows(task, truth, a) - score_rows(task, truth, b)
++    if not np.isfinite(difference):
++        raise ValueError("The observed paired score difference is undefined.")
+     rng = np.random.default_rng(seed)
+     spread = np.empty(draws)
+     for i in range(draws):
+         pick = rng.integers(0, len(truth), len(truth))
+         spread[i] = (score_rows(task, truth[pick], a[pick])
+                      - score_rows(task, truth[pick], b[pick]))
++        if not np.isfinite(spread[i]):
++            raise ValueError(f"Bootstrap draw {i} has an undefined score; no interval was produced.")
+     low, high = np.percentile(spread, [2.5, 97.5])
+-    return {"difference": score_rows(task, truth, a) - score_rows(task, truth, b),
++    return {"difference": difference,
+             "ci_low": float(low), "ci_high": float(high),
+             "first_wins": float((spread > 0).mean())}
+ 

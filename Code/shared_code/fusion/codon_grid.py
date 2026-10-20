@@ -1,8 +1,9 @@
 """Put the DNA, RNA, and protein token streams on one codon grid.
 
 BioLangFusion aligns the three modalities at the codon, three nucleotides encoding one
-amino acid, and takes the protein frame as the reference: a coding sequence of T
-nucleotides becomes T' = T/3 positions. The protein stream is already one token per
+amino acid, and takes the protein frame as the reference: an input of T nucleotides
+becomes T' = floor(T/3) complete triplets under the chosen origin. This length convention
+does not establish a biological reading frame. The protein stream is one token per
 codon. The RNA stream, one token per nucleotide, is averaged in non-overlapping groups
 of three. The DNA stream, one token per 6-mer, is upsampled by a learned transposed
 convolution (BioLangFusion Section 2.1 and Equation 1).
@@ -13,14 +14,16 @@ Two details the paper leaves to the implementation are settled here.
 and stride 2, which doubles the stream exactly: T/6 tokens become T/3. Appendix List 1 and
 List 2 give kernel 3, stride 2, padding 2, which returns 2n - 3 positions, three short of
 doubling. Both appear in the same paper, so both are offered; the appendix setting is the
-default, because the appendix is what the text calls the detailed architecture. The choice
-turns out not to matter much, because of the next point.
+default, because the appendix is what the text calls the detailed architecture. Matching
+the final array length does not make the settings equivalent in coverage or learned effect.
 
-**Neither setting lands on T' exactly.** Nucleotide Transformer v2 tokenizes greedily into
+**Remainder tokens complicate the factor-two mapping.** Nucleotide Transformer v2 tokenizes greedily into
 6-mers and falls back to single nucleotides for the remainder, so 999 nucleotides give 169
 tokens rather than the 166.5 the paper's T/6 implies. The paper's own answer is the line
 "Padding: sequence length aligned to protein" in List 1, so after the convolution the DNA
-stream is zero-padded or trimmed to exactly T'.
+stream is zero-padded or trimmed to exactly T'. This matches shape without resolving
+the nonuniform spans of complete 6-mers and individual remainder nucleotides. For inputs
+made entirely of complete 6-mers, the equation setting does match T' before trimming.
 
 That padding has to be done per row, which is why the DNA token count travels with the
 batch. A transposed convolution over a batch writes an output position for every input

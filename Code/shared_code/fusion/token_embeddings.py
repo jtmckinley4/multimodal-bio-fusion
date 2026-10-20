@@ -23,6 +23,7 @@ BioLangFusion applies to those streams belongs to the fusion model, not to this 
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import zipfile
@@ -83,6 +84,25 @@ def token_states(text, tokenizer, model, max_len, dtype=np.float16):
             "this encoder changes sequence length inside the model and needs its own handling."
         )
     return states[keep].astype(dtype, copy=False)
+
+
+def input_fingerprint(texts):
+    """Hash exact encoder input strings in order, including unambiguous row boundaries."""
+    digest = hashlib.sha256()
+    for text in texts:
+        encoded = text.encode("utf-8")
+        digest.update(len(encoded).to_bytes(8, "big"))
+        digest.update(encoded)
+    return digest.hexdigest()
+
+
+def file_fingerprint(path):
+    """Hash a file in bounded memory, including large token-cache shards."""
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(8 * 1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def _meta_path(cache_dir):

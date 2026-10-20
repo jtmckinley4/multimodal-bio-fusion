@@ -22,6 +22,9 @@ Two rounds, following the research plan (Overleaf Section 11):
 
 Token-level embeddings are large; keep them out of Git. Training results are small JSON
 files and are tracked; the checkpoints beside them are not.
+`results/fungal_expression/reproducible/` holds Chase's fifteen seed-0 fungal fits from his Windows
+desktop (nine appendix, six Equation 1), which record a run identity but not per-row predictions; the
+Stage 3 comparisons read `results/fungal_expression/` directly.
 
 **Why fungal expression is the build check.** Of the four benchmarks in hand it is the only
 one with clean published splits, published values for all six variants, and no decision of

@@ -418,6 +418,22 @@ class PipelineTests(unittest.TestCase):
                 "cpu", directory, log=None).test_prediction
         self.assertNotEqual(outputs[0], other)
 
+    def test_a_result_file_with_extra_keys_is_read_and_rewritten_intact(self):
+        """Another writer's keys (a run identity, say) survive a load and save round trip."""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "r.json"
+            path.write_text(json.dumps({"variant": "concat", "benchmark": "stub", "config": {},
+                                        "epochs": 1, "best_epoch": 0, "val_score": 0.1,
+                                        "test_score": 0.2, "seconds": 1.0,
+                                        "identity": {"version": 1}, "note": "theirs"}))
+            loaded = train.Result.load(path)
+            self.assertEqual(loaded.test_score, 0.2)
+            self.assertEqual(loaded.extra_fields, {"identity": {"version": 1}, "note": "theirs"})
+            loaded.save(path)
+            again = json.loads(path.read_text())
+            self.assertEqual(again["identity"], {"version": 1})
+            self.assertEqual(again["test_score"], 0.2)
+
     def test_require_predictions_retrains_a_result_that_predates_them(self):
         streams = self.streams()
         with tempfile.TemporaryDirectory() as directory:

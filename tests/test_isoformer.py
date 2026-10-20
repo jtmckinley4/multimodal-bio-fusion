@@ -131,6 +131,9 @@ class PipelineTests(unittest.TestCase):
                                   **{t: rng.normal(size=n) for t in TISSUES}})
 
     def tearDown(self):
+        # Shard readers keep files open; release them before removing the fixture on Windows.
+        for cache in self.caches.values():
+            cache.close()
         self.dir.cleanup()
 
     def streams(self):
