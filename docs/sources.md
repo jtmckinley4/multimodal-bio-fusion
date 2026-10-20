@@ -150,9 +150,27 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 [Sanofi-Public/CodonBERT](https://github.com/Sanofi-Public/CodonBERT), including its [embedding-extraction script](https://github.com/Sanofi-Public/CodonBERT/blob/master/benchmarks/CodonBERT/extract_embed.py).
 
-**Why retain it:** The repository is the source of the stability and mRFP CSVs and hosts the codon-level CodonBERT model, a candidate mRNA encoder. Its benchmark files are needed to resolve the dataset-version question recorded in the [stability dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons).
+**Why retain it:** The repository distributes the benchmark CSVs cited through CodonBERT, including fungal expression and E. coli proteins, and hosts the codon-level CodonBERT model. It provides a source-tracing route for the [benchmark target guide](methods/biological-targets-and-controls.md#fungal-and-e-coli-benchmark-targets) and the dataset-version question in the [stability dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons). Release availability does not establish which bytes an earlier model run used.
 
 **Reading scope and limits:** Only the search listing was seen on September 29, 2026. How weights are distributed and which data version BioLangFusion used remain unread leads.
+
+**October 20, 2026 benchmark review:** Read the Dataset section of the [README at commit `451a1b1`](https://github.com/Sanofi-Public/CodonBERT/blob/451a1b167c06028dfbf2ff7aa2cfdea46fbcc4f4/README.md) and the [fine-tuning loader](https://github.com/Sanofi-Public/CodonBERT/blob/451a1b167c06028dfbf2ff7aa2cfdea46fbcc4f4/benchmarks/CodonBERT/finetune.py#L110-L148), alongside Li et al.'s [published CodonBERT article](https://pmc.ncbi.nlm.nih.gov/articles/PMC11368176/), supervised-task description and Table 1, inspected through its [publisher-supplied XML](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11368176/fullTextXML). The paper describes fungal CDS expression regression, E. coli low/medium/high classification and 70/15/15 splits. The inspected loader reads `Value` and `Split`; it does not supply the upstream fungal target transformation or the E. coli numeric-label dictionary. This review informed the guide's source chain and qualifications. It did not match local rows against downloaded releases, reconstruct CSV generation or verify the historical BioLangFusion input version. No new PDF or dataset copy was added.
+
+### Wint et al.: Fungal expression and tRNA context
+
+[Wint, Salamov and Grigoriev (2022), Kingdom-Wide Analysis of Fungal Protein-Coding and tRNA Genes Reveals Conserved Patterns of Adaptive Evolution](https://pmc.ncbi.nlm.nih.gov/articles/PMC8826637/), especially the expression-linked codon-usage analysis and Methods: Genomic Data Acquisition, RNA sequencing, tRNA gene prediction, and Data Set Collection and Preprocessing.
+
+**Why retain it:** It separates RNA-seq expression evidence from the study's tRNA-copy analysis, informing the [fungal target explanation](methods/biological-targets-and-controls.md#fungal-expression). Neither a broad paper title nor its species total establishes the contents of the downstream CSV.
+
+**Reading scope and limits:** Those sections were read on October 20, 2026 through the [publisher-supplied XML](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8826637/fullTextXML). The [author's Codon2Vec preprocessing](https://github.com/rhondene/Codon2Vec/blob/1d3e5df41425753502076927b3bf2f0aa9e927a5/Codon2Vec/filterExprs.py#L42-L57) was also inspected: it selects expression extremes for a separate binary task, so its protocol does not identify the continuous CodonBERT labels. Exact local units, transformation, species composition and assay-to-row mapping remain unresolved. Remote full text was inspected without adding a repository copy.
+
+### Boël and Ding: E. coli expression assay and label groups
+
+[Boël et al. (2016), Codon influence on protein expression in E. coli correlates with mRNA levels](https://pmc.ncbi.nlm.nih.gov/articles/PMC5054687/), Large-scale protein-expression dataset and Methods on the dataset's proteins and scoring; and [Ding et al. (2022), MPEPE](https://pmc.ncbi.nlm.nih.gov/articles/PMC8913310/), Section 2.1 and Table 1.
+
+**Why retain them:** Boël identifies the original host system and ordinal whole-cell gel assay. Ding explains the subsequent grouping used before CodonBERT's three-class task. They support the [E. coli target explanation](methods/biological-targets-and-controls.md#protein-expression-in-e-coli) and prevent conflating host organism, gene origin, soluble yield and native abundance.
+
+**Reading scope and limits:** The named sections and Ding's evaluation description were read on October 20, 2026. Ding's prose reports 6,438 proteins, whereas its listed groups total 6,348, matching Boël and CodonBERT; this discrepancy is retained rather than silently selecting a new local count. No supplementary-row mapping was performed. The local `0/1/2` dictionary, filtered organism membership and construct-level correspondence remain unverified. Remote articles were inspected without adding repository copies.
 
 ### Medina-Munoz et al.: Stability assay provenance lead
 

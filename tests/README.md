@@ -34,6 +34,22 @@ The tests use Python's built-in `unittest` runner and the existing notebook depe
 
 The tests do not run the research bodies or update notebooks. Setup uses separate namespaces in one Python process, not separate Jupyter kernels. Passing these checks does not reproduce scientific results or verify how a notebook viewer renders or follows links. The blocked entry points guard against accidental execution; they are not a sandbox for untrusted code.
 
+## Forward-only codon-grid checks
+
+From the repository root, select only the codon-grid and TextCNN forward checks:
+
+```shell
+python -B -m unittest discover -s tests -p test_fusion_model.py -k CodonGridTests -k TextCNNTests -v
+```
+
+These checks use small CPU tensors. Hand-derived impulses verify Equation 1's actual kernel 2, stride 2, padding 0 and positional values before and after length fitting for complete 6-mers. RNA fixtures check triplet means, dropped incomplete triplets, masks, and nonzero batch padding; per-row invariance covers both convolution settings. TextCNN checks cover padded inputs and short sequences. No optimizer, backward pass, research data, cache opening, checkpoint access, or pretrained model is needed; codon-grid fixtures also block training and artifact entry points.
+
+This command does not run the training tests elsewhere in `test_fusion_model.py`. It does not validate biological reading frames or the placement of NT remainder tokens, compare trained convolution variants, or implement the pending standalone codon-pooled RNA baseline. Julian's reported standalone baseline needs source inspection, integration, and its own acceptance checks.
+
+## Saved-result verification checks
+
+The [fungal Equation 1 verifier checks](test_equation_verification.py) use invented JSON records and a small independent bootstrap calculation. Run them separately with `python -B -m unittest discover -s tests -p test_equation_verification.py -v`. They reject malformed records, mismatched configurations/targets/scores/history, incomplete seed cohorts, and undefined resampled correlations. Fitting, model/cache/checkpoint access, real dataset reads, and report execution are blocked. These checks do not validate historical provenance; the [saved-result verification](../docs/run-records.md#fungal-equation-1-saved-result-verification) records the separate analysis of the actual inputs.
+
 ## After editing a notebook or shared code
 
 Keep each notebook's imports and settings inside its bounded `## Setup` section, followed by the next main section. The notebooks' saved reading mode uses `SHOW_IMPLEMENTATION = False`. If code moves and a source-link check fails, use an isolated, guarded Setup namespace and only the affected `show_source` calls. Save only their changed implementation-display content, preserving execution counts, scientific outputs, unrelated metadata, and existing device/setup output. Displaying source does not run the referenced research functions; the setup guard in `test_notebook_setup.py` provides the bounded environment.

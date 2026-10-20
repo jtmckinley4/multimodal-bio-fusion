@@ -37,6 +37,15 @@ def streams_for(nucleotides, batch=2, extra=0):
 
 
 class CodonGridTests(unittest.TestCase):
+    def setUp(self):
+        torch.manual_seed(0)
+        self.enterContext(torch.no_grad())
+        # These checks need only tiny tensors and a forward pass.
+        for owner, name in ((train, "fit"), (train, "run"), (torch, "load"), (torch, "save"),
+                            (blf.BenchmarkStreams, "open"), (TE, "open_shard")):
+            self.enterContext(mock.patch.object(
+                owner, name, side_effect=AssertionError("Unexpected training or artifact access")))
+
     def test_every_stream_lands_on_the_protein_frame(self):
         for nucleotides in (996, 999, 81, 150):
             grid = codon_grid.CodonGrid(WIDTHS["dna"])
@@ -53,10 +62,67 @@ class CodonGridTests(unittest.TestCase):
             streams, _ = grid(*streams_for(999))
             self.assertEqual(streams["dna"].shape[1], 333, setting)
 
+    def test_equation_setting_places_complete_6mer_impulses_before_and_after_fitting(self):
+        """Three complete 6-mers cover six codons; this does not test remainder-token placement."""
+        grid = codon_grid.CodonGrid(1, tconv="equation").eval()
+        convolution = grid.dna_upsample
+        self.assertEqual((convolution.kernel_size, convolution.stride, convolution.padding),
+                         ((2,), (2,), (0,)))
+        convolution.weight.copy_(torch.tensor([[[2.0, 5.0]]]))
+        convolution.bias.zero_()
+        dna = torch.tensor([
+            [[1.0], [0.0], [0.0]],
+            [[0.0], [1.0], [0.0]],
+            [[0.0], [0.0], [1.0]],
+            [[1.0], [3.0], [7.0]],
+        ])
+        # Each impulse writes its own adjacent pair. Distinct token values expose reordering.
+        expected = torch.tensor([
+            [[2.0], [5.0], [0.0], [0.0], [0.0], [0.0]],
+            [[0.0], [0.0], [2.0], [5.0], [0.0], [0.0]],
+            [[0.0], [0.0], [0.0], [0.0], [2.0], [5.0]],
+            [[2.0], [5.0], [6.0], [15.0], [14.0], [35.0]],
+        ])
+        raw = convolution(dna.transpose(1, 2)).transpose(1, 2)
+        torch.testing.assert_close(raw, expected, rtol=0, atol=0)
+        torch.testing.assert_close(codon_grid.fit_length(raw, 6), expected, rtol=0, atol=0)
+        streams, mask = grid(dna, torch.zeros(4, 18, 1), torch.zeros(4, 6, 1),
+                             torch.tensor([6, 6, 6, 6]), torch.tensor([3, 3, 3, 3]))
+        torch.testing.assert_close(streams["dna"], expected, rtol=0, atol=0)
+        self.assertTrue(bool(mask.all()))
+
+    def test_rna_pooling_uses_only_complete_triplets(self):
+        grid = codon_grid.CodonGrid(1, tconv="equation").eval()
+        expected = torch.tensor([[[4.0], [13.0]]])
+        for tail in ([], [100.0], [100.0, 200.0]):
+            with self.subTest(trailing_nucleotides=len(tail)):
+                rna = torch.tensor([1.0, 4.0, 7.0, 10.0, 13.0, 16.0, *tail]).reshape(1, -1, 1)
+                raw = grid.rna_downsample(rna.transpose(1, 2)).transpose(1, 2)
+                torch.testing.assert_close(raw, expected, rtol=0, atol=0)
+                # NT-v2 uses one 6-mer and individual tokens for the trailing nucleotides.
+                token_count = 1 + len(tail)
+                streams, mask = grid(torch.zeros(1, token_count, 1), rna, torch.zeros(1, 2, 1),
+                                     torch.tensor([2]), torch.tensor([token_count]))
+                torch.testing.assert_close(streams["rna"], expected, rtol=0, atol=0)
+                self.assertEqual(mask.tolist(), [[True, True]])
+
+    def test_rna_padding_is_masked_without_changing_complete_triplet_means(self):
+        grid = codon_grid.CodonGrid(1, tconv="equation").eval()
+        # Row 0 has seven real nucleotides: its final nucleotide and padded values must
+        # not become a third complete codon. Row 1 supplies four complete triplets.
+        rna = torch.tensor([
+            [1.0, 4.0, 7.0, 10.0, 13.0, 16.0, 100.0, 1000.0, 1000.0, 1000.0, 1000.0, 1000.0],
+            [2.0, 5.0, 8.0, 11.0, 14.0, 17.0, 20.0, 23.0, 26.0, 29.0, 32.0, 35.0],
+        ]).unsqueeze(-1)
+        streams, mask = grid(torch.zeros(2, 2, 1), rna, torch.zeros(2, 4, 1),
+                             torch.tensor([2, 4]), torch.tensor([2, 2]))
+        expected = torch.tensor([[[4.0], [13.0], [0.0], [0.0]],
+                                 [[5.0], [14.0], [23.0], [32.0]]])
+        torch.testing.assert_close(streams["rna"], expected, rtol=0, atol=0)
+        self.assertEqual(mask.tolist(), [[True, True, False, False], [True, True, True, True]])
+
     def test_a_row_is_resampled_the_same_alone_as_in_a_padded_batch(self):
         """Padding a batch must not change any row: no valid codon is built from padding."""
-        torch.manual_seed(0)
-        grid = codon_grid.CodonGrid(WIDTHS["dna"]).eval()
         short, long = 300, 999
         dna = torch.zeros(2, long // 6 + long % 6, WIDTHS["dna"])
         rna = torch.zeros(2, long, WIDTHS["rna"])
@@ -67,13 +133,15 @@ class CodonGridTests(unittest.TestCase):
             prot[row, :n // 3] = torch.randn(n // 3, WIDTHS["prot"])
         codons = torch.tensor([short // 3, long // 3])
         dna_tokens = torch.tensor([short // 6 + short % 6, long // 6 + long % 6])
-        with torch.no_grad():
-            batched, _ = grid(dna, rna, prot, codons, dna_tokens)
-            alone, _ = grid(dna[:1, :short // 6 + short % 6], rna[:1, :short],
-                            prot[:1, :short // 3], codons[:1], dna_tokens[:1])
-        for modality in alone:
-            torch.testing.assert_close(batched[modality][:1, :short // 3], alone[modality],
-                                       msg=f"{modality} changed when batched with a longer row")
+        for setting in ("appendix", "equation"):
+            with self.subTest(setting=setting):
+                grid = codon_grid.CodonGrid(WIDTHS["dna"], tconv=setting).eval()
+                batched, _ = grid(dna, rna, prot, codons, dna_tokens)
+                alone, _ = grid(dna[:1, :short // 6 + short % 6], rna[:1, :short],
+                                prot[:1, :short // 3], codons[:1], dna_tokens[:1])
+                for modality in alone:
+                    torch.testing.assert_close(batched[modality][:1, :short // 3], alone[modality],
+                                               msg=f"{modality} changed when batched with a longer row")
 
     def test_fit_length_pads_and_trims(self):
         x = torch.ones(2, 5, 3)
