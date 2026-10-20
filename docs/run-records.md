@@ -2,27 +2,64 @@
 
 Use this record to connect a shared result to the code, inputs, settings, and environment that produced it. Team members can run on different computers; hardware belongs to an individual execution. The [README](../README.md#setup) describes how to prepare and run the project.
 
+## Apply the provenance workflow
+
+Provenance records what happened, why it was done and what evidence supports that account. Lineage connects an output to the inputs and transformations it depends on. Keep a navigable route from the research question and consulted sources, through the decision and implemented version, to the run, analysis, result and interpretation. Use links between existing owners rather than a second copy of the project history: the [Gantt and Details sheets](Research_Project_Plan_Gantt.xlsx) own the plan, [method guides](README.md#understand-the-methods) own shared explanations, [selected sources](sources.md) own reusable readings, and this page owns execution records and their interpretations.
+
+| When | Required action within the authorized scope |
+| --- | --- |
+| Before fitting, extracting embeddings, analyzing saved predictions or exporting results | Identify the question and relevant plan item, the authorized operation, actual inputs and upstream records, settings and source state, reuse eligibility, and a destination that preserves existing evidence. A plan or preview is not an execution record. |
+| After completion, failure, interruption or reuse | Record what actually ran, its outcome, consumed artifacts, saved outputs, checks and unresolved gaps. Distinguish a new analysis using retained predictions from a new fit. Preserve partial evidence and identify the last confirmed state when completion is unknown. |
+| When selection, uncertainty, comparability or interpretation changes | Link the earlier evidence, changed rule or reasoning, and affected interpretation. Give a newly computed analysis its own ID and output destination. A prose-only correction needs a linked qualification, not an invented execution. |
+
+Routine reading of existing evidence, formatting, and ordinary code edits do not each need a run record or manifest. Keep proposals and pending approvals in their existing plan or task context. During authorized work that permits documentation updates, maintain the relevant record without a separate permission request. An explicitly read-only request remains read-only; describe needed corrections in the response. Changes to scientific methods or execution scope still need the applicable human decision.
+
+### Connect records without rewriting their parents
+
+Give each actual execution or saved-result analysis a distinct ID, such as its UTC start time plus purpose. Link the parent run or artifact using its existing ID, repository path and retained version or checksum; identify whether it was reused, transformed, compared or superseded. An analysis ID belongs to the new analysis, not to the older fits supplying its predictions. Preserve completed artifacts and prior interpretations, and use a new output destination for a different computation. For legacy evidence without an ID or producer identity, cite the retained artifact and mark the missing facts unknown.
+
+Record consequential decisions where they belong: the question, alternatives actually considered, evidence consulted at that time, reason for the chosen approach, who proposed it and the human decision if known. Link that record from the run. If choices were made after inspecting outcomes, record that timing rather than presenting them as prior hypotheses or selection rules. An approval reference should identify the agreed scope and recoverable version or task/turn locator; if the source is private or unavailable to collaborators, retain a concise attributed account and mark what cannot be independently inspected. Do not copy whole conversations or infer approval from a plan, successful test or later result.
+
+When a source, preprocessing rule or interpretation changes, follow the known links to affected analyses, figures and claims. Record which dependencies were reviewed and any that remain unresolved. This is an explicit review step; the repository does not automatically discover every affected claim. Keep the earlier statement and its evidence available, with a correction or qualification explaining the change.
+
+### Separate automatic capture from authored context
+
+Mechanical facts should come from the existing producers and validators. The researcher or assistant supplies the scientific purpose, rationale, attribution, interpretation and review status. Link generated evidence instead of transcribing large configurations or inventing missing fields.
+
+| Evidence | Existing capture route and boundary |
+| --- | --- |
+| Cache and fit identity | [Token extraction](../Code/shared_code/fusion/token_embeddings.py) and the [shared trainer](../Code/shared_code/fusion/train.py) record their supported metadata. [Input and embedding guidance](methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse) explains cache use. Capture differs across stages and legacy records; current cache bytes do not establish their original producer. |
+| Execution plan and analysis exports | The [Phase A runner](../Code/stage4/run_blf_phaseA.py) saves a plan only when an output is requested. The [Phase A reader](../Code/stage4/tier2_blf_phaseA.ipynb) builds an analysis manifest in memory; export must save it with the reported outputs. Inspect the actual path used rather than assuming every notebook persists this evidence. |
+| Narrative and review | This page is maintained by a researcher or assistant; notebooks do not automatically populate it. Separate authorization, observed execution, machine checks, scientific qualification and human acceptance. Record only the states supported by evidence. |
+
+For a reported artifact, check that its saved manifest or run record identifies the consumed inputs and their order/splits where relevant, settings, producing source state, environment, upstream evidence and retained outputs. Inspect whether code hashes have a recoverable source version or patch; a hash alone does not preserve code. Name absent information as a limit. Record whether the artifact retains predictions, fitted weights or both; reproducible evaluation from predictions does not imply new inference is possible.
+
+Instructions guide agents; writer and validator behavior provides the operational checks. Missing metadata may limit historical reuse without making an old result worthless. Do not weaken identity checks, relabel old results or claim full provenance to satisfy a documentation template.
+
 ## Record a run or rerun
 
-Append an entry when producing results for comparison, a meeting, or the manuscript, including relevant failed or interrupted attempts. Give each execution a distinct ID, such as its UTC start time plus an experiment label. Identify which sections actually ran; a partial rerun does not refresh every saved notebook output. Link the earlier entry when comparing reruns, and preserve earlier observations when the interpretation changes.
+Append an entry when producing results for comparison, a meeting, or the manuscript, including relevant failed or interrupted attempts. Identify which sections actually ran; a partial rerun does not refresh every saved notebook output. Apply the workflow above to reuse and interpretation changes as well.
 
 Use the template below and link existing configuration or environment exports instead of copying long inventories. Record unknown details as `unknown`; do not substitute today's checkout or computer for an older result's producer. Use repository-relative evidence links, with a retained version or checksum for files that can be overwritten. Follow the [generated-file policy](../README.md#generated-files) when preserving outputs.
 
 ```markdown
 ### <run ID> — <purpose>
 
+- Question and decision: research question and plan item; linked sources or decision record; rationale, attribution and authorized scope, with the approval reference or an explicit unknown.
 - Execution: start/end with timezone; runner; completed, partial, failed, or interrupted.
+- Parents: upstream run/analysis IDs or artifact versions and hashes; what was reused, transformed or compared.
 - Scope: notebook and sections/cells executed; earlier run compared and intended change.
 - Code: producing Git commit; uncommitted changes and a retained patch/snapshot if present.
 - Inputs: dataset version/path and hash; selected rows/order, filtering and split identity.
-- Configuration: encoder/checkpoint revisions actually resolved; tokenization/pooling and analysis settings; sampling, model and fold seeds, including unset values.
+- Configuration: encoder/checkpoint revisions actually resolved; tokenization/pooling, selection and uncertainty rules; sampling, model, fold and analysis seeds, including unset values.
 - Environment: OS, Python and relevant package versions or an environment export; selected backend and hardware model; applicable precision, fallback and deterministic settings.
 - Reuse: which encoder/stage outputs were computed or reused; cache/artifact identity and known producing run/backend. Keep the consuming environment separate.
-- Evidence: versioned output links/checksums, relevant metrics and warnings/errors.
-- Interpretation: comparison with the earlier run, unresolved differences and next check.
+- Evidence: saved manifests and versioned output links/checksums; retained predictions or weights; relevant metrics and warnings/errors.
+- Checks and review: what was checked and observed, scientific qualifications and human review status; distinguish these from authorization.
+- Interpretation: comparison with the earlier run, linked correction or qualification, affected claims reviewed, unresolved dependencies and next check.
 ```
 
-This is a manually maintained record that a researcher or an assistant can update during authorized work. The notebooks do not automatically populate it. Matching seeds or a device name alone does not establish identical results across platforms or releases; see [PyTorch's reproducibility guidance](https://docs.pytorch.org/docs/2.14/notes/randomness.html).
+Use only fields applicable to the operation, linking existing machine-readable records where they hold the detail. Do not retroactively populate older entries with inferred facts. Matching seeds or a device name alone does not establish identical results across platforms or releases; see [PyTorch's reproducibility guidance](https://docs.pytorch.org/docs/2.14/notes/randomness.html).
 
 ## What the current cache records
 
