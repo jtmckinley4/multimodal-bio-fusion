@@ -32,7 +32,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from ..encoders import encoder_input, load_encoder, protein_input
+from ..encoders import ENCODERS, encoder_input, load_encoder, protein_input
 from ..sequences import rna_to_dna
 
 # Bump when the shard layout or the stored calculation changes.
@@ -264,8 +264,8 @@ def summarize(cache_dir):
 # Nucleotides per token for the encoders that consume a fixed number of them. A byte-pair
 # vocabulary such as DNABERT-2's has no fixed rate and is deliberately absent.
 NUCLEOTIDES_PER_TOKEN = {
-    "rnafm": 1, "rinalmo": 1,      # one token per nucleotide
-    "mrnafm": 3, "calm": 3,        # one token per codon
+    "rnafm": 1, "rinalmo": 1, "hyenadna": 1,     # one token per nucleotide
+    "mrnafm": 3, "calm": 3,                      # one token per codon
 }
 
 # k-mer encoders, which tokenize greedily and fall back to single nucleotides for whatever
@@ -282,13 +282,39 @@ def expected_tokens(encoder, seq):
     protein encoder sees the grid-aligned translation, one token per codon. Returns None for
     an encoder whose tokenization has no fixed rate, such as DNABERT-2's byte-pair vocabulary.
     """
+    return tokens_for_length(encoder, len(seq))
+
+
+def tokens_for_length(encoder, nucleotides):
+    """expected_tokens for a coding sequence of the given length."""
     if encoder.modality == "protein":
-        return len(seq) // 3
+        return nucleotides // 3
     k = KMER_SIZE.get(encoder.key)
     if k is not None:
-        return len(seq) // k + len(seq) % k
+        return nucleotides // k + nucleotides % k
     per_token = NUCLEOTIDES_PER_TOKEN.get(encoder.key)
-    return None if per_token is None else -(-len(seq) // per_token)
+    return None if per_token is None else -(-nucleotides // per_token)
+
+
+def grid_resolution(encoder_key):
+    """How one encoder's stream reaches the codon grid: "kmer", "nucleotide", or "codon".
+
+    kmer: one token per six nucleotides, upsampled by the learned transposed convolution
+    (Nucleotide Transformer v2 and 500M). nucleotide: one token per nucleotide, averaged in
+    threes (RNA-FM, RiNALMo, HyenaDNA). codon: one token per codon or residue, used as it is
+    (mRNA-FM, CaLM, and every protein encoder). An encoder with no fixed rate, DNABERT-2's
+    byte-pair vocabulary, raises: placing it on the grid needs an adapter of its own.
+    """
+    encoder = ENCODERS[encoder_key]
+    if encoder.modality == "protein":
+        return "codon"
+    if KMER_SIZE.get(encoder_key) == 6:
+        return "kmer"
+    per_token = NUCLEOTIDES_PER_TOKEN.get(encoder_key)
+    if per_token in (1, 3):
+        return "nucleotide" if per_token == 1 else "codon"
+    raise ValueError(f"{encoder_key} has no fixed number of nucleotides per token, so the "
+                     "codon grid cannot place its stream without a dedicated adapter.")
 
 
 def grid_protein(seq):

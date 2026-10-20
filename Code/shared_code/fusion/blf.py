@@ -15,7 +15,7 @@ grid resamples to and what the mask is built from.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 import torch
@@ -23,10 +23,11 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from .. import datasets as datasets_module
+from ..encoders import ENCODERS
 from .codon_grid import CODON_LENGTH, CodonGrid, mask_of
 from .heads import FUSIONS, SHARED_WIDTH
 from .textcnn import DEFAULT_CHANNELS, TextCNN
-from .token_embeddings import summarize
+from .token_embeddings import grid_resolution, summarize, tokens_for_length
 
 # BioLangFusion's own three encoders, in the order the fusion heads expect them.
 ENCODER_OF_MODALITY = {"dna": "ntv2_100m", "rna": "rnafm", "prot": "esm2_8m"}
@@ -43,34 +44,49 @@ class BenchmarkStreams:
     task: str
     label_column: str = "Value"
     split_column: str = "Split"
+    # Which encoder fills each modality; BioLangFusion's own unless Phase B swaps one.
+    encoders: dict = field(default_factory=lambda: dict(ENCODER_OF_MODALITY))
 
     @classmethod
     def open(cls, key, cache_root, encoder_of_modality=None):
-        encoder_of_modality = encoder_of_modality or ENCODER_OF_MODALITY
+        encoder_of_modality = {**ENCODER_OF_MODALITY, **(encoder_of_modality or {})}
         spec = datasets_module.DATASETS[key]
         rows = datasets_module.blf_benchmark_rows(key)
         caches = {m: summarize(f"{cache_root}/{key}/{encoder}")
                   for m, encoder in encoder_of_modality.items()}
-        streams = cls(key, rows, caches, spec.task, spec.label_column, spec.split_column)
+        streams = cls(key, rows, caches, spec.task, spec.label_column, spec.split_column,
+                      encoders=encoder_of_modality)
         streams.check()
         return streams
 
     def check(self):
-        """Every cache must hold one row per sequence, with the token count its length implies."""
+        """Every cache must hold one row per sequence, with the token count its length implies.
+
+        The count comes from the encoder's tokenization: one per nucleotide, per codon, or
+        per 6-mer with the single-nucleotide remainder (token_embeddings.tokens_for_length).
+        """
         nucleotides = self.rows["length"].to_numpy()
         for modality, cache in self.caches.items():
             if len(cache) != len(self.rows):
                 raise ValueError(
                     f"{self.key}/{modality}: {len(cache)} cached rows for {len(self.rows)} "
                     "sequences; the cache was built from a different row set.")
-        if not np.array_equal(np.asarray(self.caches["rna"].lengths), nucleotides):
-            raise ValueError(f"{self.key}: the RNA cache is not one token per nucleotide.")
-        if not np.array_equal(np.asarray(self.caches["prot"].lengths), nucleotides // CODON_LENGTH):
-            raise ValueError(f"{self.key}: the protein cache is not one token per codon.")
+            encoder = ENCODERS[self.encoders[modality]]
+            grid_resolution(encoder.key)          # raises for an encoder the grid cannot place
+            expected = [tokens_for_length(encoder, int(n)) for n in nucleotides]
+            if not np.array_equal(np.asarray(cache.lengths), expected):
+                raise ValueError(
+                    f"{self.key}/{modality}: the {encoder.key} cache does not hold the token "
+                    "count each sequence's length implies for that encoder.")
 
     @property
     def widths(self):
         return {m: cache.width for m, cache in self.caches.items()}
+
+    @property
+    def resolutions(self):
+        """How each stream reaches the codon grid, from the encoder that fills it."""
+        return {m: grid_resolution(self.encoders[m]) for m in MODALITIES}
 
     @property
     def labels(self):
@@ -154,12 +170,12 @@ class BioLangFusion(nn.Module):
     """Codon grid, one fusion head, and the TextCNN prediction head."""
 
     def __init__(self, widths, fusion, n_outputs, channels=DEFAULT_CHANNELS,
-                 out_width=SHARED_WIDTH, tconv="appendix", **fusion_kwargs):
+                 out_width=SHARED_WIDTH, tconv="appendix", resolutions=None, **fusion_kwargs):
         super().__init__()
         if fusion not in FUSIONS:
             raise ValueError(f"fusion must be one of {sorted(FUSIONS)}, not {fusion!r}")
         self.fusion_name = fusion
-        self.grid = CodonGrid(widths["dna"], tconv=tconv)
+        self.grid = CodonGrid(widths["dna"], tconv=tconv, resolutions=resolutions)
         self.fusion = FUSIONS[fusion](widths, out_width=out_width, **fusion_kwargs)
         self.head = TextCNN(self.fusion.out_width, n_outputs, channels=channels)
 
@@ -184,9 +200,41 @@ class Unimodal(nn.Module):
         return self.head(stream, mask_of(batch.tokens[self.modality], stream.shape[1])), {}
 
 
+class GriddedUnimodal(nn.Module):
+    """One stream after the codon grid, read by the same TextCNN head.
+
+    The paper does not say at what resolution its single-encoder baselines were read. The
+    plain Unimodal model reads each stream as the encoder wrote it, so RNA-FM's baseline
+    sees one position per nucleotide while every fused model sees RNA-FM pooled three to
+    one. This variant reads the stream after the grid instead, so a unimodal baseline and a
+    fusion head see the same input and differ only in the fusion. Only the selected stream
+    reaches the head; the grid still builds the others, which costs a little time and
+    leaves the DNA convolution untrained when the stream is not DNA.
+    """
+
+    def __init__(self, widths, modality, n_outputs, channels=DEFAULT_CHANNELS,
+                 tconv="appendix", resolutions=None):
+        super().__init__()
+        self.modality = modality
+        self.fusion_name = f"unimodal-grid:{modality}"
+        self.grid = CodonGrid(widths["dna"], tconv=tconv, resolutions=resolutions)
+        self.head = TextCNN(widths[modality], n_outputs, channels=channels)
+
+    def forward(self, batch):
+        grid, mask = self.grid(batch.streams["dna"], batch.streams["rna"],
+                               batch.streams["prot"], batch.codons, batch.tokens["dna"])
+        return self.head(grid[self.modality], mask), {}
+
+
 def build(streams, variant, channels=DEFAULT_CHANNELS, **kwargs):
-    """A model by name: a fusion head, or 'unimodal:dna', 'unimodal:rna', 'unimodal:prot'."""
+    """A model by name: a fusion head, 'unimodal:<m>' for one stream as the encoder wrote
+    it, or 'unimodal-grid:<m>' for one stream after the codon grid; m is dna, rna, or prot."""
     if variant.startswith("unimodal:"):
         return Unimodal(streams.widths, variant.split(":", 1)[1], streams.n_outputs,
                         channels=channels)
-    return BioLangFusion(streams.widths, variant, streams.n_outputs, channels=channels, **kwargs)
+    if variant.startswith("unimodal-grid:"):
+        return GriddedUnimodal(streams.widths, variant.split(":", 1)[1], streams.n_outputs,
+                               channels=channels, tconv=kwargs.get("tconv", "appendix"),
+                               resolutions=streams.resolutions)
+    return BioLangFusion(streams.widths, variant, streams.n_outputs, channels=channels,
+                         resolutions=streams.resolutions, **kwargs)

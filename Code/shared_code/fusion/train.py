@@ -119,6 +119,62 @@ def paired_bootstrap(first, second, task, draws=2000, seed=0):
             "first_wins": float((spread > 0).mean())}
 
 
+def seed_averaged_bootstrap(task, truth, predictions, comparisons, rows=None, groups=None,
+                            draws=4000, seed=0):
+    """Paired differences between models on one test split, seeds averaged inside each draw.
+
+    predictions maps a model name to a list of per-seed prediction arrays, every one scored
+    on the rows of truth in the same order; comparisons is a list of (label, first, second)
+    model names. Each draw resamples the test rows once and scores every model on that same
+    resample, averaging its seeds inside the draw, so the interval measures the split rather
+    than initialisation and the comparison stays paired.
+
+    rows restricts everything to a subset of positions, such as the test sequences never
+    seen in training. groups gives a label per row, for example the sequence itself; whole
+    groups are then resampled, so repeated measurements of one sequence move together rather
+    than counting as independent evidence. Without groups each row is its own group, and with
+    one seed per model this is exactly paired_bootstrap.
+    """
+    truth = np.asarray(truth)
+    rows = np.arange(len(truth)) if rows is None else np.asarray(rows)
+    needed = {name for _, first, second in comparisons for name in (first, second)}
+    seeds_of = {}
+    for name in needed:
+        runs = [np.asarray(p) for p in predictions[name]]
+        if not runs:
+            raise ValueError(f"{name}: no predictions")
+        for p in runs:
+            if len(p) != len(truth):
+                raise ValueError(f"{name}: {len(p)} predictions for {len(truth)} rows")
+        seeds_of[name] = runs
+    if groups is None:
+        members = [rows[i:i + 1] for i in range(len(rows))]
+    else:
+        _, inverse = np.unique(np.asarray(groups)[rows], return_inverse=True)
+        order = np.argsort(inverse, kind="stable")
+        members = np.split(rows[order], np.cumsum(np.bincount(inverse))[:-1])
+
+    def averaged(name, pick):
+        return float(np.mean([score_rows(task, truth[pick], p[pick]) for p in seeds_of[name]]))
+
+    observed = {name: averaged(name, rows) for name in needed}
+    rng = np.random.default_rng(seed)
+    drawn = {name: np.empty(draws) for name in needed}
+    for i in range(draws):
+        pick = np.concatenate([members[g] for g in rng.integers(0, len(members), len(members))])
+        for name in needed:
+            drawn[name][i] = averaged(name, pick)
+    results = []
+    for label, first, second in comparisons:
+        spread = drawn[first] - drawn[second]
+        low, high = np.percentile(spread, [2.5, 97.5])
+        results.append({"comparison": label, "difference": observed[first] - observed[second],
+                        "ci_low": float(low), "ci_high": float(high),
+                        "first_wins": float((spread > 0).mean()),
+                        "rows": len(rows), "groups": len(members)})
+    return results
+
+
 def predict(model, batches, device, task):
     """Return the labels, the predictions, and the mean modality weights over a split."""
     model.eval()
@@ -285,6 +341,10 @@ def run(streams, variant, config, device, results_dir, log=print,
             log(f"  {tag}: retraining, the stored result has no per-row predictions")
     if log:
         log(f"  {tag}: training")
+    # Seed before building, so the seed fixes the initial weights as well as the batch order
+    # and dropout. Before 2026-10-19 fit() seeded only after the model existed, so a run's
+    # initial weights were not determined by its seed.
+    torch.manual_seed(config.seed)
     model = (builder(streams, variant, config, **model_kwargs) if builder
              else build(streams, variant, channels=config.channels, tconv=config.tconv,
                         **model_kwargs))

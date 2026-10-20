@@ -145,6 +145,21 @@ class EmbeddingCacheTests(unittest.TestCase):
         self.embed.assert_not_called()
         self.assertEqual(self.path.read_bytes(), before)
 
+    def test_read_saved_returns_a_matching_cache_and_never_loads_a_model(self):
+        written, _ = self.call()                      # embed_with_cache writes the cache
+        self.load.reset_mock()
+        self.embed.reset_mock()
+        np.testing.assert_array_equal(
+            embeddings.read_saved(self.encoder, self.seqs, self.cache_dir, prepared=True),
+            written)
+        with self.assertRaises(ValueError):
+            embeddings.read_saved(self.encoder, ["AUG", "GCC"], self.cache_dir, prepared=True)
+        with self.assertRaises(FileNotFoundError):
+            embeddings.read_saved(replace(self.encoder, key="absent"), self.seqs,
+                                  self.cache_dir, prepared=True)
+        self.load.assert_not_called()
+        self.embed.assert_not_called()
+
     def test_same_raw_strings_cannot_collide_across_preparation_modes(self):
         raw = ["ATG", "GCT"]
         first, reused = self.call(raw, prepared=False)

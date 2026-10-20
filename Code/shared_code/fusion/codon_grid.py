@@ -30,6 +30,14 @@ had the zero padding that aligns it to T'. Those positions are inside the row's 
 they would reach the prediction head and make a sequence's representation depend on which
 sequences it was batched with. Each row is therefore cut to its own convolution output
 length, (n - 1) * stride - 2 * padding + kernel, before the frame mask is applied.
+
+**Other encoders arrive at other resolutions.** Phase B swaps one encoder at a time, and a
+replacement need not tokenize like the one it replaces: HyenaDNA reads DNA one nucleotide
+per token, and mRNA-FM and CaLM read RNA one codon per token. Each stream is therefore
+placed by its resolution rather than by its modality: a 6-mer stream through the transposed
+convolution, a single-nucleotide stream through the three-to-one average, and a codon or
+residue stream as it is. BioLangFusion's own encoders give the default, and with it the
+grid is exactly the one checked in Stage 3.
 """
 
 from __future__ import annotations
@@ -44,6 +52,11 @@ TCONV_SETTINGS = {
     "appendix": (3, 2, 2),   # List 1 and List 2: out = 2n - 3
     "equation": (2, 2, 0),   # Equation 1: out = 2n
 }
+
+# How each stream reaches the grid (token_embeddings.grid_resolution names an encoder's), and
+# BioLangFusion's own: Nucleotide Transformer 6-mers, RNA-FM nucleotides, ESM-2 residues.
+RESOLUTIONS = ("kmer", "nucleotide", "codon")
+BLF_RESOLUTIONS = {"dna": "kmer", "rna": "nucleotide", "prot": "codon"}
 
 
 def fit_length(x, target):
@@ -72,30 +85,47 @@ class CodonGrid(nn.Module):
     the longest row in the batch.
     """
 
-    def __init__(self, dna_width, tconv="appendix"):
+    def __init__(self, dna_width, tconv="appendix", resolutions=None):
         super().__init__()
         if tconv not in TCONV_SETTINGS:
             raise ValueError(f"tconv must be one of {sorted(TCONV_SETTINGS)}, not {tconv!r}")
+        self.resolutions = dict(BLF_RESOLUTIONS if resolutions is None else resolutions)
+        if set(self.resolutions) != set(BLF_RESOLUTIONS) or any(
+                r not in RESOLUTIONS for r in self.resolutions.values()):
+            raise ValueError(f"resolutions must give one of {RESOLUTIONS} for each of "
+                             f"{sorted(BLF_RESOLUTIONS)}, not {self.resolutions}")
+        if self.resolutions["prot"] != "codon" or self.resolutions["rna"] == "kmer":
+            raise ValueError("the protein stream is one token per codon, and only the DNA "
+                             "stream has a transposed convolution")
         kernel, stride, padding = TCONV_SETTINGS[tconv]
         self.tconv_setting = tconv
         self.kernel, self.stride, self.padding = kernel, stride, padding
-        self.dna_upsample = nn.ConvTranspose1d(dna_width, dna_width, kernel, stride=stride,
-                                               padding=padding)
+        if self.resolutions["dna"] == "kmer":
+            self.dna_upsample = nn.ConvTranspose1d(dna_width, dna_width, kernel, stride=stride,
+                                                   padding=padding)
         self.rna_downsample = nn.AvgPool1d(CODON_LENGTH, stride=CODON_LENGTH)
 
     def upsampled_length(self, dna_tokens):
         """Positions the transposed convolution produces from a row's own DNA tokens."""
         return ((dna_tokens - 1) * self.stride - 2 * self.padding + self.kernel).clamp(min=0)
 
+    def place(self, modality, stream, target, tokens):
+        """One stream on the (batch, target, width) grid, by its resolution."""
+        resolution = self.resolutions[modality]
+        if resolution == "kmer":
+            upsampled = self.dna_upsample(stream.transpose(1, 2)).transpose(1, 2)
+            return fit_length(upsampled, target) * mask_of(
+                self.upsampled_length(tokens), target).unsqueeze(-1)
+        if resolution == "nucleotide":
+            return fit_length(self.rna_downsample(stream.transpose(1, 2)).transpose(1, 2), target)
+        return fit_length(stream, target)
+
     def forward(self, dna, rna, protein, codon_lengths, dna_tokens):
         target = int(codon_lengths.max())
-        upsampled = self.dna_upsample(dna.transpose(1, 2)).transpose(1, 2)
-        pooled = self.rna_downsample(rna.transpose(1, 2)).transpose(1, 2)
         grid = {
-            "dna": fit_length(upsampled, target) * mask_of(
-                self.upsampled_length(dna_tokens), target).unsqueeze(-1),
-            "rna": fit_length(pooled, target),
-            "prot": fit_length(protein, target),
+            "dna": self.place("dna", dna, target, dna_tokens),
+            "rna": self.place("rna", rna, target, None),
+            "prot": self.place("prot", protein, target, None),
         }
         mask = mask_of(codon_lengths, target)
         return {name: stream * mask.unsqueeze(-1) for name, stream in grid.items()}, mask

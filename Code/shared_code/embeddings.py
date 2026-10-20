@@ -252,3 +252,33 @@ def attention_profiles(encoder, seqs, device, layer=-1):
     finally:
         del model, tokenizer
         _free_memory_preserving_error(primary_error)
+
+
+def _cache_identity(encoder, texts):
+    """The metadata embed_with_cache requires before it reuses a cache for these inputs."""
+    return {
+        "cache_version": CACHE_VERSION,
+        "checkpoint": encoder.checkpoint,
+        "revision": encoder.revision or "",
+        "max_len": encoder.max_len,
+        "fingerprint": sequences_fingerprint(texts),
+        "n_sequences": len(texts),
+    }
+
+
+def read_saved(encoder, seqs, cache_dir, prepared=False):
+    """Return a saved matrix for exactly these inputs, without ever loading a model.
+
+    For analyses that must reuse an earlier run's embeddings rather than recompute them:
+    a missing file raises FileNotFoundError, and a cache made from other inputs, another
+    checkpoint, or another context length raises ValueError. The identity is the one
+    embed_with_cache checks before reusing a cache, so whatever it would reuse, this reads.
+    """
+    texts = list(seqs) if prepared else [encoder_input(encoder, seq) for seq in seqs]
+    path = os.path.join(cache_dir, f"{encoder.key}.npz")
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"no saved embeddings for {encoder.key} in {cache_dir}")
+    saved = _read_cache(path, _cache_identity(encoder, texts))
+    if saved is None:
+        raise ValueError(f"{path} was computed from different inputs or settings")
+    return saved
