@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOK = ROOT / "Code/stage4/tier2_blf_phaseA.ipynb"
 sys.path.insert(0, str(ROOT / "Code"))
 from shared_code.fusion.train import Result, TrainConfig, paired_bootstrap
-from stage4.run_blf_phaseA import result_path, validate_prediction_arrays
+from stage4 import run_blf_phaseA as phasea_runner
 
 
 class PhaseAResultTests(unittest.TestCase):
@@ -44,10 +44,14 @@ class PhaseAResultTests(unittest.TestCase):
             "file_fingerprint": lambda path: "d" * 64,
             "rows": pd.DataFrame({"sequence": ["AAACCC", "GGGTTT", "CCCAAA"]}),
             "row_columns": ["sequence", "length", "label", "split"], "rows_sha256": "a" * 64,
-            "result_path": result_path, "validate_prediction_arrays": validate_prediction_arrays,
+            "phasea_runner": SimpleNamespace(
+                result_path=phasea_runner.result_path,
+                validate_prediction_arrays=phasea_runner.validate_prediction_arrays,
+            ),
             "expected_test_truth": np.array([0.0, 1.0, 2.0], dtype=np.float32),
         }
-        self.execute("settings")
+        for cell_id in ("settings", "benchmark-contract", "comparison-plan"):
+            self.execute(cell_id)
         self.read_headers("missing")
         self.execute("check-protocol")
         self.execute("check-scores")
@@ -67,6 +71,8 @@ class PhaseAResultTests(unittest.TestCase):
         source = "".join(self.cells["settings"]["source"]).replace(
             'BENCHMARK = "fungal_expression"', 'BENCHMARK = "ecoli_proteins"', 1)
         self.execute("settings", source)
+        self.execute("benchmark-contract")
+        self.execute("comparison-plan")
         self.values["expected_test_truth"] = np.array([0, 1, 2], dtype=np.int64)
 
     def read_headers(self, mode):
@@ -114,7 +120,7 @@ class PhaseAResultTests(unittest.TestCase):
         return self.stored[Path(path)]
 
     def collect(self, records):
-        folder = self.values["RESULT_DIRECTORIES"][0]
+        folder = self.values["RESULT_DIRECTORY"]
         self.stored = {folder / f"fixture_{index}.json": result for index, result in enumerate(records)}
         # The explicit reference is a protocol-valid concat run, independently of scan order.
         reference_path = next((path for path, result in self.stored.items()
@@ -154,6 +160,19 @@ class PhaseAResultTests(unittest.TestCase):
                 change(result)
                 with self.assertRaises((ValueError, TypeError, KeyError)):
                     self.values["check_protocol"](result)
+
+    def test_baseline_candidates_accept_only_the_three_native_encoder_variants(self):
+        for variant in ("unimodal:dna", "unimodal:rna", "unimodal:prot"):
+            with self.subTest(variant=variant):
+                self.assertEqual(self.values["check_protocol"](self.record(variant)),
+                                 (0, variant, 0.0))
+        # Sharing the prefix does not make a differently pooled encoder an eligible baseline.
+        extra = self.record("unimodal:rna_codon")
+        with self.assertRaises(ValueError):
+            self.values["check_protocol"](extra)
+        self.collect([self.record(), extra])
+        self.assertEqual(len(self.values["results"]), 1)
+        self.assertEqual(len(self.values["excluded"]), 1)
 
     def test_scores_require_consistent_completed_history_and_validation_selection(self):
         for field, bad_value in (("epochs", 3), ("best_epoch", 0), ("test_score", float("nan"))):
@@ -256,14 +275,15 @@ class PhaseAResultTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.values["check_scores"](result)
 
-    def test_empty_classification_grid_previews_fits_without_a_reference(self):
+    def test_empty_classification_grid_reports_local_absence_without_a_reference(self):
         self.classification()
         self.collect([])
         with patch.object(Path, "is_file", return_value=False):
             self.execute("execution-preview")
         preview = self.values["execution_preview"]
         self.assertEqual(len(preview), len(self.values["plan"]))
-        self.assertTrue(preview["status"].eq("fit_required").all())
+        self.assertTrue(preview["status"].eq("not_found_locally").all())
+        self.assertTrue(self.values["coverage"]["status"].eq("not_represented").all())
         self.assertFalse(self.values["COMPARISON_READY"])
         self.assertFalse(self.values["RUN_TRAINING"])
         self.assertIn("stage4", str(self.values["RESULT_DIRECTORY"]))
@@ -284,7 +304,35 @@ class PhaseAResultTests(unittest.TestCase):
         with patch.object(Path, "is_file", return_value=False):
             self.execute("execution-preview")
         status = self.values["execution_preview"].set_index(["seed", "variant", "entropy_lambda"])["status"]
-        self.assertEqual(status.loc[(0, "concat", 0.0)], "refit_requires_new_directory")
+        self.assertEqual(status.loc[(0, "concat", 0.0)], "predictions_absent")
+
+    def test_local_inventory_distinguishes_invalid_predictions_and_incompatible_records(self):
+        self.classification()
+        records = [self.record(variant) for variant in
+                   ("concat", "cross", "unimodal:dna", "unimodal:prot")]
+        for result in records[1:]:
+            result.test_truth = [0, 1, 2]
+            result.test_prediction = [0, 1, 2]
+            result.test_score = 1.0
+        records[1].test_score = 0.5  # Present predictions contradict the saved score.
+        records[2].identity["code_sha256"]["train.py"] = "0" * 64
+        original = deepcopy(records)
+        self.collect(records)
+        with patch.object(Path, "is_file", return_value=False):
+            self.execute("execution-preview")
+        status = self.values["execution_preview"].set_index(
+            ["seed", "variant", "entropy_lambda"])["status"]
+        self.assertEqual(status.loc[(0, "concat", 0.0)], "predictions_absent")
+        self.assertEqual(status.loc[(0, "cross", 0.0)], "predictions_invalid")
+        self.assertEqual(status.loc[(0, "unimodal:dna", 0.0)], "incompatible_with_comparison")
+        self.assertEqual(status.loc[(0, "unimodal:prot", 0.0)], "recorded_evidence_available")
+        coverage = self.values["coverage"].set_index(["seed", "variant", "entropy_lambda"])
+        # An existing but incompatible file leaves the comparison unrepresented, not absent locally.
+        self.assertEqual(coverage.loc[(0, "unimodal:dna", 0.0), "status"], "not_represented")
+        self.assertEqual(coverage.loc[(0, "unimodal:dna", 0.0), "matching_files"], 0)
+        self.assertEqual(records, original)
+        self.assertFalse(self.values["COMPARISON_READY"])
+        self.assertFalse(self.values["RUN_TRAINING"])
 
     def test_prediction_validation_uses_training_dtype_and_rejects_bad_arrays(self):
         result = self.record()
