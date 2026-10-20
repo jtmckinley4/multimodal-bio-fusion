@@ -1,0 +1,22 @@
+seed,method,val_score,test_score,best_epoch,path
+0,DNA,0.5178571428571429,0.4691011235955056,27,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-dna__lambda0.0__ch100__appendix__seed0.json
+0,RNA,0.532967032967033,0.5112359550561798,11,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-rna__lambda0.0__ch100__appendix__seed0.json
+0,Protein,0.5412087912087912,0.5084269662921348,19,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__appendix__seed0.json
+0,Concat,0.5837912087912088,0.5519662921348315,18,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__appendix__seed0.json
+0,MIL without entropy,0.5645604395604396,0.5323033707865169,20,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.0__ch100__appendix__seed0.json
+0,Cross,0.5631868131868132,0.5379213483146067,14,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__appendix__seed0.json
+0,MIL,0.5659340659340659,0.5421348314606742,20,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__appendix__seed0.json
+1,DNA,0.47527472527472525,0.45646067415730335,14,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-dna__lambda0.0__ch100__appendix__seed1.json
+1,RNA,0.5233516483516484,0.49297752808988765,12,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-rna__lambda0.0__ch100__appendix__seed1.json
+1,Protein,0.521978021978022,0.5421348314606742,9,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__appendix__seed1.json
+1,Concat,0.5796703296703297,0.5941011235955056,12,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__appendix__seed1.json
+1,MIL without entropy,0.554945054945055,0.5632022471910112,9,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.0__ch100__appendix__seed1.json
+1,Cross,0.5618131868131868,0.5379213483146067,16,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__appendix__seed1.json
+1,MIL,0.5439560439560439,0.5603932584269663,9,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__appendix__seed1.json
+2,DNA,0.49725274725274726,0.4747191011235955,9,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-dna__lambda0.0__ch100__appendix__seed2.json
+2,RNA,0.5041208791208791,0.48314606741573035,18,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-rna__lambda0.0__ch100__appendix__seed2.json
+2,Protein,0.5027472527472527,0.5070224719101124,19,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__appendix__seed2.json
+2,Concat,0.5934065934065934,0.5617977528089888,18,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__appendix__seed2.json
+2,MIL without entropy,0.5576923076923077,0.5603932584269663,9,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.0__ch100__appendix__seed2.json
+2,Cross,0.5576923076923077,0.5575842696629213,4,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__appendix__seed2.json
+2,MIL,0.5645604395604396,0.5617977528089888,9,Code/stage4/results/blf_phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__appendix__seed2.json

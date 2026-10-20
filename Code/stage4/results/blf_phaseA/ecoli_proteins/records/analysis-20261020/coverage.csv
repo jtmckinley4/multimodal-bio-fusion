@@ -1,0 +1,28 @@
+seed,candidate,variant,entropy_lambda,matching_files,status
+0,DNA,unimodal:dna,0.0,1,represented
+0,RNA,unimodal:rna,0.0,1,represented
+0,Protein,unimodal:prot,0.0,1,represented
+0,Concat,concat,0.0,1,represented
+0,MIL lambda=0.01,mil,0.01,1,represented
+0,MIL lambda=0.5,mil,0.5,1,represented
+0,MIL lambda=1,mil,1.0,1,represented
+0,MIL without entropy,mil,0.0,1,represented
+0,Cross,cross,0.0,1,represented
+1,DNA,unimodal:dna,0.0,1,represented
+1,RNA,unimodal:rna,0.0,1,represented
+1,Protein,unimodal:prot,0.0,1,represented
+1,Concat,concat,0.0,1,represented
+1,MIL lambda=0.01,mil,0.01,1,represented
+1,MIL lambda=0.5,mil,0.5,1,represented
+1,MIL lambda=1,mil,1.0,1,represented
+1,MIL without entropy,mil,0.0,1,represented
+1,Cross,cross,0.0,1,represented
+2,DNA,unimodal:dna,0.0,1,represented
+2,RNA,unimodal:rna,0.0,1,represented
+2,Protein,unimodal:prot,0.0,1,represented
+2,Concat,concat,0.0,1,represented
+2,MIL lambda=0.01,mil,0.01,1,represented
+2,MIL lambda=0.5,mil,0.5,1,represented
+2,MIL lambda=1,mil,1.0,1,represented
+2,MIL without entropy,mil,0.0,1,represented
+2,Cross,cross,0.0,1,represented

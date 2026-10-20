@@ -240,6 +240,23 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             train.paired_bootstrap(with_rows, other_rows, "regression", draws=10)
 
+    def test_bootstrap_rejects_nonfinite_or_undefined_scores(self):
+        truth = [0.0, 1.0, 2.0]
+        first = train.Result("a", "stub", {}, 1, 0, 1.0, 1.0, 0.0,
+                             test_truth=truth, test_prediction=truth)
+        second = train.Result("b", "stub", {}, 1, 0, 1.0, 1.0, 0.0,
+                              test_truth=truth, test_prediction=[0.0, np.nan, 2.0])
+        with self.assertRaisesRegex(ValueError, "finite"):
+            train.paired_bootstrap(first, second, "regression", draws=10)
+        second.test_prediction = truth
+        # A score function returning NaN must not produce an apparent loss or a NaN CI.
+        with mock.patch.object(train, "score_rows", return_value=float("nan")):
+            with self.assertRaisesRegex(ValueError, "observed.*undefined"):
+                train.paired_bootstrap(first, second, "regression", draws=10)
+        with mock.patch.object(train, "score_rows", side_effect=[1.0, 0.5, float("nan"), 0.5]):
+            with self.assertRaisesRegex(ValueError, "draw 0.*undefined"):
+                train.paired_bootstrap(first, second, "regression", draws=10)
+
     def test_missing_predictions_never_retrain_or_overwrite_a_completed_result(self):
         streams = self.streams()
         streams.allow_legacy_cache = True

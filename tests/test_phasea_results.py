@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
@@ -17,7 +17,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOK = ROOT / "Code/stage4/tier2_blf_phaseA.ipynb"
 sys.path.insert(0, str(ROOT / "Code"))
-from shared_code.fusion.train import Result, TrainConfig
+from shared_code.fusion.train import Result, TrainConfig, paired_bootstrap
+from stage4.run_blf_phaseA import result_path, validate_prediction_arrays
 
 
 class PhaseAResultTests(unittest.TestCase):
@@ -34,7 +35,8 @@ class PhaseAResultTests(unittest.TestCase):
             "json": json, "asdict": asdict, "replace": replace, "np": np, "pd": pd,
             "display": lambda *args: None,
             # The reader cannot reach a model, a cache opener, or fitting through this stub.
-            "train": SimpleNamespace(TrainConfig=TrainConfig, Result=SimpleNamespace(load=self.load)),
+            "train": SimpleNamespace(TrainConfig=TrainConfig, Result=SimpleNamespace(load=self.load),
+                                     paired_bootstrap=paired_bootstrap),
             "blf": SimpleNamespace(ENCODER_OF_MODALITY={"dna": "DNA", "rna": "RNA", "prot": "Protein"}),
             "ENCODERS": {"DNA": object(), "RNA": object(), "Protein": object()},
             "inputs_for_rows": lambda encoder, sequences: sequences,
@@ -42,21 +44,30 @@ class PhaseAResultTests(unittest.TestCase):
             "file_fingerprint": lambda path: "d" * 64,
             "rows": pd.DataFrame({"sequence": ["AAACCC", "GGGTTT", "CCCAAA"]}),
             "row_columns": ["sequence", "length", "label", "split"], "rows_sha256": "a" * 64,
+            "result_path": result_path, "validate_prediction_arrays": validate_prediction_arrays,
+            "expected_test_truth": np.array([0.0, 1.0, 2.0], dtype=np.float32),
         }
         self.execute("settings")
         self.read_headers("missing")
         self.execute("check-protocol")
         self.execute("check-scores")
+        self.execute("check-predictions")
 
-    def execute(self, cell_id):
+    def execute(self, cell_id, source=None):
         with redirect_stdout(io.StringIO()) as output, ExitStack() as guards:
             for name in ("open", "mkdir", "write_text", "write_bytes"):
                 guards.enter_context(patch.object(
                     Path, name, side_effect=AssertionError("Unexpected file access")))
             guards.enter_context(patch("builtins.open", side_effect=AssertionError("Unexpected file access")))
             cell = self.cells[cell_id]
-            exec(compile("".join(cell["source"]), f"{NOTEBOOK.name}:{cell_id}", "exec"), self.values)
+            exec(compile(source or "".join(cell["source"]), f"{NOTEBOOK.name}:{cell_id}", "exec"), self.values)
         return output.getvalue()
+
+    def classification(self):
+        source = "".join(self.cells["settings"]["source"]).replace(
+            'BENCHMARK = "fungal_expression"', 'BENCHMARK = "ecoli_proteins"', 1)
+        self.execute("settings", source)
+        self.values["expected_test_truth"] = np.array([0, 1, 2], dtype=np.int64)
 
     def read_headers(self, mode):
         def read_text(path, *args, **kwargs):
@@ -83,18 +94,19 @@ class PhaseAResultTests(unittest.TestCase):
         }
         identity = {
             "version": 1, "variant": variant, "config": deepcopy(config),
-            "model_kwargs": {}, "widths": dict(self.values["EXPECTED_WIDTHS"]), "n_outputs": 1,
+            "model_kwargs": {}, "widths": dict(self.values["EXPECTED_WIDTHS"]),
+            "n_outputs": self.values["EXPECTED_OUTPUTS"],
             "code_sha256": {name: "b" * 64 for name in self.values["source_names"]},
             "environment": environment,
             "inputs": {
-                "benchmark": "fungal_expression", "task": "regression",
+                "benchmark": self.values["BENCHMARK"], "task": self.values["TASK"],
                 "row_columns": list(self.values["row_columns"]), "rows_sha256": "a" * 64,
                 "input_identity_status": "recorded_inputs",
                 "cache_files": {modality: {"meta.json": "d" * 64, "shard_00000.npz": "f" * 64}
                                 for modality in ("dna", "rna", "prot")},
             },
         }
-        return Result(variant, "fungal_expression", config, 2, 1, 0.5, 0.4, 1.0,
+        return Result(variant, self.values["BENCHMARK"], config, 2, 1, 0.5, 0.4, 1.0,
                       history=[{"epoch": 0, "val_score": 0.3}, {"epoch": 1, "val_score": 0.5}],
                       identity=identity)
 
@@ -105,9 +117,10 @@ class PhaseAResultTests(unittest.TestCase):
         folder = self.values["RESULT_DIRECTORIES"][0]
         self.stored = {folder / f"fixture_{index}.json": result for index, result in enumerate(records)}
         # The explicit reference is a protocol-valid concat run, independently of scan order.
-        reference_path = next(path for path, result in self.stored.items()
-                              if result.variant == "concat" and result.config["seed"] == 0)
-        self.stored[self.values["REFERENCE_RESULT_PATH"]] = self.stored.pop(reference_path)
+        reference_path = next((path for path, result in self.stored.items()
+                               if result.variant == "concat" and result.config["seed"] == 0), None)
+        if reference_path is not None:
+            self.stored[self.values["REFERENCE_RESULT_PATH"]] = self.stored.pop(reference_path)
         with patch.object(Path, "glob", lambda folder, pattern: list(self.stored)):
             self.execute("collect")
         return self.execute("coverage")
@@ -202,7 +215,7 @@ class PhaseAResultTests(unittest.TestCase):
         reference.val_score = 2.0
         self.collect([self.record("cross"), reference])
         self.assertTrue(self.values["results"].empty)
-        self.assertTrue(self.values["prediction_availability"].empty)
+        self.assertEqual(self.values["prediction_availability"]["matching_records"].sum(), 1)
         self.assertFalse(self.values["COMPARISON_READY"])
         for table in ("selected", "choices", "paired"):
             self.values[table] = pd.DataFrame({"old": [1]})
@@ -225,8 +238,165 @@ class PhaseAResultTests(unittest.TestCase):
         }
         self.assertEqual(availability, {(False, False): 1, (True, False): 1,
                                         (False, True): 1, (True, True): 2})
-        self.assertEqual(len(self.values["results"]), 5)
+        self.assertEqual(len(self.values["checked_results"]), 5)
+        self.assertEqual(len(self.values["results"]), 3)
+        self.assertEqual(len(self.values["excluded"]), 2)
         self.assertFalse(self.values["COMPARISON_READY"])
+
+    def test_classification_protocol_uses_three_outputs_and_fraction_scores(self):
+        self.classification()
+        self.assertEqual(self.values["EXPECTED_SPLITS"], {"train": 3010, "val": 728, "test": 712})
+        self.assertEqual(self.values["DISPLAY_SCALE"], 100.0)
+        self.assertEqual(self.values["EXPECTED_OUTPUTS"], 3)
+        result = self.record()
+        self.values["check_protocol"](result)
+        self.values["check_scores"](result)
+        for score in (-0.1, 52.949):
+            result.test_score = score
+            with self.assertRaises(ValueError):
+                self.values["check_scores"](result)
+
+    def test_empty_classification_grid_previews_fits_without_a_reference(self):
+        self.classification()
+        self.collect([])
+        with patch.object(Path, "is_file", return_value=False):
+            self.execute("execution-preview")
+        preview = self.values["execution_preview"]
+        self.assertEqual(len(preview), len(self.values["plan"]))
+        self.assertTrue(preview["status"].eq("fit_required").all())
+        self.assertFalse(self.values["COMPARISON_READY"])
+        self.assertFalse(self.values["RUN_TRAINING"])
+        self.assertIn("stage4", str(self.values["RESULT_DIRECTORY"]))
+
+    def test_existing_record_waits_for_reference_and_score_only_is_preserved(self):
+        self.classification()
+        saved = self.record("unimodal:dna")
+        saved.test_truth = [0, 1, 2]
+        saved.test_prediction = [0, 1, 0]
+        saved.test_score = 2 / 3
+        self.collect([saved])
+        with patch.object(Path, "is_file", return_value=False):
+            self.execute("execution-preview")
+        status = self.values["execution_preview"].set_index(["seed", "variant", "entropy_lambda"])["status"]
+        self.assertEqual(status.loc[(0, "unimodal:dna", 0.0)], "reference_pending")
+        self.assertFalse(self.values["COMPARISON_READY"])
+        self.collect([self.record()])
+        with patch.object(Path, "is_file", return_value=False):
+            self.execute("execution-preview")
+        status = self.values["execution_preview"].set_index(["seed", "variant", "entropy_lambda"])["status"]
+        self.assertEqual(status.loc[(0, "concat", 0.0)], "refit_requires_new_directory")
+
+    def test_prediction_validation_uses_training_dtype_and_rejects_bad_arrays(self):
+        result = self.record()
+        self.values["expected_test_truth"] = np.array([0.1, 0.2, 0.3], dtype=np.float64)
+        result.test_truth = self.values["expected_test_truth"].astype(np.float32).tolist()
+        result.test_prediction = [0.2, 0.4, 0.1]
+        result.test_score = -0.5
+        self.values["check_predictions"](result)
+        self.classification()
+        result = self.record()
+        result.test_truth, result.test_prediction, result.test_score = [0, 1, 2], [0, 1, 0], 2 / 3
+        self.values["check_predictions"](result)
+        for values in ([0.5, 1, 2], [0, 1, 3], [0, 1], [0, 1, float("nan")]):
+            changed = deepcopy(result)
+            changed.test_prediction = values
+            with self.assertRaises(ValueError):
+                self.values["check_predictions"](changed)
+        changed = deepcopy(result)
+        changed.test_truth = [2, 1, 0]
+        with self.assertRaises(ValueError):
+            self.values["check_predictions"](changed)
+
+    def test_inconsistent_present_predictions_block_an_otherwise_complete_grid(self):
+        self.classification()
+        records = [self.record(variant, weight, seed) for seed in self.values["SEEDS"]
+                   for _, variant, weight in self.values["CANDIDATES"]]
+        invalid = next(record for record in records if record.variant == "cross")
+        invalid.test_truth, invalid.test_prediction = [0, 1, 2], [0, 1, 2]
+        invalid.test_score = 0.5  # The supplied predictions instead have accuracy 1.
+        self.read_headers("matching")
+        self.collect(records)
+        self.assertEqual(len(self.values["results"]), len(records) - 1)
+        self.assertFalse(self.values["COMPARISON_READY"])
+        self.assertIn("Invalid saved prediction arrays", self.values["excluded"][0]["reason"])
+
+    def test_paired_interval_figure_uses_percentage_points_and_requires_all_intervals(self):
+        self.classification()
+        axis = MagicMock()
+        plot = SimpleNamespace(subplots=MagicMock(return_value=(object(), axis)), show=MagicMock())
+        methods = ["Concat", "MIL", "Cross", "MIL without entropy"]
+        self.values.update({
+            "plt": plot, "UNCERTAINTY_READY": True,
+            "offsets": np.linspace(-0.15, 0.15, 3),
+            "seed_colors": ("#0072B2", "#D55E00", "#009E73"),
+            "uncertainty": pd.DataFrame([
+                {"seed": seed, "method": method, "baseline": baseline,
+                 "difference": 0.02, "ci_low": -0.01, "ci_high": 0.06}
+                for seed, baseline in enumerate(("Protein", "RNA", "RNA")) for method in methods
+            ]),
+        })
+        self.execute("uncertainty-figure")
+        self.assertEqual(len(axis.hlines.call_args_list), 3)
+        for call in axis.hlines.call_args_list:
+            self.assertEqual(len(call.args[0]), len(methods))
+            np.testing.assert_allclose(call.args[1], -1.0)
+            np.testing.assert_allclose(call.args[2], 6.0)
+        for call in axis.scatter.call_args_list:
+            np.testing.assert_allclose(call.args[0], 2.0)
+        self.assertEqual([call.kwargs["label"] for call in axis.scatter.call_args_list],
+                         ["Seed 0 vs Protein", "Seed 1 vs RNA", "Seed 2 vs RNA"])
+        self.assertEqual(axis.set.call_args.kwargs["yticklabels"], methods)
+        self.assertIn("percentage points", axis.set.call_args.kwargs["xlabel"])
+        self.assertEqual(axis.axvline.call_args.args, (0,))
+        plot.subplots.reset_mock()
+        plot.show.reset_mock()
+        self.values["UNCERTAINTY_READY"] = False
+        self.execute("uncertainty-figure")
+        plot.subplots.assert_not_called()
+        plot.show.assert_not_called()
+
+    def test_classification_selection_bootstrap_and_manifest_keep_units_and_lineage(self):
+        self.classification()
+        records = [self.record(variant, weight, seed) for seed in self.values["SEEDS"]
+                   for _, variant, weight in self.values["CANDIDATES"]]
+        for record in records:
+            record.test_truth = [0, 1, 2]
+            record.test_prediction = [0, 1, 2] if record.variant == "cross" else [0, 0, 2]
+            record.test_score = 1.0 if record.variant == "cross" else 2 / 3
+        self.read_headers("matching")
+        self.collect(records)
+        self.assertTrue(self.values["COMPARISON_READY"])
+        self.execute("select")
+        choices = self.values["choices"]
+        self.assertTrue(choices["single encoder"].eq("DNA").all())
+        self.assertTrue(choices["MIL lambda"].eq(0.01).all())
+        self.values["BOOTSTRAP_DRAWS"] = 40
+        self.execute("tables")
+        self.assertAlmostEqual(self.values["summary_display"].loc["Cross", "mean"], 100.0)
+        self.assertAlmostEqual(self.values["selected"].query("method == 'Cross'")["test_score"].iloc[0], 1.0)
+        self.execute("uncertainty")
+        self.assertTrue(self.values["UNCERTAINTY_READY"])
+        self.assertEqual(len(self.values["uncertainty"]), len(self.values["SEEDS"]) * 4)
+        cross = self.values["uncertainty"].query("method == 'Cross'")
+        np.testing.assert_allclose(cross["difference"], 1 / 3)
+        self.execute("analysis-manifest")
+        manifest = self.values["analysis_manifest"]
+        self.assertEqual(len(manifest["candidate_files"]), len(records))
+        self.assertEqual(len(manifest["selected_files"]), 21)
+        relative_paths = [manifest["reference_path"], *self.values["results"]["path"],
+                          *self.values["selected"]["path"]]
+        relative_paths.extend(item["path"] for item in manifest["candidate_files"])
+        relative_paths.extend(item["path"] for item in manifest["selected_files"])
+        self.execute("execution-preview")
+        relative_paths.extend(self.values["execution_preview"]["expected_path"])
+        self.assertTrue(all("\\" not in path and path.startswith("Code/") for path in relative_paths))
+        self.assertTrue(all(item["sha256"] == "d" * 64 for item in manifest["candidate_files"]))
+        self.assertEqual(set(manifest["reader_helper_sha256"]), {
+            "Code/shared_code/fusion/train.py", "Code/stage4/run_blf_phaseA.py"})
+        self.assertTrue(all(value == "d" * 64 for value in manifest["reader_helper_sha256"].values()))
+        self.assertEqual(manifest["stored_score_units"], "accuracy proportion")
+        self.assertEqual(manifest["bootstrap"]["draws"], 40)
+        json.dumps(manifest, allow_nan=False)
 
 
 if __name__ == "__main__":
