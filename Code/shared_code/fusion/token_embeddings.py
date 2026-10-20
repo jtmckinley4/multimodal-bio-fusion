@@ -255,6 +255,26 @@ class TokenCache:
             self.tokens_of_shard(int(self.shard_of[i]))[start:start + int(self.lengths[i])])
 
 
+def pooled_matrix(cache, progress=None, progress_every=5000):
+    """Mean-pool every row of a token cache into one vector, giving a (rows, width) matrix.
+
+    Stage 1's pooled cache and these token shards hold the same encoder reading different
+    row sets: Stage 1 embedded its own sample, these hold a benchmark's rows in file order.
+    Pooling the shards is how a pooled vector for the benchmark's rows is obtained without
+    loading an encoder again, which is what a probe comparison against LucaOne needs: the
+    same rows, the same frozen weights, the same pooling, and no second extraction.
+
+    Rows are read in order, so each shard is touched once.
+    """
+    matrix = np.empty((len(cache), cache.width), dtype=np.float32)
+    for i in range(len(cache)):
+        matrix[i] = np.asarray(cache[i], dtype=np.float32).mean(axis=0)
+        if progress and progress_every and (i + 1) % progress_every == 0:
+            progress(f"    pooled {i + 1}/{len(cache)}")
+    cache.close()
+    return matrix
+
+
 def summarize(cache_dir):
     """Read the shard lengths and return a TokenCache describing the whole extraction."""
     cache_dir = Path(cache_dir)

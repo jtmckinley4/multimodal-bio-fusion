@@ -503,6 +503,19 @@ class ShardReaderTests(unittest.TestCase):
                 for name in reference.files:
                     np.testing.assert_array_equal(np.asarray(mapped[name]), reference[name])
 
+    def test_pooling_a_token_cache_gives_one_mean_vector_per_row(self):
+        """What the LucaOne comparison reads: the same rows, pooled, with no model loaded."""
+        with tempfile.TemporaryDirectory() as directory:
+            cache_dir = Path(directory)
+            rows = [np.arange(6, dtype=np.float16).reshape(3, 2),
+                    np.full((2, 2), 4, dtype=np.float16)]
+            TE._write_shard(TE._shard_path(cache_dir, 0), rows)
+            TE._meta_path(cache_dir).write_text('{"n_shards": 1, "dtype": "float16"}')
+            pooled = TE.pooled_matrix(TE.summarize(cache_dir))
+        self.assertEqual(pooled.shape, (2, 2))
+        np.testing.assert_allclose(pooled[0], [2.0, 3.0])
+        np.testing.assert_allclose(pooled[1], [4.0, 4.0])
+
 
 if __name__ == "__main__":
     unittest.main()
