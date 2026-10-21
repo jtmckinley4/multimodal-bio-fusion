@@ -46,7 +46,7 @@ from .heads import MODALITIES
 
 @dataclass
 class TrainConfig:
-    """BioLangFusion's optimisation settings; the defaults are the paper's."""
+    """BioLangFusion's optimization settings; the defaults are the paper's."""
 
     lr: float = 3e-5
     weight_decay: float = 1e-5
@@ -127,7 +127,7 @@ def seed_averaged_bootstrap(task, truth, predictions, comparisons, rows=None, gr
     on the rows of truth in the same order; comparisons is a list of (label, first, second)
     model names. Each draw resamples the test rows once and scores every model on that same
     resample, averaging its seeds inside the draw, so the interval measures the split rather
-    than initialisation and the comparison stays paired.
+    than initialization and the comparison stays paired.
 
     rows restricts everything to a subset of positions, such as the test sequences never
     seen in training. groups gives a label per row, for example the sequence itself; whole

@@ -9,7 +9,7 @@ weights, which carry the entropy term in the loss and the attention figure in th
   streams are concatenated at each codon, and the result is projected once more before the
   prediction head.
 * GatedMILFusion, Section 2.2.2. Each stream is projected to a shared width, each is
-  summarised by its mean over codons, and a gated attention over the three summaries gives
+  summarized by its mean over codons, and a gated attention over the three summaries gives
   one weight per modality per sequence, used to take a weighted sum.
 * CrossModalFusion, Section 2.2.3. The three projected streams are concatenated along the
   codon axis into a joint context; each modality attends to that context, and the three
@@ -66,7 +66,7 @@ class ConcatFusion(nn.Module):
 
 
 class GatedMILFusion(nn.Module):
-    """Entropy-regularised gated attention pooling over modalities (Section 2.2.2).
+    """Entropy-regularized gated attention pooling over modalities (Section 2.2.2).
 
     Returns the modality weights as ``alpha``, a (batch, 3) tensor in the order of
     MODALITIES. The training loop turns them into the entropy penalty.

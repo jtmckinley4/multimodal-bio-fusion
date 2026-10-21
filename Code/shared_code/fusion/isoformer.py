@@ -29,7 +29,7 @@ order is fixed so a run is reproducible, and because residual updates do not com
 order is a choice, recorded here rather than hidden.
 
 **Where the layer norm goes.** The paper says cross-attention with residual connections and
-does not say whether anything normalises. A layer norm after each residual is the standard
+does not say whether anything normalizes. A layer norm after each residual is the standard
 reading and is what is done here.
 
 **How the pooled modalities are combined.** The paper takes "a global average pooling over
@@ -292,7 +292,7 @@ def attention_cells(lengths, n_heads=N_HEADS):
 class BudgetedBatches:
     """Batch positions grouped by cost, under a ceiling on attention cells.
 
-    Rows are ordered by cost so neighbours pad each other cheaply. The order of the batches
+    Rows are ordered by cost so neighbors pad each other cheaply. The order of the batches
     themselves is reshuffled every epoch when shuffling is on, so training still sees them
     in a different sequence each time even though their membership is fixed.
     """
@@ -300,7 +300,7 @@ class BudgetedBatches:
     def __init__(self, lengths, budget, max_size, shuffle, seed, n_heads=N_HEADS):
         # A batch pads every modality to its own longest row, so its cost comes from the
         # per-modality maxima rather than from any single row. Rows are visited in order of
-        # their own cost so that neighbours pad each other cheaply.
+        # their own cost so that neighbors pad each other cheaply.
         def padded_cost(longest):
             return n_heads * sum(longest[a] * longest[b]
                                  for a in MODALITIES for b in MODALITIES if a != b)
