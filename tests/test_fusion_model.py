@@ -444,6 +444,8 @@ class PipelineTests(unittest.TestCase):
             path = next(Path(directory).glob("*.json"))
             old = json.loads(path.read_text())
             old["test_truth"] = old["test_prediction"] = None
+            # Simulate a historical record from before final weights were retained.
+            (path.parent / old.pop("model_artifact")["file"]).unlink()
             path.write_text(json.dumps(old))
             # Without the flag the incomplete record is handed back untouched.
             self.assertIsNone(

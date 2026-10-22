@@ -24,13 +24,16 @@ than an error.
 Results are written to disk per run, so a long sweep continues rather than restarts, and a
 run in progress checkpoints every few epochs, so an interruption costs those epochs rather
 than the run. Cross-attention over a 999-position joint context is the slow variant and the
-one this matters for.
+one this matters for. New runs also retain the best-validation weights beside the result
+JSON; existing results are reused without retraining to obtain missing weights.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
+import tempfile
 import time
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
@@ -218,7 +221,18 @@ class Result:
         values = asdict(self)
         payload = dict(values.pop("extra_fields"))
         payload.update(values)
-        Path(path).write_text(json.dumps(payload, indent=2) + "\n")
+        path = Path(path)
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent,
+                                             prefix=path.name + ".", suffix=".partial",
+                                             delete=False) as handle:
+                temporary = Path(handle.name)
+                handle.write(json.dumps(payload, indent=2) + "\n")
+            os.replace(temporary, path)
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
 
     @staticmethod
     def load(path):
@@ -237,12 +251,41 @@ def _save_checkpoint(path, epoch, model, optimiser, best, history, elapsed):
     os.replace(temporary, path)
 
 
+def _save_weights(path, model, result):
+    """Keep the best state restored by fit(), without replacing existing weights.
+
+    Rebuild the matching model before loading state_dict. This is an inference artifact,
+    not an optimizer checkpoint; the result JSON links its filename, checksum and size.
+    """
+    payload = {"format": "fusion-state-dict-v1", "benchmark": result.benchmark,
+               "variant": result.variant, "config": result.config,
+               "best_epoch": result.best_epoch,
+               "state_dict": {name: value.detach().cpu().clone()
+                              for name, value in model.state_dict().items()}}
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, prefix=path.name + ".",
+                                         suffix=".partial", delete=False) as handle:
+            temporary = Path(handle.name)
+            torch.save(payload, handle)
+        # A same-directory hard link publishes the complete file and fails if path exists.
+        os.link(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+    with path.open("rb") as handle:
+        checksum = hashlib.file_digest(handle, "sha256").hexdigest()
+    return {"version": 1, "format": payload["format"], "file": path.name,
+            "sha256": checksum, "size_bytes": path.stat().st_size}
+
+
 def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_every=10,
-        loaders=None):
+        loaders=None, keep_checkpoint=False):
     """Train to the early stop, restore the best epoch, and score the test split.
 
     With a checkpoint path, the run is written there every checkpoint_every epochs and
-    resumed from it if it already exists; the file is removed once the run finishes.
+    resumed from it if it already exists. run() keeps it until weights and JSON are saved;
+    direct callers remove it on success unless keep_checkpoint=True.
     """
     torch.manual_seed(config.seed)
     task = streams.task
@@ -323,7 +366,7 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
         test_truth=np.asarray(truth).tolist(),
         test_prediction=([int(v) for v in predicted.argmax(axis=1)]
                          if task == "classification" else np.asarray(predicted).tolist()))
-    if checkpoint and checkpoint.exists():
+    if checkpoint and checkpoint.exists() and not keep_checkpoint:
         checkpoint.unlink()
     return result
 
@@ -334,6 +377,7 @@ def run(streams, variant, config, device, results_dir, log=print,
 
     require_predictions retrains a stored run that predates per-row predictions, which a
     paired bootstrap needs. It is off by default, so reading back an old sweep stays free.
+    New fits save their best weights; missing historical weights never trigger retraining.
     """
     results_dir = Path(results_dir)
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -348,6 +392,11 @@ def run(streams, variant, config, device, results_dir, log=print,
             return done
         if log:
             log(f"  {tag}: retraining, the stored result has no per-row predictions")
+    weights_path = results_dir / f"{tag}.weights.pt"
+    checkpoint = results_dir / f"{tag}.checkpoint"
+    if weights_path.exists():
+        raise FileExistsError(f"{weights_path}: weights already exist without a reusable result; "
+                              "preserve them and inspect the interrupted publication before retrying")
     if log:
         log(f"  {tag}: training")
     # Seed before building, so the seed fixes the initial weights as well as the batch order
@@ -358,8 +407,10 @@ def run(streams, variant, config, device, results_dir, log=print,
              else build(streams, variant, channels=config.channels, tconv=config.tconv,
                         **model_kwargs))
     result = fit(model, streams, config, device, log=log, loaders=loaders,
-                 checkpoint=results_dir / f"{tag}.checkpoint")
-    result.save(path)
+                 checkpoint=checkpoint, keep_checkpoint=True)
+    result.extra_fields["model_artifact"] = _save_weights(weights_path, model, result)
+    result.save(path)                 # Publish completion only after its weights are saved.
+    checkpoint.unlink(missing_ok=True)
     if log:
         val = "undefined" if result.val_score is None else f"{result.val_score:.4f}"
         log(f"  {tag}: test {result.test_score:.4f} "

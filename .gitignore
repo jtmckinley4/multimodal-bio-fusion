@@ -36,3 +36,8 @@ Claude outputs/
 
 # R history
 .Rhistory
+
+# Fitted weights and interrupted publications stay local; completed result JSONs are tracked.
+/Code/*/results/**/*.weights.pt
+/Code/*/results/**/*.weights.pt.*.partial
+/Code/*/results/**/*.json.*.partial

@@ -1,0 +1,461 @@
+{
+  "identity": {
+    "alignment_status": "mRNA stability source; composition-controlled values provisional",
+    "benchmark": "ecoli_proteins",
+    "candidate_directories": [
+      {
+        "files": [
+          "ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+          "ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json",
+          "ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json",
+          "ecoli_proteins__cross__lambda0.0__ch100__equation__seed0.json",
+          "ecoli_proteins__cross__lambda0.0__ch100__equation__seed1.json",
+          "ecoli_proteins__cross__lambda0.0__ch100__equation__seed2.json",
+          "ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+          "ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+          "ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+          "ecoli_proteins__mil__lambda0.0__ch100__equation__seed0.json",
+          "ecoli_proteins__mil__lambda0.5__ch100__equation__seed0.json",
+          "ecoli_proteins__mil__lambda1.0__ch100__equation__seed0.json",
+          "ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+          "ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+          "ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+          "ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed1.json",
+          "ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2.json",
+          "ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed0.json"
+        ],
+        "path": "Code/stage4/results/phaseA/ecoli_proteins"
+      },
+      {
+        "files": [
+          "ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+          "ecoli_proteins__cross__lambda0.0__ch100__equation__seed0.json",
+          "ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+          "ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed0.json"
+        ],
+        "path": "Code/stage4/results/phaseB/runs/ecoli-mrnafm-seed0/ecoli_proteins/mrnafm"
+      }
+    ],
+    "code": {
+      "12b77f16": "f96470e9097b3829c0b3a421fe69823165b95e286e18fef86224424619969d35",
+      "65fad2b0": "103fd2e2578a7cd1b80eccd7782fd2224613308cc9037a6a115935d33eca8a86",
+      "bcddefb4": "2948b584f67002dca6830315f1ba5250c04152b0c9fc54adac06003006182b6f",
+      "db59ce8a": "f300597a75e7769cd9d50fa218668de2e0ebaa430dc070a4107ed0c50de1f64d",
+      "phaseb-analysis-requests": "1e26664b0c4895d3863772b1fc72aebc2f61f6759d8090c2ab099d4fe9341d76"
+    },
+    "comparisons": [
+      [
+        "mrnafm concat vs original",
+        "mrnafm concat",
+        "original concat"
+      ],
+      [
+        "mrnafm concat vs best single (unimodal:rna)",
+        "mrnafm concat",
+        "mrnafm unimodal:rna"
+      ],
+      [
+        "mrnafm mil vs original",
+        "mrnafm mil",
+        "original mil"
+      ],
+      [
+        "mrnafm mil vs best single (unimodal:rna)",
+        "mrnafm mil",
+        "mrnafm unimodal:rna"
+      ],
+      [
+        "mrnafm cross vs original",
+        "mrnafm cross",
+        "original cross"
+      ],
+      [
+        "mrnafm cross vs best single (unimodal:rna)",
+        "mrnafm cross",
+        "mrnafm unimodal:rna"
+      ]
+    ],
+    "kind": "phaseb-comparison-v1",
+    "predictions_sha256": "d0ca3fa22910888fb461893626d0ed45594a72d1f0f62c75daec5a4b54cf4d00",
+    "reference_limitations": [
+      "The original source, runtime, device and historical input-row identity remain unknown; this review does not reconstruct producer provenance.",
+      "Current rows and current original cache bytes constrain prospective work; they do not prove which bytes or row order the historical models consumed.",
+      "E. coli classification labels repeat. Matching saved test labels to current labels cannot detect within-class row permutations. Paired historical-versus-new intervals are conditional on the assumed shared test-row order; comparisons among new recorded models have explicit row identity.",
+      "Seed-0 historical comparisons are descriptive and provisional. Unknown producer and cross-runtime effects are not isolated from the encoder replacement, and bootstrap intervals do not quantify those effects or training-seed variability.",
+      "The published retained coding-sequence inputs and 999-nucleotide cap are unchanged. Accuracy on the three expression classes does not establish a causal mechanism.",
+      "The reference selects the native protein baseline and positive MIL lambda 0.01 by validation; lambda 0 is a separate control. It does not authorize averaging new results with historical repeated seeds.",
+      "New result reuse and checkpoint recovery still require the shared trainer's exact input, source, configuration and runtime identity. No historical result or embedding is overwritten."
+    ],
+    "reference_status": "qualified historical comparison",
+    "rows": {
+      "columns": [
+        "sequence",
+        "length",
+        "Value",
+        "Split"
+      ],
+      "count": 4450,
+      "sha256": "157ae18e5e29aad1d158230c43fcf234fe16f35fbae67993454e646d1c4366b5"
+    },
+    "settings": {
+      "bootstrap_seed": 0,
+      "draws": 2000,
+      "fitted_seeds": [
+        0
+      ],
+      "grouping": "identical test sequence",
+      "heads": [
+        "concat",
+        "mil",
+        "cross"
+      ],
+      "recipe": {
+        "batch_size": 32,
+        "channels": 100,
+        "early_stopping_patience": 20,
+        "entropy_lambda": 0.0,
+        "lr": 3e-05,
+        "max_epochs": 500,
+        "plateau_patience": 5,
+        "seed": 0,
+        "tconv": "equation",
+        "weight_decay": 1e-05
+      },
+      "scale": 100.0,
+      "swaps": [
+        [
+          "rna",
+          "mrnafm"
+        ]
+      ]
+    },
+    "snapshot_fingerprints": {
+      "alignment": "a7d9e9dc35b97c0e637045f530427dcd5bf25fadf3f08e0af11d2656b3fc7bb2",
+      "summary": "3421119cbe15f117361d389771c9095fa76494dfae74ce753ad16a27dbb711aa",
+      "validation_choices": "31879a142d30f9e888697ba4eab791a50dd2200a7a6f05e6cf5d67358453a6cd"
+    },
+    "source_files": [
+      {
+        "path": "Code/shared_code/fusion/train.py",
+        "sha256": "7ae17891fbbbf063f26df82edd9b94ff60cf023edc643ea9aff4cd8f3d5ca7c3"
+      },
+      {
+        "path": "Code/shared_code/phasea_results.py",
+        "sha256": "962410ff742c57e4b3422f6fc50e3b1b4034fb5347bdb7d9eacbadde84a08734"
+      },
+      {
+        "path": "Code/shared_code/phaseb_analysis.py",
+        "sha256": "a8805894c6b2c89bd3e60a80e54d9324e2eabf08ef7779c881fc499fa5bd2f1d"
+      },
+      {
+        "path": "Code/shared_code/phaseb_reference.py",
+        "sha256": "8c31acf5e274166505daee60a517d1f958eca0456b4cb0cfe4dabc5c86a3af37"
+      },
+      {
+        "path": "Code/shared_code/phaseb_results.py",
+        "sha256": "fdc567baf4038abea3e04369fe49d09b8a917a2fe4ff04620c07538c485533ae"
+      },
+      {
+        "path": "Code/stage4/plans/ecoli_mrnafm_reference.json",
+        "sha256": "08528b6d00d0dd1fc6e4f740301d7d94f923e45bdb8fdcb69ff7b14f52d2e2e6"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "d256695d34522ac62afcb871443e17c99f7238d673fab1f67ab7a89e6b7f4817"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json",
+        "sha256": "7f42dba4b73d0067499689c2889847fe3c25dd443e9172966a6c6976c7fd73ef"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json",
+        "sha256": "70895c3ed73be7b139a919e7be125cbad4f30d9392062d1495d05a42a809c8ea"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "61542bc38572907a67133401c4481c5d24fb6142b8c67e4e9fceffec9c7cb2f0"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed1.json",
+        "sha256": "2f737391a3102aaf773c546205539577417fa657967e0679d863fc90a268a018"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed2.json",
+        "sha256": "44ee6f3cf32a09da9a5f770d3a8af30d49d40c4cdb76f0d7851d11ef443592f1"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+        "sha256": "a14480104a843499f2466c3646188bc2e2cec2a833f909882fb36dad0915ed97"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+        "sha256": "9b95312109f77cf4396cda01bd1f38b1d7c0cec62501996927afa4dd597a9ef1"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+        "sha256": "6dd3df470062814a3e88da657b45d098fca35fd043fdde1174c310a6b3f7e675"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "93f7011893928cec209d9ae40dcfc80fdbf3e41f5300b1e103be6f16953dd01a"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.5__ch100__equation__seed0.json",
+        "sha256": "d45894843b3e325923011273aaf2ab8a167e809c9b64c1ba4218e3e02cfd5c75"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda1.0__ch100__equation__seed0.json",
+        "sha256": "6bace75f286f3dbd59c1c9754d489c46a5cd0b25f30f0e022d6d88c3be1c1d86"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "c5ca90ac24bee5050ba0b4d7847337e5b47debd98df3683cd47bb6b0d6f2052d"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "b05106839da79a6f06ebe2eb73690f9869e0451d20d5889b01b88e80d50e7b8c"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "fbec7c6dc8e97e0049e00ce170a4734833b4fada4ad285fe8293134a752bb124"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed1.json",
+        "sha256": "9d24ce4e30ac5025bb8f214e55f8a2eea9586a6c40fa20c3d55694e5054f4c7f"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2.json",
+        "sha256": "597f7ee01b2fb3530949516f59e7024a374171db28bebdadc4c0b51a6ccebfd3"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "364dd75c78594b244bd6ad7cfc407a1eff97051ed6e705f0d2ed40b9bb0af87e"
+      },
+      {
+        "path": "Code/stage4/results/phaseB/runs/ecoli-mrnafm-seed0/ecoli_proteins/mrnafm/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "e6ac7cea9b3be1f0238474de36ed62aa90dbc29b7336af16534dff987780839d"
+      },
+      {
+        "path": "Code/stage4/results/phaseB/runs/ecoli-mrnafm-seed0/ecoli_proteins/mrnafm/ecoli_proteins__cross__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "31c4dd00371b8f36d624627d571c0967392ac299fcb13686d6d25661094e63dc"
+      },
+      {
+        "path": "Code/stage4/results/phaseB/runs/ecoli-mrnafm-seed0/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+        "sha256": "7d771c7d43dc838c793e8be6ce14953a794a496e1eb0d81b21ae30604016991d"
+      },
+      {
+        "path": "Code/stage4/results/phaseB/runs/ecoli-mrnafm-seed0/ecoli_proteins/mrnafm/ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "d017df177bf5b43923b5b270dfeda1c41c395325c5c99dcd9998f4e3635ee9e0"
+      },
+      {
+        "path": "docs/figures/stability/results.json",
+        "sha256": "54241667101bfa84059ae766be5a69924000e7285fef43b19dbbc14df0e386a6"
+      }
+    ],
+    "task": "classification",
+    "versions": {
+      "numpy": "2.3.5",
+      "pandas": "2.3.3",
+      "python": "3.13.9",
+      "scipy": "1.16.3"
+    }
+  },
+  "payload": {
+    "detail": "",
+    "status": "available",
+    "tables": {
+      "alignment": {
+        "columns": [
+          "CKA",
+          "CKA after composition control"
+        ],
+        "index": [
+          [
+            "mRNA-FM",
+            "mRNA-FM + NT v2 100M multi-species"
+          ],
+          [
+            "mRNA-FM",
+            "mRNA-FM + ESM-2 8M"
+          ],
+          [
+            "mRNA-FM",
+            "mRNA-FM vs the RNA-FM it replaces"
+          ]
+        ],
+        "index_names": [
+          "swap",
+          "pair"
+        ],
+        "rows": [
+          [
+            0.029521264135837555,
+            0.0442689565810646
+          ],
+          [
+            0.04618525877594948,
+            0.10647844887309635
+          ],
+          [
+            0.12553377449512482,
+            0.2062082172143857
+          ]
+        ]
+      },
+      "bootstrap": {
+        "columns": [
+          "difference",
+          "ci_low",
+          "ci_high",
+          "first_wins",
+          "resolved"
+        ],
+        "index": [
+          "mrnafm concat vs original",
+          "mrnafm concat vs best single (unimodal:rna)",
+          "mrnafm mil vs original",
+          "mrnafm mil vs best single (unimodal:rna)",
+          "mrnafm cross vs original",
+          "mrnafm cross vs best single (unimodal:rna)"
+        ],
+        "index_names": [
+          "comparison"
+        ],
+        "rows": [
+          [
+            -1.6853932584269704,
+            -4.77528089887641,
+            1.54494382022472,
+            0.15,
+            "no"
+          ],
+          [
+            0.2808988764044895,
+            -2.94943820224719,
+            3.51123595505618,
+            0.537,
+            "no"
+          ],
+          [
+            -1.2640449438202195,
+            -3.514747191011236,
+            1.2640449438202195,
+            0.138,
+            "no"
+          ],
+          [
+            -5.61797752808989,
+            -9.691011235955049,
+            -1.54494382022472,
+            0.002,
+            "yes"
+          ],
+          [
+            0.98314606741573,
+            -2.52808988764045,
+            4.638342696629197,
+            0.686,
+            "no"
+          ],
+          [
+            -3.932584269662931,
+            -7.86516853932584,
+            0.0,
+            0.023,
+            "no"
+          ]
+        ]
+      },
+      "summary": {
+        "columns": [
+          "reference status",
+          "alone",
+          "best single",
+          "best single score",
+          "concat",
+          "concat \u0394fusion",
+          "concat vs original",
+          "mil",
+          "mil \u0394fusion",
+          "mil vs original",
+          "cross",
+          "cross \u0394fusion",
+          "cross vs original"
+        ],
+        "index": [
+          [
+            "none",
+            "BioLangFusion's own"
+          ],
+          [
+            "rna",
+            "mRNA-FM"
+          ]
+        ],
+        "index_names": [
+          "slot",
+          "encoder"
+        ],
+        "rows": [
+          [
+            "qualified historical comparison; producer effects unresolved",
+            null,
+            "unimodal:prot",
+            50.14044943820225,
+            60.67415730337079,
+            10.533707865168537,
+            null,
+            54.35393258426966,
+            4.213483146067404,
+            null,
+            53.79213483146067,
+            3.6516853932584183,
+            null
+          ],
+          [
+            "qualified historical comparison; producer effects unresolved",
+            58.70786516853933,
+            "unimodal:rna",
+            58.70786516853933,
+            58.98876404494382,
+            0.2808988764044926,
+            -1.68539325842697,
+            53.08988764044944,
+            -5.617977528089888,
+            -1.2640449438202168,
+            54.7752808988764,
+            -3.932584269662925,
+            0.9831460674157313
+          ]
+        ]
+      },
+      "validation_choices": {
+        "columns": [
+          "best single",
+          "MIL lambda",
+          "reference"
+        ],
+        "index": [
+          "original",
+          "mrnafm"
+        ],
+        "index_names": [
+          "encoder"
+        ],
+        "rows": [
+          [
+            "unimodal:prot",
+            0.01,
+            "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\ecoli_proteins\\ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed0.json"
+          ],
+          [
+            "unimodal:rna",
+            0.01,
+            "None"
+          ]
+        ]
+      }
+    }
+  },
+  "version": 1
+}
