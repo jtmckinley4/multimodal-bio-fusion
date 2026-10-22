@@ -1,0 +1,9 @@
+,probe Spearman,width
+"Composition (GC, GC3, codon use, length)",0.28283972697672827,87
+NT v2 100M multi-species,0.3123970216171106,512
+RNA-FM,0.3083001009544953,640
+ESM-2 8M,0.30916701337871605,320
+BLF three encoders concatenated,0.3904117044704991,1472
+"LucaOne, gene stream",0.44345289596555365,2560
+"LucaOne, protein stream",0.40074721302574845,2560
+"LucaOne, both streams",0.48281775745687616,5120

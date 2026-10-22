@@ -1,0 +1,460 @@
+{
+  "identity": {
+    "alignment_status": "mRNA stability source; composition-controlled values provisional",
+    "benchmark": "cov_vac_degradation",
+    "candidate_directories": [
+      {
+        "files": [
+          "cov_vac_degradation__concat__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__concat__lambda0.0__ch100__equation__seed1.json",
+          "cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2.json",
+          "cov_vac_degradation__cross__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__cross__lambda0.0__ch100__equation__seed1.json",
+          "cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2.json",
+          "cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.json",
+          "cov_vac_degradation__mil__lambda0.01__ch100__equation__seed1.json",
+          "cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2.json",
+          "cov_vac_degradation__mil__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__mil__lambda0.5__ch100__equation__seed0.json",
+          "cov_vac_degradation__mil__lambda1.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed1.json",
+          "cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2.json"
+        ],
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation"
+      },
+      {
+        "files": [
+          "cov_vac_degradation__concat__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__cross__lambda0.0__ch100__equation__seed0.json",
+          "cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.json",
+          "cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json"
+        ],
+        "path": "Code/stage4/results/phaseB/runs/cov-vac-mrnafm-seed0/cov_vac_degradation/mrnafm"
+      }
+    ],
+    "code": {
+      "12b77f16": "f96470e9097b3829c0b3a421fe69823165b95e286e18fef86224424619969d35",
+      "65fad2b0": "103fd2e2578a7cd1b80eccd7782fd2224613308cc9037a6a115935d33eca8a86",
+      "bcddefb4": "2948b584f67002dca6830315f1ba5250c04152b0c9fc54adac06003006182b6f",
+      "db59ce8a": "f300597a75e7769cd9d50fa218668de2e0ebaa430dc070a4107ed0c50de1f64d",
+      "phaseb-analysis-requests": "1e26664b0c4895d3863772b1fc72aebc2f61f6759d8090c2ab099d4fe9341d76"
+    },
+    "comparisons": [
+      [
+        "mrnafm concat vs original",
+        "mrnafm concat",
+        "original concat"
+      ],
+      [
+        "mrnafm concat vs best single (unimodal:rna)",
+        "mrnafm concat",
+        "mrnafm unimodal:rna"
+      ],
+      [
+        "mrnafm mil vs original",
+        "mrnafm mil",
+        "original mil"
+      ],
+      [
+        "mrnafm mil vs best single (unimodal:rna)",
+        "mrnafm mil",
+        "mrnafm unimodal:rna"
+      ],
+      [
+        "mrnafm cross vs original",
+        "mrnafm cross",
+        "original cross"
+      ],
+      [
+        "mrnafm cross vs best single (unimodal:rna)",
+        "mrnafm cross",
+        "mrnafm unimodal:rna"
+      ]
+    ],
+    "kind": "phaseb-comparison-v1",
+    "predictions_sha256": "2b7e4fa44920048ca03190d0dc1568085d84506ca9490a61c489518b323745bd",
+    "reference_limitations": [
+      "The original source, runtime, device and historical train/validation input identity remain unknown. This review does not reconstruct producer provenance.",
+      "Current rows and current original cache bytes are pinned for prospective work; they do not prove which cache bytes the historical models consumed.",
+      "Seed-0 historical comparisons are descriptive and provisional for the alignment hypothesis. Unknown producer and cross-runtime effects are not isolated from the encoder change; bootstrap intervals do not quantify those effects.",
+      "CoV-Vac contains 81-nucleotide fragments. Codon pooling and stop-to-X fragment translation are benchmark constructions, not evidence of authentic translated proteins.",
+      "The current reference selects positive MIL lambda on validation and compares seed 0 with seed 0. It does not authorize averaging new results with historical repeated seeds.",
+      "New result reuse and checkpoint recovery still require the shared trainer's exact input, source, configuration and runtime identity. No historical result or embedding is overwritten."
+    ],
+    "reference_status": "qualified historical comparison",
+    "rows": {
+      "columns": [
+        "sequence",
+        "length",
+        "Value",
+        "Split"
+      ],
+      "count": 2400,
+      "sha256": "19adc89cc728105c12a603d272ba2515e6d21bae305650d2cc9cefe3c6e7ee84"
+    },
+    "settings": {
+      "bootstrap_seed": 0,
+      "draws": 2000,
+      "fitted_seeds": [
+        0
+      ],
+      "grouping": "identical test sequence",
+      "heads": [
+        "concat",
+        "mil",
+        "cross"
+      ],
+      "recipe": {
+        "batch_size": 32,
+        "channels": 100,
+        "early_stopping_patience": 20,
+        "entropy_lambda": 0.0,
+        "lr": 3e-05,
+        "max_epochs": 500,
+        "plateau_patience": 5,
+        "seed": 0,
+        "tconv": "equation",
+        "weight_decay": 1e-05
+      },
+      "scale": 1.0,
+      "swaps": [
+        [
+          "rna",
+          "mrnafm"
+        ]
+      ]
+    },
+    "snapshot_fingerprints": {
+      "alignment": "a7d9e9dc35b97c0e637045f530427dcd5bf25fadf3f08e0af11d2656b3fc7bb2",
+      "summary": "28db2f9faf8ab0cfe464bae2f3f9cd783dbbe93285f0db8665d47c05fd782250",
+      "validation_choices": "c01c7a616fa9149bc949577581d204bef96354fc4c3ae1ae7b4eb5d48647754f"
+    },
+    "source_files": [
+      {
+        "path": "Code/shared_code/fusion/train.py",
+        "sha256": "7ae17891fbbbf063f26df82edd9b94ff60cf023edc643ea9aff4cd8f3d5ca7c3"
+      },
+      {
+        "path": "Code/shared_code/phasea_results.py",
+        "sha256": "962410ff742c57e4b3422f6fc50e3b1b4034fb5347bdb7d9eacbadde84a08734"
+      },
+      {
+        "path": "Code/shared_code/phaseb_analysis.py",
+        "sha256": "a8805894c6b2c89bd3e60a80e54d9324e2eabf08ef7779c881fc499fa5bd2f1d"
+      },
+      {
+        "path": "Code/shared_code/phaseb_reference.py",
+        "sha256": "9c9895fd390881ff5b42bb873a543fe116d10afe8932b2b44f315784f3cf6e68"
+      },
+      {
+        "path": "Code/shared_code/phaseb_results.py",
+        "sha256": "fdc567baf4038abea3e04369fe49d09b8a917a2fe4ff04620c07538c485533ae"
+      },
+      {
+        "path": "Code/stage4/plans/cov_vac_mrnafm_reference.json",
+        "sha256": "3d1b903aadba5b802707dfcc72a98c295d55d669fe37a8ce770b236b1da80188"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__concat__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "e4e75ef0671a1bc78b659195d000559e615976a3349ad5e8f7b16de53d3d073e"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__concat__lambda0.0__ch100__equation__seed1.json",
+        "sha256": "7f76ad196afcd922b03dfee3c39ff7f0159d5cce33de8ab6a4f89c14a83c9178"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2.json",
+        "sha256": "bf0c4fc878899893c755ec8fcf549900e6a7d9921120d5ff67a3924c5dc06c5c"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__cross__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "436395ba801f2f8063b1c8919c854d847cf283e9bd025ae6f6ef9dfc8e88dd7b"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__cross__lambda0.0__ch100__equation__seed1.json",
+        "sha256": "fc2d6bd0550963cee916a101fe02aebb4023395904e22e8566a47d7eeb069cb2"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2.json",
+        "sha256": "50c217427d49fafcc7e4c05ae6cb2863c3c54ca430c1d714a883ddc2e6b7c09b"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.json",
+        "sha256": "e65d44a7bdbbef61b0af4ae16dc81075c61ecacd5171b08fd731da7a4c38de99"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed1.json",
+        "sha256": "27dfdde5610a15b1fb6a15b5be87fc4bfe8ca175dff17b7a8d861fc154490c57"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2.json",
+        "sha256": "7674740c40b1ba8ff8325fb45179f1d51036a455949cd4c73be33303c261dc27"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "02ac6cf8a26cb1082157d9c135f775f2b745f29741c8a57307615a55b2b842b2"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.5__ch100__equation__seed0.json",
+        "sha256": "e015c8539b015482a9bb8a0b2008b62fa67e2f31ceb731195c3fb2d7df93598c"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda1.0__ch100__equation__seed0.json",
+        "sha256": "2eaa97c5c757ab09ebaa68352432804671d39516471223a1304889a7562bfe66"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "e41c98c4e59426586cf0fef6a0b323ab05673684a0ad75285194dd95dd79ea9d"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "d88cd6a5003c5ebcdac5bd1c04b706b5bcda54a00a3992a729199b65ea603729"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "8c5b376007017e2195439e1854d084a6f5073ad6c233a186d9323ae8c71391ff"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "ee6e76dd8ef6221fb6ab699a5801ac50d371b7c74cce71fb049380b95daf2b81"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed1.json",
+        "sha256": "af1d6c6b371021539c02cad88e6184103e31e5d318f6837bca952b9d5e746480"
+      },
+      {
+        "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2.json",
+        "sha256": "1ca6e21698e795194d24cb026ef33aee05dbd47f75ff0a1824362f29563d51d7"
+      },
+      {
+        "path": "Code/stage4/results/phaseB/runs/cov-vac-mrnafm-seed0/cov_vac_degradation/mrnafm/cov_vac_degradation__concat__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "34bd45e69106927d6bb8cb548e5553f5a7d900c590bb1a4082aae73ebe24e62b"
+      },
+      {
+        "path": "Code/stage4/results/phaseB/runs/cov-vac-mrnafm-seed0/cov_vac_degradation/mrnafm/cov_vac_degradation__cross__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "006ad2cb9ec8f8f9471beae80b8e48b86724ddbc14c82f7dd03911afdf71af41"
+      },
+      {
+        "path": "Code/stage4/results/phaseB/runs/cov-vac-mrnafm-seed0/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.json",
+        "sha256": "371345dedd92910be045943d85380f2a891ba954cb68c7bac789b1e85fc32d34"
+      },
+      {
+        "path": "Code/stage4/results/phaseB/runs/cov-vac-mrnafm-seed0/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+        "sha256": "a9a698cc4ae65481fc8a6871fd1def0e5ae1edae912710fc8a6dc6e579a68cfa"
+      },
+      {
+        "path": "docs/figures/stability/results.json",
+        "sha256": "54241667101bfa84059ae766be5a69924000e7285fef43b19dbbc14df0e386a6"
+      }
+    ],
+    "task": "regression",
+    "versions": {
+      "numpy": "2.3.5",
+      "pandas": "2.3.3",
+      "python": "3.13.9",
+      "scipy": "1.16.3"
+    }
+  },
+  "payload": {
+    "detail": "",
+    "status": "available",
+    "tables": {
+      "alignment": {
+        "columns": [
+          "CKA",
+          "CKA after composition control"
+        ],
+        "index": [
+          [
+            "mRNA-FM",
+            "mRNA-FM + NT v2 100M multi-species"
+          ],
+          [
+            "mRNA-FM",
+            "mRNA-FM + ESM-2 8M"
+          ],
+          [
+            "mRNA-FM",
+            "mRNA-FM vs the RNA-FM it replaces"
+          ]
+        ],
+        "index_names": [
+          "swap",
+          "pair"
+        ],
+        "rows": [
+          [
+            0.029521264135837555,
+            0.0442689565810646
+          ],
+          [
+            0.04618525877594948,
+            0.10647844887309635
+          ],
+          [
+            0.12553377449512482,
+            0.2062082172143857
+          ]
+        ]
+      },
+      "bootstrap": {
+        "columns": [
+          "difference",
+          "ci_low",
+          "ci_high",
+          "first_wins",
+          "resolved"
+        ],
+        "index": [
+          "mrnafm concat vs original",
+          "mrnafm concat vs best single (unimodal:rna)",
+          "mrnafm mil vs original",
+          "mrnafm mil vs best single (unimodal:rna)",
+          "mrnafm cross vs original",
+          "mrnafm cross vs best single (unimodal:rna)"
+        ],
+        "index_names": [
+          "comparison"
+        ],
+        "rows": [
+          [
+            -0.04255245345283398,
+            -0.07628698499312414,
+            -0.013217839024966793,
+            0.003,
+            "yes"
+          ],
+          [
+            -0.053528022050137736,
+            -0.08765117122327622,
+            -0.019400544675664797,
+            0.0,
+            "yes"
+          ],
+          [
+            -0.021076256726604625,
+            -0.041025479259764956,
+            -0.002849983767417662,
+            0.0095,
+            "yes"
+          ],
+          [
+            -0.050395252470327945,
+            -0.08475457347598615,
+            -0.017624451624257065,
+            0.0005,
+            "yes"
+          ],
+          [
+            -0.010730879567997231,
+            -0.03439108057557878,
+            0.015314050716450044,
+            0.2125,
+            "no"
+          ],
+          [
+            0.009281120507003249,
+            -0.023893301279934054,
+            0.044531626924749206,
+            0.7205,
+            "no"
+          ]
+        ]
+      },
+      "summary": {
+        "columns": [
+          "reference status",
+          "alone",
+          "best single",
+          "best single score",
+          "concat",
+          "concat \u0394fusion",
+          "concat vs original",
+          "mil",
+          "mil \u0394fusion",
+          "mil vs original",
+          "cross",
+          "cross \u0394fusion",
+          "cross vs original"
+        ],
+        "index": [
+          [
+            "none",
+            "BioLangFusion's own"
+          ],
+          [
+            "rna",
+            "mRNA-FM"
+          ]
+        ],
+        "index_names": [
+          "slot",
+          "encoder"
+        ],
+        "rows": [
+          [
+            "qualified historical comparison; producer effects unresolved",
+            null,
+            "unimodal:rna",
+            0.8331862074137962,
+            0.8014476965481033,
+            -0.031738510865692904,
+            null,
+            0.7831042694016838,
+            -0.05008193801211247,
+            null,
+            0.8324352652204076,
+            -0.0007509421933886706,
+            null
+          ],
+          [
+            "qualified historical comparison; producer effects unresolved",
+            0.8124232651454071,
+            "unimodal:rna",
+            0.8124232651454071,
+            0.7588952430952693,
+            -0.053528022050137736,
+            -0.04255245345283398,
+            0.7620280126750791,
+            -0.050395252470327945,
+            -0.021076256726604625,
+            0.8217043856524103,
+            0.009281120507003249,
+            -0.010730879567997231
+          ]
+        ]
+      },
+      "validation_choices": {
+        "columns": [
+          "best single",
+          "MIL lambda",
+          "reference"
+        ],
+        "index": [
+          "original",
+          "mrnafm"
+        ],
+        "index_names": [
+          "encoder"
+        ],
+        "rows": [
+          [
+            "unimodal:rna",
+            0.01,
+            "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\cov_vac_degradation\\cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json"
+          ],
+          [
+            "unimodal:rna",
+            0.01,
+            "None"
+          ]
+        ]
+      }
+    }
+  },
+  "version": 1
+}

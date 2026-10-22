@@ -124,7 +124,12 @@ def _content_states(text, seq_type, tokenizer, model, device, limit):
     encoded = tokenizer(text, seq_type=seq_type, return_tensors="pt",
                         add_special_tokens=True, truncation=True, max_length=limit)
     moved = {k: v.to(device) for k, v in encoded.items()}
-    with torch.no_grad():
+    # Match attention dtypes when rotary embeddings promote CUDA query/key tensors.
+    use_fp16 = (
+        str(device).startswith("cuda")
+        and next(model.parameters()).dtype == torch.float16
+    )
+    with torch.no_grad(), torch.autocast("cuda", enabled=use_fp16):
         out = model(**moved)
     states = out.last_hidden_state if hasattr(out, "last_hidden_state") else out[0]
     return states[0, 1:-1, :].float().cpu().numpy()

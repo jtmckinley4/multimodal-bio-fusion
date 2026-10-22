@@ -1,0 +1,68 @@
+{
+  "identity": {
+    "dtype": "float16",
+    "encoder": {
+      "alphabet": "rna",
+      "attention": true,
+      "checkpoint": "multimolecule/mrnafm",
+      "codon": true,
+      "key": "mrnafm",
+      "label": "mRNA-FM",
+      "loader": "auto",
+      "max_len": 1024,
+      "modality": "RNA",
+      "revision": null
+    },
+    "expected_tokens": [
+      27,
+      27,
+      27,
+      27,
+      27,
+      27,
+      27,
+      27
+    ],
+    "expected_width": 1280,
+    "input_sha256": "7b8b1c8f2b0316efce87c83602c9b380643d12681badaac342a9f515c064235b",
+    "kind": "phaseb-token-probe-v1",
+    "producer": {
+      "encoders_code_sha256": "c7a6d705b3be824e8a6281acc4fd026345027cafc8ae060fe4307e230df37da5",
+      "numpy": "2.3.5",
+      "python": "3.13.9",
+      "requested_device": "cuda",
+      "torch": "2.10.0+cu126",
+      "transformers": "5.15.1"
+    },
+    "sample_size": 8,
+    "sequences_sha256": "7b8b1c8f2b0316efce87c83602c9b380643d12681badaac342a9f515c064235b",
+    "token_code_sha256": "95d223e0d155c45fcec218f2b56f898234bc5f973f6eabfa54583dd31553464d"
+  },
+  "payload": {
+    "counts": [
+      27,
+      27,
+      27,
+      27,
+      27,
+      27,
+      27,
+      27
+    ],
+    "detail": "",
+    "encoder": "mrnafm",
+    "finite": true,
+    "passed": true,
+    "widths": [
+      1280,
+      1280,
+      1280,
+      1280,
+      1280,
+      1280,
+      1280,
+      1280
+    ]
+  },
+  "version": 1
+}

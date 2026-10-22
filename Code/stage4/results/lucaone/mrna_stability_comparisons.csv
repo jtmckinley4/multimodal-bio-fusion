@@ -1,0 +1,4 @@
+comparison,difference,ci_low,ci_high,first_wins,rows,groups
+LucaOne both streams minus the best BLF single encoder,0.17042073583976558,0.13704321544078119,0.20368312069438813,1.0,3579,3021
+LucaOne both streams minus the three concatenated,0.09240605298637705,0.0658057118097024,0.1196257825372265,1.0,3579,3021
+LucaOne gene stream minus composition,0.16061316898882538,0.13024653354196458,0.19083909176666677,1.0,3579,3021
