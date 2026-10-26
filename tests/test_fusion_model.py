@@ -240,6 +240,8 @@ class PipelineTests(unittest.TestCase):
             self.caches[modality] = TE.summarize(cache_dir)
 
     def tearDown(self):
+        for cache in self.caches.values():
+            cache.close()  # Windows cannot remove a shard while its mapping is open.
         self.dir.cleanup()
 
     def streams(self):
@@ -501,9 +503,12 @@ class ShardReaderTests(unittest.TestCase):
             rows = [np.arange(6, dtype=np.float16).reshape(2, 3), np.ones((1, 3), np.float16)]
             TE._write_shard(path, rows)
             mapped = TE.open_shard(path)
-            with np.load(path) as reference:
-                for name in reference.files:
-                    np.testing.assert_array_equal(np.asarray(mapped[name]), reference[name])
+            try:
+                with np.load(path) as reference:
+                    for name in reference.files:
+                        np.testing.assert_array_equal(np.asarray(mapped[name]), reference[name])
+            finally:
+                mapped.clear()  # Release mappings before TemporaryDirectory cleans up.
 
     def test_pooling_a_token_cache_gives_one_mean_vector_per_row(self):
         """What the LucaOne comparison reads: the same rows, pooled, with no model loaded."""

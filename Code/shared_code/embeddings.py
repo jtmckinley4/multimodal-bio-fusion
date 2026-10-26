@@ -34,12 +34,6 @@ def embed(seq, tokenizer, model, max_len, device):
     return token_embeddings.mean(dim=1).squeeze().float().cpu().numpy()
 
 
-def count_tokens(seq, tokenizer, max_len):
-    """Return (tokens after truncation, tokens without truncation) for one input."""
-    full = len(tokenizer(seq)["input_ids"])
-    return min(full, max_len), full
-
-
 def sequences_fingerprint(seqs):
     """Identify ordered effective input strings without ambiguous separators."""
     payload = json.dumps(list(seqs), ensure_ascii=False, separators=(",", ":"))

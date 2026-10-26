@@ -142,7 +142,7 @@ New matrices are written to a unique temporary sibling, reopened and checked, th
 
 **Limits of reuse.** The version is a maintained calculation marker, not an automatic source-code hash. Package versions and tokenizer behavior are not separately checked. `device` is saved when computing and neither compared nor rewritten on a hit; it records the selected creation-time backend, not proof that every operation ran there. [Run records](../run-records.md) distinguish producing conditions from later reuse. An empty revision does not identify the resolved remote commit, so an unpinned checkpoint change is not detected. A matching cache is not evidence that labels, groups, biological identities, or scientific interpretations are correct.
 
-The [Generated files policy](../../README.md#generated-files) identifies output locations and their Git treatment. The [notebook embedding section](../../Code/stage1/Stage1_stability.ipynb#Embedding-the-sample-with-every-encoder) keeps the matrix-shape outputs associated with the producing run. A width disagreement with its loading check is an inconsistency to investigate; width alone does not identify its cause.
+The [Results and cache policy](../../README.md#results-caches-and-intermediate-files) identifies output locations and their Git treatment. The [notebook embedding section](../../Code/stage1/Stage1_stability.ipynb#Embedding-the-sample-with-every-encoder) keeps the matrix-shape outputs associated with the producing run. A width disagreement with its loading check is an inconsistency to investigate; width alone does not identify its cause.
 
 
 ### Restarting without repeating inference

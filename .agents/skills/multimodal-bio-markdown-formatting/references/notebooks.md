@@ -6,9 +6,13 @@ Use this reference when creating or revising Markdown cells in a shared project 
 
 [Rule et al.'s notebook-writing guidance](../../../../docs/sources.md#rule-et-al-writing-and-sharing-jupyter-analyses) supports connecting narrative, logical divisions, and reusable computation. The rules below specify how this project applies those ideas.
 
+Develop the notebook as a connected investigation: establish the opening question and comparison, explain what each analysis contributes, interpret relevant outputs before moving on, and show how the next analysis relates to the question or preceding work. Conclude by connecting supported findings and limitations back to the opening question, including unresolved questions where relevant. Review transitions as well as individual cells; locally clear explanations may still leave the overall argument unclear. Use this progression to guide the reading sequence, without requiring a fixed set of headings or forcing results to support a preferred story.
+
 A computational unit is one operation or analysis, potentially spanning several code cells, with identifiable inputs and an output or effect: loading an encoder, producing embeddings, fitting a probe, or calculating a comparison. Inspect the relevant code to identify that unit; a single code cell can contain more than one operation.
 
 Place purpose, inputs, prerequisites, and the mathematics or explanation links needed to understand an operation before its code. Place interpretation of the observed or saved result after the relevant output when one exists. Introduce reused concepts near their first use and link to their maintained explanation from later uses. Overview and reference cells can stand separately when their links make the connection to computation clear.
+
+Keep reusable explanations of progress reporting, saving, interruption, and resumption in notebook prose. Record completion, interruption, or cancellation as dated events in the [existing run records](../../../../docs/run-records.md#apply-the-provenance-workflow), distinguishing reported progress from work actually saved. Interpretation can remain beside the identifiable observed or saved output it explains; avoid embedding changing execution status in reusable instructions.
 
 A reading dependency is information needed to understand the next explanation or expression: a biological term, the objects being measured, or the result of an earlier calculation. A code dependency is a variable, function, or resource required for execution. Explain the relevant reading dependencies before using them; do not infer reader comprehension merely because the code can execute.
 

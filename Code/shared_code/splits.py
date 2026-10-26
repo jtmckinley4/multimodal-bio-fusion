@@ -9,7 +9,6 @@ from __future__ import annotations
 import hashlib
 
 import numpy as np
-import pandas as pd
 
 
 def grouped_folds(groups, n_splits=5, seed=42):
@@ -47,16 +46,3 @@ def grouped_holdout_split(groups, test_fraction=0.3, seed=42):
         for g in groups
     ])
     return np.flatnonzero(~is_test), np.flatnonzero(is_test)
-
-
-def official_split(dataset):
-    """Return {split name: row indices} from the dataset's published split column.
-
-    Use these for comparisons with published results. In mRNA_Stability.csv thousands
-    of test sequences also occur in training, so they overstate generalization.
-    """
-    column = dataset.spec.split_column
-    if column is None:
-        raise ValueError(f"{dataset.spec.key} has no published split column")
-    values = dataset.rows[column].to_numpy()
-    return {name: np.flatnonzero(values == name) for name in pd.unique(values)}

@@ -31,10 +31,13 @@ JSON; existing results are reused without retraining to obtain missing weights.
 from __future__ import annotations
 
 import hashlib
+import inspect
 import json
 import os
+import random
 import tempfile
 import time
+import warnings
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
@@ -242,12 +245,147 @@ class Result:
                       extra_fields={k: v for k, v in payload.items() if k not in known})
 
 
-def _save_checkpoint(path, epoch, model, optimiser, best, history, elapsed):
+def _run_identity(config, variant, benchmark):
+    return {"config": asdict(config), "variant": variant, "benchmark": benchmark}
+
+
+def _check_identity(saved, requested, source):
+    mismatched = [name for name, value in requested.items() if saved.get(name) != value]
+    if mismatched:
+        raise ValueError(f"{source}: saved {', '.join(mismatched)} do not match the requested "
+                         "run; preserve this file and use a different result tag or directory")
+
+
+def _check_result_identity(result, requested, path, builder, model_kwargs):
+    """Recognize the six historical GTEx modality labels without rewriting results.
+
+    Those records say ``IsoFormer``; their budget300M/seed0 filenames identify the
+    modalities. This narrow alias is based on the known notebook caller, not proof
+    of missing historical code or input identity. Checkpoint checks stay strict.
+    """
+    saved = {"config": result.config, "variant": result.variant,
+             "benchmark": result.benchmark}
+    legacy_alias = False
+    if result.variant == "IsoFormer" and result.benchmark == "gtex_pilot":
+        from . import isoformer
+
+        variants = ("dna", "rna", "prot", "dna+prot", "dna+rna", "dna+rna+prot")
+        variant = requested["variant"]
+        legacy_settings = {"n_heads": 8, "n_layers": 1, "dropout": 0.1}
+        defaults = inspect.signature(isoformer.IsoFormer).parameters
+        effective_settings = {name: model_kwargs.get(name, defaults[name].default)
+                              for name in legacy_settings}
+        legacy_alias = (
+            builder is isoformer.builder
+            and variant in variants
+            and requested["config"]["seed"] == 0
+            and path.stem == f"gtex_pilot__{variant}__heads8__budget300M__seed0"
+            and model_kwargs.keys() <= legacy_settings.keys()
+            and effective_settings == legacy_settings)
+        if legacy_alias:
+            saved["variant"] = variant  # Normalize only the comparison, not the record.
+    _check_identity(saved, requested, path)
+    if legacy_alias:
+        warnings.warn(
+            f"{path}: interpreting legacy GTEx variant 'IsoFormer' as "
+            f"'{requested['variant']}' from its historical filename and caller; "
+            "the stored record is unchanged and historical producer identity remains limited",
+            RuntimeWarning, stacklevel=2)
+    return legacy_alias
+
+
+def _rng_state(device):
+    state = {"torch": torch.get_rng_state(), "numpy": np.random.get_state(),
+             "python": random.getstate(), "device_type": torch.device(device).type}
+    if state["device_type"] == "cuda":
+        state["cuda"] = torch.cuda.get_rng_state_all()
+    elif state["device_type"] == "mps":
+        state["mps"] = torch.mps.get_rng_state()
+    return state
+
+
+def _restore_rng(state, device):
+    torch.set_rng_state(state["torch"].cpu())
+    np.random.set_state(state["numpy"])
+    random.setstate(state["python"])
+    device_type = torch.device(device).type
+    if state.get("device_type", "cpu") != device_type:
+        warnings.warn("checkpoint device differs from the requested device; resumed numerical "
+                      "and random trajectories may differ", RuntimeWarning, stacklevel=2)
+    if device_type == "cuda" and "cuda" in state:
+        torch.cuda.set_rng_state_all([value.cpu() for value in state["cuda"]])
+    elif device_type == "mps" and "mps" in state:
+        torch.mps.set_rng_state(state["mps"].cpu())
+
+
+def _loader_components(batches):
+    sampler = getattr(batches, "sampler", None)
+    batch_sampler = getattr(batches, "batch_sampler", None)
+    return {"loader": batches, "sampler": sampler, "batch_sampler": batch_sampler,
+            "batch_sampler.sampler": getattr(batch_sampler, "sampler", None)}
+
+
+def _loader_states(splits):
+    """Keep shuffle generators, epoch samplers, and custom state_dict protocols."""
+    states = {}
+    for split, batches in splits.items():
+        states[split] = {}
+        for name, component in _loader_components(batches).items():
+            state = {}
+            generator = getattr(component, "generator", None)
+            if isinstance(generator, torch.Generator):
+                state["generator"] = generator.get_state()
+            if (callable(getattr(component, "state_dict", None))
+                    and callable(getattr(component, "load_state_dict", None))):
+                state["state_dict"] = component.state_dict()
+            # IsoFormer's budgeted batch sampler advances this counter each epoch.
+            if isinstance(getattr(component, "epoch", None), int):
+                state["epoch"] = component.epoch
+            if state:
+                state["type"] = f"{type(component).__module__}.{type(component).__qualname__}"
+                states[split][name] = state
+    return states
+
+
+def _restore_loaders(states, splits):
+    for split, saved_components in states.items():
+        components = _loader_components(splits[split])
+        for name, state in saved_components.items():
+            component = components.get(name)
+            kind = f"{type(component).__module__}.{type(component).__qualname__}"
+            if kind != state["type"]:
+                raise ValueError(f"checkpoint {split} {name} differs from the requested loader")
+            if "state_dict" in state:
+                restore = getattr(component, "load_state_dict", None)
+                if not callable(restore):
+                    raise ValueError(f"checkpoint {split} {name} requires load_state_dict()")
+                restore(state["state_dict"])
+            if "generator" in state:
+                generator = getattr(component, "generator", None)
+                if not isinstance(generator, torch.Generator):
+                    raise ValueError(f"checkpoint {split} {name} requires a shuffle generator")
+                generator.set_state(state["generator"].cpu())
+            if "epoch" in state:
+                component.epoch = state["epoch"]
+
+
+def _save_checkpoint(path, epoch, model, optimiser, best, history, elapsed, *,
+                     scheduler=None, splits=None, identity=None, device="cpu"):
     """Write the run's state atomically, so an interrupted write cannot be resumed from."""
+    path = Path(path)
+    payload = {"epoch": epoch, "model": model.state_dict(),
+               "optimiser": optimiser.state_dict(), "best": best, "history": history,
+               "elapsed": elapsed}
+    # Keep the old positional helper usable by callers that build legacy checkpoints.
+    if scheduler is not None:
+        payload["scheduler"] = scheduler.state_dict()
+    if splits is not None:
+        payload["loaders"] = _loader_states(splits)
+    if identity is not None:
+        payload["identity"] = identity
+    payload["rng"] = _rng_state(device)
     temporary = path.with_name(path.name + ".partial")
-    torch.save({"epoch": epoch, "model": model.state_dict(),
-                "optimiser": optimiser.state_dict(), "best": best, "history": history,
-                "elapsed": elapsed}, temporary)
+    torch.save(payload, temporary)
     os.replace(temporary, path)
 
 
@@ -280,17 +418,23 @@ def _save_weights(path, model, result):
 
 
 def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_every=10,
-        loaders=None, keep_checkpoint=False):
+        loaders=None, keep_checkpoint=False, run_identity=None):
     """Train to the early stop, restore the best epoch, and score the test split.
 
     With a checkpoint path, the run is written there every checkpoint_every epochs and
     resumed from it if it already exists. run() keeps it until weights and JSON are saved;
-    direct callers remove it on success unless keep_checkpoint=True.
+    direct callers remove it on success unless keep_checkpoint=True. New checkpoints retain
+    scheduler, RNG and loader shuffle state at epoch boundaries. Custom stateful loaders or
+    samplers can expose state_dict/load_state_dict; persistent worker RNG is not recoverable.
+    Older checkpoints remain usable with an explicit best-effort recovery warning.
     """
     torch.manual_seed(config.seed)
+    np.random.seed(config.seed)
+    random.seed(config.seed)
     task = streams.task
     splits = loaders or {
-        name: loader(streams, name, batch_size=config.batch_size, seed=config.seed)
+        name: loader(streams, name, batch_size=config.batch_size, seed=config.seed,
+                     modalities=getattr(model, "required_modalities", None))
         for name in ("train", "val", "test")}
     criterion = loss_function(task)
     optimiser = torch.optim.Adam(model.parameters(), lr=config.lr,
@@ -302,10 +446,29 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
     best = {"score": -float("inf"), "epoch": -1, "state": None}
     history, started, first_epoch, before = [], time.perf_counter(), 0, 0.0
     checkpoint = Path(checkpoint) if checkpoint else None
+    identity = run_identity or _run_identity(
+        config, getattr(model, "fusion_name", type(model).__name__), streams.key)
+    if checkpoint and any(getattr(batches, "persistent_workers", False)
+                          for batches in splits.values()):
+        warnings.warn("persistent DataLoader worker RNG is not checkpointed; resumed "
+                      "trajectories may differ", RuntimeWarning, stacklevel=2)
     if checkpoint and checkpoint.exists():
-        saved = torch.load(checkpoint, map_location=device, weights_only=False)
+        saved = torch.load(checkpoint, map_location="cpu", weights_only=False)
+        if "identity" in saved:
+            _check_identity(saved["identity"], identity, checkpoint)
+        missing = [key for key in ("identity", "scheduler", "rng", "loaders") if key not in saved]
+        if missing:
+            warnings.warn(f"{checkpoint}: legacy checkpoint lacks {', '.join(missing)}; "
+                          "resuming with best-effort recovery, so the training trajectory "
+                          "may differ from uninterrupted training", RuntimeWarning, stacklevel=2)
         model.load_state_dict(saved["model"])
         optimiser.load_state_dict(saved["optimiser"])
+        if "scheduler" in saved:
+            schedule.load_state_dict(saved["scheduler"])
+        if "loaders" in saved:
+            _restore_loaders(saved["loaders"], splits)
+        if "rng" in saved:
+            _restore_rng(saved["rng"], device)
         best, history = saved["best"], saved["history"]
         first_epoch, before = saved["epoch"] + 1, saved.get("elapsed", 0.0)
         if log:
@@ -348,12 +511,13 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
                 f"val {val:.4f}  best {best['score']:.4f} @ {best['epoch']}")
         if checkpoint and epoch % checkpoint_every == 0:
             _save_checkpoint(checkpoint, epoch, model, optimiser, best, history,
-                             before + time.perf_counter() - started)
+                             before + time.perf_counter() - started, scheduler=schedule,
+                             splits=splits, identity=identity, device=device)
 
     model.load_state_dict(best["state"])
     truth, predicted, alpha = predict(model, splits["test"], device, task)
     result = Result(
-        variant=getattr(model, "fusion_name", type(model).__name__),
+        variant=identity["variant"],
         benchmark=streams.key, config=asdict(config), epochs=len(history),
         best_epoch=best["epoch"],
         val_score=best["score"] if np.isfinite(best["score"]) else None,
@@ -384,8 +548,13 @@ def run(streams, variant, config, device, results_dir, log=print,
     tag = tag or (f"{streams.key}__{variant.replace(':', '-')}__lambda{config.entropy_lambda}"
                   f"__ch{config.channels}__{config.tconv}__seed{config.seed}")
     path = results_dir / f"{tag}.json"
+    identity = _run_identity(config, variant, streams.key)
     if path.exists():
         done = Result.load(path)
+        legacy_alias = _check_result_identity(done, identity, path, builder, model_kwargs)
+        if legacy_alias and require_predictions and done.test_prediction is None:
+            raise ValueError(f"{path}: legacy GTEx result has no per-row predictions; "
+                             "preserve it and use a different result tag or directory")
         if not (require_predictions and done.test_prediction is None):
             if log:
                 log(f"  {tag}: already run, test {done.test_score:.4f}")
@@ -403,11 +572,13 @@ def run(streams, variant, config, device, results_dir, log=print,
     # and dropout. Before 2026-10-19 fit() seeded only after the model existed, so a run's
     # initial weights were not determined by its seed.
     torch.manual_seed(config.seed)
+    np.random.seed(config.seed)
+    random.seed(config.seed)
     model = (builder(streams, variant, config, **model_kwargs) if builder
              else build(streams, variant, channels=config.channels, tconv=config.tconv,
                         **model_kwargs))
     result = fit(model, streams, config, device, log=log, loaders=loaders,
-                 checkpoint=checkpoint, keep_checkpoint=True)
+                 checkpoint=checkpoint, keep_checkpoint=True, run_identity=identity)
     result.extra_fields["model_artifact"] = _save_weights(weights_path, model, result)
     result.save(path)                 # Publish completion only after its weights are saved.
     checkpoint.unlink(missing_ok=True)

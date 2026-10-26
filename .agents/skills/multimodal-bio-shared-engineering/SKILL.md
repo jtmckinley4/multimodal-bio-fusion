@@ -19,11 +19,15 @@ Keep dataset/model choices, comparison settings, outputs, and interpretation vis
 
 Share code when consumers must follow the same rule, not merely because their text resembles each other. Preserve deliberate differences between datasets, controls, metrics, and published evaluation protocols. Construct fresh estimators when callers need independent fits; do not share fitted state accidentally. Judge simplification by reader effort and maintenance, not file/function counts. [Selected design sources](../../../docs/sources.md#choosing-code-boundaries) explain KISS/YAGNI, DRY, function boundaries, and SOLID's responsibility/interface questions.
 
+In notebooks, use concise comments beside unfamiliar imports, non-obvious operations, units, and consequential implementation choices to explain their role or reason where readers encounter them. Group imports by useful purpose, identifying unfamiliar dependencies locally while preserving required import order. Keep broader biological reasoning, mathematical explanation, relationships between analyses, and result interpretation in adjacent Markdown. Comments should connect the implementation to that explanation without duplicating it or merely restating syntax; familiar imports and obvious assignments usually need no commentary.
+
 ## Handle resources and recoverable work
 
 Separate calculation from external input/output or presentation when that boundary helps a current consumer or check. Release owned models and files on success and failure. Preserve the operation's original exception if cleanup also fails; otherwise report a cleanup failure. Reuse a cache only when its actual inputs and computation identity match; a producer's evidence differs from the environment consuming the cache. Report incompatible or damaged caches before expensive recovery.
 
 For affected file producers, validate content before publishing a complete replacement and preserve the last completed artifact on failure. Retry only known recoverable operations with bounded attempts/time and a retained failure cause. Add coordination only for actual competing writers. A hash or file's existence alone does not prove completeness, correctness, or historical provenance.
+
+When repairing code used by a running notebook or process, distinguish the saved implementation from code already loaded in memory. Check automatic reload or other dynamic loading before claiming an edit will leave the current operation unaffected. Preserve the authorized running operation, and state when the change takes effect and which reload, restart, or setup steps are needed; those steps remain subject to the user's execution scope.
 
 ## Preserve result provenance
 

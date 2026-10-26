@@ -106,10 +106,15 @@ class BenchmarkStreams:
 
 
 class GridDataset(Dataset):
-    """The three streams and the label of each row in one split."""
+    """The required token streams and label of each row in one split."""
 
-    def __init__(self, streams, split):
+    def __init__(self, streams, split, modalities=None):
         self.streams = streams
+        self.modalities = MODALITIES if modalities is None else tuple(modalities)
+        if (not self.modalities or len(set(self.modalities)) != len(self.modalities)
+                or any(m not in MODALITIES for m in self.modalities)):
+            raise ValueError(f"modalities must be a nonempty selection of {MODALITIES}, "
+                             f"without duplicates; got {self.modalities}")
         self.indices = streams.split_rows(split)
         labels = streams.labels[self.indices]
         self.labels = labels.astype(np.int64 if streams.task == "classification" else np.float32)
@@ -123,13 +128,13 @@ class GridDataset(Dataset):
         # np.array copies, which a memory-mapped shard needs: torch refuses to wrap a
         # read-only array without warning that writing to it is undefined.
         return ({m: torch.from_numpy(np.array(self.streams.caches[m][row]))
-                 for m in MODALITIES},
+                 for m in self.modalities},
                 int(self.codons[i]), self.labels[i])
 
 
 @dataclass
 class GridBatch:
-    """One padded batch: the three streams, their real token counts, codons, and labels."""
+    """One padded batch: selected streams, their token counts, codons, and labels."""
 
     streams: dict
     tokens: dict
@@ -145,8 +150,11 @@ class GridBatch:
 def collate(batch):
     """Pad each stream to the longest row in the batch, on its own time axis."""
     streams, codons, labels = zip(*batch)
+    modalities = tuple(streams[0])
+    if any(tuple(item) != modalities for item in streams):
+        raise ValueError("Every row in a batch must supply the same modalities in the same order.")
     padded, counts = {}, {}
-    for modality in MODALITIES:
+    for modality in modalities:
         rows = [item[modality] for item in streams]
         longest = max(row.shape[0] for row in rows)
         block = torch.zeros(len(rows), longest, rows[0].shape[1], dtype=torch.float32)
@@ -158,11 +166,12 @@ def collate(batch):
                      torch.as_tensor(np.array(labels)))
 
 
-def loader(streams, split, batch_size=32, shuffle=None, seed=0):
-    """A DataLoader over one split; the training split is shuffled, the others are not."""
+def loader(streams, split, batch_size=32, shuffle=None, seed=0, modalities=None):
+    """Load selected streams (all by default); only the training split is shuffled."""
     shuffle = (split == "train") if shuffle is None else shuffle
     generator = torch.Generator().manual_seed(seed) if shuffle else None
-    return DataLoader(GridDataset(streams, split), batch_size=batch_size, shuffle=shuffle,
+    return DataLoader(GridDataset(streams, split, modalities=modalities),
+                      batch_size=batch_size, shuffle=shuffle,
                       collate_fn=collate, generator=generator)
 
 
@@ -192,6 +201,7 @@ class Unimodal(nn.Module):
     def __init__(self, widths, modality, n_outputs, channels=DEFAULT_CHANNELS):
         super().__init__()
         self.modality = modality
+        self.required_modalities = (modality,)
         self.fusion_name = f"unimodal:{modality}"
         self.head = TextCNN(widths[modality], n_outputs, channels=channels)
 
@@ -208,22 +218,25 @@ class GriddedUnimodal(nn.Module):
     sees one position per nucleotide while every fused model sees RNA-FM pooled three to
     one. This variant reads the stream after the grid instead, so a unimodal baseline and a
     fusion head see the same input and differ only in the fusion. Only the selected stream
-    reaches the head; the grid still builds the others, which costs a little time and
-    leaves the DNA convolution untrained when the stream is not DNA.
+    is loaded and placed on the grid. Keep the original grid's registered layers and their
+    construction order so initialization and saved optimizer/model states remain compatible.
     """
 
     def __init__(self, widths, modality, n_outputs, channels=DEFAULT_CHANNELS,
                  tconv="appendix", resolutions=None):
         super().__init__()
         self.modality = modality
+        self.required_modalities = (modality,)
         self.fusion_name = f"unimodal-grid:{modality}"
         self.grid = CodonGrid(widths["dna"], tconv=tconv, resolutions=resolutions)
         self.head = TextCNN(widths[modality], n_outputs, channels=channels)
 
     def forward(self, batch):
-        grid, mask = self.grid(batch.streams["dna"], batch.streams["rna"],
-                               batch.streams["prot"], batch.codons, batch.tokens["dna"])
-        return self.head(grid[self.modality], mask), {}
+        target = int(batch.codons.max())
+        mask = mask_of(batch.codons, target)
+        stream = self.grid.place(self.modality, batch.streams[self.modality], target,
+                                 batch.tokens[self.modality])
+        return self.head(stream * mask.unsqueeze(-1), mask), {}
 
 
 def build(streams, variant, channels=DEFAULT_CHANNELS, **kwargs):

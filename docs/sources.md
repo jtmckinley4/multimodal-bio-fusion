@@ -222,7 +222,7 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 [Sandve et al. (2013), Ten Simple Rules for Reproducible Computational Research](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003285), Rules 1–6.
 
-**Why retain it:** These rules address result-producing steps, executable processing, software versions, script history, intermediate results, and random seeds. They provide a starting point for designing records that connect a result to its inputs and producing code. The [generated-file policy](../README.md#generated-files) and [embedding-cache explanation](methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse) describe relevant existing practices.
+**Why retain it:** These rules address result-producing steps, executable processing, software versions, script history, intermediate results, and random seeds. They provide a starting point for designing records that connect a result to its inputs and producing code. The [results and cache policy](../README.md#results-caches-and-intermediate-files) and [embedding-cache explanation](methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse) describe relevant existing practices.
 
 **Reading scope and limits:** Rules 1–6 were read on October 5, 2026. Complete run provenance remains a future design consideration; preserved outputs and regression checks do not establish that it exists. Recording a seed alone does not establish deterministic behavior across hardware and libraries.
 

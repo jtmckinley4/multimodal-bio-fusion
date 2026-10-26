@@ -16,7 +16,7 @@ Start with the biological question and model choices in the overview. Follow the
 | Where are the saved figures and their numeric inputs? | The [figure guide](figures/README.md), with stability/GTEx panels, result snapshots and commands that regenerate figures without rerunning models. |
 | How do the frozen encoders compare with published fusion studies? | The [comparison overview](stage1-overview.md#published-comparisons-and-distinct-inputs), [BioLangFusion published-split comparison](../Code/stage1/Stage1_stability.ipynb#Published-split-comparison), and [IsoFormer published-split comparison](../Code/stage1/Stage1_gtex.ipynb#GTEx-published-split-comparison). |
 | Where are methods and results written up for the manuscript? | The [Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f), including its Stage 1 metric definitions and published-split comparisons. |
-| What does alignment mean here, and what comes next? | [Stage 2: defining alignment](../README.md#stage-2-defining-alignment), [Stage 3 fusion experiments](../README.md#next-steps-stage-3-fusion-experiments), and the Stage 2 section of the Overleaf project. |
+| What does alignment mean here, and what comes next? | [Stage 2: defining alignment](../README.md#stage-2-defining-alignment), [Stage 3 fusion experiments](../README.md#stage-3-building-and-checking-models), and the Stage 2 section of the Overleaf project. |
 
 The October 3 comparison entry in the [Gantt workbook](Research_Project_Plan_Gantt.xlsx) names `Stage1_analysis.ipynb`, the single notebook the two experiment notebooks replaced. Use the overview and the two experiment notebooks linked above for current navigation.
 
