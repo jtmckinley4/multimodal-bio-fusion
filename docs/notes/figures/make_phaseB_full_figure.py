@@ -169,4 +169,21 @@ legend_grid(fig, -0.02, big=big)
 for ext in ("pdf", "png"):
     fig.savefig(os.path.join(OUT, f"r34_phaseB_grid_slide.{ext}"), dpi=220, bbox_inches="tight")
 plt.close(fig)
-print("r34_phaseB_full, r34_phaseB_grid_slide")
+
+# --------------------------------------------------------------- deck panel: (a) alone, larger type
+big = 1.25
+fig, axes = plt.subplots(1, 4, figsize=(11.6, 3.5), gridspec_kw={"wspace": 0.10, "left": 0.175, "right": 0.995, "top": 0.88, "bottom": 0.16})
+panel_alone(axes, big=big)
+for ax in axes:
+    ax.tick_params(axis="x", labelsize=8.0 * big)
+axes[0].set_yticklabels([f"{lab}  (for {rep})" for _, lab, _, rep in SWAPS[::-1]], fontsize=9.0)
+from matplotlib.lines import Line2D
+hs = [Line2D([], [], marker="o", mfc=SURFACE, mec=INK, mew=1.1, color=AXIS, ls="-", ms=6, label="the encoder it replaces"),
+      Line2D([], [], marker="o", color=DNA, ls="", ms=6.5, label="swapped in: DNA slot"),
+      Line2D([], [], marker="o", color=RNA, ls="", ms=6.5, label="RNA slot"),
+      Line2D([], [], marker="o", color=PROT, ls="", ms=6.5, label="protein slot")]
+fig.legend(handles=hs, loc="lower center", bbox_to_anchor=(0.57, -0.04), ncol=4, fontsize=8.6, handletextpad=0.4, columnspacing=1.8)
+for ext in ("pdf", "png"):
+    fig.savefig(os.path.join(OUT, f"r34_phaseB_alone_slide.{ext}"), dpi=220, bbox_inches="tight")
+plt.close(fig)
+print("r34_phaseB_full, r34_phaseB_grid_slide, r34_phaseB_alone_slide")

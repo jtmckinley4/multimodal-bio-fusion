@@ -259,66 +259,65 @@ At entropy weight 0.5 or 1.0, one modality takes 1.00 and the other two 0.00 on 
 
 ---
 
-## Slide 9. Phase B: one encoder swapped at a time
+## Slide 9. Phase B, the encoder question: all eight swaps read alone
 
-**What the slide shows.** CoV-Vac and E. coli with three encoders in the RNA slot: RNA-FM (the paper's own), mRNA-FM and CaLM. For each: the encoder alone, and all three fusion heads with that encoder in place. Seed 0; everything else held at Phase A's settings. Under the table is the manuscript's Phase B figure (`r34_phaseB.pdf`): panels (a) and (b) are the swapped encoder alone against concatenation built on it, and panels (c) and (d) are the paired differences with their intervals, which is where the +8.0 and the unresolved +0.3 can be seen side by side.
+**What the slide shows.** One panel per benchmark, one row per swap. The open marker is the original encoder read alone, the filled marker is the encoder swapped in for it, colored by slot (blue DNA, green RNA, orange protein). A long line to the right means the swap is much better on its own. The table underneath is the same numbers, with the encoder it replaces in brackets. This slide is only about single encoders; slide 10 asks what fusion does on top of them.
 
-**Why we did this.** Priority 1, Phase B: keep the splits, preprocessing, heads and training fixed and change encoders only. The plan's success criterion is that at least one swap improves test performance under the same architecture, and the plan's measure is Δfusion against the best single encoder of that triple. The RNA slot went first because the mRFP control predicted that mRNA-FM should carry the most, and CaLM is its control (another codon-level encoder with a different pretraining set).
+**What ran.** Eight single-encoder swaps. DNA slot: NT 500M human-ref and HyenaDNA large in place of NT v2 100M. RNA slot: RiNALMo 150M, mRNA-FM and CaLM in place of RNA-FM. Protein slot: ESM-2 35M, ESM-2 150M and ProtBERT in place of ESM-2 8M. Each on fungal, CoV-Vac and E. coli, with mRNA-FM, CaLM and ESM-2 150M also on mRNA stability: 27 swap-benchmark pairs. Chase ran the first four by October 22 and the rest between October 25 and 27, seed 0, everything else at Phase A's settings. DNABERT-2 is out of the sweep because its variable-length byte-pair tokens need a grid adapter. The figure is `r34_phaseB_alone_slide.pdf`, from `docs/notes/figures/make_phaseB_full_figure.py`.
 
-**How we did it.** Token embeddings for mRNA-FM and CaLM were extracted on the benchmarks (both read one token per codon, so they drop onto the grid without the three-to-one average RNA-FM needs). The Phase A sweep was rerun with the swapped encoder: the encoder alone, concatenation, the gated head at the validation-chosen lambda, and cross-attention. Each swap is compared with a paired bootstrap on the same test rows both against its own best single encoder (Δfusion) and against the same head with the original encoders ("vs original"). Run on Chase's GPU, scored independently twice.
+**Why we did this.** Priority 1, Phase B: hold splits, preprocessing, heads and training fixed and change one encoder, so any difference is attributable to that encoder. The RNA slot went first because the mRFP control (slide 8) predicted mRNA-FM would carry the most codon information.
 
 **What the numbers mean.**
 
-- *E. coli.* mRNA-FM alone scores 58.7%, +8.0 points over RNA-FM alone (interval +3.9 to +11.9, resolved) and +8.6 over ESM-2 alone, the validation-chosen single encoder in Phase A. CaLM alone 57.6%, +6.8 (+2.5 to +10.8, resolved). With mRNA-FM in place, concatenation scores 59.0%, +0.3 over mRNA-FM alone (interval -2.9 to +3.5, not resolved); the gated head 53.1% (-5.6, resolved worse); cross-attention 54.8% (-3.9, interval -7.9 to 0.0, not resolved). With CaLM: concatenation 57.7% (+0.1), gated 56.7% (-0.8), cross-attention 53.9% (-3.7, resolved worse). So Phase A's +6.9 for fusion on E. coli was the fusion heads compensating for a weak RNA stream: give the model the right RNA encoder and the gain is gone. The 8-point single-encoder jump is the largest effect anywhere in Stage 4, and it is not a fusion effect.
-- *CoV-Vac.* The swap does not help: mRNA-FM alone is 0.812 (-0.021 against RNA-FM alone, interval -0.056 to +0.013, a tie), CaLM alone 0.844 (+0.011, a tie). With either codon-level encoder, concatenation and the gated head are resolved worse than the encoder alone (mRNA-FM: concatenation -0.054, gated -0.050; CaLM: -0.027, -0.042) and cross-attention is a tie (+0.009 and -0.017). This is the same pattern as Phase A: on a structure-driven task on RNA fragments, a codon-level encoder has no advantage and fusing the three readings adds noise.
+- *The RNA slot is where the score moves.* On fungal, RiNALMo, mRNA-FM and CaLM alone score 0.844, 0.852 and 0.851 against RNA-FM's 0.722. That is the largest single effect in Stage 4, and it clears both NT v2 100M alone (0.813) and the paper's best fused model on fungal (0.824). On E. coli the same three lift the single encoder from 50.7% to 57.3%, 58.7% and 57.6%: mRNA-FM alone is +8.0 points over RNA-FM alone [+3.9, +11.9], CaLM +6.8 [+2.5, +10.8], both resolved.
+- *The DNA slot moves the wrong way.* NT 500M and HyenaDNA are worse than NT v2 100M on fungal (0.740 and 0.737 against 0.813) and on CoV-Vac.
+- *The protein slot barely moves.* ESM-2 35M and ProtBERT sit near ESM-2 8M everywhere; only ESM-2 150M on E. coli is clearly better (53.9% against 50.1%).
+- *CoV-Vac disagrees with the others about which RNA encoder is best,* and that is the point. There the codon-level swaps do not help: mRNA-FM alone is 0.812 against RNA-FM's 0.833 and CaLM 0.844, both ties. Fungal and E. coli expression are driven by codon usage, which mRNA-FM, CaLM and RiNALMo were pretrained on; CoV-Vac degradation is the folding of an 81-nucleotide fragment, which nucleotide-level RNA-FM was pretrained on.
 
 **Mina's notes on this slide.**
 
-- *"We want to see if fusion replaces RNA-FM and see if it works."* That is exactly Phase B's comparison: each head with the swapped encoder against that encoder alone. On E. coli, replacing RNA-FM with mRNA-FM makes the single encoder as good as the fusion was, and fusion on top of it adds +0.3, which does not resolve. So fusion does not replace a good RNA encoder; a good RNA encoder replaces fusion.
-- *"Check RNA-FM."* RNA-FM is the paper's RNA encoder and it is the weakest of the four RNA encoders on codon information in the mRFP control (+0.02 above the controls, against +0.18 for mRNA-FM). On CoV-Vac it is still the best choice, because that task is about RNA structure, which is what RNA-FM was pretrained on.
-- *"BioLangFusion: explain fusion and what these mean."* The three heads are explained once at the top of this guide and on slide 6; in the table, "concat" keeps every feature of every modality at every codon, "gated" keeps a weighted average with one weight per modality, "cross" lets each modality attend to every position of every modality.
-- *"Mark if we use cross-attention, will the result be better."* With the swapped encoders, no. Cross-attention is a tie with the encoder alone on CoV-Vac and on E. coli with mRNA-FM, and resolved worse on E. coli with CaLM. The project's own cross-attention design (January, Gantt 25) will be scored against these same baselines.
+- *"We want to see if fusion replaces RNA-FM and see if it works."* Replacing RNA-FM with a codon-level encoder is worth eight points on E. coli on its own. Whether fusion then adds anything is slide 10, and the answer there is no.
+- *"Check RNA-FM."* RNA-FM is the weakest of the four RNA encoders on codon information in the mRFP control (+0.02 above the controls against +0.18 for mRNA-FM), and this slide is that prediction confirmed on trained models.
 
-**What came next.** Chase ran the other swaps between October 25 and 27: the DNA swaps (NT 500M, HyenaDNA), the protein swaps (ESM-2 35M, ESM-2 150M, ProtBERT), RiNALMo in the RNA slot, and the fungal benchmark, plus three swaps on stability. Slide 10 has all eight. DNABERT-2 stayed out because its variable-length tokens need a grid adapter.
-
-**One sentence to say.** "Swapping one frozen encoder moved E. coli by eight points; fusion on top of the better encoder adds nothing we can resolve, and cross-attention does not change that."
+**One sentence to say.** "Changing the RNA encoder moves fungal by 0.13 and E. coli by eight points; changing the DNA or protein encoder moves almost nothing."
 
 ---
 
-## Slide 10. Phase B complete: all eight swaps
+## Slide 10. Phase B, the fusion question: all eight swaps against their best single encoder
 
-**What the slide shows.** Two things. On top, a grid: each fusion head minus the best single encoder validation chose, for every swap on every benchmark, one seed, with the 95% paired interval deciding the shading. Blue means fusion is ahead and the interval excludes zero, orange means fusion is behind and the interval excludes zero, grey is a tie. The dashed top row is the original BioLangFusion encoders at seed 0, for reference. Underneath, a table: each swapped encoder read alone, with the original encoder it replaces in brackets. The table is the encoder question; the grid is the fusion question.
+**What the slide shows.** A grid: each fusion head minus the best single encoder validation chose for that configuration, one seed, with the 95% paired interval deciding the shading. Blue means fusion is ahead and the interval excludes zero; orange means fusion is behind and the interval excludes zero; grey is a tie. The dashed top row is the original encoders, for reference. Underneath, the three gains that survive scrutiny, with their intervals.
 
-**What ran.** Eight single-encoder swaps. DNA slot: NT 500M human-ref and HyenaDNA large in place of NT v2 100M. RNA slot: RiNALMo 150M, mRNA-FM and CaLM in place of RNA-FM. Protein slot: ESM-2 35M, ESM-2 150M and ProtBERT in place of ESM-2 8M. Each on fungal, CoV-Vac and E. coli, and three of them (mRNA-FM, CaLM, ESM-2 150M) on mRNA stability: 27 swap-benchmark pairs, each with the swapped encoder alone and all three heads. Seed 0, everything else at Phase A's settings, including the gated head's entropy weight, which is inherited rather than retuned. Chase ran them on his GPU between October 25 and 27; the intervals come from his notebook (2,000 draws, identical sequences resampled together). The figure is `r34_phaseB_full.pdf` in the manuscripts and `r34_phaseB_grid_slide.pdf` on the slide, made by `docs/notes/figures/make_phaseB_full_figure.py`.
+**How to read the tally.** 81 comparisons: 15 resolve with fusion ahead, 14 with fusion behind, 52 are ties. The 15 have to be split, because two groups are artifacts of what fusion was compared against rather than fusion working.
 
-**The encoder question, from the table.**
-
-- *The RNA swaps change the most.* On fungal, RiNALMo, mRNA-FM and CaLM alone score 0.844, 0.852 and 0.851, against 0.722 for RNA-FM and 0.813 for NT v2, the best original encoder. A single swapped encoder alone now beats the paper's best fusion on fungal (0.824). On E. coli the same three lift the single encoder from 50.7% to 57.3% to 58.7%.
-- *The DNA swaps are worse* than NT v2 100M on fungal (0.740 and 0.737 against 0.813) and CoV-Vac.
-- *The protein swaps move little,* except ESM-2 150M on E. coli (53.9% against 50.1%).
-
-**The fusion question, from the grid.** 81 comparisons: 15 resolved ahead, 14 resolved behind, 52 ties. Read it in four parts.
-
-| Pattern | Where | What it means |
+| Group | Count | Why it does not count |
 | --- | --- | --- |
-| Fusion ahead, but only because the reference is weak | Fungal with ProtBERT (the three cells marked †) | Validation chose ProtBERT alone (0.761) although NT v2 alone scores 0.813; against NT v2 these are ties |
-| Fusion ahead because the RNA slot is still weak | E. coli with the DNA and protein swaps (8 cells) | RNA-FM still sits in the RNA slot, so fusion compensates for it, as in Phase A |
-| No fusion gain once the RNA encoder is good | E. coli and fungal with mRNA-FM or CaLM | Fusion ties, and on E. coli two heads are resolved worse (gated -5.6 with mRNA-FM, cross -3.7 with CaLM) |
-| New gains no weak encoder explains | CoV-Vac cross-attention with HyenaDNA (+0.039) and RiNALMo (+0.031); E. coli gated with RiNALMo (+6.5) | Candidates, one seed each |
+| Fungal with ProtBERT (marked †) | 3 | Validation chose ProtBERT alone (0.761) as the reference although NT v2 100M alone scores 0.813 on test; against NT v2 these are ties |
+| E. coli with the DNA and protein swaps | 8 | RNA-FM still fills the RNA slot in all of them, so fusion is compensating for a weak encoder, as in Phase A |
+| **What survives** | **3** | **Not explained by a weak reference or a weak slot** |
 
-Two more patterns: on CoV-Vac, concatenation and the gated head are resolved worse than the best single encoder in 12 of 16 configurations, while cross-attention is never resolved worse there; and on stability all nine comparisons tie.
+The contrast that proves the second group: with mRNA-FM or CaLM in the RNA slot, no head gains on E. coli, and two are resolved worse (gated -5.6 with mRNA-FM, cross-attention -3.7 with CaLM).
 
-**What is genuinely new.** Cross-attention with HyenaDNA reaches 0.872 on CoV-Vac, above the paper's best CoV-Vac number (0.864), and with RiNALMo 0.854. Both are nucleotide-resolution encoders and CoV-Vac is the folding of 81-nucleotide fragments, so this is the first sign that letting nucleotide-level streams attend to each other helps a nucleotide-scale task. The gated head with RiNALMo on E. coli reaches 62.5%, the highest E. coli accuracy in the project, and there its weights actually mix (RNA 0.42, protein 0.50) instead of collapsing.
+**The three that survive.**
 
-**The gated head, revisited.** With a strong RNA encoder the gate now gives RNA real weight: fungal 0.48 to 0.60, stability with mRNA-FM 0.79, CoV-Vac with RiNALMo 0.94. So slide 6's "RNA is zero everywhere" holds for the paper's RNA-FM, not for every RNA encoder; the gate tends to pick the strongest stream. But on E. coli with mRNA-FM, the best single encoder there, it still gives RNA 0.00 and scores 53.1%: it selects, and sometimes selects wrong.
+| Swap | Benchmark | Head | Over the best single encoder | Reaches |
+| --- | --- | --- | --- | --- |
+| HyenaDNA (DNA slot) | CoV-Vac | cross-attention | +0.039 [+0.012, +0.066] | 0.872, above the paper's 0.864 |
+| RiNALMo (RNA slot) | CoV-Vac | cross-attention | +0.031 [+0.008, +0.054] | 0.854 |
+| RiNALMo (RNA slot) | E. coli | gated | +6.5 points [+3.4, +9.6] | 62.5%, the project's best E. coli score |
 
-**A side result: gridded DNA.** The sweep also ran the swapped DNA encoders stretched onto the codon grid. For NT 500M the grid helps (fungal 0.740 to 0.766); for HyenaDNA it hurts (fungal 0.737 to 0.676). So whether placing an encoder on the grid helps depends on the encoder, which is why the original NT v2 100M grid run is still worth doing.
+Both CoV-Vac gains come from nucleotide-resolution encoders on a task governed by local RNA folding, which is the first sign in this project that letting nucleotide-level streams attend to one another helps a nucleotide-scale task. Each rests on one seed, so they are candidates rather than results.
 
-**Caveats to say before Mina asks.** One seed per configuration, and the intervals measure which test rows were drawn, not training variation, so the three new gains are candidates. The entropy weight is inherited. The single reference is chosen on validation, which picked a weak one once (fungal, ProtBERT).
+**Two more patterns worth saying.** On CoV-Vac, concatenation and the gated head are resolved worse than the best single encoder in 12 of 16 configurations, while cross-attention is never resolved worse there. On stability all nine comparisons tie.
 
-**What comes next.** Seeds on the three new gains; the mRNA-FM-anchored fusions Mina asked for; the plan's two-encoder replacements, chosen from these single swaps; DNABERT-2 once it has a grid adapter.
+**The gated head, revisited.** With a strong RNA encoder the gate gives RNA real weight (fungal 0.48 to 0.60 with the three RNA swaps, stability 0.79 with mRNA-FM, CoV-Vac 0.94 with RiNALMo). So slide 6's finding that RNA goes to zero holds for RNA-FM, not for every RNA encoder: the gate tends to keep the strongest stream. It still selects wrongly where it matters most, giving RNA 0.00 on E. coli with mRNA-FM, the best single encoder there, and scoring 53.1%.
 
-**One sentence to say.** "Across all eight swaps a better single encoder does most of the work, fusion gains on E. coli only appear while the weak RNA encoder is still in place, and the three new gains, two of them cross-attention on CoV-Vac, need seeds before we claim them."
+**A side result: gridded DNA.** The sweep also read the swapped DNA encoders after the codon grid's learned upsampling. For NT 500M the grid helps (fungal 0.740 to 0.766, E. coli 47.5 to 49.6); for HyenaDNA, which already reads single nucleotides, it hurts (0.737 to 0.676, 50.4 to 46.2). Whether the grid helps a single encoder depends on the encoder, which is why the same check on the original NT v2 100M is still worth running.
+
+**Caveats to have ready.** One seed per configuration, and the intervals measure which test rows were drawn, not training variation. The gated head's entropy weight is inherited from the original encoders, not retuned per swap. The single-encoder reference is chosen on validation, which went wrong once.
+
+**What comes next.** Seeds on the three surviving gains; the mRNA-FM-anchored fusions from October 22; the plan's two-encoder replacements, chosen from these single swaps; DNABERT-2 once it has a grid adapter; the five swaps not yet run on stability.
+
+**One sentence to say.** "Of 81 fusion comparisons only three gains survive once you remove the ones measured against a weak encoder, and two of those three are cross-attention on CoV-Vac, which is the first fusion result in this project that a better single encoder does not explain."
 
 ---
 
@@ -380,28 +379,26 @@ Two more patterns: on CoV-Vac, concatenation and the gated head are resolved wor
 
 ---
 
-## Slide 14. What it adds up to, and what Mina asked for
+## Slide 14. What it adds up to, and what runs next
 
-**What the slide shows.** Five conclusions, and the questions and follow-ups from the October 22 meeting.
+**What the slide shows.** Five conclusions on the left, the run order on the right, and in the footer the four things that need an answer from outside the project.
 
 **The five conclusions, with the evidence behind each.**
 
 1. *The build is right.* Single encoders within 0.01 of the paper; cross-attention within 0.01 on all four benchmarks (slide 4).
-2. *The encoder matters more than the fusion head.* One encoder swap moved E. coli by 8 points and dissolved the fusion gain that had been compensating for the weak encoder (slide 9).
+2. *The encoder matters more than the fusion head.* Across all eight swaps, better RNA encoders lift fungal and E. coli on their own and fusion on top of them adds nothing resolved; three single-seed gains survive that test (slides 9 and 10).
 3. *Fusion still wins where the modalities are different molecules.* GTEx +0.047 resolved (slide 13); full transcript with protein +0.053 and +0.030 (slide 12).
 4. *One jointly pretrained model beats three fused ones on stability.* LucaOne +0.092 resolved, on the leaky split (slide 11).
 5. *The gated head is a selector, not a mixer.* Its weights are nearly one-hot, RNA is dropped everywhere, and on CoV-Vac it drops the best encoder (slide 6). The paper reports no error bars, and its own fungal gain is the size of noise on that split (slide 5).
 
-**What Mina asked for on October 22, and where each lands.**
+**What runs next, in order.**
 
-- Interpret why things work better, not only that they do: this guide, the speaker notes and the Overleaf now carry the interpretation on every slide (pretraining domain predicts the best single encoder; fusion helps when the second input is a different molecule or region).
-- Build fusion around mRNA-FM (DNA + mRNA-FM, mRNA-FM + protein) and try other mRNA encoders: a Phase B extension on the coding-sequence benchmarks (Gantt 24).
-- Check whether cross-attention does better with the swapped encoders: on CoV-Vac, yes with two nucleotide-level swaps (HyenaDNA +0.039, RiNALMo +0.031, one seed), and it is never resolved worse there; on E. coli and fungal, no (slide 10). The project's own cross-attention design is still scored in January (Gantt 25).
-- Run LucaOne on the other datasets: E. coli, CoV-Vac and fungal fit its context; GTEx does not (Gantt 41).
-- Which rows the paper reports on stability: the full 3,579-row published split (slide 7).
+1. *Seeds on the three surviving Phase B gains* (cross-attention with HyenaDNA and with RiNALMo on CoV-Vac, the gated head with RiNALMo on E. coli). Each rests on one seed, and the intervals measure test-row sampling rather than training variation, so this is what turns them from candidates into results.
+2. *Fusion built around mRNA-FM* (DNA with mRNA-FM, mRNA-FM with protein) and the other codon-level RNA encoders, then the plan's two-encoder replacements, whose candidates the single swaps have now identified (Gantt 24).
+3. *The sequence-grouped stability re-split with seeds.* The published split repeats a training sequence in 68% of its test rows, so this is the only way to settle whether fusion helps there (slide 7).
+4. *LucaOne on E. coli, CoV-Vac and fungal,* which fit its 1,280-token context where GTEx does not (Gantt 41); the gated head at the paper's 1,280 channels on the three benchmarks not yet run that way; the mouse half-life and translation-efficiency scores, whose embeddings already exist.
+5. *Then the project's own designs, from January.* Coupled Mamba on the codon grid (Gantt 20 and 21), and IsoFormer-style cross-attention (Gantt 25) run on both redundant inputs (BioLangFusion's four benchmarks) and complementary ones (full transcripts, GTEx), which is the controlled version of the comparison GTEx alone cannot make.
 
-**Still open from the deck's own list.** Ab1 (not public; can it be obtained through UCF); seeds plus a paired bootstrap as the reporting standard for everything; GPU access for Coupled Mamba; the distillation teachers (which two DNA encoders and which RNA encoder join the twelve).
-
-**Open runs, in order.** Seeds on the three new Phase B gains; the gated head at 1,280 channels on the other three benchmarks; the sequence-grouped stability re-split with seeds; seeds on the swaps that matter; the mouse half-life and translation-efficiency scores; LucaOne on the three coding-sequence benchmarks; the mRNA-FM-anchored fusions.
+**The footer: four things that need an answer from outside the project.** Whether Ab1 can be obtained through UCF, since it is from Yazdani-Jahromi et al. there and is the one benchmark where all three of the paper's heads beat the best single encoder. Whether seeds plus a paired bootstrap becomes the reporting standard for everything that follows. GPU access beyond one laptop and one desktop, which Coupled Mamba needs. Which two DNA encoders and which RNA encoder join the twelve Stage 1 teachers for distillation.
 
 **One sentence to say.** "The reproduction is faithful, the paper's fusion gains mostly do not survive a stronger single encoder, and the project's question is now which encoder to put in each slot and when a second molecule is worth fusing."
