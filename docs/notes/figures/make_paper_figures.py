@@ -739,9 +739,9 @@ def fig_blf_pipeline():
 
     ax = axes[0]
     panel_title(ax, "a   Plan item 1: reproduce BioLangFusion, then swap encoders")
-    cols = ((2, "DNA", DNA, "NT v2 100M\n6-mer tokens", "swap: NT 500M,\nDNABERT-2, HyenaDNA", "TConv k=2, s=2\n(2 codons per token)"),
+    cols = ((2, "DNA", DNA, "NT v2 100M\n6-mer tokens", "swap: NT 500M, HyenaDNA\n(DNABERT-2 needs an adapter)", "TConv k=2, s=2\n(2 codons per token)"),
             (35, "mRNA", RNA, "RNA-FM\nnucleotide tokens", "swap: CaLM,\nmRNA-FM, RiNALMo", "AvgPool k=3, s=3\n(3 tokens per codon)"),
-            (68, "protein", PROT, "ESM-2 8M\namino-acid tokens", "swap: ESM-2 150M,\nProtBERT", "identity\n(1 residue per codon)"))
+            (68, "protein", PROT, "ESM-2 8M\namino-acid tokens", "swap: ESM-2 35M,\nESM-2 150M, ProtBERT", "identity\n(1 residue per codon)"))
     for x, name, c, orig, swap, resamp in cols:
         box(ax, x, 80, 30, 10, orig, ec=c, colour=c, bold=True, fs=6.6)
         box(ax, x, 68, 30, 8.5, swap, ec=c, colour=c, fs=6.0, ls=(0, (3, 2)))
@@ -758,7 +758,7 @@ def fig_blf_pipeline():
         arrow(ax, x + 15, 30, 50, 24)
     box(ax, 35, 2, 30, 8.5, "prediction", fc="#e8e6df", ec=INK, fs=7.0, bold=True)
     arrow(ax, 50, 15, 50, 10.5)
-    ax.text(50, 94, "Fungal, E. coli, mRNA stability, Ab1, CoV-Vac; published splits, recipe, metrics",
+    ax.text(50, 94, "Fungal, E. coli, mRNA stability, CoV-Vac (Ab1 is not public); published splits, recipe, metrics",
             ha="center", va="center", fontsize=6.6, color=MUTED, style="italic")
 
     ax = axes[1]

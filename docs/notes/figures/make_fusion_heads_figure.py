@@ -123,7 +123,7 @@ note(ax, 9.7, 1.72, "Nothing is discarded. The TextCNN decides\nwhich features o
 ax = axes[1]
 ax.set_title("b   Gated MIL attention: one weight per modality for the whole sequence")
 rows = three_streams(ax, 0.3, 2.95)
-alphas_ex = [0.14, 0.00, 0.86]
+alphas_ex = [0.11, 0.00, 0.89]
 # mean over codons -> summary boxes
 for k, (name, col) in enumerate(MODS):
     y0 = rows[name][0]

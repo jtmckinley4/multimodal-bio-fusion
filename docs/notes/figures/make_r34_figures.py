@@ -130,7 +130,7 @@ def fig_reproduction():
     for k in (0, 1, 3):
         axes[k].set_xlabel("Spearman, published test split", labelpad=6)
     axes[2].set_xlabel("accuracy, %, published test split", labelpad=6)
-    handles = [Line2D([], [], marker="o", color=INK, ls="", ms=5.5, label="ours (three seeds; stability one)"),
+    handles = [Line2D([], [], marker="o", color=INK, ls="", ms=5.5, label="ours (seed means where three seeds exist)"),
                Line2D([], [], marker="o", mfc=SURFACE, mec=PUB, mew=1.4, color=PUB, ls="", ms=5.5, label="published, BioLangFusion Tables 1 and 4")]
     fig.legend(handles=handles, loc="lower center", ncol=2, bbox_to_anchor=(0.58, 0.0), handletextpad=0.3, columnspacing=2.0)
     save(fig, "r34_reproduction")
@@ -177,7 +177,7 @@ def fig_fusion_forest():
     tidy(ax2, "x")
     panel(ax2, "b", "E. coli: head minus ESM-2 alone")
     ax2.set_xlabel("difference in accuracy, points")
-    ax2.text(11.8, 1.5, "the one clear win,\nrevised by Phase B", fontsize=6.4, color=MUTED, ha="right", va="center", style="italic")
+    ax2.text(11.8, 1.5, "a better RNA encoder\nalone matches it", fontsize=6.4, color=MUTED, ha="right", va="center", style="italic")
     handles = [Line2D([], [], marker="o", color=INK, ls="", ms=5, label="resolved (interval excludes zero)"),
                Line2D([], [], marker="o", mfc=SURFACE, mec=MUTED, color=MUTED, ls="", ms=5, label="not resolved"),
                Line2D([], [], marker="o", mfc=SURFACE, mec=INK2, color=INK2, ls="", ms=5, label="concatenation"),
@@ -424,7 +424,7 @@ def fig_halflife():
         ax.set_xlim(*lim)
         tidy(ax, "x")
         panel(ax, "ab"[k], ttl)
-        ax.set_xlabel("mean test Pearson r over nine gene-grouped splits")
+        ax.set_xlabel("mean test Pearson r (encoders: 9 splits; counted: 3)")
     axes[0].set_yticks(y)
     axes[0].set_yticklabels([r[0] for r in rows])
     axes[0].set_ylim(-1.4, len(rows) - 0.4)

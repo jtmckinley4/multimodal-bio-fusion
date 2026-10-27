@@ -1,6 +1,6 @@
 """Slide-shaped version of the three BioLangFusion heads: three panels side by side, each a
 vertical flow from the three streams to the fused stream. Same style and example weights as
-make_fusion_heads_figure.py (E. coli, seed 0: 0.14 / 0.00 / 0.86).
+make_fusion_heads_figure.py (E. coli, seed 0: 0.11 / 0.00 / 0.89).
 
     python make_fusion_heads_slide.py <output_dir>
 """
@@ -31,7 +31,7 @@ os.makedirs(OUT, exist_ok=True)
 W, H, GAP = 0.78, 0.6, 0.1
 N = 4
 MODS = [("DNA", DNA), ("RNA", RNA), ("protein", PROT)]
-ALPHA = [0.14, 0.00, 0.86]
+ALPHA = [0.11, 0.00, 0.89]
 FS = 8.2
 
 
