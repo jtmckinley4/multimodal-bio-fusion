@@ -190,7 +190,7 @@ The figure on the slide is `docs/notes/figures/figures_overleaf/r34_fusion_fores
 
 ---
 
-## Slide 6. The three fusion heads, and why only the gated one fails
+## Slide 6. How the three fusion heads work, and why the gated one collapses onto one modality
 
 **What the slide shows.** Two things. On top, one figure with three panels, one per fusion head, all starting from the same three streams on the codon grid and ending in the same fixed TextCNN. Below it, the measured gated weights for every benchmark, which are the evidence that the head is a selector rather than a mixer.
 
