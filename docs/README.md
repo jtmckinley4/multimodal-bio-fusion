@@ -2,6 +2,21 @@
 
 This directory brings together the team's research plans, bibliography, and explanations connecting biological questions, analyses, and evidence for DNA, RNA, and protein foundation models. It supports code development, experiment planning, and manuscript writing in the [multimodal-bio-fusion Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f).
 
+## How these documents work together
+
+Choose the level of detail that answers the question you are reading for. A brief local reminder can accompany a notebook or summary; the linked guide or record holds the fuller explanation and evidence.
+
+| Location | Purpose |
+| --- | --- |
+| [Project README](../README.md) and stage READMEs | The project README connects the overall investigation, setup and layout. Each stage README connects that stage's questions, experiments, findings and unresolved issues. |
+| Experiment notebooks | Keep a specific research question, inputs, choices, executable steps, saved outputs and interpretation together. The stage READMEs locate them. |
+| [Shared research guides](#understand-the-methods) | Explain dataset meaning and reusable biological, mathematical and computational procedures, with worked examples and their limits. |
+| [Shared code](../Code/shared_code/) and [software checks](../tests/README.md) | Implement shared calculations and check software behavior. Dataset files, caches and saved results supply the actual inputs and numerical artifacts; see the [artifact policy](../README.md#results-caches-and-intermediate-files). |
+| [Run records](run-records.md) | Identify what was inspected or executed, its code/input versions and settings, retained outputs and unresolved evidence. These records support the explanations without replacing them. |
+| [Research plan](#follow-the-research-plan) and [Stage 4 runbook](../Code/stage4/RUNBOOK.md) | The Gantt records planned work and dependencies; the runbook provides execution and recovery guidance. Recorded status is dated evidence. |
+| [Selected sources](sources.md), [paper catalog](../Papers/README.md) and [individual reviews](notes/Reviews/) | Record reading scope and relevance, locate retained papers, and preserve attributed interpretations. |
+| [Repository instructions](../AGENTS.md), project skills and [agent context](agent-context.md) | Guide AI work and maintenance practices and point to unresolved project questions. |
+
 ## Read the Stage 1 analyses
 
 Start with the biological question and model choices in the overview. Follow the stability experiment for the first method walkthrough, then compare it with GTEx. Each experiment links its methods, implementation, and interpretations at the relevant cells.
@@ -22,15 +37,15 @@ The October 3 comparison entry in the [Gantt workbook](Research_Project_Plan_Gan
 
 ## Understand the methods
 
-The guides develop the longer explanations and derivations. The notebooks retain the experiment-specific choices, calls, and interpretations; guide links return to the relevant analysis.
+The three shared research guides follow a reading route: establish what the data measure, follow how sequences become predictions, then examine what the representations and attention patterns reveal. They retain equations, worked examples, implementation links and interpretation limits used across notebooks. Each guide states its scope; the Stage 1 pooled-vector procedures do not automatically describe Stage 4 token-grid or fusion training.
 
-| Question | Guide |
+| Reader question | Guide |
 | --- | --- |
-| How do sequences become matched embedding vectors? | [From sequences to embeddings](methods/inputs-and-embeddings.md): filtering, translation, token limits, pooling, and cache reuse. |
-| How does a linear probe work, step by step? | [Linear probing](methods/linear-probing.md): standardization, ridge regression, evaluation, and the internal-validation limitation. |
-| What do the biological targets and recoding control measure? | [Biological targets and controls](methods/biological-targets-and-controls.md): length, GC, GC3, the Nussinov proxy, and synonymous recoding. |
-| How do representation comparisons differ? | [Comparing representations](methods/representation-comparison.md): CKA, neighborhoods, CCA/retrieval, composition, PCA bands, and alignment diagnostics. |
-| How are attention scores compared with candidate RNA patterns? | [Attention and candidate motifs](methods/attention-and-motifs.md): extraction, nucleotide mapping, comparisons, and permutation controls. |
+| What does each dataset row and target mean? | [Data and biological targets](methods/data-and-targets.md): assays, label transformations, source-to-local-data verification, examples and limits on interpreting scores. |
+| How do sequences become representations and predictions? | [From sequences to predictions](methods/sequences-to-predictions.md): input preparation, tokens, pooling, cache reuse, linear probes and evaluation; [calculated targets and controls](methods/sequences-to-predictions.md#calculated-targets-and-controls) cover length, GC, GC3, folding and synonymous recoding. |
+| How do encoders differ, and what might those differences mean? | [Comparing and interpreting representations](methods/representation-analysis.md): representation geometry, composition controls, retrieval and prediction-error comparisons, followed by frozen-encoder attention, candidate motifs and permutation controls. |
+
+Notebooks retain enough local explanation to follow their experiment, together with the actual settings, calls, saved outputs and interpretation. Guide links return to the relevant analyses for those choices and results.
 
 ## Inspect or run the implementation
 

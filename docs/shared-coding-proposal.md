@@ -21,7 +21,7 @@ The isolated skill evaluations and the combined suite used small fixtures and su
 
 Both notebooks preserve every scientific output, saved execution count, cell ID, and unrelated metadata. The permitted display refresh changed 22 stability and two GTEx compact outputs, using guarded isolated Setup and source display only. Executable edits add the explicit pinned seed and pass it to probes, or expose the shared ridge constructor; all effective scientific defaults remain unchanged. The [test guide](../tests/README.md) describes the maintained checks and their limits.
 
-Legacy embedding caches now require deliberate recovery through the [cache instructions](methods/inputs-and-embeddings.md#embedding-matrices-and-cache-reuse); no existing team cache was migrated or deleted. GTEx source-schema checks cannot determine whether a schema-valid old cache was historically complete. The coordinate extraction retains the existing boundary behavior. Model downloads, scientific notebook bodies, pilot rebuilds, commits and pushes were not performed in this implementation.
+Legacy embedding caches now require deliberate recovery through the [cache instructions](methods/sequences-to-predictions.md#embedding-matrices-and-cache-reuse); no existing team cache was migrated or deleted. GTEx source-schema checks cannot determine whether a schema-valid old cache was historically complete. The coordinate extraction retains the existing boundary behavior. Model downloads, scientific notebook bodies, pilot rebuilds, commits and pushes were not performed in this implementation.
 
 ## What the shared skill should accomplish
 
@@ -74,7 +74,7 @@ Name these roles explicitly and pass the pinned probe seed through the relevant 
 
 `probe_scores` and `fit_predict` separately construct the standardized `RidgeCV` pipeline, while `fit_predict` explicitly promises the same probe. A private function returning a fresh pipeline is a useful extraction because the two callers own the same modeling rule. Keep cross-validation, scoring, classification, and published-split evaluation in their respective callers. Preserve access to the construction through the existing implementation-display route.
 
-Compare predictions and scores with the prior construction on small scalar and 30-output examples. Preserve the penalty grid and preprocessing exactly. The [documented inner-validation limitation](methods/linear-probing.md#evaluation-and-interpretation) requires its own methodological decision and evaluation; correcting it would be more than extraction.
+Compare predictions and scores with the prior construction on small scalar and 30-output examples. Preserve the penalty grid and preprocessing exactly. The [documented inner-validation limitation](methods/sequences-to-predictions.md#evaluation-and-interpretation) requires its own methodological decision and evaluation; correcting it would be more than extraction.
 
 ### Fail clearly for unsupported scientific settings
 
@@ -84,7 +84,7 @@ In [datasets.py](../Code/shared_code/datasets.py), `audit` assumes a scalar `lab
 
 ### Keep direction distinct from a symmetric display
 
-`pairwise_matrix` evaluates each pair once and mirrors the result. This is natural for CKA; `cca_retrieval` queries the second representation with the first, so its recall is directional. The [method guide already states the direction and mirrored display](methods/representation-comparison.md#canonical-correlation-and-cross-modal-retrieval). The improvement is to expose this assumption at the helper and output too, not to claim the behavior is undocumented or the saved values are wrong.
+`pairwise_matrix` evaluates each pair once and mirrors the result. This is natural for CKA; `cca_retrieval` queries the second representation with the first, so its recall is directional. The [method guide already states the direction and mirrored display](methods/representation-analysis.md#canonical-correlation-and-cross-modal-retrieval). The improvement is to expose this assumption at the helper and output too, not to claim the behavior is undocumented or the saved values are wrong.
 
 Clarify the helper name/contract and retrieval labels. A tiny asymmetric callback can check which direction gets evaluated. Computing both directions or averaging them would change the reported experiment and needs a separate result-producing change.
 
