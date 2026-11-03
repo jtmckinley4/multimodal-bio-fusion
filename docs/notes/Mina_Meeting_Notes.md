@@ -24,3 +24,33 @@ Mina's questions on the progress deck (`Slides/Mina_Progress_Slides_2026-10-22.p
 Follow-ups adopted, as additions to the plan: an interpretation layer on every result (deck notes, slide guide, both Overleaf versions, project notes Section 14); fusion built around mRNA-FM and the other codon-level RNA encoders; LucaOne on the three coding-sequence benchmarks; cross-attention reported beside every swap.
 
 Still with Mina: Ab1 access; seeds plus a paired bootstrap as the reporting standard; GPU access for Coupled Mamba; the distillation teachers.
+
+## October 29, 2026: follow-up on the Stage 4 round 1 deck
+
+Julian's and Chase's notes, combined. Every item is an addition to the plan, not a replacement.
+
+Resources and contacts
+- GPU: ask UCF for access to GPUs on the Stokes cluster (the note says "100", typically a few hundred; confirm the GPU type and allocation). The lab's H100s are not open to students, though access may be possible close to a paper deadline.
+- Sean Moore (UCF Burnett School of Biomedical Sciences, lab page med.ucf.edu/semoore; the lab lists an applied industrial microbiology project): ask about E. coli datasets; read his current publications first.
+
+Framing: task and data first
+- A well-designed fusion method can still fail on the wrong task, so the first step is the data or the task. Look for task-specific datasets, ideally truly multimodal biology datasets (inputs that are different molecules), to see where fusion works.
+- The BioLangFusion benchmarks can still be used for tasks where they make sense. Other fusion papers mostly use their own datasets; we can show this and argue why.
+- BioLangFusion is a workshop paper, not a main-track one, which helps explain the leaky stability split.
+- Focus now: literature (arXiv, NeurIPS) and Hugging Face. For these datasets, find similar tasks where fusion works and where it does not, spot the differences, and argue why.
+
+Slide 6 (gated head) and new fusion designs
+- Training is "lazy": the model takes the easiest signal first, often the protein encoder, which may be why the gated head collapses onto one modality. Cross-attention fuses better because it has no gate, but it weights the modalities in a fixed way; an adaptive gate is sometimes better.
+- Flamingo (vision and language) fuses frozen models with gated cross-attention. Gated cross-attention at the codon level could be a real novelty for this project. Coupled Mamba stays in the plan; BioLangFusion applied three methods (concatenation, gated, cross-attention).
+
+Slide 8 (mRFP; mRNA-FM against CaLM)
+- mRNA-FM and CaLM both read codons and were trained only on coding sequences, yet mRNA-FM does best. Compare their training data and look for the specific features mRNA-FM has that CaLM lacks. From the model cards: mRNA-FM, 45 million RefSeq coding sequences, about 0.24B parameters; CaLM, about 9.9 million ENA coding sequences clustered at 40% identity, about 86M parameters. Stage 1 CKA between the two is only 0.163.
+- Hyperparameter tuning on mRNA-FM: vary how many of its layers are used (more or fewer) and look at a heat map of layer importance.
+- Consider fusion together with fine-tuning.
+
+Slide 12 (half-life and translation efficiency)
+- Test whether RNA secondary structure helps half-life prediction. Coding and non-coding regions both matter, and structure is heavily involved in regulation, so the proteins involved (RNA-binding proteins) are worth looking into as well. Look for datasets with RNA sequence plus secondary structure, and possibly secondary structure prediction.
+
+Slide 13 (GTEx)
+- Rerun the pilot with BioLangFusion's encoders (NT v2 100M, RNA-FM, ESM-2 8M) so the comparison with the BioLangFusion benchmarks is controlled.
+- Fine-tune IsoFormer the way the paper does, ourselves if GPU access allows.
