@@ -2,6 +2,44 @@
 
 Use this runbook to coordinate Stage 4 execution: identify the work already saved, the inputs needed for the next run, and who is responsible for it. Created October 20; the status and resource tables below were checked against locally saved results and notebook outputs on **October 25, 2026**. They are a dated snapshot, not a live view of either machine.
 
+
+## Read saved results without starting work
+
+Leave `READ_SAVED_RESULTS = True` in each Stage 4 notebook and run from the top in the configured project environment. This mode reads completed evidence, shows coverage and reports missing work without filling it. It skips downloads, model timing, extraction, fitting, bootstrap recalculation and result-file publication. The [Stage 4 guide](README.md#read-completed-results-from-the-top) explains historical metadata limits and the distinction between refreshed cell displays and unchanged result artifacts.
+
+Setting this flag to `False` enables research code; it is not an instruction to execute the historical work below. Encoder swaps now has the explicit missing-work plan described next. Other notebooks retain their own computation boundaries. Missing predictions do not justify repeating a completed fit, and an unidentified historical CSV does not become compatible merely because its filename exists.
+
+## Complete the encoder swaps one seed at a time
+
+This continuation concerns `Gantt`/`Details` task 24 and the user's requested expansion from three to all eight stability replacements. It preserves the benchmark rows, supplied splits, predictor recipe and existing results. It is a source workflow, not a record that the additional fits have completed.
+
+1. Reload [encoder swaps](tier2_encoder_swaps.ipynb) and restart its kernel so it imports the updated helpers. Leave the default `READ_SAVED_RESULTS = True` for an inventory without computation.
+2. To complete seed 0, set `READ_SAVED_RESULTS = False` and keep `SEED = 0`, `SELECTION_SEED = 0` and `RUN_BOOTSTRAP = False`. Run from the top. The fit inventory precedes extraction and reports reused, new, resumable or blocked records. A blocker stops the computation path before extraction or fitting; inspect it instead of removing files or changing the recipe to bypass it.
+3. Once seed 0 has completed, manually change only `SEED` to 1 and run from the top; repeat with 2 after that finishes. There is no automatic loop through seeds. Keep `SELECTION_SEED = 0`: seed-0 validation fixes the gated-fusion penalty and single-encoder reference choice across repeats, while each score comes from its requested training seed. The complete seed-0 single-encoder candidates are prerequisites for this fixed selection.
+4. For each selected seed, missing original-encoder references run before replacement fits. Compatible existing references and replacements are reused at their actual paths, including accepted historical native-baseline names. New files identify their own seed. Frozen embeddings are reused across seeds; only cache pairs needed by pending fits are checked or extracted.
+5. After an interruption, rerun with the same seed. Completed results are skipped; a checkpoint resumes only after its recorded identity and recovery state pass preflight. An incomplete or conflicting artifact is preserved and reported for inspection. Opened stream groups are closed after use, including when training fails.
+
+On November 2, metadata inspection found 23 missing seed-0 fits across the five additional stability replacements, with all 117 earlier replacement fits reusable. Five corresponding stability caches were absent. For each of seeds 1 and 2, the same snapshot found 140 replacement fits and 16 original-reference fits missing, with 12 original references reusable. These dated counts can change: use the notebook's newly generated fit inventory before each run. Seed-1/2 stability execution remains blocked until its seed-0 selection candidates exist.
+
+Leave `RUN_BOOTSTRAP = False` while completing fits. Enabling it explicitly recalculates paired intervals from available saved predictions; it does not recover missing predictions by refitting or automatically produce a three-seed average. No interval artifact is written by that step. Preserve the recipe and use a separate, identified destination for a different experiment. Required new caches may download models and take substantial disk/RAM/GPU resources; runtime and peak memory for this expansion have not been measured.
+
+Checkpoint preflight checks recorded software compatibility; it cannot reconstruct missing historical input or producer provenance. The [implementation record](../../docs/run-records.md#2026-11-02-encoder-swap-continuation-manual-seeds-and-missing-work) separates synthetic verification from future research execution.
+
+## Current readiness, November 2, 2026
+
+The October 25 tables below remain historical snapshots. Use this update for current next actions, together with the notebook's saved-result coverage. The [reader repair](../../docs/run-records.md#2026-11-02-stage4-result-reader-repair-no-research-execution) and [audit follow-up](../../docs/run-records.md#2026-11-02-stage4-audit-follow-up-code-and-documentation-no-research-execution) record source changes, not new fits or refreshed result tables.
+
+| Plan task | Current evidence | Next decision or prerequisite |
+| --- | --- | --- |
+| 17 — Phase A | Retained appendix and Equation 1 cohorts remain separate. Reader checks now use explicit configuration/seed membership and refuse duplicate identities. | The historical runner supports metadata inspection; its training entry point remains disabled until the stronger producer-identity contract is integrated. The guarded exporter targets the appendix and must be invoked separately to create an analysis. |
+| 18 — mRFP | Completed historical outputs and CSVs remain intact. | Default Run All reads the historical CSVs with schema, numerical-value and exact-key coverage checks. Their missing calculation identity remains unknown. The separate computation branch still refuses unidentified caches; recomputation needs an appropriate new destination. |
+| 24 — encoder swaps | All 117 earlier seed-0 replacement records remain present. Stability now includes all eight candidates; metadata planning identifies the additional work without running it. | Use the manual seed-0 → 1 → 2 continuation above. Missing original references are included, completed files are preserved, and seed-0 selection stays fixed. New research execution and a three-seed summary remain pending; old 87/117 counts describe the earlier scope. |
+| 41 — LucaOne | The stability ridge comparison is retained; the unused legacy probe-seed setting does not represent three fits. | Expanded benchmark comparisons remain separate work. GTEx is omitted under this notebook's selected whole-input context rule. |
+| 42 — half-life and TE | Human gate/composition/probe evidence is retained. Mouse embedding and encoder-score completion remains unverified locally. | Locate any producer artifacts before duplicating extraction. Nine split assignments are different from three training initializations. |
+| 44 — IsoFormer | Six canonical seed-0 records are identified separately; repeat seeds 1/2 are absent and their run switch is off. | Reader repair is complete in source. Further repeats require a compatible-cohort decision; the shared trainer does not record every input, loader, model or producer field needed to establish it. |
+
+No JSON rename is needed to inspect more seeds. Existing filenames continue to identify the actual saved seed; future authorized repeats need their own seed-tagged artifacts. The retained notebook outputs have not been regenerated by these code repairs.
+
 ## The split
 
 The original assignment put the CPU gate and composition probes with Julian, and the large extractions and training sweeps with Chase. The October 22 run record subsequently documents Chase running the human half-life/TE and LucaOne analyses locally. The table distinguishes recorded runners from assignments for remaining work; it does not assign the unresolved mouse work to either contributor.
@@ -42,6 +80,8 @@ Disk figures below are **existing local file sizes**, in decimal MB/GB, measured
 
 ## Phase B, step by step (Chase)
 
+These October 25 steps document the earlier computation workflow and its progress inventories. Use [the current continuation](#complete-the-encoder-swaps-one-seed-at-a-time) for the expanded stability set and manual seed repeats. In particular, the current preflight checks checkpoint recovery state before work and does not automatically resume a checkpoint with missing state.
+
 ```bash
 cd ~/.../Mina/Code/stage4          # wherever the repo lives on your machine
 git pull
@@ -58,10 +98,7 @@ jupyter lab tier2_encoder_swaps.ipynb
 5. The **sweep** runs cheap heads first and cross-attention last. It reuses a completed JSON only when the benchmark, variant and full training configuration match, preserving saved weights. New checkpoints save optimizer, scheduler, random generators and batch order at epoch boundaries; an interruption can repeat up to ten epochs. Older checkpoints warn about any missing recovery state. Training and extraction are separate: restarting a kernel does not discard disk caches or completed fits.
 6. Run the reading cells after the sweep. They need no pretrained encoder. Record the observed outcome in [run records](../../docs/run-records.md); the [October 25 recovery entry](../../docs/run-records.md#2026-10-25-encoder-swap-cache-and-checkpoint-recovery) distinguishes restored files and readiness checks from research fits.
 
-mRNA stability is last and is limited to three swaps by default (`STABILITY_SWAPS`), for the
-reason the notebook gives: mRNA-FM is what the mRFP control predicts should win the RNA slot,
-CaLM is its control, and ESM-2 150M tests whether the protein slot was too small. Widen that
-list only if the disk projection says the rest fit.
+At that October 25 snapshot, mRNA stability was limited to mRNA-FM, CaLM and ESM-2 150M. The authorized November 2 continuation expands it to all eight replacements. Token-cache payload estimates do not establish available training RAM/VRAM or runtime, and do not authorize additional comparisons.
 
 Single-modality fits load, pad and transfer only their selected token stream. The codon-grid single-modality variants also place only that stream on the grid, while retaining the original layer construction for initialization and checkpoint compatibility. Multimodal fits still use all three streams, and the initial cache validation is unchanged. This reduces unnecessary batch preparation without changing the experiment settings; runtime improvement has not been measured. An already-running kernel keeps its imported helpers: let that run continue and pick up updated helpers at a later kernel restart.
 
@@ -80,7 +117,7 @@ Use [gate.csv](results/halflife_te/gate.csv) and [composition_baselines.csv](res
 
 ## LucaOne (Chase)
 
-The completed stability results are listed above. For a separately authorized extraction, `RUN_LUCAONE = True` enables the expensive path, whose timing check uses eight sequences to project extraction time. The saved diagnostic reports 1.57 billion parameters for the selected model, loaded in float16 on CUDA. Weight size alone does not establish total GPU memory use; the retained outputs do not report a measured peak.
+The completed stability results are listed above. For a separately authorized extraction, `RUN_LUCAONE = True` enables the embedding path. The separate timing cell loads the checkpoint and evaluates eight sequences regardless of that flag; setting it false does not make Run All a read-only operation. The saved diagnostic reports 1.57 billion parameters for the selected model, loaded in float16 on CUDA. Weight size alone does not establish total GPU memory use; the retained outputs do not report a measured peak.
 
 It needs `transformers` 5.15.1, which the project already pins, and nothing else: the
 checkpoint ships its own model and tokenizer code, pinned to a commit in

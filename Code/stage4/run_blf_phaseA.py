@@ -1,8 +1,11 @@
-"""Preview or explicitly execute the fixed BioLangFusion Phase A comparison.
+"""Inspect the historical BioLangFusion Phase A grid and supply reader helpers.
 
-Preview verifies existing token-cache bytes and saved identities; it never builds a model.
-Execution is serial and uses the shared trainer's result reuse and checkpoint recovery.
-Keep one writer per results directory and leave its source files and caches unchanged.
+Preview reads completed JSON records against an explicit historical reference. It
+does not open token caches or establish execution reuse. The current shared trainer
+does not capture the full input/source/environment identity required by this runner's
+historical protocol, so --execute fails before cache or model access. Restoring that
+producer contract is a separate integration task; do not bypass it with the trainer's
+smaller config/variant/benchmark identity.
 """
 
 import argparse
@@ -11,7 +14,6 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
 
 import numpy as np
@@ -49,6 +51,15 @@ def result_path(directory, benchmark, variant, config):
     tag = (f"{benchmark}__{variant.replace(':', '-')}__lambda{config.entropy_lambda}"
            f"__ch{config.channels}__{config.tconv}__seed{config.seed}")
     return Path(directory) / f"{tag}.json"
+
+
+def recorded_identity(result):
+    """Read preserved producer metadata without inventing absent historical fields."""
+    extra = getattr(result, "extra_fields", None)
+    identity = extra.get("identity") if isinstance(extra, dict) else None
+    if not isinstance(identity, dict):
+        raise ValueError("Missing or invalid recorded producer identity; preserve this legacy result.")
+    return identity
 
 
 def select_device(requested):
@@ -128,82 +139,112 @@ def validate_completion(result, config, task):
         raise ValueError("Saved validation selection does not match the first best epoch.")
 
 
-def preview_runs(streams, runs, device, directory):
-    """Classify every request before any fit; mismatched artifacts remain untouched."""
-    validate_streams(streams)
+COHORT_FIELDS = (
+    "version", "model_kwargs", "widths", "n_outputs", "inputs", "environment", "code_sha256",
+)
+EXECUTION_BLOCKED = (
+    "Phase A execution is disabled: the current trainer does not capture this runner's "
+    "required full input/source/environment identity. Keep existing results and checkpoints; "
+    "integrate that producer contract before starting or resuming a fit. Metadata preview "
+    "remains available without --execute."
+)
+
+
+def _historical_cohort(result, benchmark, variant, config):
+    """Require the declared candidate and preserved full-cohort fields for inspection."""
+    if (result.benchmark != benchmark or result.variant != variant
+            or result.config != asdict(config)):
+        raise ValueError("Saved benchmark, variant or full training recipe differs.")
+    identity = recorded_identity(result)
+    if identity.get("version") != 1 or any(key not in identity for key in COHORT_FIELDS):
+        raise ValueError("Incomplete or unsupported recorded producer identity.")
+    if identity.get("variant") != variant or identity.get("config") != asdict(config):
+        raise ValueError("Saved result and producer identity disagree.")
+    if (identity["widths"] != EXPECTED_WIDTHS or identity["model_kwargs"] != {}
+            or identity["n_outputs"] != (3 if benchmark == "ecoli_proteins" else 1)):
+        raise ValueError("Recorded model dimensions or arguments differ from the protocol.")
+    if any(not isinstance(identity[key], dict) or not identity[key]
+           for key in ("inputs", "environment", "code_sha256")):
+        raise ValueError("Recorded input, environment or source identity is missing.")
+    json.dumps(identity, allow_nan=False)
+    task = "classification" if benchmark == "ecoli_proteins" else "regression"
+    validate_completion(result, config, task)
+    lower = 0.0 if task == "classification" else -1.0
+    if (type(result.test_score) not in (int, float) or not np.isfinite(result.test_score)
+            or not lower <= result.test_score <= 1.0):
+        raise ValueError("Invalid saved test score.")
+    return {key: identity[key] for key in COHORT_FIELDS}
+
+
+def preview_runs(benchmark, runs, directory, reference_path=None):
+    """Inventory historical records; no cache reads, fits or resume eligibility claims.
+
+    The default reference is the first declared native-DNA candidate/seed. Passing
+    another reference is explicit. Matching recorded fields is an inspection of the
+    producer's account, not independent verification of current input/cache bytes.
+    Checkpoint presence remains unresolved instead of parsing it as a current resume.
+    """
+    reference_path = Path(reference_path) if reference_path else result_path(
+        directory, benchmark, *runs[0])
+    reference = None
+    reference_issue = ""
+    try:
+        record = train.Result.load(reference_path)
+        matching = [(variant, config) for variant, config in runs
+                    if variant == record.variant and asdict(config) == record.config]
+        if len(matching) != 1:
+            raise ValueError("Reference is outside the declared candidate/seed grid.")
+        reference = _historical_cohort(record, benchmark, *matching[0])
+    except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
+        reference_issue = str(error)
+
     prepared = []
-    common_identity = None
     for variant, config in runs:
-        identity = train.run_identity(streams, variant, config, device, {})
-        common = {key: value for key, value in identity.items() if key not in ("variant", "config")}
-        if common_identity is not None and common != common_identity:
-            raise RuntimeError("Inputs, code, or environment changed while preparing the grid.")
-        common_identity = common
-        path = result_path(directory, streams.key, variant, config)
-        checkpoint = path.with_suffix(".checkpoint")
-        item = {"variant": variant, "config": config, "path": path, "identity": identity,
-                "status": "fit_required", "detail": "No completed result or checkpoint."}
-        try:
-            if path.exists():
+        path = result_path(directory, benchmark, variant, config)
+        item = {"variant": variant, "config": config, "path": path,
+                "status": "not_found_locally", "detail": "No completed result or checkpoint here."}
+        if path.is_file():
+            try:
                 result = train.Result.load(path)
-                if (result.identity != identity or result.variant != variant
-                        or result.benchmark != streams.key or result.config != asdict(config)):
-                    raise ValueError("Completed result differs from the requested computation.")
-                validate_completion(result, config, streams.task)
-                validate_predictions(result, streams)
-                item.update(status="reuse", detail="Matching identity, history, and test predictions.")
-            elif checkpoint.exists():
-                # Only point this runner at trusted local checkpoints: loading uses pickle.
-                saved = torch.load(checkpoint, map_location="cpu", weights_only=False)
-                required = {"epoch", "model", "optimiser", "schedule", "random", "best", "history", "identity"}
-                if not isinstance(saved, dict) or not required <= saved.keys() or saved["identity"] != identity:
-                    raise ValueError("Checkpoint is incomplete or belongs to a different computation.")
-                random_fields = {"python", "numpy", "torch", "loader"}
-                if device in ("cuda", "mps"):
-                    random_fields.add(device)
-                if not isinstance(saved["random"], dict) or not random_fields <= saved["random"].keys():
-                    raise ValueError("Checkpoint random-generator state is incomplete.")
-                if (type(saved["epoch"]) is not int or not 0 <= saved["epoch"] < config.max_epochs
-                        or len(saved["history"]) != saved["epoch"] + 1):
-                    raise ValueError("Checkpoint epoch and history disagree.")
-                item.update(status="resume", detail=f"Matching checkpoint through epoch {saved['epoch']} (zero-based).")
-        except Exception as error:
-            item.update(status="blocked_preserve", detail=str(error))
+                cohort = _historical_cohort(result, benchmark, variant, config)
+                if reference is None:
+                    item.update(status="reference_pending", detail=reference_issue,
+                                val_score=result.val_score, test_score=result.test_score,
+                                best_epoch=result.best_epoch)
+                elif cohort != reference:
+                    raise ValueError("Recorded producer cohort differs from the explicit reference.")
+                else:
+                    item.update(
+                        status="recorded_evidence_available",
+                        val_score=result.val_score, test_score=result.test_score,
+                        best_epoch=result.best_epoch,
+                        detail="Stored recipe/cohort/history match; input/cache bytes and paired arrays "
+                               "are not independently verified by this metadata preview.")
+            except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
+                item.update(status="blocked_preserve", detail=str(error))
+        elif path.with_suffix(".checkpoint").is_file():
+            item.update(status="checkpoint_requires_review",
+                        detail="Checkpoint preserved; this metadata preview does not establish resumability.")
         prepared.append(item)
     return prepared
 
 
-def execute_runs(streams, prepared, device, directory):
-    """Use the existing trainer sequentially; refuse the whole grid if any item is blocked."""
-    if any(item["status"] == "blocked_preserve" for item in prepared):
-        raise RuntimeError("Execution blocked; preserve conflicting artifacts and review their destination.")
-    for number, item in enumerate(prepared, start=1):
-        variant, config = item["variant"], item["config"]
-        if train.run_identity(streams, variant, config, device, {}) != item["identity"]:
-            raise RuntimeError("The verified computation changed; stop and review before continuing.")
-        timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
-        print(f"[{timestamp}] {number}/{len(prepared)} {item['status']}: {item['path'].name}", flush=True)
-        result = train.run(streams, variant, config, device, directory, require_predictions=True,
-                           log=lambda message: print(message, flush=True))
-        validate_completion(result, config, streams.task)
-        validate_predictions(result, streams)
+def execute_runs(*args, **kwargs):
+    """Retain a clear refusal for callers of the old producer entry point."""
+    raise RuntimeError(EXECUTION_BLOCKED)
 
 
-def plan_record(streams, prepared, device, cache_root, results_dir):
-    """Record one preview, keeping common identity once and individual settings beside paths."""
-    git = subprocess.run(["git", "-c", f"safe.directory={REPO_ROOT.as_posix()}", "-C", str(REPO_ROOT),
-                          "rev-parse", "HEAD"], capture_output=True, text=True, check=True)
-    status = subprocess.run(["git", "-c", f"safe.directory={REPO_ROOT.as_posix()}", "-C", str(REPO_ROOT),
-                             "status", "--short"], capture_output=True, text=True, check=True)
-    common = {key: value for key, value in prepared[0]["identity"].items() if key not in ("variant", "config")}
+def plan_record(benchmark, prepared, cache_root, results_dir, reference_path):
+    """Record inspection separately from producer identity and execution approval."""
     return {
-        "format_version": 1, "benchmark": streams.key, "device": device,
-        "repository": str(REPO_ROOT), "git_commit": git.stdout.strip(),
-        "git_dirty": bool(status.stdout.strip()), "git_status": status.stdout.splitlines(),
-        "source_note": "Git HEAD is checkout context; recorded file hashes identify the source used.",
-        "runner_sha256": file_fingerprint(__file__), "identity_common": common,
-        "cache_root": str(cache_root), "results_dir": str(results_dir),
-        "verification": "Preview of existing cache bytes and local artifacts; no fit implied.",
+        "format_version": 2, "benchmark": benchmark,
+        "kind": "historical Phase A metadata inspection", "execution_enabled": False,
+        "created_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "repository": str(REPO_ROOT), "reference_path": str(reference_path),
+        "runner_sha256": file_fingerprint(__file__),
+        "cache_root": str(cache_root), "cache_bytes_verified": False,
+        "results_dir": str(results_dir),
+        "verification": "Stored candidate/cohort metadata and history only; no fit or resume implied.",
         "runs": [{"variant": item["variant"], "config": asdict(item["config"]),
                   "path": str(item["path"]), "status": item["status"], "detail": item["detail"]}
                  for item in prepared],
@@ -226,30 +267,35 @@ def write_plan(path, record):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--benchmark", choices=("ecoli_proteins", "fungal_expression"), required=True)
-    parser.add_argument("--cache-root", type=Path, required=True)
+    parser.add_argument("--cache-root", type=Path, required=True,
+                        help="Recorded location only; this preview does not open caches.")
     parser.add_argument("--results-dir", type=Path, required=True)
-    parser.add_argument("--device", choices=("auto", "cuda", "mps", "cpu"), default="auto")
+    parser.add_argument("--device", choices=("auto", "cuda", "mps", "cpu"), default="auto",
+                        help="Retained CLI option; metadata inspection does not select a device.")
     parser.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
-    parser.add_argument("--plan-output", type=Path, help="Optional new JSON preview record; existing different files are preserved.")
-    parser.add_argument("--execute", action="store_true", help="Explicitly run the verified grid; otherwise preview only.")
+    parser.add_argument("--reference-result", type=Path,
+                        help="Explicit historical reference; defaults to the first declared candidate.")
+    parser.add_argument("--plan-output", type=Path, help="Optional new JSON inspection record.")
+    parser.add_argument("--execute", action="store_true",
+                        help="Currently refused until the full producer-identity contract is integrated.")
     args = parser.parse_args(argv)
-    device = select_device(args.device)
+    # Refuse before streams, devices, checkpoints or output destinations are touched.
+    if args.execute:
+        raise RuntimeError(EXECUTION_BLOCKED)
     runs = planned_runs(train.TrainConfig(), tuple(args.seeds))
     cache_root, results_dir = args.cache_root.resolve(), args.results_dir.resolve()
-    print(f"{'EXECUTION REQUESTED' if args.execute else 'PREVIEW ONLY'}: {args.benchmark}, {len(runs)} candidates, {device}.")
-    print("Verifying cache bytes may take time; it does not load encoder models or extract embeddings.", flush=True)
-    streams = blf.BenchmarkStreams.open(args.benchmark, cache_root, allow_legacy_cache=False)
-    try:
-        prepared = preview_runs(streams, runs, device, results_dir)
-        for item in prepared:
-            print(f"{item['status']}: {item['path'].name} | {item['detail']}")
-        if args.plan_output:
-            write_plan(args.plan_output.resolve(), plan_record(streams, prepared, device, cache_root, results_dir))
-        if args.execute:
-            execute_runs(streams, prepared, device, results_dir)
-        return 1 if any(item["status"] == "blocked_preserve" for item in prepared) else 0
-    finally:
-        streams.close()
+    reference = (args.reference_result.resolve() if args.reference_result else
+                 result_path(results_dir, args.benchmark, *runs[0]))
+    print(f"METADATA INSPECTION ONLY: {args.benchmark}, {len(runs)} candidates.")
+    print("Caches are not opened; this preview does not authorize or establish execution reuse.")
+    prepared = preview_runs(args.benchmark, runs, results_dir, reference)
+    for item in prepared:
+        print(f"{item['status']}: {item['path'].name} | {item['detail']}")
+    if args.plan_output:
+        write_plan(args.plan_output.resolve(), plan_record(
+            args.benchmark, prepared, cache_root, results_dir, reference))
+    return 1 if any(item["status"] in {"blocked_preserve", "reference_pending"}
+                    for item in prepared) else 0
 
 
 if __name__ == "__main__":

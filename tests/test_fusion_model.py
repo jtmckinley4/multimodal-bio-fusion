@@ -436,7 +436,7 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(again["identity"], {"version": 1})
             self.assertEqual(again["test_score"], 0.2)
 
-    def test_require_predictions_retrains_a_result_that_predates_them(self):
+    def test_require_predictions_preserves_a_result_that_predates_them(self):
         streams = self.streams()
         with tempfile.TemporaryDirectory() as directory:
             config = train.TrainConfig(max_epochs=1, batch_size=2, channels=3,
@@ -452,9 +452,11 @@ class PipelineTests(unittest.TestCase):
             # Without the flag the incomplete record is handed back untouched.
             self.assertIsNone(
                 train.run(streams, "concat", config, "cpu", directory, log=None).test_prediction)
-            self.assertIsNotNone(
+            before = path.read_bytes()
+            with self.assertRaisesRegex(ValueError, "completed result has no per-row"):
                 train.run(streams, "concat", config, "cpu", directory, log=None,
-                          require_predictions=True).test_prediction)
+                          require_predictions=True)
+            self.assertEqual(path.read_bytes(), before)
 
     def test_an_interrupted_run_resumes_from_its_checkpoint(self):
         """Stopping after a few epochs and restarting must continue, not start over."""

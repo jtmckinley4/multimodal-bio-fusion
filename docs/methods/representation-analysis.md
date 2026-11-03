@@ -703,6 +703,10 @@ The mapping assumes the retained token strings spell the covered nucleotides in 
 
 Return to [Scanning candidate RNA stability-associated patterns](../../Code/stage1/Stage1_stability.ipynb#Scanning-candidate-RNA-stability-associated-patterns) in the notebook.
 
+A sequence pattern can matter biologically when cellular molecules recognize it and change what happens to the RNA. In eukaryotic mRNAs, proteins bound to particular 3′-UTR sequences can influence poly-A-tail shortening, removal of the 5′ cap, or RNA cleavage and degradation. Recognition can involve the RNA’s folded shape as well as its letters; a bound protein can also prevent a degrading enzyme from accessing a cleavage site. The sequence region, RNA structure and molecular partners therefore help determine what a pattern can do. [Molecular Biology of the Cell, 7th ed., ch. 7, pp. 459–460](../sources.md#molecular-biology-of-the-cell-7th-edition)
+
+These interactions occur in a cellular setting. The relevant proteins must be present and active, and regulatory responses can differ between cell types or conditions. Identifying the same letters in two sequences does not establish the same molecular interaction or outcome in both. A sequence-only input does not identify all of these cellular conditions when the dataset omits them. [Molecular Biology of the Cell, 7th ed., ch. 7, p. 401](../sources.md#molecular-biology-of-the-cell-7th-edition)
+
 The scan creates **candidate sequence-pattern annotations** for the attention comparison. It searches the input sequence for three RNA-relevant patterns; it does not measure binding, modification, or a change in stability.
 
 | Pattern | What the scan identifies | Interpretation limit |
@@ -712,6 +716,8 @@ The scan creates **candidate sequence-pattern annotations** for the attention co
 | DRACH | Consensus associated with candidate m6A sites | D = A/G/U, R = A/G, H = A/C/U. The central A is a potential methylation site; a match does not establish methylation. |
 
 The ARE patterns have experimental precedent in [Zubiaga et al. (1995)](https://pmc.ncbi.nlm.nih.gov/articles/PMC230450/). Single-nucleotide mapping shows that only a subset of DRACH candidates are methylated; see [Linder et al. (2015)](https://pmc.ncbi.nlm.nih.gov/articles/PMC4487409/). Motif occurrence, molecular modification or binding, and a functional effect on stability are distinct claims.
+
+This biology connects the scan to a sequence of questions: are the pattern’s letters present, are they available for molecular recognition, does binding or modification occur, and does that interaction change RNA persistence? The present analysis observes the sequence match and compares model attention at those positions. It does not measure the intervening molecular events. The textbook examples explain why those distinctions matter; the studies cited above support the specific candidate patterns, and neither source establishes their activity in our retained coding-sequence inputs.
 
 `sequences.iupac_to_regex` converts each IUPAC symbol to its permitted letters in the DNA alphabet. For example, DRACH becomes `[AGT][AG]AC[ACT]`, with U represented as T to match the converted sequence. `sequences.find_iupac_matches` uses a regex lookahead to include overlapping occurrences. It returns zero-based, end-exclusive intervals: `start` is covered and `end` is the first position after the match. `sequences.scan_sequence_for_motifs` adds the pattern name to each span. Subsequent masks cover the entire matched span, including all five DRACH positions, rather than only its central A.
 

@@ -93,12 +93,48 @@ class FinalWeightTests(unittest.TestCase):
         self.assertFalse(list(self.folder.glob("*.partial")))
 
     def test_failed_result_publication_keeps_weights_and_checkpoint(self):
-        with patch.object(train.os, "replace", side_effect=OSError("simulated publication error")):
+        original_link = train.os.link
+
+        def fail_result(source, target):
+            if Path(target) == self.record:
+                raise OSError("simulated publication error")
+            return original_link(source, target)
+
+        with patch.object(train.os, "link", side_effect=fail_result):
             with self.assertRaises(OSError):
                 self.run_model()
         self.assertTrue(self.checkpoint.exists())
         self.assertTrue(self.weights.exists())
         self.assertFalse(self.record.exists())
+        self.assertFalse(list(self.folder.glob("*.partial")))
+
+    def test_score_only_record_never_retrains_for_missing_predictions(self):
+        result = self.result()
+        result.test_prediction = result.test_truth = None
+        result.save(self.record)
+        before = self.record.read_bytes()
+        self.assertIsNone(self.run_model().test_prediction)
+        with self.assertRaisesRegex(ValueError, "completed result has no per-row"):
+            self.run_model(require_predictions=True)
+        self.fit.assert_not_called()
+        self.assertEqual(self.record.read_bytes(), before)
+        self.assertFalse(self.weights.exists())
+
+    def test_concurrent_result_is_preserved_on_training_publication(self):
+        original_fit = self.completed_fit
+        concurrent = b'{"another_writer": "completed evidence"}'
+
+        def another_writer(*args, **kwargs):
+            result = original_fit(*args, **kwargs)
+            self.record.write_bytes(concurrent)
+            return result
+
+        self.fit.side_effect = another_writer
+        with self.assertRaises(FileExistsError):
+            self.run_model()
+        self.assertEqual(self.record.read_bytes(), concurrent)
+        self.assertTrue(self.checkpoint.exists())
+        self.assertTrue(self.weights.exists())
         self.assertFalse(list(self.folder.glob("*.partial")))
 
     def test_failed_replacement_preserves_existing_json(self):

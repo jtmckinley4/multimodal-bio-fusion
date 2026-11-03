@@ -1,5 +1,7 @@
 """Tiny CPU recovery checks; no encoders, scientific data, or existing run artifacts."""
 
+from contextlib import ExitStack
+from copy import deepcopy
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 import random
@@ -235,6 +237,119 @@ class TrainingRecoveryTests(unittest.TestCase):
             result = train.fit(self.model(), self.streams, self.config, "cpu", log=None,
                                loaders=self.loaders(), run_identity=identity)
         self.assertEqual(result.variant, "requested-custom-variant")
+
+
+class CheckpointPreflightTests(unittest.TestCase):
+    """Inspect tiny real-format files without training, state restoration or writes."""
+
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.path = Path(directory.name) / "fixture.checkpoint"
+        self.config = train.TrainConfig(max_epochs=5, seed=1)
+        self.identity = {"config": asdict(self.config), "benchmark": "fixture", "variant": "concat"}
+        model = nn.Linear(2, 1)
+        optimiser = torch.optim.Adam(model.parameters(), lr=self.config.lr)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimiser, mode="max")
+        splits = {
+            name: SimpleNamespace(generator=torch.Generator().manual_seed(index))
+            for index, name in enumerate(("train", "val", "test"))
+        }
+        # Serialize through the real producer but do not optimize or iterate data.
+        with patch.object(optimiser, "step", side_effect=AssertionError("no optimization")):
+            train._save_checkpoint(
+                self.path, 0, model, optimiser,
+                {"score": .5, "epoch": 0, "state": model.state_dict()},
+                [{"epoch": 0, "train_loss": .2, "val_score": .5, "lr": self.config.lr}],
+                1.25, scheduler=scheduler, splits=splits, identity=self.identity,
+            )
+        self.payload = torch.load(self.path, map_location="cpu", weights_only=False)
+
+    def inspect(self, identity=None):
+        before = self.path.read_bytes() if self.path.exists() else None
+        rng_before = torch.get_rng_state().clone(), np.random.get_state(), random.getstate()
+        with ExitStack() as stack:
+            forbidden = AssertionError("checkpoint inspection must only read")
+            for module, name in ((train, "fit"), (train, "build"), (train, "_save_checkpoint"),
+                                 (train, "_save_weights"), (train, "_restore_rng"),
+                                 (train, "_restore_loaders"), (torch, "save")):
+                stack.enter_context(patch.object(module, name, side_effect=forbidden))
+            load = stack.enter_context(patch.object(torch, "load", wraps=torch.load))
+            try:
+                result = train.checkpoint_preflight(self.path, identity or self.identity)
+                self.assertIsNone(result)
+                load.assert_called_once_with(self.path, map_location="cpu", weights_only=False)
+            finally:
+                self.assertEqual(self.path.read_bytes() if self.path.exists() else None, before)
+                self.assertTrue(torch.equal(torch.get_rng_state(), rng_before[0]))
+                current_numpy = np.random.get_state()
+                self.assertEqual(current_numpy[0], rng_before[1][0])
+                self.assertTrue(np.array_equal(current_numpy[1], rng_before[1][1]))
+                self.assertEqual(current_numpy[2:], rng_before[1][2:])
+                self.assertEqual(random.getstate(), rng_before[2])
+
+    def test_current_checkpoint_is_read_on_cpu_without_mutation(self):
+        self.inspect()
+
+    def test_changed_identity_or_extra_recorded_identity_is_rejected(self):
+        for field, value in (("benchmark", "other"), ("variant", "cross"),
+                             ("config", {**asdict(self.config), "seed": 2})):
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "identity"):
+                self.inspect({**self.identity, field: value})
+        payload = deepcopy(self.payload)
+        payload["identity"]["unknown"] = "another contract"
+        torch.save(payload, self.path)
+        with self.assertRaisesRegex(ValueError, "identity"):
+            self.inspect()
+
+    def test_every_required_recovery_field_is_checked(self):
+        for field in ("identity", "scheduler", "rng", "loaders", "model", "optimiser",
+                      "best", "history", "epoch", "elapsed"):
+            payload = deepcopy(self.payload)
+            del payload[field]
+            torch.save(payload, self.path)
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "missing fields"):
+                self.inspect()
+
+    def test_invalid_epoch_history_elapsed_and_best_state_are_rejected(self):
+        changes = (
+            {"epoch": True}, {"epoch": -1}, {"epoch": self.config.max_epochs},
+            {"history": []}, {"history": [{"epoch": 1}]}, {"elapsed": float("nan")},
+            {"elapsed": -1}, {"best": {"score": .5, "epoch": 0, "state": {}}},
+            {"best": {**self.payload["best"], "epoch": 1}},
+            {"best": {**self.payload["best"], "score": float("nan")}},
+            {"model": {"wrong_key": torch.zeros(1)}},
+        )
+        for change in changes:
+            torch.save({**self.payload, **change}, self.path)
+            with self.subTest(change=list(change)), self.assertRaises(ValueError):
+                self.inspect()
+
+    def test_malformed_recovery_components_are_rejected(self):
+        changes = (
+            {"scheduler": {}}, {"optimiser": {}}, {"rng": {}}, {"loaders": {}},
+            {"rng": {**self.payload["rng"], "torch": torch.zeros(2)}},
+            {"rng": {**self.payload["rng"], "device_type": "cuda"}},
+            {"loaders": {**self.payload["loaders"], "train": {"loader": {"type": "Loader", "generator": None}}}},
+        )
+        for change in changes:
+            torch.save({**self.payload, **change}, self.path)
+            with self.subTest(change=list(change)), self.assertRaises(ValueError):
+                self.inspect()
+
+    def test_undefined_best_score_is_valid_when_best_weights_exist(self):
+        payload = deepcopy(self.payload)
+        payload["best"]["score"] = -float("inf")
+        torch.save(payload, self.path)
+        self.inspect()
+
+    def test_missing_and_unreadable_files_report_value_error(self):
+        self.path.unlink()
+        with self.assertRaisesRegex(ValueError, "could not be read"):
+            self.inspect()
+        self.path.write_bytes(b"not a checkpoint")
+        with self.assertRaisesRegex(ValueError, "could not be read"):
+            self.inspect()
 
 
 class LegacyGTExResultTests(unittest.TestCase):

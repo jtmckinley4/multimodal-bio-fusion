@@ -6,6 +6,7 @@ Each section follows that path from the source experiment to the stored target, 
 
 | Dataset or reader question | Where to read |
 | --- | --- |
+| How do the targets relate to gene expression? | [Production, processing and loss](#connecting-the-targets-to-gene-expression) |
 | mRNA stability: what does the stability score measure? | [Standardized decay profiles](#mrna-stability-standardized-decay-profiles) |
 | mRFP: how did fluorescence become expression? | [GFPuv normalization and natural log](#mrfp-fluorescence-to-the-value-column) |
 | CoV-Vac: what was degraded and under which conditions? | [Chemical-degradation profiles](#cov-vac-chemical-degradation-of-designed-rna) |
@@ -17,11 +18,21 @@ Each explanation distinguishes steps described by the source study, transformati
 
 Our analyses also use [calculated targets and controls](sequences-to-predictions.md#calculated-targets-and-controls). Length, GC, GC3 and Nussinov pairing fraction come from sequence strings; the synonymous-recoding check tests whether the embedding pipeline behaves as expected. [From sequences to predictions](sequences-to-predictions.md) explains those calculations and how the supplied sequences and targets enter prediction and evaluation.
 
+## Connecting the targets to gene expression
+
+Transcription produces an RNA copy of a DNA region. For a protein-coding gene, a mature messenger RNA can then be translated repeatedly to produce protein chains. In eukaryotes, RNA processing includes steps such as capping, splicing and formation of the transcript's 3′ end before the mature RNA is exported from the nucleus. RNA and protein molecules are also removed over time. Cells can regulate several of these steps, so the path from a gene to its protein product includes production, processing and loss. [Essential Cell Biology, 6th ed., ch. 7, “From DNA to RNA” and “From RNA to Protein”](../sources.md#essential-cell-biology-6th-edition); [Molecular Biology of the Cell, 7th ed., ch. 6, pp. 337–339 and 348–349; ch. 7, p. 401](../sources.md#molecular-biology-of-the-cell-7th-edition).
+
+An amount measured at one time is different from a production or degradation rate. RNA abundance reflects both how much RNA is made and how much is lost. Two samples with similar RNA abundance could therefore have different rates of RNA production and degradation. Protein abundance adds further dependencies on translation and protein turnover. The cell type and experimental conditions matter because the same sequence can encounter different regulatory molecules and activities. [Molecular Biology of the Cell, 7th ed., ch. 7, pp. 397–401 and 459–460](../sources.md#molecular-biology-of-the-cell-7th-edition).
+
+The datasets below observe different parts of this process. The fungal and GTEx targets summarize RNA abundance; the stability assays follow RNA persistence; the translation-efficiency and ribosome-load targets concern ribosome occupancy; and the E. coli and mRFP targets derive from protein-gel scores and reporter fluorescence. CoV-Vac instead measures chemical degradation under a specified laboratory treatment. Their source-specific meanings and transformations remain in the sections below: the textbook background explains how these outcomes relate, while each source experiment establishes what its target actually measures.
+
 ## mRNA stability: standardized decay profiles
 
 Stability concerns how long an mRNA persists before degradation. In [mRNA_Stability.csv](../../datasets/mRNA_Stability.csv), each row pairs a protein-coding nucleotide sequence in `Sequence` with a stability score in `Value`. A sequence can occur in more than one row, so each row represents a sequence-and-score observation, not necessarily a distinct gene.
 
 The source measurements are grouped into **experimental profiles**, defined by species, cell type and measurement technique. The collection combines nine profiles spanning zebrafish and Xenopus embryos, human cell lines and mouse embryonic stem cells. Scores are standardized separately within these profiles, making a higher `Value` indicate greater stability relative to other RNAs in the same profile. The measurement and standardization steps below explain how that relative score is obtained. [Medina-Munoz et al., estimation of mRNA stability and data allocation](https://doi.org/10.1186/s13059-020-02251-5), [iCodon, training data](https://doi.org/10.1038/s41598-022-15526-7)
+
+Biologically, degradation involves enzymes breaking down RNA. In the eukaryotic examples described in the textbook, shortening the poly-A tail and removing the 5′ cap can expose an mRNA to further degradation. Proteins that recognize particular RNA regions can alter these processes. This provides a reason to investigate sequence information, but the observed lifetime depends on the surrounding cellular machinery as well. These examples do not establish a single decay mechanism for every organism or profile in the benchmark. [Molecular Biology of the Cell, 7th ed., ch. 7, “Changes in mRNA Stability Can Control Gene Expression,” pp. 459–460](../sources.md#molecular-biology-of-the-cell-7th-edition).
 
 ### From RNA measurements to a decay slope
 
@@ -110,6 +121,8 @@ The [Stage 1 audit](../../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-p
 The mRFP target is the **natural logarithm of GFPuv-normalized mean red fluorescence**. It describes a reporter's production under the source experiment's conditions; it is not a protein molecule count, an RNA-folding measurement or a direct translation-rate measurement. Stage 1 uses these synonymous sequences to check representation behavior. Stage 4 fits predictors to the supplied target in the [mRFP control notebook](../../Code/stage4/tier1_mrfp_control.ipynb).
 
 ### From engineered bacteria to fluorescence measurements
+
+A fluorescent reporter connects several steps: transcription produces its RNA, translation produces its protein chain, and folding and maturation produce a fluorescent form that the instrument can excite and detect. The textbook's GFP example illustrates the distinction between making a protein chain and forming its light-emitting group, or **chromophore**, after translation. This helps explain why a reporter signal can reflect multiple steps in gene expression; it does not identify which step accounts for a particular mRFP variant's value. The source study below establishes the actual reporter constructs and assay. [Molecular Biology of the Cell, 7th ed., ch. 9, “Individual Proteins Can Be Fluorescently Tagged in Living Cells and Organisms,” pp. 573–574, Fig. 9–16](../sources.md#molecular-biology-of-the-cell-7th-edition).
 
 Nieuwkoop et al. expressed synonymous mRFP coding variants in *E. coli* DH10B, with a separately expressed GFPuv reporter as an internal reference. Flow cytometry measured red and green fluorescence in cell populations from individual clones. The instrument supplied excitation light and detected emitted light; these measurements are fluorescence signals, not counts of spontaneously emitted bioluminescent photons. The paper describes gating out GFPuv outliers and checking sequence quality, the expected protein sequence, cell populations and agreement with plate-reader measurements. [Original study, Materials and Methods](https://academic.oup.com/nar/article/51/5/2363/7016452)
 

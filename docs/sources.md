@@ -4,6 +4,34 @@ Use these readings to revisit useful explanations, evidence, and guidance for th
 
 A citation that already serves a specific claim can stay in its owning page. This index gives reusable readings a route beyond that single use. Selection and annotation guidance lives in the [shared-documentation workflow](../.agents/skills/multimodal-bio-shared-documentation/SKILL.md).
 
+## Understanding the biology behind the methods
+
+These textbooks connect the biological processes to the quantities used in the [method guides](README.md#understand-the-methods): what sequence regions contain, how RNA and protein amounts arise, and how molecular structure and cellular context can affect regulation. They support the explanations; the original dataset papers, releases and verification records continue to establish assay procedures, label transformations and benchmark provenance. The publisher links identify the editions and access routes. The selected passages were read in privately accessed copies; textbook files and figures are not redistributed in this repository.
+
+### Essential Cell Biology, 6th edition
+
+[Essential Cell Biology, sixth edition](https://wwnorton.co.uk/books/9781324033394-essential-cell-biology-c7a43b27-8186-4ee2-b83f-e60dd511e7ac), Bruce Alberts and colleagues, W. W. Norton (2023).
+
+**Use here:** The accessible account of transcription, translation and regulation supports the [gene-expression overview](methods/data-and-targets.md#connecting-the-targets-to-gene-expression), the distinction between letter conversion and cellular transcription, and the [GC3](methods/sequences-to-predictions.md#gc3-prediction) and [synonymous-recoding](methods/sequences-to-predictions.md#pipeline-control-synonymous-recoding) explanations. It explains why an unchanged amino-acid sequence need not preserve all nucleotide-level information, without assigning a mechanism to the observed encoder rankings.
+
+**Reading scope and limits — November 2, 2026:** Selected passages in chapter 7, “From DNA to RNA” and “From RNA to Protein,” covering DNA/RNA chemistry, the genetic code, tRNAs and wobble decoding; and chapter 8, “Post-Transcriptional Controls,” covering translation and RNA regulation. This is a targeted reading, not a full-book review. Chapter and subsection names are the locators because electronic and print pagination differ.
+
+### Molecular Biology of the Cell, 7th edition
+
+[Molecular Biology of the Cell, seventh edition](https://wwnorton.co.uk/books/9780393884852-molecular-biology-of-the-cell), Bruce Alberts and colleagues, W. W. Norton (2022).
+
+**Use here:** The account of RNA processing, gene regulation and degradation supports the [target overview and stability explanation](methods/data-and-targets.md#connecting-the-targets-to-gene-expression), [sequence-region distinctions](methods/sequences-to-predictions.md#from-sequences-to-embeddings), and [motif interpretation](methods/representation-analysis.md#scanning-candidate-rna-stability-associated-patterns). The fluorescent-protein discussion connects [reporter synthesis, maturation and measured signal](methods/data-and-targets.md#from-engineered-bacteria-to-fluorescence-measurements). The GFP example explains a general reporter principle; the mRFP study remains the source for its constructs, measurements and normalization.
+
+**Reading scope and limits — November 2, 2026:** Selected passages in chapter 6 on RNA structure (p. 324), processing and splicing (pp. 337–339), 3′-end formation and nuclear export (pp. 348–349), and codon decoding (p. 358); chapter 7 on cellular context and levels of gene control (pp. 397–401), untranslated regions and translation (p. 456), and “Changes in mRNA Stability Can Control Gene Expression” (pp. 459–460); and chapter 9, “Individual Proteins Can Be Fluorescently Tagged in Living Cells and Organisms” (pp. 573–574, including Fig. 9–16). Page numbers here are the printed page labels, not PDF viewer positions. Eukaryotic processing and decay examples are identified as such; they are not a universal assay model for every organism in the benchmarks. These passages do not establish that a scanned motif binds a protein, is chemically modified, or changes persistence in our samples.
+
+### Lehninger Principles of Biochemistry, 8th edition
+
+[Lehninger Principles of Biochemistry, eighth edition](https://www.macmillanlearning.com/college/us/product/Lehninger-Principles-of-Biochemistry/p/1319228003), David L. Nelson, Michael M. Cox and Aaron A. Hoskins, Macmillan Learning (2021).
+
+**Use here:** The nucleic-acid and thermodynamic explanations support the [RNA-folding control](methods/sequences-to-predictions.md#secondary-structure-proxy-nussinov-pairing-fraction): an RNA strand can pair with itself, stems and loops are structural features, and free energy accounts for more than the number of permitted pairs. The guide distinguishes structural stability from persistence before degradation.
+
+**Reading scope and limits — November 2, 2026:** Selected passages in §8.2, “Nucleic Acid Structure,” especially “Messenger RNAs Code for Polypeptide Chains” and “Many RNAs Have More Complex Three-Dimensional Structures”; and the opening of §13.1, “Bioenergetics and Thermodynamics,” including free energy, enthalpy, entropy and the relationship between standard free-energy change and equilibrium. Section names identify the passages across print and electronic layouts. These principles explain the simplification in the Nussinov pairing proxy; they do not validate its accuracy for intracellular RNA structures or establish a folding-energy-to-half-life conversion.
+
 ## Writing for different reader needs
 
 ### Diataxis: Start here

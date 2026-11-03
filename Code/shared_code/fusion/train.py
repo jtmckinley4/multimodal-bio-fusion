@@ -108,7 +108,8 @@ def paired_bootstrap(first, second, task, draws=2000, seed=0):
     Both runs need per-row predictions, which results written before 2026-10-18 do not have.
     """
     if first.test_prediction is None or second.test_prediction is None:
-        raise ValueError("both runs need per-row predictions; rerun with require_predictions")
+        raise ValueError("both runs need saved per-row predictions; preserve the completed "
+                         "results and plan any prediction recovery separately")
     if first.test_truth != second.test_truth:
         raise ValueError("the two runs were not scored on the same rows")
     truth = np.asarray(first.test_truth)
@@ -220,7 +221,8 @@ class Result:
     # rewriting a file never drops them, and never interpreted here.
     extra_fields: dict = field(default_factory=dict, repr=False)
 
-    def save(self, path):
+    def save(self, path, *, overwrite=True):
+        """Publish a complete record; training uses exclusive creation, not replacement."""
         values = asdict(self)
         payload = dict(values.pop("extra_fields"))
         payload.update(values)
@@ -232,7 +234,12 @@ class Result:
                                              delete=False) as handle:
                 temporary = Path(handle.name)
                 handle.write(json.dumps(payload, indent=2) + "\n")
-            os.replace(temporary, path)
+            if overwrite:
+                os.replace(temporary, path)
+            else:
+                # Like weight publication, a same-directory link fails if a
+                # concurrent writer has already published the destination.
+                os.link(temporary, path)
         finally:
             if temporary is not None:
                 temporary.unlink(missing_ok=True)
@@ -254,6 +261,109 @@ def _check_identity(saved, requested, source):
     if mismatched:
         raise ValueError(f"{source}: saved {', '.join(mismatched)} do not match the requested "
                          "run; preserve this file and use a different result tag or directory")
+
+
+def checkpoint_preflight(path, requested_identity):
+    """Inspect a trusted local checkpoint on CPU before expensive preparation.
+
+    This checks recorded identity and recovery structure, without constructing a
+    model, restoring RNG state, fitting, or writing. It does not establish missing
+    producer/input provenance or identical recovery across devices. fit() still
+    performs its own checks and loads state into the actual model and loaders.
+    """
+    path = Path(path)
+
+    def require(condition, reason):
+        if not condition:
+            raise ValueError(f"{path}: checkpoint preflight failed: {reason}; preserve this file")
+
+    def integer(value):
+        return type(value) is int and value >= 0
+
+    def byte_state(value):
+        return (isinstance(value, torch.Tensor) and value.dtype == torch.uint8
+                and value.ndim == 1 and value.numel() > 0)
+
+    try:
+        # Training checkpoints contain Python/NumPy RNG tuples, so this is the
+        # same trusted-local format accepted by fit(), not an untrusted upload.
+        saved = torch.load(path, map_location="cpu", weights_only=False)
+    except Exception as error:
+        raise ValueError(f"{path}: checkpoint could not be read; preserve this file: {error}") from error
+    try:
+        required = {"identity", "scheduler", "rng", "loaders", "model", "optimiser",
+                    "best", "history", "epoch", "elapsed"}
+        require(isinstance(saved, dict), "payload must be a mapping")
+        require(required <= saved.keys(), "missing fields: " + ", ".join(sorted(required - saved.keys())))
+        require(isinstance(requested_identity, dict)
+                and {"config", "benchmark", "variant"} <= requested_identity.keys(),
+                "requested identity must include config, benchmark and variant")
+        require(isinstance(requested_identity["config"], dict), "requested config must be a mapping")
+        try:
+            recorded = json.dumps(saved["identity"], sort_keys=True, allow_nan=False)
+            requested = json.dumps(requested_identity, sort_keys=True, allow_nan=False)
+        except (TypeError, ValueError) as error:
+            raise ValueError(f"{path}: invalid checkpoint/requested identity; preserve this file") from error
+        require(recorded == requested, "recorded identity does not exactly match the requested run")
+        for name in ("model", "optimiser", "scheduler", "rng", "loaders", "best"):
+            require(isinstance(saved[name], dict), f"{name} must be a mapping")
+
+        epoch, history, best = saved["epoch"], saved["history"], saved["best"]
+        limit = requested_identity["config"].get("max_epochs")
+        require(integer(epoch) and type(limit) is int and 0 <= epoch < limit,
+                "epoch must be within the requested max_epochs")
+        require(isinstance(history, list) and len(history) == epoch + 1,
+                "history length must equal epoch + 1")
+        require(all(isinstance(row, dict) and type(row.get("epoch")) is int
+                    and row["epoch"] == index for index, row in enumerate(history)),
+                "history must contain consecutive recorded epochs")
+        elapsed = saved["elapsed"]
+        require(isinstance(elapsed, (int, float)) and not isinstance(elapsed, bool)
+                and np.isfinite(elapsed) and elapsed >= 0, "elapsed must be finite and nonnegative")
+        require(integer(best.get("epoch")) and best["epoch"] <= epoch, "invalid best epoch")
+        score = best.get("score")
+        require(isinstance(score, (int, float)) and not isinstance(score, bool)
+                and (np.isfinite(score) or score == -float("inf")), "invalid best score")
+        state = best.get("state")
+        require(isinstance(state, dict) and bool(state) and bool(saved["model"]),
+                "current and best model states must be nonempty mappings")
+        require(state.keys() == saved["model"].keys(), "current and best model keys differ")
+        require(all(isinstance(name, str) and isinstance(value, torch.Tensor)
+                    and isinstance(state[name], torch.Tensor)
+                    and value.shape == state[name].shape and value.dtype == state[name].dtype
+                    for name, value in saved["model"].items()), "invalid current/best model tensors")
+        optimiser = saved["optimiser"]
+        require(isinstance(optimiser.get("state"), dict)
+                and isinstance(optimiser.get("param_groups"), list)
+                and bool(optimiser["param_groups"]), "invalid optimiser state/parameter groups")
+        require(all(isinstance(group, dict) and isinstance(group.get("params"), list)
+                    and all(integer(value) for value in group["params"])
+                    for group in optimiser["param_groups"]), "invalid optimiser parameter IDs")
+        require(bool(saved["scheduler"]), "scheduler state is empty")
+
+        rng = saved["rng"]
+        require(byte_state(rng.get("torch")) and isinstance(rng.get("numpy"), tuple)
+                and len(rng["numpy"]) == 5 and isinstance(rng.get("python"), tuple)
+                and len(rng["python"]) == 3, "incomplete RNG state")
+        require(rng.get("device_type") in ("cpu", "cuda", "mps"), "invalid RNG device type")
+        if rng["device_type"] == "cuda":
+            require(isinstance(rng.get("cuda"), list) and bool(rng["cuda"])
+                    and all(byte_state(value) for value in rng["cuda"]), "missing CUDA RNG state")
+        elif rng["device_type"] == "mps":
+            require(byte_state(rng.get("mps")), "missing MPS RNG state")
+        require(set(saved["loaders"]) == {"train", "val", "test"}, "missing or unexpected loader splits")
+        for split, components in saved["loaders"].items():
+            require(isinstance(components, dict), f"{split} loader components must be a mapping")
+            for name, component in components.items():
+                require(name in ("loader", "sampler", "batch_sampler", "batch_sampler.sampler")
+                        and isinstance(component, dict) and isinstance(component.get("type"), str)
+                        and bool(component["type"]), f"invalid {split} loader component")
+                if "generator" in component:
+                    require(byte_state(component["generator"]), f"invalid {split} shuffle generator")
+                if "epoch" in component:
+                    require(integer(component["epoch"]), f"invalid {split} sampler epoch")
+    finally:
+        del saved
 
 
 def _check_result_identity(result, requested, path, builder, model_kwargs):
@@ -539,8 +649,8 @@ def run(streams, variant, config, device, results_dir, log=print,
         require_predictions=False, builder=None, loaders=None, tag=None, **model_kwargs):
     """Train one variant, or return the run already on disk under the same settings.
 
-    require_predictions retrains a stored run that predates per-row predictions, which a
-    paired bootstrap needs. It is off by default, so reading back an old sweep stays free.
+    require_predictions refuses a stored run without per-row predictions; it never
+    replaces completed evidence to supply an analysis with missing inputs.
     New fits save their best weights; missing historical weights never trigger retraining.
     """
     results_dir = Path(results_dir)
@@ -552,15 +662,13 @@ def run(streams, variant, config, device, results_dir, log=print,
     if path.exists():
         done = Result.load(path)
         legacy_alias = _check_result_identity(done, identity, path, builder, model_kwargs)
-        if legacy_alias and require_predictions and done.test_prediction is None:
-            raise ValueError(f"{path}: legacy GTEx result has no per-row predictions; "
-                             "preserve it and use a different result tag or directory")
-        if not (require_predictions and done.test_prediction is None):
-            if log:
-                log(f"  {tag}: already run, test {done.test_score:.4f}")
-            return done
+        if require_predictions and (done.test_prediction is None or done.test_truth is None):
+            kind = "legacy GTEx result" if legacy_alias else "completed result"
+            raise ValueError(f"{path}: {kind} has no per-row predictions or targets; "
+                             "preserve it and plan any recovery in a separate destination")
         if log:
-            log(f"  {tag}: retraining, the stored result has no per-row predictions")
+            log(f"  {tag}: already run, test {done.test_score:.4f}")
+        return done
     weights_path = results_dir / f"{tag}.weights.pt"
     checkpoint = results_dir / f"{tag}.checkpoint"
     if weights_path.exists():
@@ -580,7 +688,7 @@ def run(streams, variant, config, device, results_dir, log=print,
     result = fit(model, streams, config, device, log=log, loaders=loaders,
                  checkpoint=checkpoint, keep_checkpoint=True, run_identity=identity)
     result.extra_fields["model_artifact"] = _save_weights(weights_path, model, result)
-    result.save(path)                 # Publish completion only after its weights are saved.
+    result.save(path, overwrite=False)  # Never replace a concurrently completed result.
     checkpoint.unlink(missing_ok=True)
     if log:
         val = "undefined" if result.val_score is None else f"{result.val_score:.4f}"
