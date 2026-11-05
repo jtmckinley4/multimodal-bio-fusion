@@ -76,7 +76,7 @@ The current design choices follow from this evidence, with room to revise them a
 
 Stage 2 interprets the Stage 1 evidence without introducing another dataset or a separate executable notebook. Its output is the working definition and the reasoning behind these choices, recorded here and in the manuscript. Later evidence can refine them while preserving the definition used for each earlier result.
 
-**Definition and evidence:** [Representation-comparison methods](docs/methods/representation-analysis.md#comparing-representations) · [Project notes](docs/notes/Mina_Project_Notes.docx) · [October 7 alignment meeting slides](docs/notes/Slides/Mina_Meeting_Slides_2026-10-07.pptx). The manuscript records the decision in its “Stage 2: Defining Alignment” section. Gantt `Details` task 7 specifies the objects, metrics, controls, and permitted conclusions; task 23 keeps the alignment-loss comparison conditional.
+**Definition and evidence:** [Representation-comparison methods](Code/stage1/representation-analysis.md#comparing-representations) · [Project notes](docs/notes/Mina_Project_Notes.docx) · [October 7 alignment meeting slides](docs/notes/Slides/Mina_Meeting_Slides_2026-10-07.pptx). The manuscript records the decision in its “Stage 2: Defining Alignment” section. Gantt `Details` task 7 specifies the objects, metrics, controls, and permitted conclusions; task 23 keeps the alignment-loss comparison conditional.
 
 ### Stage 3: building and checking models
 

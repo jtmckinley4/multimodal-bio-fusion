@@ -144,6 +144,30 @@ class SwapResultTests(unittest.TestCase):
         self.assertEqual(self.read().records, [])
         self.assertEqual(len(self.read().issues), 2)
 
+    def test_completed_epoch_bounds_for_historical_filenames(self):
+        # Epochs is a count; best_epoch is the writer's zero-based index.
+        names = (
+            "fixture__concat__lambda0.0__ch100__seed0.json",
+            "fixture__concat__lambda0.0__ch100__equation__seed0.json",
+        )
+        cases = ((1, 0, True), (1, 1, False), (4, 3, True),
+                 (4, 4, False), (4, -1, False), (4, True, False))
+        for name in names:
+            for epochs, best_epoch, valid in cases:
+                with self.subTest(name=name, epochs=epochs, best_epoch=best_epoch):
+                    path = self.save(name, epochs=epochs, best_epoch=best_epoch)
+                    before = path.read_bytes()
+                    report = self.read()
+                    if valid:
+                        self.assertEqual([r["path"] for r in report.require_unique()], [path])
+                        self.assertEqual(report.issues, [])
+                    else:
+                        self.assertEqual(report.records, [])
+                        self.assertEqual(len(report.issues), 1)
+                        self.assertIn("best_epoch", report.issues[0]["reason"])
+                    self.assertEqual(path.read_bytes(), before)
+            path.unlink()
+
     def test_float32_targets_use_loader_precision_without_changing_bootstrap_truth(self):
         original = [0.1, 0.2]
         record = dict(test_truth=[0.10000000149011612, 0.20000000298023224],

@@ -27,6 +27,7 @@ Start with the biological question and model choices in the overview. Follow the
 | Where do I follow the mRNA stability experiment? | The [stability notebook](../Code/stage1/Stage1_stability.ipynb): input preparation, embeddings, prediction, geometry, recoding control, attention, and the BioLangFusion comparison. |
 | Where do I compare distinct DNA, transcript, and protein inputs? | The [GTEx notebook](../Code/stage1/Stage1_gtex.ipynb): expression across 30 tissues, length and composition baselines, representation comparisons, attention, and the IsoFormer comparison. |
 | What do the sequences and labels represent? | The [dataset overview](../README.md#data), [stability data preparation](../Code/stage1/Stage1_stability.ipynb#Data), [stability dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons), and [GTEx data and expression labels](../Code/stage1/Stage1_gtex.ipynb#GTEx-data). Check what a row and its label mean, how the label was obtained, and which examples enter the analysis. |
+| How are Stage 1 representations and attention patterns examined? | The [representation-analysis guide](../Code/stage1/representation-analysis.md) explains geometry, composition controls, retrieval, prediction-error comparisons, attention, candidate motifs and permutation controls, with return links to the notebooks. |
 | What did Stage 1 find? | The overview's [Summary](stage1-overview.md#summary) and [result tables](stage1-overview.md#result-tables), with the producing outputs and local interpretations in each experiment notebook. |
 | Where are the saved figures and their numeric inputs? | The [figure guide](figures/README.md), with stability/GTEx panels, result snapshots and commands that regenerate figures without rerunning models. |
 | How do the frozen encoders compare with published fusion studies? | The [comparison overview](stage1-overview.md#published-comparisons-and-distinct-inputs), [BioLangFusion published-split comparison](../Code/stage1/Stage1_stability.ipynb#Published-split-comparison), and [IsoFormer published-split comparison](../Code/stage1/Stage1_gtex.ipynb#GTEx-published-split-comparison). |
@@ -37,13 +38,12 @@ The October 3 comparison entry in the [Gantt workbook](Research_Project_Plan_Gan
 
 ## Understand the methods
 
-The three shared research guides follow a reading route: establish what the data measure, follow how sequences become predictions, then examine what the representations and attention patterns reveal. They retain equations, worked examples, implementation links and interpretation limits used across notebooks. Each guide states its scope; the Stage 1 pooled-vector procedures do not automatically describe Stage 4 token-grid or fusion training.
+The two shared research guides explain what the data measure and how sequences become predictions. They retain equations, worked examples, implementation links and interpretation limits used across notebooks. Each guide states its scope. Stage 1 pooled-vector procedures do not automatically describe Stage 4 token-grid or fusion training. The [Stage 1 representation-analysis guide](../Code/stage1/representation-analysis.md) develops that stage's geometry and attention methods alongside its experiment notebooks.
 
 | Reader question | Guide |
 | --- | --- |
 | What does each dataset row and target mean? | [Data and biological targets](methods/data-and-targets.md): assays, label transformations, source-to-local-data verification, examples and limits on interpreting scores. |
 | How do sequences become representations and predictions? | [From sequences to predictions](methods/sequences-to-predictions.md): input preparation, tokens, pooling, cache reuse, linear probes and evaluation; [calculated targets and controls](methods/sequences-to-predictions.md#calculated-targets-and-controls) cover length, GC, GC3, folding and synonymous recoding. |
-| How do encoders differ, and what might those differences mean? | [Comparing and interpreting representations](methods/representation-analysis.md): representation geometry, composition controls, retrieval and prediction-error comparisons, followed by frozen-encoder attention, candidate motifs and permutation controls. |
 
 Notebooks retain enough local explanation to follow their experiment, together with the actual settings, calls, saved outputs and interpretation. Guide links return to the relevant analyses for those choices and results.
 

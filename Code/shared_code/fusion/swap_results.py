@@ -243,7 +243,7 @@ def read_results(folders, *, benchmark, config, encoders, native_fallback=False,
             # The notebook converts selected records with train.Result.load; do not
             # advertise a record that lacks that consumer's required fit metadata.
             if (type(data.get("best_epoch")) is not int
-                    or not 0 <= data["best_epoch"] <= data["epochs"]
+                    or not 0 <= data["best_epoch"] < data["epochs"]
                     or not _finite(data.get("seconds")) or data["seconds"] < 0):
                 raise ValueError("missing or invalid best_epoch/seconds")
 

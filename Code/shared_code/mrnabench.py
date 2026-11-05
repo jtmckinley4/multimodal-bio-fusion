@@ -186,13 +186,34 @@ def gate(frame, spec):
     whether the coding sequences are in frame, whether the labels are there, whether the
     rows can be grouped without leaking, and whether the same sequence appears twice. The
     verdict is the plan's own rule: a dataset without untranslated regions is not a
-    full-transcript test, whatever else is true of it.
+    full-transcript test, whatever else is true of it. Missing required columns or any
+    nonfinite/non-numeric target block comparison before constructing regions. The gate
+    reports these rows; it does not choose a subset or change the supplied values.
     """
-    full = region_frame(frame)
-    usable = full["frame_problem"] == ""
-    targets = {t: float(frame[t].notna().mean()) for t in spec.targets if t in frame}
+    required = ("sequence", "cds", *spec.targets)
+    missing = [name for name in required if name not in frame]
+    problems = [f"missing required columns: {', '.join(missing)}"] if missing else []
+    if frame.empty:
+        problems.append("the dataset has no rows")
+    if not spec.targets:
+        problems.append("the dataset specification declares no targets")
+
+    # Count usable labels without filtering rows or coercing the caller's target column.
+    targets = {}
+    for name in spec.targets:
+        if name in frame:
+            values = pd.to_numeric(frame[name], errors="coerce").to_numpy(
+                dtype=float, na_value=np.nan
+            )
+            finite = np.isfinite(values)
+            targets[name] = float(finite.mean()) if len(finite) else 0.0
+            if not finite.all():
+                problems.append(f"{name}: {(~finite).sum()} of {len(frame)} rows lack "
+                                "a finite numeric target")
+
     has_genes = "gene" in frame
     genes = frame["gene"] if has_genes else pd.Series(dtype=object)
+    gene_counts = genes.value_counts()
     answer = {
         "dataset": spec.key,
         "rows": int(len(frame)),
@@ -201,6 +222,26 @@ def gate(frame, spec):
         "targets present": ", ".join(f"{k} {v:.0%}" for k, v in targets.items()) or "none",
         "has cds track": "cds" in frame,
         "has splice track": "splice" in frame,
+        "rows with a coding region": np.nan,
+        "rows with a 5' region": np.nan,
+        "rows with a 3' region": np.nan,
+        "coding sequence in frame": np.nan,
+        "median transcript nt": np.nan,
+        "longest transcript nt": np.nan,
+        "median cds nt": np.nan,
+        "distinct genes": int(genes.nunique()) if has_genes else 0,
+        "largest gene group": int(gene_counts.max()) if not gene_counts.empty else 0,
+        "repeated sequences": np.nan,
+        "split rule": spec.split,
+    }
+    if problems:
+        answer["verdict"] = "invalid input: full-transcript comparison blocked"
+        answer["caveats"] = "; ".join(problems)
+        return answer
+
+    full = region_frame(frame)
+    usable = full["frame_problem"] == ""
+    answer.update({
         "rows with a coding region": float(usable.mean()),
         "rows with a 5' region": float((full.loc[usable, "utr5_len"] > 0).mean()),
         "rows with a 3' region": float((full.loc[usable, "utr3_len"] > 0).mean()),
@@ -208,11 +249,8 @@ def gate(frame, spec):
         "median transcript nt": int(frame["sequence"].str.len().median()),
         "longest transcript nt": int(frame["sequence"].str.len().max()),
         "median cds nt": int(full.loc[usable, "cds_len"].median()) if usable.any() else 0,
-        "distinct genes": int(genes.nunique()) if has_genes else 0,
-        "largest gene group": int(genes.value_counts().max()) if has_genes and len(genes) else 0,
         "repeated sequences": float(frame["sequence"].duplicated().mean()),
-        "split rule": spec.split,
-    }
+    })
     answer["verdict"], answer["caveats"] = _verdict(answer)
     return answer
 
@@ -232,6 +270,9 @@ def _verdict(answer):
     caveats = []
     if not answer["has cds track"]:
         return "no coding-region track: not a region comparison", "the file has no cds column"
+    if not np.isfinite([answer["rows with a 5' region"], answer["rows with a 3' region"]]).all():
+        return ("no usable coding regions: not a full-transcript test",
+                "no rows have an interpretable coding-region track")
     if answer["rows with a 5' region"] < 0.5 or answer["rows with a 3' region"] < 0.5:
         verdict = "regions missing: a sequence-level task, not a full-transcript test"
     elif answer["split rule"] == "homology" and answer["distinct genes"] < 100:

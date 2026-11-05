@@ -2,9 +2,9 @@
 
 Once sequences have been encoded, we can ask two related questions: do the encoders organize the same examples similarly, and which sequence positions receive attention inside a nucleotide encoder? The first concerns representation geometry across examples; the second concerns model behavior within a sequence. Neither representation similarity nor an attention pattern alone establishes predictive benefit or a biological mechanism.
 
-This guide retains the equations, worked examples, implementation details and interpretation limits behind the Stage 1 analyses. The [stability notebook](../../Code/stage1/Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) uses both representation comparisons and exploratory attention analyses. GTEx reuses the representation comparisons in [Track B](../../Code/stage1/Stage1_gtex.ipynb#GTEx-Track-B:-Cross-modal-geometry) and its [alignment and similarity diagnostics](../../Code/stage1/Stage1_gtex.ipynb#Alignment,-prediction-error,-and-representational-similarity-on-GTEx); the attention walkthrough below follows the stability notebook. The notebooks retain experiment settings, code calls, saved outputs and result interpretations. Section return links lead to the stability walkthrough unless explicitly labeled GTEx; references to notebook cells and tables mean those linked cells, unless an explanatory table appears here.
+This guide retains the equations, worked examples, implementation details and interpretation limits behind the Stage 1 analyses. The [stability notebook](Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) uses both representation comparisons and exploratory attention analyses. GTEx reuses the representation comparisons in [Track B](Stage1_gtex.ipynb#GTEx-Track-B:-Cross-modal-geometry) and its [alignment and similarity diagnostics](Stage1_gtex.ipynb#Alignment,-prediction-error,-and-representational-similarity-on-GTEx); the attention walkthrough below follows the stability notebook. The notebooks retain experiment settings, code calls, saved outputs and result interpretations. Section return links lead to the stability walkthrough unless explicitly labeled GTEx; references to notebook cells and tables mean those linked cells, unless an explanatory table appears here.
 
-Read [Data and biological targets](data-and-targets.md) for what the observations and labels mean, and [From sequences to predictions](sequences-to-predictions.md) for sequence preparation, pooling and target prediction. Here, [comparing representations](#comparing-representations) asks how the encoded examples relate across feature spaces, while [attention and candidate motifs](#attention-and-candidate-motifs) asks how model attention relates to sequence-pattern annotations.
+Read [Data and biological targets](../../docs/methods/data-and-targets.md) for what the observations and labels mean, and [From sequences to predictions](../../docs/methods/sequences-to-predictions.md) for sequence preparation, pooling and target prediction. Here, [comparing representations](#comparing-representations) asks how the encoded examples relate across feature spaces, while [attention and candidate motifs](#attention-and-candidate-motifs) asks how model attention relates to sequence-pattern annotations.
 
 ## Comparing representations
 
@@ -23,7 +23,7 @@ All comparisons require corresponding rows to identify the same examples. Two en
 
 ### Final-layer representation similarity: linear CKA
 
-Return to [Final-layer representation similarity: linear CKA](../../Code/stage1/Stage1_stability.ipynb#Final-layer-representation-similarity:-linear-CKA) in the notebook.
+Return to [Final-layer representation similarity: linear CKA](Stage1_stability.ipynb#Final-layer-representation-similarity:-linear-CKA) in the notebook.
 
 Linear centered kernel alignment (CKA) compares the final-layer mean-pooled representations of the same retained examples, one pair of encoders at a time, for every pair in `PAIRS`. Corresponding rows refer to the same example, while the feature counts can differ.
 
@@ -35,7 +35,7 @@ In the derived stability setting, pairs within one modality provide a reference 
 
 #### Linear centered kernel alignment
 
-`analysis.linear_cka(X, Y)` compares representations of the same examples. `X` has shape `(n, p)` and `Y` has shape `(n, q)`: their feature counts may differ, but corresponding rows must identify the same example. Capital `Y` here is a second embedding matrix, distinct from the lowercase target `y` used by the [linear probe](sequences-to-predictions.md#linear-probing).
+`analysis.linear_cka(X, Y)` compares representations of the same examples. `X` has shape `(n, p)` and `Y` has shape `(n, q)`: their feature counts may differ, but corresponding rows must identify the same example. Capital `Y` here is a second embedding matrix, distinct from the lowercase target `y` used by the [linear probe](../../docs/methods/sequences-to-predictions.md#linear-probing).
 
 **1. Center each feature across examples.**
 
@@ -124,7 +124,7 @@ If either centered representation is entirely zero, the denominator is zero and 
 
 ### Layerwise representation similarity: linear CKA
 
-Return to [Layerwise representation similarity: linear CKA](../../Code/stage1/Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) in the notebook.
+Return to [Layerwise representation similarity: linear CKA](Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) in the notebook.
 
 The final-layer comparison gives one summary of representation similarity. This analysis asks whether that similarity changes with encoder depth by comparing every returned hidden state of one encoder with every returned hidden state of another, for every pair of encoders. A hidden state is the model's numerical representation at a particular point in its computation; it still contains one vector per token before pooling.
 
@@ -163,7 +163,7 @@ The slice `matrix[:, 1:]` keeps every state of the first encoder, including its 
 
 ### Neighborhood overlap across representations
 
-Return to [Neighborhood overlap across representations](../../Code/stage1/Stage1_stability.ipynb#Neighborhood-overlap-across-representations) in the notebook.
+Return to [Neighborhood overlap across representations](Stage1_stability.ipynb#Neighborhood-overlap-across-representations) in the notebook.
 
 CKA summarizes similarity across representation matrices. Neighborhood overlap asks a more local question: for a particular retained row, are the examples nearest to it in one representation also nearest to it in another? The notebook computes it for every pair of encoders. Neighbor identities refer to the same paired rows in both matrices, not to equal feature coordinates.
 
@@ -205,13 +205,13 @@ The helper uses the default Euclidean distance of [`NearestNeighbors`](https://s
 
 ### Canonical correlation and cross-modal retrieval
 
-Return to [Canonical correlation and cross-modal retrieval](../../Code/stage1/Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval) in the notebook.
+Return to [Canonical correlation and cross-modal retrieval](Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval) in the notebook.
 
 The previous metrics compare the representations without learning a cross-modal projection. Canonical correlation analysis (CCA) instead fits linear combinations of features that vary together across matched examples of two representations. The notebook fits a separate CCA for every pair of encoders, querying with the encoder that comes first in `ENCODER_KEYS` and searching the second; the matrices show each pair's value in both positions. The explanation below uses the first encoder's representation as $X$ and the second's as $Y$. It can reveal correspondence in selected directions even when a whole-matrix comparison is modest.
 
 **1. Fit the transformations on training rows.**
 
-`splits.grouped_holdout_split` assigns each retained sequence to the training or test side from the SHA-256 hash of `SEED` and the sequence string, using the same grouped-hash idea as the probe folds. This CCA call explicitly receives the notebook's `SEED`; `probe_table` separately receives `PROBE_SEED` for its pinned folds, as explained in the [linear-probing guide](sequences-to-predictions.md#evaluation-and-interpretation). About 30% of rows become test rows, and every copy of an identical sequence falls on the same side. The same indices select every encoder's matrix, so every pair uses the same training and test rows. Write $n_{\mathrm{train}}$ for the number of training pairs and $n_{\mathrm{test}}$ for the number of test pairs; $p$ and $q$ are the embedding widths of the pair's first and second encoders.
+`splits.grouped_holdout_split` assigns each retained sequence to the training or test side from the SHA-256 hash of `SEED` and the sequence string, using the same grouped-hash idea as the probe folds. This CCA call explicitly receives the notebook's `SEED`; `probe_table` separately receives `PROBE_SEED` for its pinned folds, as explained in the [linear-probing guide](../../docs/methods/sequences-to-predictions.md#evaluation-and-interpretation). About 30% of rows become test rows, and every copy of an identical sequence falls on the same side. The same indices select every encoder's matrix, so every pair uses the same training and test rows. Write $n_{\mathrm{train}}$ for the number of training pairs and $n_{\mathrm{test}}$ for the number of test pairs; $p$ and $q$ are the embedding widths of the pair's first and second encoders.
 
 Each encoder's representation receives a separate principal component analysis (PCA), fitted only on its training matrix, requesting 50 components, capped at `min(50, n_train - 1, p, q)`. The 50-component shapes below describe the saved configuration where this cap does not reduce the request. PCA supplies a smaller feature space using directions of large training-set variation. The implementation centers features without standardizing their variances before PCA. See [the PCA definition and implementation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html).
 
@@ -304,9 +304,9 @@ Training the transformations only on training rows avoids fitting those transfor
 
 ### Composition control
 
-Return to [Composition control](../../Code/stage1/Stage1_stability.ipynb#Composition-control) in the notebook.
+Return to [Composition control](Stage1_stability.ipynb#Composition-control) in the notebook.
 
-The [layer-wise CKA](../../Code/stage1/Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) and [GC-content](../../Code/stage1/Stage1_stability.ipynb#GC-content-prediction) results suggest a hypothesis: the representations may agree largely because each tracks sequence composition. This analysis tests that hypothesis by removing composition from every embedding and repeating two of the preceding notebook comparisons.
+The [layer-wise CKA](Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) and [GC-content](Stage1_stability.ipynb#GC-content-prediction) results suggest a hypothesis: the representations may agree largely because each tracks sequence composition. This analysis tests that hypothesis by removing composition from every embedding and repeating two of the preceding notebook comparisons.
 
 **1. Describe each sequence by its composition.**
 
@@ -317,7 +317,7 @@ $$
 In this notation:
 
 - $s$ is one retained coding sequence, and $L(s)$ is its length in nucleotides.
-- $\mathrm{GC}(s)$ and $\mathrm{GC3}(s)$ are the GC fractions over the whole sequence and over third codon positions, as defined in [GC-content prediction](../../Code/stage1/Stage1_stability.ipynb#GC-content-prediction) and [GC3 prediction](../../Code/stage1/Stage1_stability.ipynb#GC3-prediction).
+- $\mathrm{GC}(s)$ and $\mathrm{GC3}(s)$ are the GC fractions over the whole sequence and over third codon positions, as defined in [GC-content prediction](Stage1_stability.ipynb#GC-content-prediction) and [GC3 prediction](Stage1_stability.ipynb#GC3-prediction).
 - $\log$ is the natural logarithm.
 - $c_k(s)$ is the frequency of codon $k$, for the 64 possible codons in a fixed order, among the sequence's complete codons. The 64 frequencies sum to 1 when every counted codon contains only A, C, G, and T; the preliminary sequence filter does not itself establish that alphabet condition.
 - $a_m(s)$ is the frequency of amino acid $m$, for the 20 standard amino acids, in the translated protein.
@@ -350,7 +350,7 @@ where $\lVert\cdot\rVert_F^2$ sums the squares of every entry and $\bar X$ repea
 
 **3. Repeat the comparisons on the residuals.**
 
-For every pair of encoders, the cell reports linear CKA and CCA Recall@1 before and after residualization. Recall@1 uses the same PCA-CCA pipeline and the same `train_idx` and `test_idx` rows as [Canonical correlation and cross-modal retrieval](#canonical-correlation-and-cross-modal-retrieval), so its "before" value should match the Recall@1 printed in the [earlier notebook retrieval output](../../Code/stage1/Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval).
+For every pair of encoders, the cell reports linear CKA and CCA Recall@1 before and after residualization. Recall@1 uses the same PCA-CCA pipeline and the same `train_idx` and `test_idx` rows as [Canonical correlation and cross-modal retrieval](#canonical-correlation-and-cross-modal-retrieval), so its "before" value should match the Recall@1 printed in the [earlier notebook retrieval output](Stage1_stability.ipynb#Canonical-correlation-and-cross-modal-retrieval).
 
 **Interpretation.** Residualization removes the fitted linear component associated with the specified features on these rows. A decrease shows that the comparison is sensitive to removing that component. Nonlinear composition effects and other shared influences can remain, so residual agreement alone does not identify a biological mechanism.
 
@@ -360,7 +360,7 @@ For every pair of encoders, the cell reports linear CKA and CCA Recall@1 before 
 
 ### High- and low-variance directions
 
-Return to [High- and low-variance directions](../../Code/stage1/Stage1_stability.ipynb#High--and-low-variance-directions) in the notebook.
+Return to [High- and low-variance directions](Stage1_stability.ipynb#High--and-low-variance-directions) in the notebook.
 
 An embedding's variance is usually concentrated in a few directions. This analysis asks whether agreement between encoders, composition, and stability signal sit in those dominant directions or in the many low-variance ones. The protein encoders are the main case: they agree strongly with each other, even after the composition control, and the question is which directions carry that agreement.
 
@@ -387,11 +387,11 @@ The PCA is fit on all rows without the stability labels, so held-out rows help c
 
 ### Sample-level alignment and prediction error
 
-Return to [Sample-level alignment and prediction error](../../Code/stage1/Stage1_stability.ipynb#Sample-level-alignment-and-prediction-error) in the notebook.
+Return to [Sample-level alignment and prediction error](Stage1_stability.ipynb#Sample-level-alignment-and-prediction-error) in the notebook.
 
 This diagnostic asks whether examples whose representations in two modalities are more similar also tend to be easier to predict. It is run once for every pair of encoders. It is an **exploratory sample-level adaptation** inspired by [Tjandrasuwita et al. (ICML 2025), Sections 5-6](https://proceedings.mlr.press/v267/tjandrasuwita25a.html). The paper studies relationships across models/configurations and a contrastive-training intervention; this code compares examples from one fixed encoder pair at a time. It does not reproduce those experiments.
 
-For each pair `(a, b)`, the call in [Run and interpret the alignment diagnostics](../../Code/stage1/Stage1_stability.ipynb#Run-and-interpret-the-alignment-diagnostics) supplies the two coordinate matrices stored in `cca_results[(a, b)]["test_coords"]` and `labels[test_idx]`: matched CCA coordinates and stability labels from the earlier CCA test subset. Corresponding rows must identify the same examples. The encoder weights and the earlier fitted PCA/CCA transformations remain fixed here; the new models fitted in this diagnostic are ordinary linear regressions.
+For each pair `(a, b)`, the call in [Run and interpret the alignment diagnostics](Stage1_stability.ipynb#Run-and-interpret-the-alignment-diagnostics) supplies the two coordinate matrices stored in `cca_results[(a, b)]["test_coords"]` and `labels[test_idx]`: matched CCA coordinates and stability labels from the earlier CCA test subset. Corresponding rows must identify the same examples. The encoder weights and the earlier fitted PCA/CCA transformations remain fixed here; the new models fitted in this diagnostic are ordinary linear regressions.
 
 **1. Compare the directions of each example's paired CCA vectors.**
 
@@ -468,9 +468,9 @@ The earlier stability CCA split groups identical sequence strings; the GTEx CCA 
 
 ### Representational similarity analysis
 
-Return to [Representational similarity analysis](../../Code/stage1/Stage1_stability.ipynb#Representational-similarity-analysis) in the notebook.
+Return to [Representational similarity analysis](Stage1_stability.ipynb#Representational-similarity-analysis) in the notebook.
 
-Representational similarity analysis (RSA) asks whether pairs of examples that are dissimilar within one representation also tend to be dissimilar within the other. For every pair of encoders, the call in [Run and interpret the alignment diagnostics](../../Code/stage1/Stage1_stability.ipynb#Run-and-interpret-the-alignment-diagnostics) supplies the two original final-layer matrices from `EMBEDDINGS`, rather than the CCA projections. Corresponding rows must identify the same examples in the same order; the feature counts can differ. This diagnostic fits no predictor or projection.
+Representational similarity analysis (RSA) asks whether pairs of examples that are dissimilar within one representation also tend to be dissimilar within the other. For every pair of encoders, the call in [Run and interpret the alignment diagnostics](Stage1_stability.ipynb#Run-and-interpret-the-alignment-diagnostics) supplies the two original final-layer matrices from `EMBEDDINGS`, rather than the CCA projections. Corresponding rows must identify the same examples in the same order; the feature counts can differ. This diagnostic fits no predictor or projection.
 
 **1. Center each example across its own features.**
 
@@ -589,11 +589,11 @@ In this notation:
 
 ## Attention and candidate motifs
 
-Representation geometry compares examples; the following analysis returns to positions within each sequence. It develops the attention extraction, token-to-nucleotide mapping, candidate-pattern scan and comparisons used in the [stability notebook's Track C](../../Code/stage1/Stage1_stability.ipynb#Track-C:-Attention-and-exploratory-diagnostics). Attention is a model behavior, and a sequence match is a candidate annotation: neither is a direct assay of regulatory function.
+Representation geometry compares examples; the following analysis returns to positions within each sequence. It develops the attention extraction, token-to-nucleotide mapping, candidate-pattern scan and comparisons used in the [stability notebook's Track C](Stage1_stability.ipynb#Track-C:-Attention-and-exploratory-diagnostics). Attention is a model behavior, and a sequence match is a candidate annotation: neither is a direct assay of regulatory function.
 
 The attention here is **self-attention inside a frozen nucleotide encoder**, relating tokens within one input sequence. Stage 4 fusion cross-attention has a separate role: it combines information across RNA and protein representations. An attention-pattern result from this Stage 1 analysis therefore does not evaluate a Stage 4 fusion mechanism.
 
-The maintained implementation is in [embeddings.py](../../Code/shared_code/embeddings.py), [analysis.py](../../Code/shared_code/analysis.py), [sequences.py](../../Code/shared_code/sequences.py), and the [encoder registry and loader](../../Code/shared_code/encoders.py). The [sequence preparation and embedding explanation](sequences-to-predictions.md) supplies the earlier biological-input and tokenization context.
+The maintained implementation is in [embeddings.py](../shared_code/embeddings.py), [analysis.py](../shared_code/analysis.py), [sequences.py](../shared_code/sequences.py), and the [encoder registry and loader](../shared_code/encoders.py). The [sequence preparation and embedding explanation](../../docs/methods/sequences-to-predictions.md) supplies the earlier biological-input and tokenization context.
 
 | Step | Walkthrough |
 | --- | --- |
@@ -606,9 +606,9 @@ The maintained implementation is in [embeddings.py](../../Code/shared_code/embed
 
 ### Extracting self-attention from the frozen nucleotide encoders
 
-Return to [Extracting self-attention from the frozen nucleotide encoders](../../Code/stage1/Stage1_stability.ipynb#Extracting-self-attention-from-the-frozen-nucleotide-encoders) in the notebook.
+Return to [Extracting self-attention from the frozen nucleotide encoders](Stage1_stability.ipynb#Extracting-self-attention-from-the-frozen-nucleotide-encoders) in the notebook.
 
-The notebook's [representation comparisons](../../Code/stage1/Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) use extracted representations, including those from intermediate layers. Here, `embeddings.attention_maps` requests `output_attentions=True` for one nucleotide sequence from one encoder at a time. These are **self-attention** weights: query and key positions belong to the same sequence and the same encoder, rather than to separate modalities.
+The notebook's [representation comparisons](Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) use extracted representations, including those from intermediate layers. Here, `embeddings.attention_maps` requests `output_attentions=True` for one nucleotide sequence from one encoder at a time. These are **self-attention** weights: query and key positions belong to the same sequence and the same encoder, rather than to separate modalities.
 
 Each layer returns an array with shape `(1, H, T, T)`. The leading 1 is the one-sequence batch size. Removing that axis leaves `(H, T, T)`: heads, query positions and key positions.
 
@@ -626,11 +626,11 @@ In this notation:
 Each loaded model is placed in evaluation mode, and inference runs inside `torch.no_grad()`. No parameter update is performed. Tokenization uses `truncation=True` with the same token limit as embedding extraction, the encoder's `max_len` in the registry. The returned token list describes this model call's processed input and may cover less than the full sequence; its coverage must be checked rather than assumed to match earlier extraction.
 
 
-Loading an encoder with eager attention can print the same kind of weight report described in [Interpreting the loading messages](../../Code/stage1/Stage1_stability.ipynb#Interpreting-the-loading-messages). Pooler parameters reported as newly initialized do not affect this analysis, which reads `outputs.attentions` and does not use a pooled output. The report should be interpreted in relation to the outputs consumed here, rather than treated as a general confirmation that every model component has pretrained weights.
+Loading an encoder with eager attention can print the same kind of weight report described in [Interpreting the loading messages](Stage1_stability.ipynb#Interpreting-the-loading-messages). Pooler parameters reported as newly initialized do not affect this analysis, which reads `outputs.attentions` and does not use a pooled output. The report should be interpreted in relation to the outputs consumed here, rather than treated as a general confirmation that every model component has pretrained weights.
 
 ### Summarizing attention and mapping tokens to nucleotides
 
-Return to [Summarizing attention and mapping tokens to nucleotides](../../Code/stage1/Stage1_stability.ipynb#Summarizing-attention-and-mapping-tokens-to-nucleotides) in the notebook.
+Return to [Summarizing attention and mapping tokens to nucleotides](Stage1_stability.ipynb#Summarizing-attention-and-mapping-tokens-to-nucleotides) in the notebook.
 
 `analysis.aggregate_attention` turns one layer's `(H, T, T)` array into one score per token. With `mode="incoming"`, the score summarizes how much attention a key position receives from all query positions after averaging heads. `embeddings.nucleotide_attention` requests the original model's final layer with `layers=[-1]`, then calls `aggregate_attention(..., layer=0)` on the returned one-element list. The index 0 therefore selects that already extracted final layer, not the model's first layer. This is the current analysis choice, not evidence that the final layer is the most informative one.
 
@@ -701,11 +701,11 @@ The mapping assumes the retained token strings spell the covered nucleotides in 
 
 ### Scanning candidate RNA stability-associated patterns
 
-Return to [Scanning candidate RNA stability-associated patterns](../../Code/stage1/Stage1_stability.ipynb#Scanning-candidate-RNA-stability-associated-patterns) in the notebook.
+Return to [Scanning candidate RNA stability-associated patterns](Stage1_stability.ipynb#Scanning-candidate-RNA-stability-associated-patterns) in the notebook.
 
-A sequence pattern can matter biologically when cellular molecules recognize it and change what happens to the RNA. In eukaryotic mRNAs, proteins bound to particular 3′-UTR sequences can influence poly-A-tail shortening, removal of the 5′ cap, or RNA cleavage and degradation. Recognition can involve the RNA’s folded shape as well as its letters; a bound protein can also prevent a degrading enzyme from accessing a cleavage site. The sequence region, RNA structure and molecular partners therefore help determine what a pattern can do. [Molecular Biology of the Cell, 7th ed., ch. 7, pp. 459–460](../sources.md#molecular-biology-of-the-cell-7th-edition)
+A sequence pattern can matter biologically when cellular molecules recognize it and change what happens to the RNA. In eukaryotic mRNAs, proteins bound to particular 3′-UTR sequences can influence poly-A-tail shortening, removal of the 5′ cap, or RNA cleavage and degradation. Recognition can involve the RNA’s folded shape as well as its letters; a bound protein can also prevent a degrading enzyme from accessing a cleavage site. The sequence region, RNA structure and molecular partners therefore help determine what a pattern can do. [Molecular Biology of the Cell, 7th ed., ch. 7, pp. 459–460](../../docs/sources.md#molecular-biology-of-the-cell-7th-edition)
 
-These interactions occur in a cellular setting. The relevant proteins must be present and active, and regulatory responses can differ between cell types or conditions. Identifying the same letters in two sequences does not establish the same molecular interaction or outcome in both. A sequence-only input does not identify all of these cellular conditions when the dataset omits them. [Molecular Biology of the Cell, 7th ed., ch. 7, p. 401](../sources.md#molecular-biology-of-the-cell-7th-edition)
+These interactions occur in a cellular setting. The relevant proteins must be present and active, and regulatory responses can differ between cell types or conditions. Identifying the same letters in two sequences does not establish the same molecular interaction or outcome in both. A sequence-only input does not identify all of these cellular conditions when the dataset omits them. [Molecular Biology of the Cell, 7th ed., ch. 7, p. 401](../../docs/sources.md#molecular-biology-of-the-cell-7th-edition)
 
 The scan creates **candidate sequence-pattern annotations** for the attention comparison. It searches the input sequence for three RNA-relevant patterns; it does not measure binding, modification, or a change in stability.
 
@@ -721,11 +721,11 @@ This biology connects the scan to a sequence of questions: are the pattern’s l
 
 `sequences.iupac_to_regex` converts each IUPAC symbol to its permitted letters in the DNA alphabet. For example, DRACH becomes `[AGT][AG]AC[ACT]`, with U represented as T to match the converted sequence. `sequences.find_iupac_matches` uses a regex lookahead to include overlapping occurrences. It returns zero-based, end-exclusive intervals: `start` is covered and `end` is the first position after the match. `sequences.scan_sequence_for_motifs` adds the pattern name to each span. Subsequent masks cover the entire matched span, including all five DRACH positions, rather than only its central A.
 
-These annotations depend only on sequence and require no external database call. The [CodonBERT source repository](https://github.com/Sanofi-Public/CodonBERT) links the stability task to [iCodon](https://www.nature.com/articles/s41598-022-15526-7), which studies coding-sequence codon composition. The [October 28 target trace](../run-records.md#2026-10-28-dataset-target-provenance) resolves the earlier uncertainty about the local label mapping: the released sequence/value observations match iCodon's within-profile standardized stability scores, as explained in the [target guide](data-and-targets.md#mrna-stability-standardized-decay-profiles). The released file omits the source profile identifiers, and this label verification does not establish UTR coverage. Presence or absence of these patterns therefore still needs interpretation in the context of the sequence region.
+These annotations depend only on sequence and require no external database call. The [CodonBERT source repository](https://github.com/Sanofi-Public/CodonBERT) links the stability task to [iCodon](https://www.nature.com/articles/s41598-022-15526-7), which studies coding-sequence codon composition. The [October 28 target trace](../../docs/run-records.md#2026-10-28-dataset-target-provenance) resolves the earlier uncertainty about the local label mapping: the released sequence/value observations match iCodon's within-profile standardized stability scores, as explained in the [target guide](../../docs/methods/data-and-targets.md#mrna-stability-standardized-decay-profiles). The released file omits the source profile identifiers, and this label verification does not establish UTR coverage. Presence or absence of these patterns therefore still needs interpretation in the context of the sequence region.
 
 ### Comparing attention at matched and other positions
 
-Return to [Comparing attention at matched and other positions](../../Code/stage1/Stage1_stability.ipynb#Comparing-attention-at-matched-and-other-positions) in the notebook.
+Return to [Comparing attention at matched and other positions](Stage1_stability.ipynb#Comparing-attention-at-matched-and-other-positions) in the notebook.
 
 `analysis.attention_motif_overlap` compares expanded attention scores at candidate-pattern positions with scores at the other covered positions in the same sequence. It forms the union of matched spans for the pooled comparison, counting each position once, then repeats the comparison separately for each pattern name. Match ends are clipped to the attention array's length. For a per-pattern comparison, the other-position group can include positions matching a different pattern.
 
@@ -790,7 +790,7 @@ Treat the p-values as **nominal**: they are the test's reported values without c
 
 ### Running the attention-motif analysis
 
-Return to [Running the attention-motif analysis](../../Code/stage1/Stage1_stability.ipynb#Running-the-attention-motif-analysis) in the notebook.
+Return to [Running the attention-motif analysis](Stage1_stability.ipynb#Running-the-attention-motif-analysis) in the notebook.
 
 The first execution follows one retained sequence through the complete pipeline for each nucleotide encoder in `ATTENTION_ENCODERS`: convert its alphabet for that encoder, extract attention, summarize the final layer, expand token scores, scan candidate patterns, compare groups, and plot the result. `embeddings.nucleotide_attention` performs the first four steps. The printed sequence and attention-array lengths help inspect coverage, but they are not an assertion that the coordinates agree for every input.
 
@@ -839,7 +839,7 @@ The table's label “fraction with nominal p < 0.05” refers only to crossing t
 
 ### Controlling the attention test for position and codons
 
-Return to [Controlling the attention test for position and codons](../../Code/stage1/Stage1_stability.ipynb#Controlling-the-attention-test-for-position-and-codons) in the notebook.
+Return to [Controlling the attention test for position and codons](Stage1_stability.ipynb#Controlling-the-attention-test-for-position-and-codons) in the notebook.
 
 The per-sequence rank test compares matched positions with every other position. Two properties of the attention arrays can make that comparison favor matches without any link to the patterns themselves: attention can depend on position, for example by concentrating near the start of a sequence, and codon-level encoders give all three nucleotides of a codon one shared score, while a pattern such as DRACH overlaps only some codons. `analysis.motif_permutation_test` shuffles matched labels within groups that preserve the number of matched positions in each 100-nucleotide bin or each identical fixed-triplet-and-offset group. These preserve selected counts, not arbitrary positional or contextual token effects.
 
@@ -879,6 +879,6 @@ The table reports $G$, the mean of the shuffled statistics, their difference (th
 
 ### Reusing the method on untranslated regions
 
-The notebook's [GTEx attention analysis](../../Code/stage1/Stage1_gtex.ipynb#Attention-at-candidate-patterns-in-3'-untranslated-regions) applies the same summary, pattern scan, comparison, and permutation functions to selected 3' untranslated regions using the single-nucleotide RNA encoders. The notebook owns its selection settings and saved results.
+The notebook's [GTEx attention analysis](Stage1_gtex.ipynb#Attention-at-candidate-patterns-in-3'-untranslated-regions) applies the same summary, pattern scan, comparison, and permutation functions to selected 3' untranslated regions using the single-nucleotide RNA encoders. The notebook owns its selection settings and saved results.
 
 The `strata="codon"` option still groups positions by the same nonoverlapping three-nucleotide block and offset within that block, beginning at the region's first nucleotide. Because these are untranslated regions, those blocks are sequence-context groups rather than biological codons or reading frames. The position null still uses 100-nucleotide bins; all coverage and permutation assumptions above continue to apply.

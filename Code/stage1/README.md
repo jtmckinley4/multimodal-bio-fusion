@@ -51,7 +51,7 @@ We also concatenate embeddings—append their feature columns—and fit the same
 
 The tracks therefore inform one another without forming a chain in which A proves B and B proves C. A pair can organize examples similarly yet add little predictive value when combined. A useful predictor can also have an attention summary that does not support the proposed biological explanation. We need those distinctions before deciding what alignment should mean or which fusion method to test.
 
-**Methods:** [Representation comparisons](../../docs/methods/representation-analysis.md#comparing-representations) · [Attention and candidate motifs](../../docs/methods/representation-analysis.md#attention-and-candidate-motifs).
+**Methods:** [Representation comparisons](representation-analysis.md#comparing-representations) · [Attention and candidate motifs](representation-analysis.md#attention-and-candidate-motifs).
 
 The stability notebook's **mRFP control** uses a [separate expression dataset](../../README.md#mrfp-expression-control), rather than a subset of the stability rows. Its nucleotide sequences differ while encoding the same red fluorescent protein. Protein encoders should receive identical strings while nucleotide encoders can respond to the codon differences. Stage 1 checks this input/embedding behavior; the [Stage 4 control](../stage4/README.md#mrfp-changing-the-nucleotide-sequence-while-keeping-the-protein-fixed) reuses the control to ask whether nucleotide representations help predict the expression differences.
 
@@ -87,6 +87,7 @@ Some composition-controlled values differ between the saved Stage 1 sources impo
 | --- | --- |
 | [Stage1_stability.ipynb](Stage1_stability.ipynb) | Stability prediction from coding-sequence inputs and their protein translations, plus the mRFP synonymous-recoding control |
 | [Stage1_gtex.ipynb](Stage1_gtex.ipynb) | Expression prediction across human tissues from the GTEx pilot's DNA windows, transcripts, and proteins |
+| [representation-analysis.md](representation-analysis.md) | Equations, worked examples, implementation links and interpretation limits for representation comparisons and exploratory attention analyses |
 | [build_gtex_pilot.py](build_gtex_pilot.py) | Rebuilds `datasets/GTEx_pilot.csv`; run from the repository root with `python Code/stage1/build_gtex_pilot.py` |
 | `embeddings/` | Saved embedding caches, one folder per dataset sample; local and ignored by Git |
 | `embeddings_legacy/` | Older caches from before the October 6 runs; local and ignored by Git |

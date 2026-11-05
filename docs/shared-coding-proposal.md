@@ -84,7 +84,7 @@ In [datasets.py](../Code/shared_code/datasets.py), `audit` assumes a scalar `lab
 
 ### Keep direction distinct from a symmetric display
 
-`pairwise_matrix` evaluates each pair once and mirrors the result. This is natural for CKA; `cca_retrieval` queries the second representation with the first, so its recall is directional. The [method guide already states the direction and mirrored display](methods/representation-analysis.md#canonical-correlation-and-cross-modal-retrieval). The improvement is to expose this assumption at the helper and output too, not to claim the behavior is undocumented or the saved values are wrong.
+`pairwise_matrix` evaluates each pair once and mirrors the result. This is natural for CKA; `cca_retrieval` queries the second representation with the first, so its recall is directional. The [method guide already states the direction and mirrored display](../Code/stage1/representation-analysis.md#canonical-correlation-and-cross-modal-retrieval). The improvement is to expose this assumption at the helper and output too, not to claim the behavior is undocumented or the saved values are wrong.
 
 Clarify the helper name/contract and retrieval labels. A tiny asymmetric callback can check which direction gets evaluated. Computing both directions or averaging them would change the reported experiment and needs a separate result-producing change.
 

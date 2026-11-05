@@ -3,6 +3,7 @@
 import sys
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -89,6 +90,97 @@ class GateTests(unittest.TestCase):
         self.assertEqual(answer["rows with a 3' region"], 1.0)
         self.assertEqual(answer["coding sequence in frame"], 1.0)
         self.assertIn("passes", answer["verdict"])
+        self.assertEqual(answer["targets present"], "target 100%")
+        self.assertEqual(answer["rows"], 200)
+        self.assertEqual(answer["median transcript nt"], 19)
+        self.assertEqual(answer["median cds nt"], 9)
+
+    def assert_blocked_before_regions(self, frame, spec=None):
+        """Invalid inputs remain reportable without constructing transcript regions."""
+        before = frame.copy(deep=True)
+        with patch.object(MB, "region_frame", side_effect=AssertionError("constructed regions")):
+            answer = MB.gate(frame, spec or self.spec)
+        self.assertFalse(answer["verdict"].startswith("passes"))
+        self.assertIn("blocked", answer["verdict"])
+        self.assertEqual(answer["rows"], len(frame))
+        self.assertTrue(np.isnan(answer["rows with a coding region"]))
+        pd.testing.assert_frame_equal(frame, before)
+        return answer
+
+    def test_missing_required_columns_block_before_region_construction(self):
+        frame = frame_of([("AAAAA", "ATGAAATAG", "CCCCC")] * 200)
+        for name in ("sequence", "cds", "target"):
+            with self.subTest(column=name):
+                answer = self.assert_blocked_before_regions(frame.drop(columns=[name]))
+                self.assertIn(f"missing required columns: {name}", answer["caveats"])
+                if name == "target":
+                    self.assertEqual(answer["targets present"], "none")
+
+    def test_invalid_targets_block_without_silently_selecting_finite_rows(self):
+        for value in (np.nan, np.inf, -np.inf, "not a measurement"):
+            for count in (1, 200):
+                with self.subTest(value=value, invalid_rows=count):
+                    targets = [value] * count + list(range(count, 200))
+                    frame = frame_of([("AAAAA", "ATGAAATAG", "CCCCC")] * 200,
+                                     target=targets)
+                    answer = self.assert_blocked_before_regions(frame)
+                    self.assertIn(f"target: {count} of 200 rows lack a finite numeric target",
+                                  answer["caveats"])
+                    if count == 200:
+                        self.assertEqual(answer["targets present"], "target 0%")
+
+    def test_each_declared_target_is_required(self):
+        spec = replace(self.spec, targets=("target", "second_target"))
+        frame = frame_of([("AAAAA", "ATGAAATAG", "CCCCC")] * 200)
+        answer = self.assert_blocked_before_regions(frame, spec)
+        self.assertIn("missing required columns: second_target", answer["caveats"])
+        frame["second_target"] = np.nan
+        answer = self.assert_blocked_before_regions(frame, spec)
+        self.assertIn("second_target: 200 of 200", answer["caveats"])
+
+    def test_empty_input_is_reported_without_region_or_length_errors(self):
+        frame = frame_of([("A", "ATG", "T")]).iloc[:0]
+        answer = self.assert_blocked_before_regions(frame)
+        self.assertIn("the dataset has no rows", answer["caveats"])
+
+    def test_missing_gene_values_do_not_hide_a_required_column_problem(self):
+        frame = frame_of([("A", "ATG", "T")] * 200, gene_names=[None] * 200)
+        answer = self.assert_blocked_before_regions(frame.drop(columns="cds"))
+        self.assertIn("missing required columns: cds", answer["caveats"])
+        self.assertEqual(answer["distinct genes"], 0)
+        self.assertEqual(answer["largest gene group"], 0)
+
+    def test_nullable_missing_target_is_reported_as_nonfinite(self):
+        target = pd.Series([pd.NA] + list(range(1, 200)), dtype="Float64")
+        frame = frame_of([("A", "ATG", "T")] * 200, target=target)
+        answer = self.assert_blocked_before_regions(frame)
+        self.assertIn("target: 1 of 200 rows lack a finite numeric target", answer["caveats"])
+
+    def test_numeric_string_labels_keep_the_existing_numeric_input_compatibility(self):
+        frame = frame_of([("AAAAA", "ATGAAATAG", "CCCCC")] * 200,
+                         target=[str(i / 10) for i in range(200)])
+        before = frame.copy(deep=True)
+        answer = MB.gate(frame, self.spec)
+        self.assertTrue(answer["verdict"].startswith("passes"))
+        self.assertEqual(answer["targets present"], "target 100%")
+        pd.testing.assert_frame_equal(frame, before)
+
+    def test_no_usable_coding_regions_cannot_pass_through_undefined_fractions(self):
+        frame = frame_of([("AAAAA", "ATGAAATAG", "CCCCC")] * 200)
+        frame["cds"] = [np.zeros(19, dtype=np.int8) for _ in range(200)]
+        answer = MB.gate(frame, self.spec)
+        self.assertEqual(answer["rows with a coding region"], 0.0)
+        self.assertFalse(answer["verdict"].startswith("passes"))
+        self.assertIn("no usable coding regions", answer["verdict"])
+
+    def test_mixed_coding_tracks_keep_the_existing_region_screening_policy(self):
+        frame = frame_of([("AAAAA", "ATGAAATAG", "CCCCC")] * 200)
+        frame.at[0, "cds"] = np.zeros(19, dtype=np.int8)
+        answer = MB.gate(frame, self.spec)
+        self.assertTrue(answer["verdict"].startswith("passes"))
+        self.assertEqual(answer["rows"], 200)
+        self.assertEqual(answer["rows with a coding region"], 199 / 200)
+        self.assertIn("0.5% of rows mark no coding region", answer["caveats"])
 
     def test_coding_sequences_with_no_regions_do_not_count_as_full_transcripts(self):
         frame = frame_of([("", "ATGAAATAG", "")] * 200,
