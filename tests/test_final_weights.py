@@ -1,6 +1,7 @@
 """Check final artifact publication with a fixed CPU model and no optimization."""
 import hashlib
 import json
+from copy import deepcopy
 import sys
 import tempfile
 import unittest
@@ -49,6 +50,131 @@ class FinalWeightTests(unittest.TestCase):
     def run_model(self, **kwargs):
         return train.run(self.streams, "concat", self.config, "cpu", self.folder, log=None,
                          builder=lambda *args, **options: self.model, **kwargs)
+
+    def identity(self):
+        # A custom contract keeps this publication fixture independent of research inputs.
+        return {
+            "schema": "fusion.run.v1", "config": asdict(self.config),
+            "variant": "concat", "benchmark": "fixture",
+            "inputs": {"encoders": {}}, "model": {"contract": "synthetic-v1"},
+            "loader": {"kind": "custom", "recovery": {
+                "train": {}, "val": {}, "test": {}}},
+        }
+
+    def test_versioned_identity_and_separate_producer_are_retained(self):
+        identity = self.identity()
+        producer = {"host": "synthetic-a", "device": "cpu"}
+        result = self.run_model(run_identity=identity, producer=producer)
+        payload = torch.load(self.weights, map_location="cpu", weights_only=True)
+        record = json.loads(self.record.read_text())
+        for saved in (payload, record, result.extra_fields):
+            self.assertEqual(saved["identity"], identity)
+            self.assertEqual(saved["producer"], producer)
+        self.assertEqual(self.fit.call_args.kwargs["run_identity"], identity)
+        self.assertEqual(self.fit.call_args.kwargs["producer"], producer)
+
+        # Reuse does not relabel the original producer as the consuming machine.
+        before = self.record.read_bytes(), self.weights.read_bytes()
+        self.fit.reset_mock()
+        reused = self.run_model(run_identity=identity, producer={"host": "synthetic-b"})
+        self.assertEqual(reused.extra_fields["producer"], producer)
+        self.fit.assert_not_called()
+        self.assertEqual(before, (self.record.read_bytes(), self.weights.read_bytes()))
+
+    def test_versioned_reuse_refuses_changed_inputs_model_or_loader(self):
+        identity = self.identity()
+        self.run_model(run_identity=identity)
+        before = self.record.read_bytes(), self.weights.read_bytes()
+        self.fit.reset_mock()
+        for field in ("inputs", "model", "loader"):
+            requested = deepcopy(identity)
+            requested[field]["changed_fixture_setting"] = True
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "identity does not match"):
+                self.run_model(run_identity=requested)
+            self.fit.assert_not_called()
+            self.assertEqual(before, (self.record.read_bytes(), self.weights.read_bytes()))
+
+    def test_versioned_request_preserves_historical_completed_result(self):
+        self.result().save(self.record)
+        before = self.record.read_bytes()
+        with self.assertRaisesRegex(ValueError, "no versioned computation identity"):
+            self.run_model(run_identity=self.identity())
+        self.fit.assert_not_called()
+        self.assertEqual(before, self.record.read_bytes())
+        self.assertFalse(self.weights.exists())
+
+    def test_versioned_completed_result_requires_full_identity_for_run_reuse(self):
+        for schema in ("fusion.run.v1", None, "", False, "future-version"):
+            result = self.result()
+            result.extra_fields["identity"] = {**self.identity(), "schema": schema}
+            result.save(self.record)
+            self.weights.write_bytes(b"preserved completed weights")
+            self.checkpoint.write_bytes(b"preserved leftover checkpoint")
+            before = {path.name: path.read_bytes() for path in self.folder.iterdir()}
+            with self.subTest(schema=schema):
+                with patch.object(torch, "manual_seed", side_effect=AssertionError("must not seed")):
+                    with patch.object(torch, "load", side_effect=AssertionError("must not deserialize")):
+                        with self.assertRaisesRegex(ValueError, "requires its full requested"):
+                            self.run_model()
+                self.fit.assert_not_called()
+                self.assertEqual(before, {path.name: path.read_bytes() for path in self.folder.iterdir()})
+                # Reading a record remains possible without claiming computation compatibility.
+                self.assertEqual(train.Result.load(self.record).extra_fields["identity"],
+                                 result.extra_fields["identity"])
+
+    def test_malformed_identity_declarations_never_downgrade_to_legacy_reuse(self):
+        for declared in ([], False, 0, "", "not-an-identity"):
+            result = self.result()
+            result.extra_fields["identity"] = declared
+            result.save(self.record)
+            before = self.record.read_bytes()
+            with self.subTest(identity=declared), self.assertRaisesRegex(ValueError, "malformed computation identity"):
+                self.run_model()
+            self.fit.assert_not_called()
+            self.assertEqual(before, self.record.read_bytes())
+            self.assertFalse(self.weights.exists())
+
+    def test_unversioned_identity_metadata_keeps_historical_read_compatibility(self):
+        for declared in (None, {}, {"config": asdict(self.config)}):
+            result = self.result()
+            result.extra_fields["identity"] = declared
+            result.save(self.record)
+            before = self.record.read_bytes()
+            with self.subTest(identity=declared):
+                self.run_model()
+                self.fit.assert_not_called()
+                self.assertEqual(before, self.record.read_bytes())
+                self.assertFalse(self.weights.exists())
+
+    def test_completed_record_takes_precedence_over_leftover_checkpoint(self):
+        self.result().save(self.record)
+        self.checkpoint.write_bytes(b"leftover checkpoint must not be inspected")
+        before = self.record.read_bytes(), self.checkpoint.read_bytes()
+        with patch.object(torch, "load", side_effect=AssertionError("completed reuse must not load weights")):
+            self.run_model()
+        self.fit.assert_not_called()
+        self.assertEqual(before, (self.record.read_bytes(), self.checkpoint.read_bytes()))
+
+    def test_unreadable_checkpoint_blocks_before_model_construction_or_seeding(self):
+        self.checkpoint.write_bytes(b"not a checkpoint")
+        with patch.object(torch, "manual_seed", side_effect=AssertionError("must not seed")):
+            with self.assertRaisesRegex(ValueError, "checkpoint could not be read"):
+                train.run(self.streams, "concat", self.config, "cpu", self.folder, log=None,
+                          builder=lambda *args, **kwargs: self.fail("must not construct model"))
+        self.fit.assert_not_called()
+        self.assertEqual(self.checkpoint.read_bytes(), b"not a checkpoint")
+        self.assertFalse(self.record.exists())
+        self.assertFalse(self.weights.exists())
+
+    def test_invalid_identity_does_not_create_a_result_directory(self):
+        folder = self.folder / "not-created"
+        identity = self.identity()
+        identity["schema"] = "unknown-version"
+        with self.assertRaises(ValueError):
+            train.run(self.streams, "concat", self.config, "cpu", folder,
+                      run_identity=identity, log=None)
+        self.assertFalse(folder.exists())
+        self.fit.assert_not_called()
 
     def test_best_state_is_linked_and_reused_without_fitting(self):
         result = self.run_model()

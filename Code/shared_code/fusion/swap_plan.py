@@ -136,7 +136,8 @@ def _validate_request(benchmark, config, selection_seed, original_encoders, swap
 
 
 def _plan_fit(*, benchmark, role, encoder_key, modality, variant, config, encoders,
-              folders, destination_directory, native_fallback, checkpoint_validator):
+              folders, destination_directory, native_fallback, checkpoint_validator,
+              identity_factory=None):
     destination = result_path(destination_directory, benchmark, variant, config).resolve()
     run = RunSpec(benchmark, role, encoder_key, modality, variant, dict(config), dict(encoders),
                   destination, "blocked", "Inspection did not complete")
@@ -158,12 +159,22 @@ def _plan_fit(*, benchmark, role, encoder_key, modality, variant, config, encode
             run.reason = "Canonical destination already exists; preserve it: " + detail
             return run
         if entry is not None:
+            identity = entry["data"].get("identity")
+            identity = {} if identity is None else identity
+            if not isinstance(identity, dict):
+                raise ValueError("Saved identity must be an object or an unidentified historical record")
+            if "schema" in identity and identity_factory is not None:
+                requested = identity_factory(benchmark, variant, dict(config), dict(encoders))
+                if identity != requested:
+                    raise ValueError("Saved full input/model/loader identity differs from this request")
             run.status = "reuse"
             run.source_path = entry["path"]
-            run.legacy_identity = entry["legacy"]
+            run.legacy_identity = "schema" not in identity
             run.reason = ("Compatible saved score record; reuse this actual path without a new fit. "
                           + ("Historical encoder/input identity is incomplete."
-                             if entry["legacy"] else "Recorded encoder mapping matches."))
+                             if run.legacy_identity else
+                             "Full identity matches." if identity_factory is not None else
+                             "Recorded identity only; current inputs were not checked."))
             return run
         for suffix, explanation in (
             (".weights.pt", "Final weights exist without a reusable completed result"),
@@ -180,6 +191,8 @@ def _plan_fit(*, benchmark, role, encoder_key, modality, variant, config, encode
                 run.reason = "Checkpoint not deserialized in metadata mode; compatibility preflight required."
             else:
                 requested = {"config": dict(config), "variant": variant, "benchmark": benchmark}
+                if identity_factory is not None:
+                    requested = identity_factory(benchmark, variant, dict(config), dict(encoders))
                 if checkpoint_validator(checkpoint, requested) is not None:
                     raise ValueError("Checkpoint validator must return None on success")
                 run.status = "resume"
@@ -231,7 +244,8 @@ def _check_selection_singles(plan, *, config, original_encoders, original_folder
 
 def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
                    original_destination, swaps, swap_root, selection_seed=0,
-                   positive_lambdas=(0.01, 0.5, 1.0), checkpoint_validator=None):
+                   positive_lambdas=(0.01, 0.5, 1.0), checkpoint_validator=None,
+                   identity_factory=None):
     """Plan all references and selected swaps for one manually chosen training seed.
 
     ``swaps`` contains (modality, encoder_key, needs_grid) triples. ``swap_root``
@@ -242,6 +256,10 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
     With no checkpoint_validator, checkpoint-only work remains blocked. A compute
     caller can supply a validator(path, requested_identity) that returns None only
     after checking the checkpoint schema and recorded recipe; it must not train.
+    Compute callers supply identity_factory(benchmark, variant, config, encoders)
+    to bind recovery and new-schema completed results to current input metadata.
+    New fits acquire their full identity after missing caches have been extracted;
+    legacy completed scores remain readable without opening arrays or inventing provenance.
     """
     config, original_encoders = dict(config), dict(original_encoders)
     swaps, penalties = tuple(swaps), tuple(positive_lambdas)
@@ -278,7 +296,7 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
             modality=variant.split(":")[1] if ":" in variant else None, variant=variant,
             config=recipe, encoders=original_encoders, folders=original_folders,
             destination_directory=original_destination, native_fallback=True,
-            checkpoint_validator=checkpoint_validator,
+            checkpoint_validator=checkpoint_validator, identity_factory=identity_factory,
         ))
     for modality, encoder_key, grid in swaps:
         mapping = {**original_encoders, modality: encoder_key}
@@ -290,6 +308,6 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
                 modality=modality, variant=variant,
                 config=recipe, encoders=mapping, folders=(directory,),
                 destination_directory=directory, native_fallback=False,
-                checkpoint_validator=checkpoint_validator,
+                checkpoint_validator=checkpoint_validator, identity_factory=identity_factory,
             ))
     return plan

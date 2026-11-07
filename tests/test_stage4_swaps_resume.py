@@ -76,7 +76,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
         self.assertTrue(all(run.status == "reuse" for run in self.plan().require_ready()))
 
     def fake_open(self, key, mapping):
-        stream = SimpleNamespace(key=key, encoders=dict(mapping))
+        stream = SimpleNamespace(key=key, encoders=dict(mapping), rows=object())
         self.opened.append(stream)
 
         def close():
@@ -87,7 +87,10 @@ class SwapResumeNotebookTests(unittest.TestCase):
         stream.close = close
         return stream
 
-    def fake_run(self, stream, variant, config, device, folder, *, tag):
+    def fake_run(self, stream, variant, config, device, folder, *, tag, run_identity, producer):
+        self.assertEqual(run_identity["variant"], variant)
+        self.assertEqual(run_identity["config"], vars(config))
+        self.assertEqual(producer, {"fixture": True})
         path = Path(folder) / (tag + ".json")
         self.calls.append((variant, config.seed, path, dict(stream.encoders)))
         if self.fail_at == len(self.calls):
@@ -114,6 +117,8 @@ class SwapResumeNotebookTests(unittest.TestCase):
             train=SimpleNamespace(TrainConfig=lambda **kw: SimpleNamespace(**{**RECIPE, **kw}),
                                   checkpoint_preflight=forbidden, run=self.fake_run),
             datasets=SimpleNamespace(blf_benchmark_rows=forbidden),
+            run_identity=SimpleNamespace(producer_record=lambda **kw: {"fixture": True}),
+            CACHE_VERIFICATION=object(),
             time=time, pd=pd, np=np, json=json, display=lambda value: None,
         )
         exec(compile(self.sources["swaps-training-defs"], "fixture orchestration definitions", "exec"), env)
@@ -124,6 +129,12 @@ class SwapResumeNotebookTests(unittest.TestCase):
         # Metadata inspection only, with invented folders and no real data paths.
         with redirect_stdout(io.StringIO()):
             exec(compile(self.sources["swaps-execution-plan"], "fixture metadata plan", "exec"), env)
+        # Only the downstream fit identity is stubbed; the metadata plan above
+        # must itself avoid current inputs for completed historical scores.
+        env["requested_identity"] = lambda key, variant, config, mapping, **kw: {
+            "benchmark": key, "variant": variant, "config": config,
+            "inputs": {"encoders": mapping},
+        }
 
     def execute_training_branch(self, env):
         guard = ast.parse(self.sources["fc1f77cc"]).body[0]

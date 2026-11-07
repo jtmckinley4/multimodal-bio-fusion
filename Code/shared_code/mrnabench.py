@@ -297,6 +297,62 @@ def _verdict(answer):
     return verdict, "; ".join(caveats)
 
 
+def checked_regions(keys, frames):
+    """Validate the whole requested cohort before preparing any producer's inputs.
+
+    Use current loaded frames, never a historical CSV verdict or a stale notebook
+    selection. The supplied-row minimum and existing in-frame row filter are kept.
+    A rejected selection stops the batch rather than silently changing its cohort.
+    """
+    if isinstance(keys, str):
+        raise ValueError("Select dataset keys as a sequence, not one string.")
+    keys = tuple(keys)
+    if not keys or len(set(keys)) != len(keys):
+        raise ValueError("Select at least one dataset, with no duplicate keys.")
+    problems = []
+    for key in keys:
+        if key not in DATASETS:
+            problems.append(f"{key}: unknown dataset")
+        elif key not in frames:
+            problems.append(f"{key}: no loaded frame; rerun the live dataset inspection")
+        else:
+            report = gate(frames[key], DATASETS[key])
+            if not report["verdict"].startswith("passes"):
+                problems.append(f"{key}: {report['verdict']}; {report['caveats']}")
+            elif report["rows"] < MINIMUM_ROWS:
+                problems.append(f"{key}: {report['rows']} supplied rows; "
+                                f"at least {MINIMUM_ROWS} are required")
+    if problems:
+        raise ValueError("Computation blocked: " + " | ".join(problems))
+
+    prepared = {}
+    for key in keys:
+        regions = region_frame(frames[key])
+        prepared[key] = regions.loc[regions["frame_problem"] == ""].reset_index(drop=True)
+    return prepared
+
+
+def regions_identity(prepared, settings):
+    """Fingerprint an in-memory handoff, not historical result provenance.
+
+    Bind ordered effective regions, targets and genes to the caller's settings.
+    Numeric targets use float.hex so close values remain distinct. This prevents
+    later notebook cells from treating a previous attempt's inputs as current.
+    """
+    payload = [settings]
+    for key, regions in prepared.items():
+        spec = DATASETS[key]
+        columns = ["sequence", "utr5", "cds", "utr3"]
+        strings = regions[columns].astype(str).values.tolist()
+        genes = (regions["gene"].astype(str).tolist() if "gene" in regions
+                 else [None] * len(regions))
+        targets = regions[list(spec.targets)].to_numpy(dtype=float)
+        rows = [values + [gene] + [float(value).hex() for value in target]
+                for values, gene, target in zip(strings, genes, targets)]
+        payload.append([key, list(spec.targets), rows])
+    return sequences_fingerprint(payload)
+
+
 REGION_NAMES = ("utr5", "cds", "utr3")
 
 

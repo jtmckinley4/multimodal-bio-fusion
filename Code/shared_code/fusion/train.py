@@ -272,6 +272,68 @@ def checkpoint_preflight(path, requested_identity):
     performs its own checks and loads state into the actual model and loaders.
     """
     path = Path(path)
+    if isinstance(requested_identity, dict) and "schema" in requested_identity:
+        from .run_identity import validate_identity
+        requested_identity = validate_identity(requested_identity)
+    saved = _read_checkpoint(path)
+    _validate_checkpoint_payload(saved, requested_identity, path)
+
+
+def _read_checkpoint(path):
+    """Read trusted local recovery state on CPU without modifying process RNGs."""
+    try:
+        # Training checkpoints contain Python/NumPy RNG tuples: trusted local files only.
+        return torch.load(path, map_location="cpu", weights_only=False)
+    except Exception as error:
+        raise ValueError(f"{path}: checkpoint could not be read; preserve this file: {error}") from error
+
+
+def _validate_adam_state(state, config, source, parameter_groups=None):
+    """Check saved Adam slots; actual parameter dimensions are known only after build."""
+    def require(condition, reason):
+        if not condition:
+            raise ValueError(f"{source}: checkpoint preflight failed: {reason}; preserve this file")
+
+    groups = state["param_groups"]
+    ids = [index for group in groups for index in group["params"]]
+    require(len(ids) == len(set(ids)), "duplicate optimiser parameter IDs")
+    require(bool(state["state"]), "post-epoch Adam moment state is empty")
+    settings = {"weight_decay": config.get("weight_decay"), "betas": (0.9, 0.999),
+                "eps": 1e-8, "amsgrad": False}
+    for group in groups:
+        require(all(group.get(key) == value for key, value in settings.items()),
+                "Adam settings differ from the requested training configuration")
+        require(all(not group.get(key, False) for key in
+                    ("maximize", "capturable", "differentiable", "decoupled_weight_decay")),
+                "unsupported Adam update settings")
+    parameters = {}
+    if parameter_groups is not None:
+        require(len(groups) == len(parameter_groups), "optimiser parameter group count differs")
+        for saved_group, group in zip(groups, parameter_groups):
+            require(len(saved_group["params"]) == len(group["params"]),
+                    "optimiser parameter group size differs")
+            parameters.update(zip(saved_group["params"], group["params"]))
+    for index, slot in state["state"].items():
+        require(type(index) is int and index in ids and isinstance(slot, dict),
+                "invalid Adam parameter slot")
+        require({"step", "exp_avg", "exp_avg_sq"} <= slot.keys(), "incomplete Adam moment state")
+        first, second, step = slot["exp_avg"], slot["exp_avg_sq"], slot["step"]
+        require(isinstance(first, torch.Tensor) and isinstance(second, torch.Tensor)
+                and first.shape == second.shape and first.dtype == second.dtype,
+                "Adam moment shapes or dtypes differ")
+        if isinstance(step, torch.Tensor):
+            require(step.numel() == 1, "invalid Adam step counter")
+            step = step.item()
+        require(isinstance(step, (int, float)) and not isinstance(step, bool)
+                and np.isfinite(step) and step > 0 and step == int(step), "invalid Adam step counter")
+        if index in parameters:
+            parameter = parameters[index]
+            require(first.shape == parameter.shape and first.dtype == parameter.dtype,
+                    "Adam moments differ from the constructed model parameter")
+
+
+def _validate_checkpoint_payload(saved, requested_identity, path):
+    """Check the same recovery contract before preparation and again before restoration."""
 
     def require(condition, reason):
         if not condition:
@@ -284,12 +346,6 @@ def checkpoint_preflight(path, requested_identity):
         return (isinstance(value, torch.Tensor) and value.dtype == torch.uint8
                 and value.ndim == 1 and value.numel() > 0)
 
-    try:
-        # Training checkpoints contain Python/NumPy RNG tuples, so this is the
-        # same trusted-local format accepted by fit(), not an untrusted upload.
-        saved = torch.load(path, map_location="cpu", weights_only=False)
-    except Exception as error:
-        raise ValueError(f"{path}: checkpoint could not be read; preserve this file: {error}") from error
     try:
         required = {"identity", "scheduler", "rng", "loaders", "model", "optimiser",
                     "best", "history", "epoch", "elapsed"}
@@ -362,6 +418,65 @@ def checkpoint_preflight(path, requested_identity):
                     require(byte_state(component["generator"]), f"invalid {split} shuffle generator")
                 if "epoch" in component:
                     require(integer(component["epoch"]), f"invalid {split} sampler epoch")
+        if "schema" in requested_identity:
+            from .run_identity import validate_identity
+            identity = validate_identity(requested_identity)
+            _validate_adam_state(optimiser, identity["config"], path)
+            schedule = saved["scheduler"]
+            schedule_fields = {"factor", "min_lrs", "patience", "cooldown", "eps", "last_epoch",
+                               "_last_lr", "mode_worse", "mode", "threshold", "threshold_mode",
+                               "best", "cooldown_counter", "num_bad_epochs"}
+            require(schedule_fields <= schedule.keys(), "incomplete scheduler recovery state")
+            defaults = inspect.signature(torch.optim.lr_scheduler.ReduceLROnPlateau).parameters
+            require("plateau_patience" in identity["config"],
+                    "requested configuration lacks scheduler patience")
+            expected_settings = {
+                "mode": "max", "patience": identity["config"]["plateau_patience"],
+                **{key: defaults[key].default for key in
+                   ("factor", "cooldown", "eps", "threshold", "threshold_mode")},
+            }
+            require(all(schedule[key] == value for key, value in expected_settings.items()),
+                    "scheduler settings differ from the requested training configuration")
+            groups = optimiser["param_groups"]
+            require(schedule["last_epoch"] == epoch + 1
+                    and integer(schedule["cooldown_counter"])
+                    and integer(schedule["num_bad_epochs"]), "invalid scheduler epoch/counters")
+            require(schedule["min_lrs"] == [defaults["min_lr"].default] * len(groups)
+                    and ("default_min_lr" not in schedule
+                         or schedule["default_min_lr"] == defaults["min_lr"].default),
+                    "scheduler minimum learning rates differ")
+            require(schedule["_last_lr"] == [group.get("lr") for group in groups]
+                    and all(isinstance(value, (int, float)) and np.isfinite(value) and value >= 0
+                            for value in schedule["_last_lr"]), "invalid scheduler learning rates")
+            require(schedule["mode_worse"] == -float("inf")
+                    and isinstance(schedule["best"], (int, float))
+                    and (np.isfinite(schedule["best"]) or schedule["best"] == -float("inf")),
+                    "invalid scheduler best score")
+            # Private generators validate serialized CPU states without touching global RNGs.
+            # Device-specific RNG payloads retain structural checks until actual restoration.
+            try:
+                torch.Generator(device="cpu").set_state(rng["torch"].cpu())
+                np.random.RandomState().set_state(rng["numpy"])
+                random.Random().setstate(rng["python"])
+            except (TypeError, ValueError, RuntimeError) as error:
+                raise ValueError(f"{path}: checkpoint preflight failed: invalid RNG recovery "
+                                 "state; preserve this file") from error
+            contract = identity["loader"]["recovery"]
+            for split, expected in contract.items():
+                actual = saved["loaders"][split]
+                require(actual.keys() == expected.keys(),
+                        f"{split} recovery components differ from the requested loader")
+                for name, component in expected.items():
+                    require(actual[name]["type"] == component["type"],
+                            f"{split} {name} recovery type differs")
+                    require(set(actual[name]) - {"type"} == set(component["fields"]),
+                            f"{split} {name} recovery fields differ")
+                    if "generator" in actual[name]:
+                        try:
+                            torch.Generator(device="cpu").set_state(actual[name]["generator"].cpu())
+                        except (TypeError, ValueError, RuntimeError) as error:
+                            raise ValueError(f"{path}: checkpoint preflight failed: invalid "
+                                             f"{split} {name} generator state; preserve this file") from error
     finally:
         del saved
 
@@ -375,6 +490,24 @@ def _check_result_identity(result, requested, path, builder, model_kwargs):
     """
     saved = {"config": result.config, "variant": result.variant,
              "benchmark": result.benchmark}
+    recorded = result.extra_fields.get("identity")
+    if recorded is not None and not isinstance(recorded, dict):
+        raise ValueError(f"{path}: completed result has a malformed computation identity; "
+                         "preserve this file and inspect its provenance")
+    if isinstance(recorded, dict) and "schema" in recorded and "schema" not in requested:
+        raise ValueError(f"{path}: versioned completed result requires its full requested "
+                         "computation identity; preserve this file or read it with Result.load")
+    if "schema" in requested:
+        from .run_identity import validate_identity
+        if not isinstance(recorded, dict) or "schema" not in recorded:
+            raise ValueError(f"{path}: completed result has no versioned computation identity; "
+                             "preserve it as historical evidence and use a separate destination")
+        recorded = validate_identity(recorded, config=result.config,
+                                     variant=result.variant, benchmark=result.benchmark)
+        if recorded != requested:
+            raise ValueError(f"{path}: saved computation identity does not match the requested "
+                             "run; preserve this file and use a different result tag or directory")
+        return False
     legacy_alias = False
     if result.variant == "IsoFormer" and result.benchmark == "gtex_pilot":
         from . import isoformer
@@ -480,7 +613,7 @@ def _restore_loaders(states, splits):
 
 
 def _save_checkpoint(path, epoch, model, optimiser, best, history, elapsed, *,
-                     scheduler=None, splits=None, identity=None, device="cpu"):
+                     scheduler=None, splits=None, identity=None, device="cpu", producer=None):
     """Write the run's state atomically, so an interrupted write cannot be resumed from."""
     path = Path(path)
     payload = {"epoch": epoch, "model": model.state_dict(),
@@ -493,6 +626,8 @@ def _save_checkpoint(path, epoch, model, optimiser, best, history, elapsed, *,
         payload["loaders"] = _loader_states(splits)
     if identity is not None:
         payload["identity"] = identity
+    if producer is not None:
+        payload["producer"] = producer
     payload["rng"] = _rng_state(device)
     temporary = path.with_name(path.name + ".partial")
     torch.save(payload, temporary)
@@ -510,6 +645,9 @@ def _save_weights(path, model, result):
                "best_epoch": result.best_epoch,
                "state_dict": {name: value.detach().cpu().clone()
                               for name, value in model.state_dict().items()}}
+    for key in ("identity", "producer"):
+        if key in result.extra_fields:
+            payload[key] = result.extra_fields[key]
     temporary = None
     try:
         with tempfile.NamedTemporaryFile(dir=path.parent, prefix=path.name + ".",
@@ -528,7 +666,7 @@ def _save_weights(path, model, result):
 
 
 def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_every=10,
-        loaders=None, keep_checkpoint=False, run_identity=None):
+        loaders=None, keep_checkpoint=False, run_identity=None, producer=None):
     """Train to the early stop, restore the best epoch, and score the test split.
 
     With a checkpoint path, the run is written there every checkpoint_every epochs and
@@ -536,8 +674,27 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
     direct callers remove it on success unless keep_checkpoint=True. New checkpoints retain
     scheduler, RNG and loader shuffle state at epoch boundaries. Custom stateful loaders or
     samplers can expose state_dict/load_state_dict; persistent worker RNG is not recoverable.
-    Older checkpoints remain usable with an explicit best-effort recovery warning.
+    Direct legacy callers without a versioned identity retain warned best-effort recovery.
+    Declared versioned runs require the complete recovery contract before restoration.
     """
+    identity = run_identity or _run_identity(
+        config, getattr(model, "fusion_name", type(model).__name__), streams.key)
+    strict = "schema" in identity
+    if strict:
+        from .run_identity import validate_identity, validate_loaders
+        identity = validate_identity(identity, config=asdict(config), benchmark=streams.key)
+    checkpoint = Path(checkpoint) if checkpoint else None
+    saved = _read_checkpoint(checkpoint) if checkpoint and checkpoint.exists() else None
+    if saved is not None:
+        # run() always supplies an identity, so its preflight is repeated on the
+        # payload actually restored. Only unspecified direct callers retain legacy recovery.
+        if run_identity is not None:
+            _validate_checkpoint_payload(saved, identity, checkpoint)
+        elif "identity" in saved:
+            if isinstance(saved["identity"], dict) and "schema" in saved["identity"]:
+                raise ValueError(f"{checkpoint}: a versioned checkpoint requires its full "
+                                 "requested computation identity; preserve this file")
+            _check_identity(saved["identity"], identity, checkpoint)
     torch.manual_seed(config.seed)
     np.random.seed(config.seed)
     random.seed(config.seed)
@@ -546,6 +703,8 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
         name: loader(streams, name, batch_size=config.batch_size, seed=config.seed,
                      modalities=getattr(model, "required_modalities", None))
         for name in ("train", "val", "test")}
+    if strict:
+        validate_loaders(identity, splits)
     criterion = loss_function(task)
     optimiser = torch.optim.Adam(model.parameters(), lr=config.lr,
                                  weight_decay=config.weight_decay)
@@ -553,19 +712,16 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
         optimiser, mode="max", patience=config.plateau_patience)
 
     model.to(device)
+    if strict and saved is not None:
+        _validate_adam_state(saved["optimiser"], identity["config"], checkpoint,
+                             parameter_groups=optimiser.param_groups)
     best = {"score": -float("inf"), "epoch": -1, "state": None}
     history, started, first_epoch, before = [], time.perf_counter(), 0, 0.0
-    checkpoint = Path(checkpoint) if checkpoint else None
-    identity = run_identity or _run_identity(
-        config, getattr(model, "fusion_name", type(model).__name__), streams.key)
     if checkpoint and any(getattr(batches, "persistent_workers", False)
                           for batches in splits.values()):
         warnings.warn("persistent DataLoader worker RNG is not checkpointed; resumed "
                       "trajectories may differ", RuntimeWarning, stacklevel=2)
-    if checkpoint and checkpoint.exists():
-        saved = torch.load(checkpoint, map_location="cpu", weights_only=False)
-        if "identity" in saved:
-            _check_identity(saved["identity"], identity, checkpoint)
+    if saved is not None:
         missing = [key for key in ("identity", "scheduler", "rng", "loaders") if key not in saved]
         if missing:
             warnings.warn(f"{checkpoint}: legacy checkpoint lacks {', '.join(missing)}; "
@@ -622,7 +778,7 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
         if checkpoint and epoch % checkpoint_every == 0:
             _save_checkpoint(checkpoint, epoch, model, optimiser, best, history,
                              before + time.perf_counter() - started, scheduler=schedule,
-                             splits=splits, identity=identity, device=device)
+                             splits=splits, identity=identity, device=device, producer=producer)
 
     model.load_state_dict(best["state"])
     truth, predicted, alpha = predict(model, splits["test"], device, task)
@@ -640,25 +796,40 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
         test_truth=np.asarray(truth).tolist(),
         test_prediction=([int(v) for v in predicted.argmax(axis=1)]
                          if task == "classification" else np.asarray(predicted).tolist()))
+    result.extra_fields["identity"] = identity
+    if producer is not None:
+        result.extra_fields["producer"] = producer
     if checkpoint and checkpoint.exists() and not keep_checkpoint:
         checkpoint.unlink()
     return result
 
 
 def run(streams, variant, config, device, results_dir, log=print,
-        require_predictions=False, builder=None, loaders=None, tag=None, **model_kwargs):
+        require_predictions=False, builder=None, loaders=None, tag=None,
+        run_identity=None, producer=None, **model_kwargs):
     """Train one variant, or return the run already on disk under the same settings.
 
     require_predictions refuses a stored run without per-row predictions; it never
     replaces completed evidence to supply an analysis with missing inputs.
     New fits save their best weights; missing historical weights never trigger retraining.
+    An explicit versioned identity enables strict computation matching. Producer metadata
+    records execution context separately and does not decide whether a result matches.
     """
     results_dir = Path(results_dir)
-    results_dir.mkdir(parents=True, exist_ok=True)
     tag = tag or (f"{streams.key}__{variant.replace(':', '-')}__lambda{config.entropy_lambda}"
                   f"__ch{config.channels}__{config.tconv}__seed{config.seed}")
     path = results_dir / f"{tag}.json"
-    identity = _run_identity(config, variant, streams.key)
+    if run_identity is None:
+        identity = _run_identity(config, variant, streams.key)
+    else:
+        from .run_identity import validate_identity, validate_model_request
+        identity = validate_identity(run_identity, config=asdict(config),
+                                     variant=variant, benchmark=streams.key)
+        validate_model_request(identity, builder=builder, model_kwargs=model_kwargs)
+    if producer is not None:
+        if not isinstance(producer, dict):
+            raise ValueError("producer must be a mapping")
+        producer = json.loads(json.dumps(producer, sort_keys=True, allow_nan=False))
     if path.exists():
         done = Result.load(path)
         legacy_alias = _check_result_identity(done, identity, path, builder, model_kwargs)
@@ -674,6 +845,9 @@ def run(streams, variant, config, device, results_dir, log=print,
     if weights_path.exists():
         raise FileExistsError(f"{weights_path}: weights already exist without a reusable result; "
                               "preserve them and inspect the interrupted publication before retrying")
+    if checkpoint.exists():
+        checkpoint_preflight(checkpoint, identity)
+    results_dir.mkdir(parents=True, exist_ok=True)
     if log:
         log(f"  {tag}: training")
     # Seed before building, so the seed fixes the initial weights as well as the batch order
@@ -686,7 +860,11 @@ def run(streams, variant, config, device, results_dir, log=print,
              else build(streams, variant, channels=config.channels, tconv=config.tconv,
                         **model_kwargs))
     result = fit(model, streams, config, device, log=log, loaders=loaders,
-                 checkpoint=checkpoint, keep_checkpoint=True, run_identity=identity)
+                 checkpoint=checkpoint, keep_checkpoint=True, run_identity=identity,
+                 producer=producer)
+    result.extra_fields["identity"] = identity
+    if producer is not None:
+        result.extra_fields["producer"] = producer
     result.extra_fields["model_artifact"] = _save_weights(weights_path, model, result)
     result.save(path, overwrite=False)  # Never replace a concurrently completed result.
     checkpoint.unlink(missing_ok=True)

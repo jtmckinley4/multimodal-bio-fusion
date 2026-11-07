@@ -220,3 +220,26 @@ def coverage(lengths, limit=CONTEXT_TOKENS):
 def write_manifest(path, **fields):
     """Record what a LucaOne run embedded, beside its cache, for the run record."""
     Path(path).write_text(json.dumps(fields, indent=2, sort_keys=True) + "\n")
+
+
+def read_cached(texts, seq_type, cache_path, checkpoint="default", limit=CONTEXT_TOKENS):
+    """Read an identified pooled cache without downloading, extracting or writing.
+
+    This is the entry point for new CPU probes of existing representations. A
+    missing or incompatible file stops the comparison instead of filling a cache.
+    Metadata binds ordered inputs, checkpoint, stream and context; it does not
+    recover an unrecorded historical checkpoint revision or execution environment.
+    """
+    texts = list(texts)
+    if not texts or seq_type not in {"gene", "prot"}:
+        raise ValueError("Supply nonempty inputs and a gene or prot stream.")
+    matrix = matrix_cache.read(
+        cache_path, _cache_metadata(checkpoint, seq_type, texts, limit),
+    )
+    if matrix is None:
+        raise FileNotFoundError(
+            f"Missing LucaOne cache: {cache_path}. This comparison never extracts embeddings."
+        )
+    if matrix.shape[1] == 0 or matrix.dtype.kind not in "fiu" or not np.isfinite(matrix).all():
+        raise ValueError(f"{cache_path} must contain finite numeric pooled vectors.")
+    return matrix

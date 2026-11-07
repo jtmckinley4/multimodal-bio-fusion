@@ -30,6 +30,20 @@ def forbidden(*args, **kwargs):
     raise AssertionError("A saved-results branch reached a producer or writer")
 
 
+def gate_row(**changes):
+    """An invented complete gate report; callers explicitly replace missing fields."""
+    row = {
+        "dataset": "synthetic", "rows": 10, "species": "invented", "measures": "invented",
+        "targets present": "target", "has cds track": True, "has splice track": True,
+        "rows with a coding region": 1, "rows with a 5' region": 1, "rows with a 3' region": 1,
+        "coding sequence in frame": 1, "median transcript nt": 12, "longest transcript nt": 20,
+        "median cds nt": 6, "distinct genes": 10, "largest gene group": 1,
+        "repeated sequences": 0.2, "split rule": "invented", "verdict": "passes", "caveats": "",
+    }
+    row.update(changes)
+    return row
+
+
 class NoProducer:
     def __getattr__(self, name):
         return forbidden
@@ -95,6 +109,28 @@ class HistoricalCSVTests(unittest.TestCase):
             self.read(numeric=("undeclared",))
         with self.assertRaises(ValueError):
             self.read(bounds={"model": (0, 1)})
+
+    def test_missing_numbers_require_an_explicit_policy_and_keep_raw_row_context(self):
+        for missing in ("", "nan", "NaN"):
+            with self.subTest(missing=missing):
+                self.path.write_text(f"model,score,seeds\nexample,{missing},3\n", encoding="utf-8")
+                before = self.path.read_bytes()
+                self.assertIsNone(self.read())
+
+                def allowed(row):
+                    self.assertEqual(row["seeds"], "3")
+                    return ("score",)
+
+                rows = self.read(missing_numeric=allowed)
+                self.assertTrue(pd.isna(rows[0]["score"]))
+                self.assertEqual(rows[0]["seeds"], 3)
+                self.assertEqual(self.path.read_bytes(), before)
+
+    def test_missing_policy_does_not_admit_infinity_text_or_out_of_bounds_values(self):
+        for value in ("inf", "-inf", "unknown", "1.2"):
+            with self.subTest(value=value):
+                self.path.write_text(f"model,score,seeds\nexample,{value},3\n", encoding="utf-8")
+                self.assertIsNone(self.read(missing_numeric=lambda row: ("score",)))
 
 
 class SavedNotebookBranchesTests(unittest.TestCase):
@@ -205,14 +241,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         )
         env["REGION_SETS"] = {"CDS only": ("cds",)}
         env["INPUTS"] = {"full transcript": ("rna", ("utr5", "cds", "utr3"))}
-        gate = {
-            "dataset": "synthetic", "rows": 10, "species": "invented", "measures": "invented",
-            "targets present": "target", "has cds track": True, "has splice track": True,
-            "rows with a coding region": 1, "rows with a 5' region": 1, "rows with a 3' region": 1,
-            "coding sequence in frame": 1, "median transcript nt": 12, "longest transcript nt": 20,
-            "median cds nt": 6, "distinct genes": 10, "largest gene group": 1,
-            "repeated sequences": 0.2, "split rule": "invented", "verdict": "passes", "caveats": "",
-        }
+        gate = gate_row()
         write_csv(self.folder / "gate.csv", tuple(gate), [gate])
         baseline = dict(dataset="synthetic", target="target", representation="CDS only",
                         **{"test r": 0.2, "spread": 0.01, "seeds": 3})
@@ -251,6 +280,106 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         self.assertIsNone(env["baselines"])
         self.assertEqual(len(self.displayed), 2)
         self.assertIn("valid saved gate", self.messages.getvalue())
+
+    def test_blocked_gate_diagnostics_display_beside_passing_rows_without_enabling_work(self):
+        env = self.halflife_fixture()
+        blocked = gate_row(
+            dataset="blocked", verdict="invalid input: full-transcript comparison blocked",
+            caveats="missing required columns: cds",
+        )
+        unavailable = (
+            "rows with a coding region", "rows with a 5' region", "rows with a 3' region",
+            "coding sequence in frame", "repeated sequences", "median transcript nt",
+            "longest transcript nt", "median cds nt",
+        )
+        blocked.update({column: "" if i % 2 else "NaN" for i, column in enumerate(unavailable)})
+        env["mrnabench"].DATASETS = {
+            name: SimpleNamespace(targets=("target",), measures="invented")
+            for name in ("synthetic", "blocked")
+        }
+        env["mrnabench"].MINIMUM_ROWS = 1
+        write_csv(self.folder / "gate.csv", tuple(blocked), [gate_row(), blocked])
+        before = self.snapshot()
+        for cell_id in ("8911ff86", "d2cdfe59"):
+            self.branch("tier3_halflife_te.ipynb", cell_id, env)
+        self.assertEqual(len(self.displayed), 2)
+        self.assertEqual(list(env["gate"].index), ["synthetic", "blocked"])
+        self.assertTrue(env["gate"].loc["blocked", list(unavailable)].isna().all())
+        self.assertEqual(env["gate"].loc["blocked", "caveats"], blocked["caveats"])
+
+        # This selection cell contains only metadata filtering and printing. It must
+        # use the saved verdict, without loading inputs or recomputing a live gate.
+        doc = json.loads((ROOT / "Code/stage4/tier3_halflife_te.ipynb").read_text(encoding="utf-8"))
+        cell = next(c for c in doc["cells"] if c["id"] == "c56eac35")
+        with redirect_stdout(self.messages), patch.object(Path, "mkdir", forbidden), \
+                patch.object(pd.DataFrame, "to_csv", forbidden):
+            exec(compile("".join(cell["source"]), "fixture:gate-selection", "exec"), env)
+        self.assertEqual(env["usable"], ["synthetic"])
+        self.assertEqual(env["held_back"], ["blocked"])
+        self.assertEqual(before, self.snapshot())
+
+    def test_no_usable_coding_regions_admits_only_undefined_region_fractions(self):
+        env = self.halflife_fixture()
+        row = gate_row(
+            verdict="no usable coding regions: not a full-transcript test",
+            caveats="no rows have an interpretable coding-region track",
+            **{"rows with a coding region": 0, "rows with a 5' region": "",
+               "rows with a 3' region": "nan", "coding sequence in frame": "NaN",
+               "median cds nt": 0},
+        )
+        write_csv(self.folder / "gate.csv", tuple(row), [row])
+        before = self.snapshot()
+        self.branch("tier3_halflife_te.ipynb", "8911ff86", env)
+        self.assertIsNotNone(env["gate"])
+        self.assertTrue(pd.isna(env["gate"].loc["synthetic", "rows with a 3' region"]))
+        self.assertEqual(env["gate"].loc["synthetic", "rows with a coding region"], 0)
+        self.assertEqual(before, self.snapshot())
+        for changes in ({"median transcript nt": ""}, {"rows with a coding region": 0.5}):
+            with self.subTest(changes=changes):
+                malformed = {**row, **changes}
+                write_csv(self.folder / "gate.csv", tuple(malformed), [malformed])
+                self.branch("tier3_halflife_te.ipynb", "8911ff86", env)
+                self.assertIsNone(env["gate"])
+
+    def test_passing_or_unexplained_gate_cannot_hide_missing_diagnostics(self):
+        env = self.halflife_fixture()
+        for verdict, caveats in (
+            ("passes", ""),
+            ("passes: full transcript, regions and grouped splits all present", "a caveat"),
+            ("invalid input: full-transcript comparison blocked", "   "),
+            ("some unknown blocked verdict", "missing input"),
+        ):
+            with self.subTest(verdict=verdict, caveats=caveats):
+                row = gate_row(verdict=verdict, caveats=caveats, **{"median transcript nt": ""})
+                write_csv(self.folder / "gate.csv", tuple(row), [row])
+                before = self.snapshot()
+                self.branch("tier3_halflife_te.ipynb", "8911ff86", env)
+                self.assertIsNone(env["gate"])
+                self.assertEqual(before, self.snapshot())
+
+    def test_blocked_gate_keeps_numeric_metadata_bounds_and_coverage_strict(self):
+        env = self.halflife_fixture()
+        blocked = gate_row(
+            verdict="invalid input: full-transcript comparison blocked",
+            caveats="missing required columns: cds", **{"median transcript nt": ""},
+        )
+        cases = [
+            [{**blocked, **changes}]
+            for changes in (
+                {"rows": ""}, {"distinct genes": "nan"}, {"largest gene group": ""},
+                {"median transcript nt": "inf"}, {"median transcript nt": "unknown"},
+                {"rows with a 5' region": 1.5}, {"rows": -1}, {"rows": 2.5},
+                {"dataset": "unexpected"},
+            )
+        ]
+        cases.append([blocked, blocked])
+        for index, rows in enumerate(cases):
+            with self.subTest(case=index):
+                write_csv(self.folder / "gate.csv", tuple(blocked), rows)
+                before = self.snapshot()
+                self.branch("tier3_halflife_te.ipynb", "8911ff86", env)
+                self.assertIsNone(env["gate"])
+                self.assertEqual(before, self.snapshot())
 
     def test_invalid_encoder_table_does_not_prevent_saved_gain_display(self):
         env = self.halflife_fixture()

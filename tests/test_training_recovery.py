@@ -110,7 +110,23 @@ class TrainingRecoveryTests(unittest.TestCase):
                     collate_fn=tiny_collate)
         return made
 
-    def interrupt(self, path, epoch_sampler=False):
+    def identity(self, epoch_sampler):
+        generator = {"type": "torch.utils.data.dataloader.DataLoader", "fields": ["generator"]}
+        sampler = {"type": "torch.utils.data.sampler.RandomSampler", "fields": ["generator"]}
+        recovery = {name: {"loader": generator} for name in ("train", "val", "test")}
+        if epoch_sampler:
+            recovery["train"] = {"batch_sampler": {
+                "type": f"{EpochBatches.__module__}.EpochBatches", "fields": ["epoch"]}}
+        else:
+            recovery["train"].update({"sampler": sampler, "batch_sampler.sampler": sampler})
+        return {
+            "schema": "fusion.run.v1", "config": asdict(self.config),
+            "variant": "tiny", "benchmark": self.streams.key,
+            "inputs": {"encoders": {}}, "model": {"contract": "synthetic-v1"},
+            "loader": {"kind": "custom", "recovery": recovery},
+        }
+
+    def interrupt(self, path, epoch_sampler=False, identity=None):
         save = train._save_checkpoint
 
         def save_then_interrupt(*args, **kwargs):
@@ -122,18 +138,19 @@ class TrainingRecoveryTests(unittest.TestCase):
             with self.assertRaises(Interrupted):
                 train.fit(self.model(), self.streams, self.config, "cpu", log=None,
                           loaders=self.loaders(epoch_sampler), checkpoint=path,
-                          checkpoint_every=1, keep_checkpoint=True)
+                          checkpoint_every=1, keep_checkpoint=True, run_identity=identity)
 
     def test_resume_matches_uninterrupted_dropout_shuffle_and_scheduler_decay(self):
-        for epoch_sampler in (False, True):
-            with self.subTest(epoch_sampler=epoch_sampler), tempfile.TemporaryDirectory() as d:
+        for epoch_sampler, versioned in ((False, False), (True, False), (False, True), (True, True)):
+            with self.subTest(epoch_sampler=epoch_sampler, versioned=versioned), tempfile.TemporaryDirectory() as d:
                 full_path, resumed_path = Path(d) / "full.pt", Path(d) / "resumed.pt"
+                identity = self.identity(epoch_sampler) if versioned else None
                 # Constant validation makes every epoch after the first decay the LR.
                 with patch.object(train, "score", return_value=0.5):
                     full = train.fit(self.model(), self.streams, self.config, "cpu", log=None,
                                      loaders=self.loaders(epoch_sampler), checkpoint=full_path,
-                                     checkpoint_every=1, keep_checkpoint=True)
-                    self.interrupt(resumed_path, epoch_sampler)
+                                     checkpoint_every=1, keep_checkpoint=True, run_identity=identity)
+                    self.interrupt(resumed_path, epoch_sampler, identity)
                     # Simulate unrelated notebook work and fresh loader/model construction.
                     torch.rand(29)
                     np.random.normal(size=31)
@@ -141,7 +158,7 @@ class TrainingRecoveryTests(unittest.TestCase):
                     resumed = train.fit(self.model(), self.streams, self.config, "cpu", log=None,
                                         loaders=self.loaders(epoch_sampler),
                                         checkpoint=resumed_path, checkpoint_every=1,
-                                        keep_checkpoint=True)
+                                        keep_checkpoint=True, run_identity=identity)
                 self.assertEqual(full.history, resumed.history)
                 self.assertEqual(full.test_prediction, resumed.test_prediction)
                 self.assertLess(full.history[-1]["lr"], full.history[0]["lr"])
@@ -249,8 +266,10 @@ class CheckpointPreflightTests(unittest.TestCase):
         self.config = train.TrainConfig(max_epochs=5, seed=1)
         self.identity = {"config": asdict(self.config), "benchmark": "fixture", "variant": "concat"}
         model = nn.Linear(2, 1)
-        optimiser = torch.optim.Adam(model.parameters(), lr=self.config.lr)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimiser, mode="max")
+        optimiser = self.fixture_optimiser(model)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimiser, mode="max", patience=self.config.plateau_patience)
+        scheduler.step(.5)
         splits = {
             name: SimpleNamespace(generator=torch.Generator().manual_seed(index))
             for index, name in enumerate(("train", "val", "test"))
@@ -264,6 +283,230 @@ class CheckpointPreflightTests(unittest.TestCase):
                 1.25, scheduler=scheduler, splits=splits, identity=self.identity,
             )
         self.payload = torch.load(self.path, map_location="cpu", weights_only=False)
+
+    def fixture_optimiser(self, model):
+        optimiser = torch.optim.Adam(model.parameters(), lr=self.config.lr,
+                                     weight_decay=self.config.weight_decay)
+        # Hand-written state exercises checkpoint validation without optimization.
+        # The unused bias deliberately has no slots, as real models may have unused layers.
+        parameter = next(model.parameters())
+        optimiser.state[parameter] = {"step": torch.tensor(1.0),
+                                      "exp_avg": torch.zeros_like(parameter),
+                                      "exp_avg_sq": torch.zeros_like(parameter)}
+        return optimiser
+
+    def versioned_identity(self):
+        # Explicit expected recovery state, independent of the producer implementation.
+        recovery = {
+            name: {"loader": {"type": "types.SimpleNamespace", "fields": ["generator"]}}
+            for name in ("train", "val", "test")
+        }
+        return {
+            **self.identity, "schema": "fusion.run.v1", "inputs": {"encoders": {}},
+            "model": {"contract": "synthetic-v1"},
+            "loader": {"kind": "custom", "recovery": recovery},
+        }
+
+    def test_versioned_checkpoint_requires_every_declared_loader_component(self):
+        identity = self.versioned_identity()
+        payload = deepcopy(self.payload)
+        payload["identity"] = identity
+        payload["producer"] = {"host": "synthetic-producer"}
+        torch.save(payload, self.path)
+        self.inspect(identity)
+        for split in ("train", "val", "test"):
+            missing = deepcopy(payload)
+            missing["loaders"][split] = {}
+            torch.save(missing, self.path)
+            with self.subTest(split=split), self.assertRaisesRegex(ValueError, "recovery components"):
+                self.inspect(identity)
+
+    def test_versioned_checkpoint_checks_component_type_and_complete_state_fields(self):
+        identity = self.versioned_identity()
+        identity["loader"]["recovery"]["train"]["loader"]["fields"] = ["epoch", "generator"]
+        payload = deepcopy(self.payload)
+        payload["identity"] = identity
+        payload["loaders"]["train"]["loader"]["epoch"] = 2
+        torch.save(payload, self.path)
+        self.inspect(identity)
+        for change in ("type", "epoch", "generator", "extra_state"):
+            altered = deepcopy(payload)
+            component = altered["loaders"]["train"]["loader"]
+            if change == "type":
+                component["type"] = "another.Loader"
+            elif change == "extra_state":
+                component["state_dict"] = {"unrequested": 1}
+            else:
+                del component[change]
+            torch.save(altered, self.path)
+            with self.subTest(change=change), self.assertRaisesRegex(ValueError, "recovery (type|fields)"):
+                self.inspect(identity)
+
+    def test_run_blocks_incomplete_legacy_checkpoint_before_preparation(self):
+        payload = deepcopy(self.payload)
+        del payload["scheduler"]
+        torch.save(payload, self.path)
+        before = self.path.read_bytes()
+        with ExitStack() as stack:
+            forbidden = AssertionError("invalid recovery must fail before preparation")
+            for module, name in ((torch, "manual_seed"), (np.random, "seed"),
+                                 (random, "seed"), (train, "build"), (train, "fit")):
+                stack.enter_context(patch.object(module, name, side_effect=forbidden))
+            with self.assertRaisesRegex(ValueError, "missing fields: scheduler"):
+                train.run(SimpleNamespace(key="fixture"), "concat", self.config, "cpu",
+                          self.path.parent, tag="fixture", log=None)
+        self.assertEqual(before, self.path.read_bytes())
+        self.assertEqual(list(self.path.parent.iterdir()), [self.path])
+
+    def test_strict_fit_rechecks_payload_before_rng_model_or_optimizer_restoration(self):
+        identity = self.versioned_identity()
+        payload = deepcopy(self.payload)
+        payload["identity"] = identity
+        payload["loaders"]["train"] = {}
+        torch.save(payload, self.path)
+        model = nn.Linear(2, 1)
+        before = self.path.read_bytes()
+        with ExitStack() as stack:
+            forbidden = AssertionError("strict restore must validate first")
+            for module, name in ((torch, "manual_seed"), (torch.optim, "Adam"),
+                                 (model, "to"), (model, "load_state_dict"),
+                                 (train, "_restore_loaders"), (train, "_restore_rng")):
+                stack.enter_context(patch.object(module, name, side_effect=forbidden))
+            with self.assertRaisesRegex(ValueError, "recovery components"):
+                train.fit(model, SimpleNamespace(key="fixture", task="regression"),
+                          self.config, "cpu", checkpoint=self.path, run_identity=identity,
+                          log=None)
+        self.assertEqual(before, self.path.read_bytes())
+
+    def test_direct_legacy_fit_cannot_weaken_a_versioned_checkpoint_contract(self):
+        payload = deepcopy(self.payload)
+        payload["identity"] = self.versioned_identity()
+        torch.save(payload, self.path)
+        model = nn.Linear(2, 1)
+        model.fusion_name = "concat"
+        before = self.path.read_bytes()
+        with patch.object(torch, "manual_seed", side_effect=AssertionError("must not seed")):
+            with self.assertRaisesRegex(ValueError, "versioned checkpoint requires its full"):
+                train.fit(model, SimpleNamespace(key="fixture", task="regression"),
+                          self.config, "cpu", checkpoint=self.path, log=None)
+        self.assertEqual(before, self.path.read_bytes())
+
+    def test_explicit_legacy_identity_rechecks_payload_in_actual_restore_path(self):
+        payload = deepcopy(self.payload)
+        del payload["scheduler"]
+        torch.save(payload, self.path)
+        model = nn.Linear(2, 1)
+        before = self.path.read_bytes()
+        with patch.object(torch, "manual_seed", side_effect=AssertionError("must not seed")):
+            with self.assertRaisesRegex(ValueError, "missing fields: scheduler"):
+                train.fit(model, SimpleNamespace(key="fixture", task="regression"),
+                          self.config, "cpu", checkpoint=self.path, run_identity=self.identity,
+                          log=None)
+        self.assertEqual(before, self.path.read_bytes())
+
+    def test_checkpoint_producer_is_stored_separately_from_matching_identity(self):
+        identity = self.versioned_identity()
+        model = nn.Linear(2, 1)
+        optimiser = self.fixture_optimiser(model)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimiser, mode="max", patience=self.config.plateau_patience)
+        scheduler.step(.5)
+        splits = {name: SimpleNamespace(generator=torch.Generator())
+                  for name in ("train", "val", "test")}
+        producer = {"host": "synthetic-a", "device": "cpu"}
+        train._save_checkpoint(
+            self.path, 0, model, optimiser,
+            {"score": .5, "epoch": 0, "state": model.state_dict()},
+            [{"epoch": 0}], 1.25, scheduler=scheduler, splits=splits,
+            identity=identity, producer=producer)
+        payload = torch.load(self.path, map_location="cpu", weights_only=False)
+        self.assertEqual(payload["identity"], identity)
+        self.assertEqual(payload["producer"], producer)
+        self.inspect(identity)
+
+    def test_versioned_scheduler_requires_complete_matching_state(self):
+        identity = self.versioned_identity()
+        original = deepcopy(self.payload)
+        original["identity"] = identity
+        changes = (
+            {"patience": self.config.plateau_patience + 1}, {"mode": "min"},
+            {"last_epoch": 0}, {"num_bad_epochs": -1}, {"_last_lr": [999.0]},
+            {"best": float("nan")}, {"min_lrs": [0.1]},
+        )
+        for change in changes:
+            payload = deepcopy(original)
+            payload["scheduler"].update(change)
+            torch.save(payload, self.path)
+            with self.subTest(change=change), self.assertRaisesRegex(ValueError, "scheduler"):
+                self.inspect(identity)
+        for field in original["scheduler"]:
+            if field == "default_min_lr":  # Optional across supported PyTorch versions.
+                continue
+            payload = deepcopy(original)
+            del payload["scheduler"][field]
+            torch.save(payload, self.path)
+            with self.subTest(missing=field), self.assertRaisesRegex(ValueError, "incomplete scheduler"):
+                self.inspect(identity)
+
+    def test_versioned_rng_checks_validate_private_generators_without_mutation(self):
+        identity = self.versioned_identity()
+        original = deepcopy(self.payload)
+        original["identity"] = identity
+        changes = {
+            "torch": torch.zeros(2, dtype=torch.uint8),
+            "numpy": ("unknown-generator", np.zeros(624, dtype=np.uint32), 0, 0, 0.0),
+            "python": (99, tuple(range(625)), None),
+        }
+        for field, value in changes.items():
+            payload = deepcopy(original)
+            payload["rng"][field] = value
+            torch.save(payload, self.path)
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "invalid RNG recovery"):
+                self.inspect(identity)
+        original["loaders"]["train"]["loader"]["generator"] = torch.zeros(2, dtype=torch.uint8)
+        torch.save(original, self.path)
+        with self.assertRaisesRegex(ValueError, "invalid train loader generator"):
+            self.inspect(identity)
+
+    def test_versioned_adam_state_rejects_missing_or_malformed_slots_and_settings(self):
+        identity = self.versioned_identity()
+        original = deepcopy(self.payload)
+        original["identity"] = identity
+        for change in ("empty", "missing_step", "missing_moment", "bad_step", "shape", "dtype",
+                       "unknown_id", "settings"):
+            payload = deepcopy(original)
+            optimiser = payload["optimiser"]
+            slot = optimiser["state"][0]
+            if change == "empty":
+                optimiser["state"] = {}
+            elif change == "missing_step":
+                del slot["step"]
+            elif change == "missing_moment":
+                del slot["exp_avg_sq"]
+            elif change == "bad_step":
+                slot["step"] = torch.tensor(0.0)
+            elif change == "shape":
+                slot["exp_avg_sq"] = torch.zeros(99)
+            elif change == "dtype":
+                slot["exp_avg_sq"] = slot["exp_avg_sq"].double()
+            elif change == "unknown_id":
+                optimiser["state"][999] = optimiser["state"].pop(0)
+            else:
+                optimiser["param_groups"][0]["weight_decay"] = 99
+            torch.save(payload, self.path)
+            with self.subTest(change=change), self.assertRaisesRegex(ValueError, "Adam"):
+                self.inspect(identity)
+
+    def test_actual_optimizer_parameter_shapes_are_checked_without_restoration(self):
+        state = deepcopy(self.payload["optimiser"])
+        state["state"][0]["exp_avg"] = torch.zeros(99)
+        state["state"][0]["exp_avg_sq"] = torch.zeros(99)
+        model = nn.Linear(2, 1)
+        optimiser = self.fixture_optimiser(model)
+        with patch.object(optimiser, "load_state_dict", side_effect=AssertionError("must not restore")):
+            with self.assertRaisesRegex(ValueError, "constructed model parameter"):
+                train._validate_adam_state(state, asdict(self.config), self.path,
+                                           parameter_groups=optimiser.param_groups)
 
     def inspect(self, identity=None):
         before = self.path.read_bytes() if self.path.exists() else None

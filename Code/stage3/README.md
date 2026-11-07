@@ -4,6 +4,8 @@ Stage 1 examined what frozen encoder representations make accessible to simple p
 
 The first four notebooks connect data preparation, token representations, fusion, and prediction. Their checks matter because a model can produce a plausible score even when its inputs do not represent the intended comparison. Early fits also provide research results, so Stage 3 and Stage 4 overlap: we build and inspect an implementation here, compare it more broadly in Stage 4, and return here when those comparisons expose a question about the implementation.
 
+These implementations support different claims. A common predictor compares representation usefulness; single-versus-combined inputs test predictive complementarity; alternative fusion operations test how to combine the same representations. Reproducing an operation, reproducing a paper's score, and explaining a biological mechanism are different outcomes. Stage 3 establishes what a local implementation actually computes so that [Stage 4](../stage4/README.md) can make the appropriate comparison.
+
 ## Building the baseline comparisons
 
 ### 1. Establish which benchmark data the models receive
@@ -56,6 +58,8 @@ For GTEx, notebook 04 reuses the pilot introduced in Stage 1, keeping its 30 tis
 
 The notebook implements successive cross-attention between streams at their own lengths, using frozen Nucleotide Transformer v2 100M for the genomic and transcript inputs and ESM-2 150M for protein. Its six input combinations compare DNA, RNA, and protein individually with DNA+protein, DNA+RNA, and all three on the same pilot split. Removing an input tests what it contributes within this setup; the six combinations are six model configurations, not six datasets.
 
+This is the local IsoFormer-style pilot. Its aggregator updates each available stream, applies normalization, then pools and concatenates the streams. The released Enformer implementation instead updates DNA through RNA and protein cross-attention and pools that DNA representation. The [source mapping](../stage4/RUNBOOK.md#released-computation-and-proposed-notebook) retains the distinction. Studying the released design can inform a focused test of our local method without treating the pilot as a reproduction of its full training procedure.
+
 The [October 19 pilot record](../../docs/run-records.md#2026-10-19-stage3-isoformer-gtex-isoformers-aggregator-on-the-gtex-pilot-frozen-encoders) reports higher average tissue Spearman correlation for DNA+RNA than RNA alone, while adding protein to DNA+RNA did not resolve a further improvement. This is one-seed evidence on a small pilot, with row-bootstrap intervals. Our frozen encoders, smaller training sample, checkpoint choice, and implementation adaptations differ from the paper, so the gap to its published scores cannot isolate the effect of freezing. Likewise, comparing this GTEx result with the fungal result does not isolate architecture: the data and prediction task change too.
 
 **Notebook:** [04 — LucaOne feasibility and IsoFormer-style GTEx comparison](04_lucaone_isoformer_check.ipynb).
@@ -64,7 +68,7 @@ The [October 19 pilot record](../../docs/run-records.md#2026-10-19-stage3-isofor
 
 Stage 4 extends these implementations to further benchmarks, encoder substitutions, and repeated comparisons. Stage 1 helps nominate encoders, Stage 2 specifies what we mean by agreement, and the trained comparisons test whether those choices improve prediction. A later result can therefore send us back to an input rule, a baseline, or an alignment interpretation; the stages are connected responsibilities rather than a one-way sequence.
 
-The current plan places the project's proposed designs after the baseline and dataset work. These notebooks are planned and do not yet exist:
+The recorded plan places the project's proposed designs after the baseline and dataset work. These notebooks are planned and do not yet exist; they identify possible implementation work, not a requirement to build every architecture before interpreting the current comparisons:
 
 | Planned notebook | Purpose |
 | --- | --- |
@@ -72,6 +76,8 @@ The current plan places the project's proposed designs after the baseline and da
 | `06_cross_attention_check.ipynb` | Develop cross-attention with the encoder choices informed by Stage 1. This is distinct from the IsoFormer-style pilot baseline in notebook 04. |
 
 The [Gantt workbook](../../docs/Research_Project_Plan_Gantt.xlsx), `Details` tasks 20, 21, and 25, records that sequence and its dependencies. The earlier baseline work corresponds to tasks 16, 17, 41, and 44. A planned date or an existing implementation does not establish that its evaluation is complete.
+
+The [current scope clarification](../stage4/RUNBOOK.md#current-investigation-scope) prioritizes explaining the retained experiments and choosing a comparison that distinguishes competing explanations. Full IsoFormer replication is deferred. Before another implementation, identify what a proposed operation should add beyond the relevant single encoder and simple fusion reference, what existing evidence cannot answer, and the computation needed to test that expectation. The later design can follow a biological task; the present notebooks do not establish one universally suitable fusion architecture.
 
 **Continue with:** [Stage 4 comparisons](../stage4/README.md). The guide explains which question each experiment adds; the [runbook](../stage4/RUNBOOK.md) handles execution coordination.
 

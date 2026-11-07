@@ -200,6 +200,47 @@ class GateTests(unittest.TestCase):
         self.assertAlmostEqual(MB.gate(frame, self.spec)["repeated sequences"], 0.75)
 
 
+class ComputationInputTests(unittest.TestCase):
+    def setUp(self):
+        self.frame = frame_of([("AAAAA", "ATGAAATAG", "CCCCC")] * 200)
+        self.minimum = patch.object(MB, "MINIMUM_ROWS", 100)
+        self.minimum.start()
+        self.addCleanup(self.minimum.stop)
+
+    def test_checked_regions_keeps_selection_and_valid_row_order(self):
+        frames = {key: self.frame.copy(deep=True) for key in MB.HALF_LIFE}
+        frames["rnahl-human"].at[0, "cds"] = np.zeros(19, dtype=np.int8)
+        selected = tuple(reversed(MB.HALF_LIFE))
+        prepared = MB.checked_regions(selected, frames)
+        self.assertEqual(tuple(prepared), selected)
+        self.assertEqual(prepared["rnahl-human"]["target"].tolist(), list(range(1, 200)))
+        self.assertEqual(len(frames["rnahl-human"]), 200)
+
+    def test_invalid_selection_is_not_silently_narrowed(self):
+        frames = {"rnahl-human": self.frame}
+        for selected in ((), ("unknown",), MB.HALF_LIFE,
+                         ("rnahl-human", "rnahl-human"), "rnahl-human"):
+            with self.subTest(selected=selected), self.assertRaises(ValueError):
+                MB.checked_regions(selected, frames)
+        invalid = self.frame.copy(deep=True)
+        invalid.at[0, "target"] = np.nan
+        with self.assertRaisesRegex(ValueError, "finite numeric target"):
+            MB.checked_regions(MB.HALF_LIFE, {**frames, "rnahl-mouse": invalid})
+
+    def test_current_data_and_supplied_row_minimum_are_checked(self):
+        with patch.object(MB, "MINIMUM_ROWS", 201), self.assertRaisesRegex(ValueError, "supplied rows"):
+            MB.checked_regions(("rnahl-human",), {"rnahl-human": self.frame})
+        prepared = MB.checked_regions(("rnahl-human",), {"rnahl-human": self.frame})
+        first = MB.regions_identity(prepared, {"seeds": (1, 2)})
+        self.assertEqual(first, MB.regions_identity(prepared, {"seeds": (1, 2)}))
+        self.assertNotEqual(first, MB.regions_identity(prepared, {"seeds": (2, 1)}))
+        for changed in (prepared["rnahl-human"].iloc[::-1].reset_index(drop=True),
+                        prepared["rnahl-human"].copy(deep=True)):
+            if changed.equals(prepared["rnahl-human"]):
+                changed.at[0, "target"] = np.nextafter(0.0, 1.0)
+            self.assertNotEqual(first, MB.regions_identity({"rnahl-human": changed}, {"seeds": (1, 2)}))
+
+
 class FeatureTests(unittest.TestCase):
     """The composition floor: in-frame codon counting, and nested region sets."""
 

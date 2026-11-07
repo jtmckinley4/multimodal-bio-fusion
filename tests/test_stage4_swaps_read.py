@@ -84,6 +84,10 @@ class SwapNotebookReadTests(unittest.TestCase):
             for cell in self.cells:
                 if cell["cell_type"] == "code" and cell["id"] not in omitted:
                     exec(compile("".join(cell["source"]), cell["id"], "exec"), namespace)
+                    if cell["id"] == "swaps-settings":
+                        # Test the reading branch even when the user last saved
+                        # the notebook's settings for an authorized compute run.
+                        namespace["READ_SAVED_RESULTS"] = True
         self.assertTrue(namespace["READ_SAVED_RESULTS"])
         self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
         self.assertEqual(namespace["STREAMS"], {})

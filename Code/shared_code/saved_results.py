@@ -13,13 +13,16 @@ from pathlib import Path
 
 def read_historical_csv(
     path, *, required, key, numeric=(), integers=(), expected_keys=None,
-    expected_values=None, bounds=None, report=print,
+    expected_values=None, bounds=None, missing_numeric=None, report=print,
 ):
     """Return validated rows, or report why this independent table is unavailable.
 
     ``key`` and ``expected_keys`` use tuples of column values. Numeric columns are
     converted to finite floats (or integers); other fields retain their saved text.
     ``bounds`` gives inclusive numeric limits, with None for an unbounded endpoint.
+    An optional ``missing_numeric(raw_row)`` policy names numeric columns where
+    blank/NaN means unavailable for that row. All other values remain strictly
+    validated; infinity is never accepted. Unavailable numbers remain NaN, not zero.
     No directory, result, provenance field, or replacement calculation is created.
     """
     path = Path(path)
@@ -56,7 +59,13 @@ def read_historical_csv(
             if identity in seen:
                 raise ValueError(f"duplicate entry: {identity}")
             seen.add(identity)
+            missing = set(missing_numeric(row)) if missing_numeric is not None else set()
+            if not missing.issubset(numeric | integers):
+                raise ValueError("Missing-number policy must name only declared numeric columns.")
             for column in numeric | integers:
+                if column in missing and row[column].strip().lower() in ("", "nan"):
+                    row[column] = math.nan
+                    continue
                 value = float(row[column])
                 if not math.isfinite(value):
                     raise ValueError(f"row {number}, {column}: nonfinite number")
@@ -66,6 +75,8 @@ def read_historical_csv(
                     value = int(value)
                 row[column] = value
             for column, (lower, upper) in bounds.items():
+                if math.isnan(row[column]):  # Only the explicit row policy can admit this.
+                    continue
                 if ((lower is not None and row[column] < lower)
                         or (upper is not None and row[column] > upper)):
                     raise ValueError(f"row {number}, {column}: outside {lower} to {upper}")
@@ -90,3 +101,29 @@ def read_historical_csv(
         "historical input, actual seed IDs and producer identity are not fully recorded."
     )
     return rows
+
+
+def gate_missing_diagnostics(row):
+    """Name diagnostics left uncomputed by a known, explained transcript-gate failure.
+
+    Called on raw CSV text. Row/gene counts remain required even for blocked input.
+    A missing value never changes the saved verdict or makes a dataset eligible.
+    """
+    if not row.get("caveats", "").strip():
+        return ()
+    if row.get("verdict") == "invalid input: full-transcript comparison blocked":
+        return (
+            "rows with a coding region", "rows with a 5' region", "rows with a 3' region",
+            "coding sequence in frame", "median transcript nt", "longest transcript nt",
+            "median cds nt", "repeated sequences",
+        )
+    if row.get("verdict") == "no usable coding regions: not a full-transcript test":
+        # These fractions have an empty denominator; the zero usable-row fraction
+        # and sequence-level summaries were still computed and must remain numeric.
+        try:
+            if float(row.get("rows with a coding region", "")) == 0:
+                return ("rows with a 5' region", "rows with a 3' region",
+                        "coding sequence in frame")
+        except ValueError:
+            pass  # The ordinary numeric checks will report a malformed fraction.
+    return ()

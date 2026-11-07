@@ -1,0 +1,228 @@
+{
+  "schema": "gtex-pilot-recovery.v1",
+  "record_id": "gtex-pilot-2026-11-05",
+  "status": "historically_reconstructed",
+  "benchmark": "gtex_pilot",
+  "recorded_date": "2026-11-05",
+  "purpose": "Qualified reuse of the inspected existing GTEx pilot matrices without re-embedding. This is a reconstruction, not an extraction-time manifest.",
+  "authorization": "The project owner authorized this recovery record and scoped reuse option; no embedding extraction or training was authorized.",
+  "source": {
+    "path": "datasets/GTEx_pilot.csv",
+    "sha256": "6d24f8176b662c5a767de653eed01699ae8a7a6143f3bcae56370a21e70d9963",
+    "git_blob": "4581d99f145d7c15eef73188411427aa8bb418fe"
+  },
+  "encoders": {
+    "dna": "ntv2_100m",
+    "rna": "ntv2_100m",
+    "prot": "esm2_150m"
+  },
+  "crop": {
+    "dna": null,
+    "rna": 12000,
+    "prot": 1022
+  },
+  "rows": {
+    "columns": [
+      "DNA",
+      "RNA",
+      "Protein",
+      "split"
+    ],
+    "count": 2000,
+    "sha256": "5f9ad4b59ab7b952220fc9d8c936a31047bcd9f0cf2340b72fbd5be89f163513"
+  },
+  "targets": {
+    "shape": [
+      2000,
+      30
+    ],
+    "dtype": "<f4",
+    "sha256": "68d6c8b278cb5e6a779ec47074cdc9c7de3084d0aa2ea6682d1e6b3aeb2a312a"
+  },
+  "tissues": [
+    "Adipose Tissue",
+    "Adrenal Gland",
+    "Bladder",
+    "Blood",
+    "Blood Vessel",
+    "Brain",
+    "Breast",
+    "Cervix Uteri",
+    "Colon",
+    "Esophagus",
+    "Fallopian Tube",
+    "Heart",
+    "Kidney",
+    "Liver",
+    "Lung",
+    "Muscle",
+    "Nerve",
+    "Ovary",
+    "Pancreas",
+    "Pituitary",
+    "Prostate",
+    "Salivary Gland",
+    "Skin",
+    "Small Intestine",
+    "Spleen",
+    "Stomach",
+    "Testis",
+    "Thyroid",
+    "Uterus",
+    "Vagina"
+  ],
+  "caches": {
+    "dna": {
+      "directory": "dna_ntv2_100m",
+      "metadata_sha256": "1ffb3ab5b9a7f3c612915a34baa3e034be93dedbd1fdcb6b4ef3d21f76cee638",
+      "reconstructed_input_sha256": "913435ca152ef14870dc8fb2dc78e073e53164aaa04fbd56250f0a8febd2b630",
+      "width": 512,
+      "total_tokens": 2000000,
+      "shards": [
+        {
+          "name": "shard_00000.npz",
+          "sha256": "faba3f14397a319a5553cdbd36c9b655077a3568ac1409327858459aad9eda1b"
+        },
+        {
+          "name": "shard_00001.npz",
+          "sha256": "f523fcfa79cf361479ee5fd20c9c8f36bd1dace58f64f38a85a3eda85204b114"
+        },
+        {
+          "name": "shard_00002.npz",
+          "sha256": "12ff5be987bed5adfc17b883f6dd91ba4e5c8ca3dc663a082e4a688625b23857"
+        },
+        {
+          "name": "shard_00003.npz",
+          "sha256": "11ca75596460bad574e8209bc73efa1e89cc4e4abc066f750e01aa1f1f24b9b9"
+        },
+        {
+          "name": "shard_00004.npz",
+          "sha256": "e020dee2d312b4c561cd57c2d3b75e3eee9f7c8c5051f3c2222eb14a319c320c"
+        },
+        {
+          "name": "shard_00005.npz",
+          "sha256": "c2b1a24f909bdd0e998925f837e928b3308488b0e2ecbb8be4bf87cc932354c9"
+        },
+        {
+          "name": "shard_00006.npz",
+          "sha256": "24dee5c0bd67a26c1fc08929a8df40ead32e5fdedede62db8f476d8af070f3be"
+        },
+        {
+          "name": "shard_00007.npz",
+          "sha256": "d38f0805325c0268f97ec3c30c563d8eb4cad65d92375737c4c2d4cf3d2f95c6"
+        }
+      ]
+    },
+    "rna": {
+      "directory": "rna_ntv2_100m",
+      "metadata_sha256": "1ffb3ab5b9a7f3c612915a34baa3e034be93dedbd1fdcb6b4ef3d21f76cee638",
+      "reconstructed_input_sha256": "13db77557dabaed84a5d737d2feb4565421342e3759e61669077737bc989eeca",
+      "width": 512,
+      "total_tokens": 776882,
+      "shards": [
+        {
+          "name": "shard_00000.npz",
+          "sha256": "5912ac62f86223ff2120643c74742fa9b8e8d10d15d2a4d322a072e691bbca7b"
+        },
+        {
+          "name": "shard_00001.npz",
+          "sha256": "ad14dfef10f72e8759b868b9ed34f37c6d279c4d0145a762e5a48809129c910c"
+        },
+        {
+          "name": "shard_00002.npz",
+          "sha256": "772b917667946bf6ab50b0928f0b4b7834d567183ce3ccd16be0d5f44f01e9a0"
+        },
+        {
+          "name": "shard_00003.npz",
+          "sha256": "347e46c4acf354a808915aecfabd6f0b580000e2d0c3c63a69a674694a5a435b"
+        },
+        {
+          "name": "shard_00004.npz",
+          "sha256": "10d48d5f34553ce87169c9d9f176fc70da5e8590e35e095fce21211fceeeb6ab"
+        },
+        {
+          "name": "shard_00005.npz",
+          "sha256": "53b909ab3e3f4b0846eaa2738a6d0ed60ab7550a7f8ffdb6756d6f2b0e8267d4"
+        },
+        {
+          "name": "shard_00006.npz",
+          "sha256": "9c0397371ba20e342c5b2983c5547d7ec92ef4c05f8e6165c57a08533b8c5719"
+        },
+        {
+          "name": "shard_00007.npz",
+          "sha256": "4e7d51e50d8fb394facb801563f0d53539da15da2358844265b37c32c4836e9f"
+        }
+      ]
+    },
+    "prot": {
+      "directory": "prot_esm2_150m",
+      "metadata_sha256": "b43cb5005859e482fcf36929a88c70fe9cc5b2d520e5a544fc5f3664360953dd",
+      "reconstructed_input_sha256": "e04a48358425ddb3e0f1513f43098b336f620d1dfddca67842839c32635dcba7",
+      "width": 640,
+      "total_tokens": 696364,
+      "shards": [
+        {
+          "name": "shard_00000.npz",
+          "sha256": "55117e9cafbea56e9e05408d54700f1b43163f595dab4c9213ce9de48d800027"
+        },
+        {
+          "name": "shard_00001.npz",
+          "sha256": "02382178a7c609687e65e822b05620fc12038b95608fcf6b7c798bf3a076211d"
+        },
+        {
+          "name": "shard_00002.npz",
+          "sha256": "31aa917cba7f5968d0f79e2d1a854e05357d0356a75bd4bbadba2b59b42e7546"
+        },
+        {
+          "name": "shard_00003.npz",
+          "sha256": "21e1ac1ce310722f607468f017de54b24fd4691b44028e73218b6b8055b9bd26"
+        },
+        {
+          "name": "shard_00004.npz",
+          "sha256": "77b06894b227ab6a4c4f3501f69b8e2b2e62906ab4c247506d81b0093c62747b"
+        },
+        {
+          "name": "shard_00005.npz",
+          "sha256": "5dbe8401a3d4ac2fe56dd07734b9256424b0192f59686fc2d9c44f58ccf547fe"
+        },
+        {
+          "name": "shard_00006.npz",
+          "sha256": "ea9d395c447c8ddbcbd767d79d19a8a333ea5db303b849b511e8f176396bb722"
+        },
+        {
+          "name": "shard_00007.npz",
+          "sha256": "b7cdc98fcc0f33add09ef9ad3cbd69e9ba52517fe0a59c41df43a7434b3a424d"
+        }
+      ]
+    }
+  },
+  "evidence": {
+    "extraction_notebook": "Code/stage3/04_lucaone_isoformer_check.ipynb",
+    "extraction_cell": "s4c12",
+    "historical_commits": {
+      "c4815c9": "c4815c9b66dc36021e207c272e3c2179096e697f",
+      "8b8dd12": "8b8dd12cc24ee9a59257c7910921f92d24fa120e",
+      "58b1058": "58b1058ff51da1ecdbec518e5d8f6852e1daadcc"
+    },
+    "unchanged_csv": "The tracked CSV matches its historical Git blob and the SHA-256 recorded in docs/run-records.md on October 28.",
+    "recipe": "Direct CSV row order; strip whitespace and uppercase; unchanged DNA window, RNA final 12000 bases, protein first 1022 residues; nucleotide U converted to T for NT.",
+    "stored_length_checks": "All 2000 rows in each of the three streams match reconstructed input token lengths in order; all 24 shard shapes and total-token counts match saved extraction output.",
+    "saved_target_checks": "All six budget300M seed0 test-truth arrays match the 1000-by-30 float32 targets after the historical stable attention-cost sort using all three streams. This does not verify embedding values.",
+    "reference_result_sha256": {
+      "gtex_pilot__dna+prot__heads8__budget300M__seed0.json": "605d8979497e289d71599fb7b623dfcce15739d9c2d510fa32bb0a51099954f4",
+      "gtex_pilot__dna+rna+prot__heads8__budget300M__seed0.json": "179b54aede09a8025eb5bfda1b83a4950e22b7d7ad83117502c39932c6f84b80",
+      "gtex_pilot__dna+rna__heads8__budget300M__seed0.json": "df858d2c7eb07bb04689935ac76a67d13184c78a1922386cf25f1fb0e48171b7",
+      "gtex_pilot__dna__heads8__budget300M__seed0.json": "78637267cfbb6bfff680bf28f1122361265125b220abf1a3990ebb53fd01bb77",
+      "gtex_pilot__prot__heads8__budget300M__seed0.json": "d8facd1943b6a2d9a0dcb4091cadf800a2709a4af45daddfc84d348ee0000576",
+      "gtex_pilot__rna__heads8__budget300M__seed0.json": "3a1c19c1048cde9f309b170bba9ee5a1b67ce42ffbcd2b0f7fbccaa499a2c44c"
+    },
+    "historical_writer": "The October 19 and October 22 extraction code never wrote ordered-input or shard hashes.",
+    "hash_evidence": "Shard and metadata SHA-256 values identify the current inspected files. Reconstructed input hashes were calculated from the retained CSV and recipe; they were not recovered from extraction-time records."
+  },
+  "limitations": [
+    "Equal token lengths and matching labels corroborate correspondence but cannot prove the numerical embeddings encode every claimed sequence.",
+    "The exact ESM-2 producing revision remains unknown; its empty recorded revision is preserved.",
+    "The original fit record describes Mac execution; the later saved extraction output records CUDA. These caches are not proven byte-identical to those consumed by the historical seed-0 fits.",
+    "Combining historical seed 0 with new fits on these matrices is a qualified pilot comparison, not demonstrated pure training-seed variation on proven identical historical embeddings."
+  ]
+}

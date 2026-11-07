@@ -1,0 +1,4479 @@
+{
+  "identity": {
+    "schema": "swap.paired-report.v1",
+    "benchmark": "mrna_stability",
+    "config": {
+      "lr": 3e-05,
+      "weight_decay": 1e-05,
+      "batch_size": 32,
+      "max_epochs": 500,
+      "early_stopping_patience": 20,
+      "plateau_patience": 5,
+      "entropy_lambda": 0.0,
+      "channels": 100,
+      "tconv": "equation",
+      "seed": 0
+    },
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "selection_seed": 0,
+    "best_singles": {
+      "nt500m": "unimodal:rna",
+      "hyenadna": "unimodal:rna",
+      "rinalmo": "unimodal-grid:rna",
+      "mrnafm": "unimodal:rna",
+      "calm": "unimodal:rna",
+      "esm2_35m": "unimodal:rna",
+      "esm2_150m": "unimodal:rna",
+      "protbert": "unimodal:prot"
+    },
+    "mil_lambda": 0.01,
+    "comparisons": [
+      {
+        "encoder": "nt500m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "nt500m/unimodal:dna",
+        "second": "original/unimodal:dna"
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "nt500m/concat",
+        "second": "original/concat"
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "nt500m/concat",
+        "second": "nt500m/unimodal:rna"
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "nt500m/mil",
+        "second": "original/mil"
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "nt500m/mil",
+        "second": "nt500m/unimodal:rna"
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "nt500m/cross",
+        "second": "original/cross"
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "nt500m/cross",
+        "second": "nt500m/unimodal:rna"
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "nt500m/mil",
+        "second": "nt500m/concat"
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "nt500m/cross",
+        "second": "nt500m/concat"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "hyenadna/unimodal:dna",
+        "second": "original/unimodal:dna"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "hyenadna/concat",
+        "second": "original/concat"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "hyenadna/concat",
+        "second": "hyenadna/unimodal:rna"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "hyenadna/mil",
+        "second": "original/mil"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "hyenadna/mil",
+        "second": "hyenadna/unimodal:rna"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "hyenadna/cross",
+        "second": "original/cross"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "hyenadna/cross",
+        "second": "hyenadna/unimodal:rna"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "hyenadna/mil",
+        "second": "hyenadna/concat"
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "hyenadna/cross",
+        "second": "hyenadna/concat"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "rinalmo/unimodal:rna",
+        "second": "original/unimodal:rna"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "rinalmo/concat",
+        "second": "original/concat"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "rinalmo/concat",
+        "second": "rinalmo/unimodal-grid:rna"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "rinalmo/mil",
+        "second": "original/mil"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "rinalmo/mil",
+        "second": "rinalmo/unimodal-grid:rna"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "rinalmo/cross",
+        "second": "original/cross"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "rinalmo/cross",
+        "second": "rinalmo/unimodal-grid:rna"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "rinalmo/mil",
+        "second": "rinalmo/concat"
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "rinalmo/cross",
+        "second": "rinalmo/concat"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "mrnafm/unimodal:rna",
+        "second": "original/unimodal:rna"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "mrnafm/concat",
+        "second": "original/concat"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "mrnafm/concat",
+        "second": "mrnafm/unimodal:rna"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "mrnafm/mil",
+        "second": "original/mil"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "mrnafm/mil",
+        "second": "mrnafm/unimodal:rna"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "mrnafm/cross",
+        "second": "original/cross"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "mrnafm/cross",
+        "second": "mrnafm/unimodal:rna"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "mrnafm/mil",
+        "second": "mrnafm/concat"
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "mrnafm/cross",
+        "second": "mrnafm/concat"
+      },
+      {
+        "encoder": "calm",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "calm/unimodal:rna",
+        "second": "original/unimodal:rna"
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "calm/concat",
+        "second": "original/concat"
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "calm/concat",
+        "second": "calm/unimodal:rna"
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "calm/mil",
+        "second": "original/mil"
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "calm/mil",
+        "second": "calm/unimodal:rna"
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "calm/cross",
+        "second": "original/cross"
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "calm/cross",
+        "second": "calm/unimodal:rna"
+      },
+      {
+        "encoder": "calm",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "calm/mil",
+        "second": "calm/concat"
+      },
+      {
+        "encoder": "calm",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "calm/cross",
+        "second": "calm/concat"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "esm2_35m/unimodal:prot",
+        "second": "original/unimodal:prot"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "esm2_35m/concat",
+        "second": "original/concat"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "esm2_35m/concat",
+        "second": "esm2_35m/unimodal:rna"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "esm2_35m/mil",
+        "second": "original/mil"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "esm2_35m/mil",
+        "second": "esm2_35m/unimodal:rna"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "esm2_35m/cross",
+        "second": "original/cross"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "esm2_35m/cross",
+        "second": "esm2_35m/unimodal:rna"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "esm2_35m/mil",
+        "second": "esm2_35m/concat"
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "esm2_35m/cross",
+        "second": "esm2_35m/concat"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "esm2_150m/unimodal:prot",
+        "second": "original/unimodal:prot"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "esm2_150m/concat",
+        "second": "original/concat"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "esm2_150m/concat",
+        "second": "esm2_150m/unimodal:rna"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "esm2_150m/mil",
+        "second": "original/mil"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "esm2_150m/mil",
+        "second": "esm2_150m/unimodal:rna"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "esm2_150m/cross",
+        "second": "original/cross"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "esm2_150m/cross",
+        "second": "esm2_150m/unimodal:rna"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "esm2_150m/mil",
+        "second": "esm2_150m/concat"
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "esm2_150m/cross",
+        "second": "esm2_150m/concat"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "protbert/unimodal:prot",
+        "second": "original/unimodal:prot"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "protbert/concat",
+        "second": "original/concat"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "protbert/concat",
+        "second": "protbert/unimodal:prot"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "protbert/mil",
+        "second": "original/mil"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "protbert/mil",
+        "second": "protbert/unimodal:prot"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "protbert/cross",
+        "second": "original/cross"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "protbert/cross",
+        "second": "protbert/unimodal:prot"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "protbert/mil",
+        "second": "protbert/concat"
+      },
+      {
+        "encoder": "protbert",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "protbert/cross",
+        "second": "protbert/concat"
+      }
+    ],
+    "sources": {
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "f85e195b7a7c29f3773286ab1068c6f486705ac0227ef7ec8f6fe170ca05b2b2",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "b46934fec06b693e0c86b46a3890232546dffdc65be9229f1a24831e3e5586c2",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "46010235b46ae25a0eb7b84f61bd6b71c4c6165da8f096eb6f70a48a9e789122",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.5__ch100__equation__seed0.json": "9518398a845354864689511961b86fde40cfbf136bfb1ee0d49401f43b2ba8c9",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda1.0__ch100__equation__seed0.json": "b741a07ec179ba0d4d7fdaaf0d36d75f99f0c3c99eb0c4e035536bef5db0ae08",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json": "c3b524b5f9f84c22248e5e6398d869bb3f2d434c113dab8c91d171c616ef62cf",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json": "89e44892505d993688ad48d93c72d21eba0141f154b900bd2e0f6a044dd82460",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json": "47a6973b734045d401de18d8c924c3df3af15f03ed06e13d9f75b6dd29075d28",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json": "d85adaa752456d62a6e2865b2b98bfa749c51edb93ea932ed9db4fdf92462059",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "d6d57ce32d778e1c70c10c03e8c64cd7d8d5d3fb30bbe17c204a6fe4830c287a",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "6f05d3e87279a9bfd6b30f8cf05ed3b86d8c822be817673d905fd2c6b403e9c8",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "7297e5887d0d1a104f4442d17c1f3fabbdf1830792f25f738e0900bec17598fa",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json": "75ea083d1795aadcad9006e7ab1cd2a4c76e525893b0d5b124f4b96ca353d8ac",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed0.json": "55193c92b791a6c0a4cf8adcf3972874be1904ae6e2b85c8a082f861e5a8d382",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "0d2f9efe4b7d5a955065679ca568f2719268322c9f97f924b8297eeeefd53315",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "6df0facfe25cb6cb96051fc19a19e2ccc1540f67e309b2ce9f18ec8492c75142",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "a4e178968bc12a1c7c85395b1963c550cf3cb4bf5ccd7238d2b63cb7528ca7f9",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json": "bec82fd22296ce4dbb814abc79697c8905379ca2a3b80bb2f6b2185bf23a843f",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed0.json": "a765cc0b499adc6ee614d76f769090cdccdb53464aea8f806a8706d88f3ef1cb",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "b64d2e222ab935ddff1dba53c0e62a7eebcc600605e7c9ccb26d7d92ecef5d1c",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "2addaa8b8206ca0fc00fd9c47387336543b6a8c3424ccbf0109d15d6c4620577",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "b0406f1a2cc3bc567f2cd3570ac93e81319a7e36ef0e75fa21afc5e2347771b5",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json": "fc80142752da32a9c85bba40629fd5c12d142ced03d7199462c04efb4103dc93",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json": "9834988028aac529f509c97ea1823205c1a71d82d9cf08018791e5df619d5427",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "6033e57dda4e7c635dad45a8ba28521b3e9ec8d7352e55575669369155d14999",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "319b6ec3dbc8904a7ad18d22da075d4ba8eff31e13ece5644d8c8f293229bbd5",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "26acc683b2f54dcec905b2fda15b049489739d67732422cb011e60278907fb28",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json": "aadd01ee86d88b81b5b65c795fc3040d870b1663b83b43267d9cac86f93dae64",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "7bd1f6e7f1dd572062f8ae29acbb8771db7b54f545f9b2425d99cfdf56c563b1",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "3ea26a9bd0f1bfa7d2e2f1a15ed7f806b2d73b30c386976b069429ecfd338599",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "32468d714350abdf20e41e258368b1e56ca366788e9068f9d29c2f1db4dacd3f",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json": "0246a53c67dcb0167d0a232c195077284b0f638081fad7b7e0d39d3c2571b556",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "663b4e457c4339d5023d920a5a1ec481c189ef3f07363116aed26bba70f28f1f",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "6ef3532d2ed19a01b66fb3a35e4282970e2ae2d38dd44226d8d41c018d550471",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "2022c923557bde1ba35929d44d6f8b58a7d48adcb9436cf078231dce91b2bdfb",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json": "c66ceba97de6ea780414ddf3fed9137d470e5543c09c6effd874ec7e9ffbfb32",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "6b6459e2ed723d73593870ffe76acba3d06ed90e7794c0e0e675d236d6b6c011",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "80f53221ab54497ffdf2c5be38053ac5599c4e80bed039c74ac3186306df3500",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "1c8a16263804810a9ccffa9b036be64f38268b7a4c3b6992293ce891f7369df8",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json": "17bde28b2c3457e2fb3c9c1d140d124945ced5234d3eddc8c8219fdd561ea52b",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json": "efbc4c0d8cf2f4787c8df627dc3c9c64d20dce7f0173fe216a93fb05b1b1a7d4",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json": "4d30ae2260cffec1142b4c3744a78a67871fc2f477926e6282e3673589bb5b2a",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json": "9d7bce4b6b2e727ade1968b397c345056b50c5157534b9060a4a1757c60bde2a",
+      "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json": "7d38d2e9fa87f0eec298f6ad32339f74f99be2c5019725f8ad48e64a1130102a"
+    },
+    "context": {
+      "rows": {
+        "columns": [
+          "sequence",
+          "length"
+        ],
+        "count": 23929,
+        "sha256": "da2022aa5066a3fa2d6c0d1e50004637b525dcc166afdfac4a20081061486250"
+      },
+      "targets": {
+        "shape": [
+          23929
+        ],
+        "dtype": "<f4",
+        "sha256": "5796f30831e103e26be54242bfe8debabc057a1ce125da4e5500820d80305cc6",
+        "columns": [
+          "Value"
+        ],
+        "task": "regression",
+        "transform": "as_supplied"
+      },
+      "splits": {
+        "train": {
+          "shape": [
+            16742
+          ],
+          "dtype": "<i8",
+          "sha256": "94baba186bd52ae6bc449dc1f537b69f7d5876574eb05efc6c3ec806119c272c"
+        },
+        "val": {
+          "shape": [
+            3608
+          ],
+          "dtype": "<i8",
+          "sha256": "14bcebfc7d92767efa9806384c453c2f1b8fda9339f5a1d6174a96162d2ad4d8"
+        },
+        "test": {
+          "shape": [
+            3579
+          ],
+          "dtype": "<i8",
+          "sha256": "4051357da8520fd2bee11544981dd46a5c6bec1a6b5bcccd879ed9e388d6dc98"
+        }
+      },
+      "split_targets": {
+        "train": {
+          "shape": [
+            16742
+          ],
+          "dtype": "<f4",
+          "sha256": "fac527fd2b85fcdff04f9f5f93f4b52073724529242d1e489bb91ac14c2819eb"
+        },
+        "val": {
+          "shape": [
+            3608
+          ],
+          "dtype": "<f4",
+          "sha256": "8ed6ecdb5845ca6f500a66b02c4fcd188d70fbf00a24f4916bd14b543e5d2980"
+        },
+        "test": {
+          "shape": [
+            3579
+          ],
+          "dtype": "<f4",
+          "sha256": "f290da40187cd5d5755cc339fdf5ae41d4fa575442d980ff0de567e6f6552a6c"
+        }
+      }
+    },
+    "truth": {
+      "shape": [
+        3579
+      ],
+      "dtype": "<f8",
+      "sha256": "21edbb0a999bdbce67ddc0254039538ec2d4d872937751bc9bdad48006cc35ee"
+    },
+    "groups_sha256": "2bae9d1da9514c583161a3661a1c17e86eb33505ed902f1e4cac6e67aea3fcf7",
+    "task": "regression",
+    "scoring_target_precision": "float32",
+    "n_classes": null,
+    "draws": 2000,
+    "bootstrap_seed": 0,
+    "source_sha256": {
+      "swap_reporting.py": "3f2a9c2e00da82a72ed372654f8c2cd15704db3bb2c5ace393ba040316c5d228",
+      "swap_results.py": "7c1942e964c0d2232809bdb1cce33f698e3d5970298878c7df3092c421708a73",
+      "run_identity.py": "bf25d2895dd7958470f272380cd6975004a36714dbec18425fb4ee6e6e1f1a83"
+    }
+  },
+  "analysis": {
+    "per_seed": [
+      {
+        "encoder": "nt500m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "nt500m/unimodal:dna",
+        "second": "original/unimodal:dna",
+        "seed": 0,
+        "first_score": 0.5368086454553529,
+        "second_score": 0.5390943035983511,
+        "difference": -0.0022856581429981926,
+        "seed_sd": null,
+        "ci_low": -0.015001179730171912,
+        "ci_high": 0.009867406925576534,
+        "first_wins": 0.378,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "nt500m/concat",
+        "second": "original/concat",
+        "seed": 0,
+        "first_score": 0.5515432908197974,
+        "second_score": 0.5581931621050912,
+        "difference": -0.006649871285293818,
+        "seed_sd": null,
+        "ci_low": -0.017139922158009156,
+        "ci_high": 0.003378601185982636,
+        "first_wins": 0.0985,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "nt500m/concat",
+        "second": "nt500m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5515432908197974,
+        "second_score": 0.551660406705307,
+        "difference": -0.00011711588550966656,
+        "seed_sd": null,
+        "ci_low": -0.012936689470443088,
+        "ci_high": 0.012214600459933295,
+        "first_wins": 0.496,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "nt500m/mil",
+        "second": "original/mil",
+        "seed": 0,
+        "first_score": 0.5532688024847016,
+        "second_score": 0.5507555404266331,
+        "difference": 0.002513262058068455,
+        "seed_sd": null,
+        "ci_low": -0.007972040563484925,
+        "ci_high": 0.012619674018963009,
+        "first_wins": 0.6965,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "nt500m/mil",
+        "second": "nt500m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5532688024847016,
+        "second_score": 0.551660406705307,
+        "difference": 0.0016083957793945336,
+        "seed_sd": null,
+        "ci_low": -0.011763461939352687,
+        "ci_high": 0.015117577599630358,
+        "first_wins": 0.6005,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "nt500m/cross",
+        "second": "original/cross",
+        "seed": 0,
+        "first_score": 0.5453834522784896,
+        "second_score": 0.5526840807035046,
+        "difference": -0.007300628425014999,
+        "seed_sd": null,
+        "ci_low": -0.019218883313889205,
+        "ci_high": 0.004300801055108363,
+        "first_wins": 0.107,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "nt500m/cross",
+        "second": "nt500m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5453834522784896,
+        "second_score": 0.551660406705307,
+        "difference": -0.006276954426817416,
+        "seed_sd": null,
+        "ci_low": -0.02003426817909735,
+        "ci_high": 0.0074093333765826,
+        "first_wins": 0.196,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "nt500m/mil",
+        "second": "nt500m/concat",
+        "seed": 0,
+        "first_score": 0.5532688024847016,
+        "second_score": 0.5515432908197974,
+        "difference": 0.0017255116649042002,
+        "seed_sd": null,
+        "ci_low": -0.007257023404250889,
+        "ci_high": 0.010936271008943394,
+        "first_wins": 0.663,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "nt500m/cross",
+        "second": "nt500m/concat",
+        "seed": 0,
+        "first_score": 0.5453834522784896,
+        "second_score": 0.5515432908197974,
+        "difference": -0.0061598385413077494,
+        "seed_sd": null,
+        "ci_low": -0.016997263490658034,
+        "ci_high": 0.005234298707004192,
+        "first_wins": 0.158,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "hyenadna/unimodal:dna",
+        "second": "original/unimodal:dna",
+        "seed": 0,
+        "first_score": 0.5228743906685025,
+        "second_score": 0.5390943035983511,
+        "difference": -0.01621991292984859,
+        "seed_sd": null,
+        "ci_low": -0.031535903151145815,
+        "ci_high": -8.849028875976348e-05,
+        "first_wins": 0.024,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "hyenadna/concat",
+        "second": "original/concat",
+        "seed": 0,
+        "first_score": 0.5571356197791795,
+        "second_score": 0.5581931621050912,
+        "difference": -0.001057542325911709,
+        "seed_sd": null,
+        "ci_low": -0.011055763149554735,
+        "ci_high": 0.00834378050265174,
+        "first_wins": 0.43,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "hyenadna/concat",
+        "second": "hyenadna/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5571356197791795,
+        "second_score": 0.551660406705307,
+        "difference": 0.0054752130738724425,
+        "seed_sd": null,
+        "ci_low": -0.007251207375852611,
+        "ci_high": 0.0179999496784704,
+        "first_wins": 0.805,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "hyenadna/mil",
+        "second": "original/mil",
+        "seed": 0,
+        "first_score": 0.5393164918127011,
+        "second_score": 0.5507555404266331,
+        "difference": -0.011439048613931968,
+        "seed_sd": null,
+        "ci_low": -0.02133623535905562,
+        "ci_high": -0.001411107574912699,
+        "first_wins": 0.0095,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "hyenadna/mil",
+        "second": "hyenadna/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5393164918127011,
+        "second_score": 0.551660406705307,
+        "difference": -0.01234391489260589,
+        "seed_sd": null,
+        "ci_low": -0.027101356187479747,
+        "ci_high": 0.0024877456192272836,
+        "first_wins": 0.0545,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "hyenadna/cross",
+        "second": "original/cross",
+        "seed": 0,
+        "first_score": 0.5478669102689163,
+        "second_score": 0.5526840807035046,
+        "difference": -0.0048171704345882915,
+        "seed_sd": null,
+        "ci_low": -0.01774842618377674,
+        "ci_high": 0.007632129935321934,
+        "first_wins": 0.228,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "hyenadna/cross",
+        "second": "hyenadna/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5478669102689163,
+        "second_score": 0.551660406705307,
+        "difference": -0.0037934964363907087,
+        "seed_sd": null,
+        "ci_low": -0.017637316645737373,
+        "ci_high": 0.010515866387203272,
+        "first_wins": 0.3,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "hyenadna/mil",
+        "second": "hyenadna/concat",
+        "seed": 0,
+        "first_score": 0.5393164918127011,
+        "second_score": 0.5571356197791795,
+        "difference": -0.017819127966478332,
+        "seed_sd": null,
+        "ci_low": -0.027559036207520104,
+        "ci_high": -0.00828704113994926,
+        "first_wins": 0.0005,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "hyenadna/cross",
+        "second": "hyenadna/concat",
+        "seed": 0,
+        "first_score": 0.5478669102689163,
+        "second_score": 0.5571356197791795,
+        "difference": -0.009268709510263151,
+        "seed_sd": null,
+        "ci_low": -0.019283733096024526,
+        "ci_high": 0.0008000946079100027,
+        "first_wins": 0.0325,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "rinalmo/unimodal:rna",
+        "second": "original/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5599569397786281,
+        "second_score": 0.551660406705307,
+        "difference": 0.008296533073321122,
+        "seed_sd": null,
+        "ci_low": -0.004484889027210268,
+        "ci_high": 0.021165630165994865,
+        "first_wins": 0.898,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "rinalmo/concat",
+        "second": "original/concat",
+        "seed": 0,
+        "first_score": 0.5562670768392247,
+        "second_score": 0.5581931621050912,
+        "difference": -0.0019260852658664618,
+        "seed_sd": null,
+        "ci_low": -0.01109521134004155,
+        "ci_high": 0.007654788930416146,
+        "first_wins": 0.346,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "rinalmo/concat",
+        "second": "rinalmo/unimodal-grid:rna",
+        "seed": 0,
+        "first_score": 0.5562670768392247,
+        "second_score": 0.555872385503944,
+        "difference": 0.00039469133528069467,
+        "seed_sd": null,
+        "ci_low": -0.00884437155971235,
+        "ci_high": 0.010169521017351708,
+        "first_wins": 0.521,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "rinalmo/mil",
+        "second": "original/mil",
+        "seed": 0,
+        "first_score": 0.5643379635718174,
+        "second_score": 0.5507555404266331,
+        "difference": 0.01358242314518432,
+        "seed_sd": null,
+        "ci_low": 0.0023611854441551203,
+        "ci_high": 0.024965039782886434,
+        "first_wins": 0.992,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "rinalmo/mil",
+        "second": "rinalmo/unimodal-grid:rna",
+        "seed": 0,
+        "first_score": 0.5643379635718174,
+        "second_score": 0.555872385503944,
+        "difference": 0.008465578067873403,
+        "seed_sd": null,
+        "ci_low": -0.0015649063021197088,
+        "ci_high": 0.018422921867692784,
+        "first_wins": 0.9415,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "rinalmo/cross",
+        "second": "original/cross",
+        "seed": 0,
+        "first_score": 0.5584583640701303,
+        "second_score": 0.5526840807035046,
+        "difference": 0.0057742833666256654,
+        "seed_sd": null,
+        "ci_low": -0.005512644303795508,
+        "ci_high": 0.017669926575335518,
+        "first_wins": 0.8285,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "rinalmo/cross",
+        "second": "rinalmo/unimodal-grid:rna",
+        "seed": 0,
+        "first_score": 0.5584583640701303,
+        "second_score": 0.555872385503944,
+        "difference": 0.0025859785661862533,
+        "seed_sd": null,
+        "ci_low": -0.009379488017897971,
+        "ci_high": 0.014276575252176928,
+        "first_wins": 0.659,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "rinalmo/mil",
+        "second": "rinalmo/concat",
+        "seed": 0,
+        "first_score": 0.5643379635718174,
+        "second_score": 0.5562670768392247,
+        "difference": 0.008070886732592708,
+        "seed_sd": null,
+        "ci_low": -0.0011378153930466177,
+        "ci_high": 0.017704799066452802,
+        "first_wins": 0.957,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "rinalmo/cross",
+        "second": "rinalmo/concat",
+        "seed": 0,
+        "first_score": 0.5584583640701303,
+        "second_score": 0.5562670768392247,
+        "difference": 0.0021912872309055587,
+        "seed_sd": null,
+        "ci_low": -0.00868642665092885,
+        "ci_high": 0.013403328867476354,
+        "first_wins": 0.6555,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "mrnafm/unimodal:rna",
+        "second": "original/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5650251166121821,
+        "second_score": 0.551660406705307,
+        "difference": 0.013364709906875105,
+        "seed_sd": null,
+        "ci_low": 4.3179359138756536e-05,
+        "ci_high": 0.02673940687507615,
+        "first_wins": 0.975,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "mrnafm/concat",
+        "second": "original/concat",
+        "seed": 0,
+        "first_score": 0.5683299373474089,
+        "second_score": 0.5581931621050912,
+        "difference": 0.010136775242317708,
+        "seed_sd": null,
+        "ci_low": -0.000620452745260644,
+        "ci_high": 0.020130477217386113,
+        "first_wins": 0.965,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "mrnafm/concat",
+        "second": "mrnafm/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5683299373474089,
+        "second_score": 0.5650251166121821,
+        "difference": 0.0033048207352267545,
+        "seed_sd": null,
+        "ci_low": -0.002800841354098918,
+        "ci_high": 0.009865280123742846,
+        "first_wins": 0.8585,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "mrnafm/mil",
+        "second": "original/mil",
+        "seed": 0,
+        "first_score": 0.5648080380455736,
+        "second_score": 0.5507555404266331,
+        "difference": 0.014052497618940452,
+        "seed_sd": null,
+        "ci_low": 0.0028467162844169557,
+        "ci_high": 0.025226941974589714,
+        "first_wins": 0.9915,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "mrnafm/mil",
+        "second": "mrnafm/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5648080380455736,
+        "second_score": 0.5650251166121821,
+        "difference": -0.00021707856660857505,
+        "seed_sd": null,
+        "ci_low": -0.00613621496149862,
+        "ci_high": 0.005843977166191683,
+        "first_wins": 0.472,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "mrnafm/cross",
+        "second": "original/cross",
+        "seed": 0,
+        "first_score": 0.5619465272056599,
+        "second_score": 0.5526840807035046,
+        "difference": 0.009262446502155242,
+        "seed_sd": null,
+        "ci_low": -0.0032433350712829877,
+        "ci_high": 0.021660677191650265,
+        "first_wins": 0.9305,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "mrnafm/cross",
+        "second": "mrnafm/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5619465272056599,
+        "second_score": 0.5650251166121821,
+        "difference": -0.0030785894065222807,
+        "seed_sd": null,
+        "ci_low": -0.01315285631359522,
+        "ci_high": 0.007057329102887389,
+        "first_wins": 0.271,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "mrnafm/mil",
+        "second": "mrnafm/concat",
+        "seed": 0,
+        "first_score": 0.5648080380455736,
+        "second_score": 0.5683299373474089,
+        "difference": -0.0035218993018353295,
+        "seed_sd": null,
+        "ci_low": -0.009972610967863496,
+        "ci_high": 0.002541395784465592,
+        "first_wins": 0.141,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "mrnafm/cross",
+        "second": "mrnafm/concat",
+        "seed": 0,
+        "first_score": 0.5619465272056599,
+        "second_score": 0.5683299373474089,
+        "difference": -0.006383410141749035,
+        "seed_sd": null,
+        "ci_low": -0.016039819593059466,
+        "ci_high": 0.0030914385114249447,
+        "first_wins": 0.087,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "calm/unimodal:rna",
+        "second": "original/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5588389896735694,
+        "second_score": 0.551660406705307,
+        "difference": 0.007178582968262348,
+        "seed_sd": null,
+        "ci_low": -0.00615064037206848,
+        "ci_high": 0.020813260559295024,
+        "first_wins": 0.845,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "calm/concat",
+        "second": "original/concat",
+        "seed": 0,
+        "first_score": 0.5610274858077517,
+        "second_score": 0.5581931621050912,
+        "difference": 0.0028343237026605683,
+        "seed_sd": null,
+        "ci_low": -0.006568114826216553,
+        "ci_high": 0.011639709367752016,
+        "first_wins": 0.7285,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "calm/concat",
+        "second": "calm/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5610274858077517,
+        "second_score": 0.5588389896735694,
+        "difference": 0.0021884961341823717,
+        "seed_sd": null,
+        "ci_low": -0.004567796299841209,
+        "ci_high": 0.009581232680972407,
+        "first_wins": 0.7415,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "calm/mil",
+        "second": "original/mil",
+        "seed": 0,
+        "first_score": 0.560634051054869,
+        "second_score": 0.5507555404266331,
+        "difference": 0.00987851062823586,
+        "seed_sd": null,
+        "ci_low": 0.00039108978971683653,
+        "ci_high": 0.01909313196196427,
+        "first_wins": 0.9805,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "calm/mil",
+        "second": "calm/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.560634051054869,
+        "second_score": 0.5588389896735694,
+        "difference": 0.0017950613812995897,
+        "seed_sd": null,
+        "ci_low": -0.005619124150564469,
+        "ci_high": 0.009303306820611961,
+        "first_wins": 0.685,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "calm/cross",
+        "second": "original/cross",
+        "seed": 0,
+        "first_score": 0.5484682582698023,
+        "second_score": 0.5526840807035046,
+        "difference": -0.004215822433702332,
+        "seed_sd": null,
+        "ci_low": -0.015978115328442323,
+        "ci_high": 0.007756811807328666,
+        "first_wins": 0.2315,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "calm/cross",
+        "second": "calm/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5484682582698023,
+        "second_score": 0.5588389896735694,
+        "difference": -0.010370731403767097,
+        "seed_sd": null,
+        "ci_low": -0.020918296152416246,
+        "ci_high": 0.00017202570368340464,
+        "first_wins": 0.0275,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "calm/mil",
+        "second": "calm/concat",
+        "seed": 0,
+        "first_score": 0.560634051054869,
+        "second_score": 0.5610274858077517,
+        "difference": -0.00039343475288278196,
+        "seed_sd": null,
+        "ci_low": -0.007390757036430859,
+        "ci_high": 0.006739542618838129,
+        "first_wins": 0.444,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "calm",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "calm/cross",
+        "second": "calm/concat",
+        "seed": 0,
+        "first_score": 0.5484682582698023,
+        "second_score": 0.5610274858077517,
+        "difference": -0.012559227537949469,
+        "seed_sd": null,
+        "ci_low": -0.022558216936843668,
+        "ci_high": -0.0032123143165533547,
+        "first_wins": 0.004,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "esm2_35m/unimodal:prot",
+        "second": "original/unimodal:prot",
+        "seed": 0,
+        "first_score": 0.5352418917713235,
+        "second_score": 0.5311449324666977,
+        "difference": 0.004096959304625836,
+        "seed_sd": null,
+        "ci_low": -0.005272881100506841,
+        "ci_high": 0.013630769305142176,
+        "first_wins": 0.802,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "esm2_35m/concat",
+        "second": "original/concat",
+        "seed": 0,
+        "first_score": 0.5543102254110115,
+        "second_score": 0.5581931621050912,
+        "difference": -0.003882936694079686,
+        "seed_sd": null,
+        "ci_low": -0.01316781372992733,
+        "ci_high": 0.005270367662801123,
+        "first_wins": 0.2125,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "esm2_35m/concat",
+        "second": "esm2_35m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5543102254110115,
+        "second_score": 0.551660406705307,
+        "difference": 0.0026498187057044653,
+        "seed_sd": null,
+        "ci_low": -0.009804850482232707,
+        "ci_high": 0.015150538244549957,
+        "first_wins": 0.677,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "esm2_35m/mil",
+        "second": "original/mil",
+        "seed": 0,
+        "first_score": 0.5512632994359618,
+        "second_score": 0.5507555404266331,
+        "difference": 0.0005077590093286455,
+        "seed_sd": null,
+        "ci_low": -0.008241738547668362,
+        "ci_high": 0.009658957345883554,
+        "first_wins": 0.5465,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "esm2_35m/mil",
+        "second": "esm2_35m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5512632994359618,
+        "second_score": 0.551660406705307,
+        "difference": -0.00039710726934527596,
+        "seed_sd": null,
+        "ci_low": -0.013829136094624373,
+        "ci_high": 0.013411802710930423,
+        "first_wins": 0.4905,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "esm2_35m/cross",
+        "second": "original/cross",
+        "seed": 0,
+        "first_score": 0.5405508401366246,
+        "second_score": 0.5526840807035046,
+        "difference": -0.012133240566880032,
+        "seed_sd": null,
+        "ci_low": -0.024684450888314842,
+        "ci_high": 9.829063047878022e-05,
+        "first_wins": 0.0265,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "esm2_35m/cross",
+        "second": "esm2_35m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5405508401366246,
+        "second_score": 0.551660406705307,
+        "difference": -0.01110956656868245,
+        "seed_sd": null,
+        "ci_low": -0.0246056301522976,
+        "ci_high": 0.0031164938068034566,
+        "first_wins": 0.059,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "esm2_35m/mil",
+        "second": "esm2_35m/concat",
+        "seed": 0,
+        "first_score": 0.5512632994359618,
+        "second_score": 0.5543102254110115,
+        "difference": -0.0030469259750497413,
+        "seed_sd": null,
+        "ci_low": -0.011962746283518549,
+        "ci_high": 0.005910328105914036,
+        "first_wins": 0.257,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "esm2_35m/cross",
+        "second": "esm2_35m/concat",
+        "seed": 0,
+        "first_score": 0.5405508401366246,
+        "second_score": 0.5543102254110115,
+        "difference": -0.013759385274386915,
+        "seed_sd": null,
+        "ci_low": -0.02473586589003357,
+        "ci_high": -0.003164909285744618,
+        "first_wins": 0.007,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "esm2_150m/unimodal:prot",
+        "second": "original/unimodal:prot",
+        "seed": 0,
+        "first_score": 0.5364633314578704,
+        "second_score": 0.5311449324666977,
+        "difference": 0.005318398991172701,
+        "seed_sd": null,
+        "ci_low": -0.0052444676104788646,
+        "ci_high": 0.015442133552010162,
+        "first_wins": 0.85,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "esm2_150m/concat",
+        "second": "original/concat",
+        "seed": 0,
+        "first_score": 0.5593955290071495,
+        "second_score": 0.5581931621050912,
+        "difference": 0.0012023669020583272,
+        "seed_sd": null,
+        "ci_low": -0.008973261278812076,
+        "ci_high": 0.011106607062451717,
+        "first_wins": 0.588,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "esm2_150m/concat",
+        "second": "esm2_150m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5593955290071495,
+        "second_score": 0.551660406705307,
+        "difference": 0.007735122301842479,
+        "seed_sd": null,
+        "ci_low": -0.004415346653700131,
+        "ci_high": 0.02017462805770567,
+        "first_wins": 0.902,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "esm2_150m/mil",
+        "second": "original/mil",
+        "seed": 0,
+        "first_score": 0.5485085663784024,
+        "second_score": 0.5507555404266331,
+        "difference": -0.00224697404823071,
+        "seed_sd": null,
+        "ci_low": -0.012267271725483721,
+        "ci_high": 0.008076336515104738,
+        "first_wins": 0.3505,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "esm2_150m/mil",
+        "second": "esm2_150m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5485085663784024,
+        "second_score": 0.551660406705307,
+        "difference": -0.0031518403269046313,
+        "seed_sd": null,
+        "ci_low": -0.01776998297225054,
+        "ci_high": 0.011566031148401159,
+        "first_wins": 0.3475,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "esm2_150m/cross",
+        "second": "original/cross",
+        "seed": 0,
+        "first_score": 0.5585725396309946,
+        "second_score": 0.5526840807035046,
+        "difference": 0.0058884589274900145,
+        "seed_sd": null,
+        "ci_low": -0.005857050116987219,
+        "ci_high": 0.01813859322105485,
+        "first_wins": 0.82,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "esm2_150m/cross",
+        "second": "esm2_150m/unimodal:rna",
+        "seed": 0,
+        "first_score": 0.5585725396309946,
+        "second_score": 0.551660406705307,
+        "difference": 0.006912132925687597,
+        "seed_sd": null,
+        "ci_low": -0.006063206288348213,
+        "ci_high": 0.020267464368045995,
+        "first_wins": 0.8525,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "esm2_150m/mil",
+        "second": "esm2_150m/concat",
+        "seed": 0,
+        "first_score": 0.5485085663784024,
+        "second_score": 0.5593955290071495,
+        "difference": -0.01088696262874711,
+        "seed_sd": null,
+        "ci_low": -0.01952312492138405,
+        "ci_high": -0.0018876198070911546,
+        "first_wins": 0.01,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "esm2_150m/cross",
+        "second": "esm2_150m/concat",
+        "seed": 0,
+        "first_score": 0.5585725396309946,
+        "second_score": 0.5593955290071495,
+        "difference": -0.0008229893761548812,
+        "seed_sd": null,
+        "ci_low": -0.010170535086350607,
+        "ci_high": 0.009128662436562296,
+        "first_wins": 0.433,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "protbert/unimodal:prot",
+        "second": "original/unimodal:prot",
+        "seed": 0,
+        "first_score": 0.542719019469299,
+        "second_score": 0.5311449324666977,
+        "difference": 0.011574087002601319,
+        "seed_sd": null,
+        "ci_low": 9.208721391047186e-05,
+        "ci_high": 0.02296365981347375,
+        "first_wins": 0.975,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "protbert/concat",
+        "second": "original/concat",
+        "seed": 0,
+        "first_score": 0.5576906464822086,
+        "second_score": 0.5581931621050912,
+        "difference": -0.0005025156228826155,
+        "seed_sd": null,
+        "ci_low": -0.01233718727175107,
+        "ci_high": 0.01094915851732666,
+        "first_wins": 0.466,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "protbert/concat",
+        "second": "protbert/unimodal:prot",
+        "seed": 0,
+        "first_score": 0.5576906464822086,
+        "second_score": 0.542719019469299,
+        "difference": 0.01497162701290955,
+        "seed_sd": null,
+        "ci_low": 0.002109938589785063,
+        "ci_high": 0.027959991297059898,
+        "first_wins": 0.9885,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "protbert/mil",
+        "second": "original/mil",
+        "seed": 0,
+        "first_score": 0.5504180109003014,
+        "second_score": 0.5507555404266331,
+        "difference": -0.0003375295263317035,
+        "seed_sd": null,
+        "ci_low": -0.013196016310936462,
+        "ci_high": 0.012221765953923028,
+        "first_wins": 0.486,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "protbert/mil",
+        "second": "protbert/unimodal:prot",
+        "seed": 0,
+        "first_score": 0.5504180109003014,
+        "second_score": 0.542719019469299,
+        "difference": 0.007698991431002389,
+        "seed_sd": null,
+        "ci_low": -0.004520282915117244,
+        "ci_high": 0.02016247285178392,
+        "first_wins": 0.902,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "protbert/cross",
+        "second": "original/cross",
+        "seed": 0,
+        "first_score": 0.5513646225993294,
+        "second_score": 0.5526840807035046,
+        "difference": -0.0013194581041752196,
+        "seed_sd": null,
+        "ci_low": -0.014696044550941981,
+        "ci_high": 0.011417871866601105,
+        "first_wins": 0.4115,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "protbert/cross",
+        "second": "protbert/unimodal:prot",
+        "seed": 0,
+        "first_score": 0.5513646225993294,
+        "second_score": 0.542719019469299,
+        "difference": 0.008645603130030377,
+        "seed_sd": null,
+        "ci_low": -0.0038187669660848496,
+        "ci_high": 0.021408811442745427,
+        "first_wins": 0.9105,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "protbert/mil",
+        "second": "protbert/concat",
+        "seed": 0,
+        "first_score": 0.5504180109003014,
+        "second_score": 0.5576906464822086,
+        "difference": -0.007272635581907161,
+        "seed_sd": null,
+        "ci_low": -0.017770169139637693,
+        "ci_high": 0.003274804395683089,
+        "first_wins": 0.0925,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      },
+      {
+        "encoder": "protbert",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "protbert/cross",
+        "second": "protbert/concat",
+        "seed": 0,
+        "first_score": 0.5513646225993294,
+        "second_score": 0.5576906464822086,
+        "difference": -0.006326023882879173,
+        "seed_sd": null,
+        "ci_low": -0.01833770683730436,
+        "ci_high": 0.005211526487809757,
+        "first_wins": 0.1235,
+        "valid_draws": 2000,
+        "requested_draws": 2000,
+        "interval_issue": ""
+      }
+    ],
+    "seed_summary": [
+      {
+        "encoder": "nt500m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "nt500m/unimodal:dna",
+        "second": "original/unimodal:dna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "nt500m/concat",
+        "second": "original/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "nt500m/concat",
+        "second": "nt500m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "nt500m/mil",
+        "second": "original/mil",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "nt500m/mil",
+        "second": "nt500m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "nt500m/cross",
+        "second": "original/cross",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "nt500m/cross",
+        "second": "nt500m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "nt500m/mil",
+        "second": "nt500m/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "nt500m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "nt500m/cross",
+        "second": "nt500m/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "hyenadna/unimodal:dna",
+        "second": "original/unimodal:dna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "hyenadna/concat",
+        "second": "original/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "hyenadna/concat",
+        "second": "hyenadna/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "hyenadna/mil",
+        "second": "original/mil",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "hyenadna/mil",
+        "second": "hyenadna/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "hyenadna/cross",
+        "second": "original/cross",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "hyenadna/cross",
+        "second": "hyenadna/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "hyenadna/mil",
+        "second": "hyenadna/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "hyenadna",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "hyenadna/cross",
+        "second": "hyenadna/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "rinalmo/unimodal:rna",
+        "second": "original/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "rinalmo/concat",
+        "second": "original/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "rinalmo/concat",
+        "second": "rinalmo/unimodal-grid:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "rinalmo/mil",
+        "second": "original/mil",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "rinalmo/mil",
+        "second": "rinalmo/unimodal-grid:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "rinalmo/cross",
+        "second": "original/cross",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "rinalmo/cross",
+        "second": "rinalmo/unimodal-grid:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "rinalmo/mil",
+        "second": "rinalmo/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "rinalmo",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "rinalmo/cross",
+        "second": "rinalmo/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "mrnafm/unimodal:rna",
+        "second": "original/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "mrnafm/concat",
+        "second": "original/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "mrnafm/concat",
+        "second": "mrnafm/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "mrnafm/mil",
+        "second": "original/mil",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "mrnafm/mil",
+        "second": "mrnafm/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "mrnafm/cross",
+        "second": "original/cross",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "mrnafm/cross",
+        "second": "mrnafm/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "mrnafm/mil",
+        "second": "mrnafm/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "mrnafm",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "mrnafm/cross",
+        "second": "mrnafm/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "calm/unimodal:rna",
+        "second": "original/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "calm/concat",
+        "second": "original/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "calm/concat",
+        "second": "calm/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "calm/mil",
+        "second": "original/mil",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "calm/mil",
+        "second": "calm/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "calm/cross",
+        "second": "original/cross",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "calm/cross",
+        "second": "calm/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "calm/mil",
+        "second": "calm/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "calm",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "calm/cross",
+        "second": "calm/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "esm2_35m/unimodal:prot",
+        "second": "original/unimodal:prot",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "esm2_35m/concat",
+        "second": "original/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "esm2_35m/concat",
+        "second": "esm2_35m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "esm2_35m/mil",
+        "second": "original/mil",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "esm2_35m/mil",
+        "second": "esm2_35m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "esm2_35m/cross",
+        "second": "original/cross",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "esm2_35m/cross",
+        "second": "esm2_35m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "esm2_35m/mil",
+        "second": "esm2_35m/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_35m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "esm2_35m/cross",
+        "second": "esm2_35m/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "esm2_150m/unimodal:prot",
+        "second": "original/unimodal:prot",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "esm2_150m/concat",
+        "second": "original/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "esm2_150m/concat",
+        "second": "esm2_150m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "esm2_150m/mil",
+        "second": "original/mil",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "esm2_150m/mil",
+        "second": "esm2_150m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "esm2_150m/cross",
+        "second": "original/cross",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "esm2_150m/cross",
+        "second": "esm2_150m/unimodal:rna",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "esm2_150m/mil",
+        "second": "esm2_150m/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "esm2_150m",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "esm2_150m/cross",
+        "second": "esm2_150m/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "representation",
+        "comparison": "replacement single vs original single",
+        "first": "protbert/unimodal:prot",
+        "second": "original/unimodal:prot",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "concat vs original concat",
+        "first": "protbert/concat",
+        "second": "original/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "concat vs validation-selected single",
+        "first": "protbert/concat",
+        "second": "protbert/unimodal:prot",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "mil vs original mil",
+        "first": "protbert/mil",
+        "second": "original/mil",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "mil vs validation-selected single",
+        "first": "protbert/mil",
+        "second": "protbert/unimodal:prot",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "replacement",
+        "comparison": "cross vs original cross",
+        "first": "protbert/cross",
+        "second": "original/cross",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "complementarity",
+        "comparison": "cross vs validation-selected single",
+        "first": "protbert/cross",
+        "second": "protbert/unimodal:prot",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "method",
+        "comparison": "mil vs concat",
+        "first": "protbert/mil",
+        "second": "protbert/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      },
+      {
+        "encoder": "protbert",
+        "kind": "method",
+        "comparison": "cross vs concat",
+        "first": "protbert/cross",
+        "second": "protbert/concat",
+        "available_seeds": [
+          0
+        ],
+        "missing_seeds": [
+          1,
+          2
+        ],
+        "status": "incomplete",
+        "first_score": null,
+        "second_score": null,
+        "difference": null,
+        "seed_sd": null,
+        "ci_low": null,
+        "ci_high": null,
+        "first_wins": null
+      }
+    ],
+    "issues": [
+      {
+        "model": "calm/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "calm/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "calm/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "calm/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "calm/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "calm/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "calm/unimodal:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "calm/unimodal:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/unimodal:prot",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/unimodal:prot",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/unimodal:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_150m/unimodal:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/unimodal:prot",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/unimodal:prot",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/unimodal:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "esm2_35m/unimodal:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/unimodal:dna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/unimodal:dna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/unimodal:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "hyenadna/unimodal:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "mrnafm/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "mrnafm/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "mrnafm/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "mrnafm/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "mrnafm/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "mrnafm/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "mrnafm/unimodal:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "mrnafm/unimodal:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/unimodal:dna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/unimodal:dna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/unimodal:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "nt500m/unimodal:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/unimodal:dna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/unimodal:dna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/unimodal:prot",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/unimodal:prot",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/unimodal:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "original/unimodal:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "protbert/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "protbert/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "protbert/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "protbert/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "protbert/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "protbert/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "protbert/unimodal:prot",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "protbert/unimodal:prot",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/concat",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/concat",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/cross",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/cross",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/mil",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/mil",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/unimodal-grid:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/unimodal-grid:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/unimodal:rna",
+        "seed": 1,
+        "reason": "completed fit absent"
+      },
+      {
+        "model": "rinalmo/unimodal:rna",
+        "seed": 2,
+        "reason": "completed fit absent"
+      }
+    ],
+    "rows": 3579,
+    "groups": 3021,
+    "units": "Spearman",
+    "interval_scope": "test-sequence groups conditional on fitted seeds; unadjusted",
+    "row_provenance": "Current targets/order and recorded identities checked where present; matching labels do not establish unrecorded historical input identity."
+  },
+  "analysis_sha256": "c84c2d12d3ff16d45d6ec794394289ba276f70158f014d27826e00ac5ae958f4",
+  "reader_issues": [
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.0__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "entropy penalty is outside the declared candidate grid"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.0__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "entropy penalty is outside the declared candidate grid"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.5__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda1.0__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal-grid:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:prot",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.0__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "entropy penalty is outside the declared candidate grid"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda0.5__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__mil__lambda1.0__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal-grid:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:prot",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseA\\mrna_stability\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal-grid:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\nt500m\\mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal-grid:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal-grid:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\hyenadna\\mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal-grid:dna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal-grid:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal-grid:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\rinalmo\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\mrnafm\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\calm\\mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:rna",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:prot",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_35m\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:prot",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:prot",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\esm2_150m\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:prot",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:prot",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "variant": "concat",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "variant": "cross",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__mil__lambda0.01__ch100__equation__seed0.json",
+      "variant": "mil",
+      "reason": "configuration differs: seed"
+    },
+    {
+      "source": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\phaseB\\mrna_stability\\protbert\\mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "variant": "unimodal:prot",
+      "reason": "configuration differs: seed"
+    }
+  ],
+  "created_utc": "2026-11-06T17:49:28.098199+00:00",
+  "producer": {
+    "host": "cDesktopLab",
+    "started_utc": "2026-11-06T17:49:28.262590+00:00",
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "device": "cpu",
+    "packages": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3"
+    },
+    "git": {
+      "commit": "049e6eac9a6299cf2d0ba94209f5ccb367eb2842",
+      "dirty": true
+    },
+    "source_sha256": {
+      "Code/shared_code/fusion/train.py": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3",
+      "Code/shared_code/fusion/blf.py": "1a2e9200c5943a3cdea268580f54da26a10c675f97afe61c2bcbf71b7365194e",
+      "Code/shared_code/fusion/isoformer.py": "c6b8e303864e20d16ee9b7da8fa77dcb26fccb7c06e4507222699f3241634867",
+      "Code/shared_code/fusion/heads.py": "1a4878e7d9966d096345ae572f4a9e7dfbf8e5633f61fe6398d70752a513bdf6",
+      "Code/shared_code/fusion/codon_grid.py": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+      "Code/shared_code/fusion/textcnn.py": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+      "Code/shared_code/fusion/run_identity.py": "bf25d2895dd7958470f272380cd6975004a36714dbec18425fb4ee6e6e1f1a83"
+    }
+  }
+}

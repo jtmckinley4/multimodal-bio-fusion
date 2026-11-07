@@ -298,6 +298,8 @@ class BudgetedBatches:
     """
 
     def __init__(self, lengths, budget, max_size, shuffle, seed, n_heads=N_HEADS):
+        # Retain the effective batching settings for identity checks before iteration.
+        self.budget, self.max_size, self.n_heads = budget, max_size, n_heads
         # A batch pads every modality to its own longest row, so its cost comes from the
         # per-modality maxima rather than from any single row. Rows are visited in order of
         # their own cost so that neighbors pad each other cheaply.

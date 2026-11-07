@@ -69,10 +69,11 @@ class SwapPlanTests(unittest.TestCase):
                        original_encoders=ORIGINAL, original_folders=[self.originals],
                        original_destination=self.destination, swaps=swaps, swap_root=self.swaps)
         request.update(overrides)
-        untouched = deepcopy({k: v for k, v in request.items() if k != "checkpoint_validator"})
+        callbacks = {"checkpoint_validator", "identity_factory"}
+        untouched = deepcopy({k: v for k, v in request.items() if k not in callbacks})
         before = self.snapshot()
         plan = swap_plan.plan_benchmark(**request)
-        self.assertEqual({k: v for k, v in request.items() if k != "checkpoint_validator"}, untouched)
+        self.assertEqual({k: v for k, v in request.items() if k not in callbacks}, untouched)
         self.assertEqual(before, self.snapshot())
         return plan
 
@@ -221,6 +222,40 @@ class SwapPlanTests(unittest.TestCase):
         plan = self.plan(checkpoint_validator=validator)
         validator.assert_not_called()
         self.assertTrue(any("Final weights exist" in r.reason for r in plan.runs))
+
+    def test_checkpoint_receives_full_requested_identity_before_arrays_are_opened(self):
+        self.original_grid()
+        target = swap_plan.result_path(self.swaps / "calm", "fixture", "concat", RECIPE)
+        target.parent.mkdir(parents=True)
+        target.with_suffix(".checkpoint").write_bytes(b"synthetic checkpoint")
+        identity = {"schema": "fusion.run.v1", "inputs": {"ordered_rows": "fixture-hash"}}
+        factory, validator = Mock(return_value=identity), Mock(return_value=None)
+        plan = self.plan(identity_factory=factory, checkpoint_validator=validator)
+        factory.assert_called_once_with("fixture", "concat", RECIPE, {**ORIGINAL, "rna": "calm"})
+        validator.assert_called_once_with(target.with_suffix(".checkpoint").resolve(), identity)
+        self.assertEqual(next(r for r in plan.runs if r.path == target.resolve()).status, "resume")
+
+    def test_versioned_result_checks_inputs_and_preserves_mismatch(self):
+        self.original_grid()
+        identity = {"schema": "fusion.run.v1", "inputs": {"encoders": {**ORIGINAL, "rna": "calm"}}}
+        path = self.write(self.swaps / "calm", "concat", encoders={**ORIGINAL, "rna": "calm"})
+        data = json.loads(path.read_text())
+        data["identity"] = identity
+        path.write_text(json.dumps(data))
+        before = path.read_bytes()
+        for requested, status in ((identity, "reuse"), ({**identity, "model": "changed"}, "blocked")):
+            plan = self.plan(identity_factory=Mock(return_value=requested))
+            run = next(r for r in plan.runs if r.path == path.resolve())
+            self.assertEqual(run.status, status)
+        self.assertEqual(path.read_bytes(), before)
+
+    def test_legacy_completed_scores_need_no_current_cache_identity(self):
+        self.original_grid()
+        self.replacements()
+        factory = Mock(side_effect=AssertionError("Historical reading opened current inputs"))
+        plan = self.plan(identity_factory=factory)
+        self.assertTrue(all(r.status == "reuse" and r.legacy_identity for r in plan.runs))
+        factory.assert_not_called()
 
     def test_completed_score_only_result_does_not_retrain_for_missing_arrays_or_checkpoint(self):
         self.original_grid()
