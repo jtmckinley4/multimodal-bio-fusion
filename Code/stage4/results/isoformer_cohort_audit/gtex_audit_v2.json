@@ -1,0 +1,3538 @@
+{
+  "alphabets": {
+    "Protein": {
+      "*": 307,
+      "A": 2386125,
+      "C": 757949,
+      "D": 1659952,
+      "E": 2476055,
+      "F": 1241089,
+      "G": 2229207,
+      "H": 893335,
+      "I": 1498181,
+      "K": 2001029,
+      "L": 3395554,
+      "M": 762006,
+      "N": 1247767,
+      "P": 2146093,
+      "Q": 1649647,
+      "R": 1952113,
+      "S": 2870007,
+      "T": 1837514,
+      "U": 118,
+      "V": 2056382,
+      "W": 422651,
+      "X": 6844,
+      "Y": 908050
+    },
+    "RNA": {
+      "A": 75841578,
+      "C": 70672660,
+      "G": 72135084,
+      "N": 1,
+      "T": 71941283
+    }
+  },
+  "audit_identity": {
+    "chromosome_sizes_sha256": "e1d9152418038457a959e949d99c9caf7ae3e4f87cfbb4ffe7d8b9a54ba1202b",
+    "data_checks_version": "gtex-data-checks-v1",
+    "dataset_revision": "330ab1795abca683e692c7ee138a2e89c0c882f1",
+    "method_version": "isoformer-cohort-v1-exact-markers",
+    "model_revision": "afac2a386c8f2241faf8fad3c5971a9307c13775",
+    "source_bytes": 644594050,
+    "source_sha256": "99f86bb787cc37b7b016ed7ec1dc49aacaa5605a4679b7ddff1e8c090f7667fd",
+    "transformers": "5.15.1",
+    "vocabulary_sha256": {
+      "protein": "0f32181752cb8dd5766f8fa6dc0adb69d56df3fc7db1135e7006feeab3c0b8d7",
+      "rna": "c00e0ad166d6ab3f7540ebc92270392e581bb3106763412f29034b49323e1052"
+    }
+  },
+  "chromosome_sizes_sha256": "e1d9152418038457a959e949d99c9caf7ae3e4f87cfbb4ffe7d8b9a54ba1202b",
+  "data_checks": {
+    "annotations": {
+      "by_type": {
+        "lnc_RNA": {
+          "cds_missing": 56229,
+          "cds_present": 0,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 56229,
+          "protein_id_present": 0,
+          "protein_missing": 56229,
+          "protein_present": 0,
+          "rna_missing": 0,
+          "rna_present": 56229,
+          "rows": 56229
+        },
+        "mRNA": {
+          "cds_missing": 0,
+          "cds_present": 91241,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 0,
+          "protein_id_present": 91241,
+          "protein_missing": 0,
+          "protein_present": 91241,
+          "rna_missing": 0,
+          "rna_present": 91241,
+          "rows": 91241
+        },
+        "miRNA": {
+          "cds_missing": 1877,
+          "cds_present": 0,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 1877,
+          "protein_id_present": 0,
+          "protein_missing": 1877,
+          "protein_present": 0,
+          "rna_missing": 0,
+          "rna_present": 1877,
+          "rows": 1877
+        },
+        "rRNA": {
+          "cds_missing": 48,
+          "cds_present": 0,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 48,
+          "protein_id_present": 0,
+          "protein_missing": 48,
+          "protein_present": 0,
+          "rna_missing": 0,
+          "rna_present": 48,
+          "rows": 48
+        },
+        "scRNA": {
+          "cds_missing": 50,
+          "cds_present": 0,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 50,
+          "protein_id_present": 0,
+          "protein_missing": 50,
+          "protein_present": 0,
+          "rna_missing": 0,
+          "rna_present": 50,
+          "rows": 50
+        },
+        "snRNA": {
+          "cds_missing": 1905,
+          "cds_present": 0,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 1905,
+          "protein_id_present": 0,
+          "protein_missing": 1905,
+          "protein_present": 0,
+          "rna_missing": 0,
+          "rna_present": 1905,
+          "rows": 1905
+        },
+        "snoRNA": {
+          "cds_missing": 941,
+          "cds_present": 0,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 941,
+          "protein_id_present": 0,
+          "protein_missing": 941,
+          "protein_present": 0,
+          "rna_missing": 0,
+          "rna_present": 941,
+          "rows": 941
+        },
+        "tRNA": {
+          "cds_missing": 22,
+          "cds_present": 0,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 22,
+          "protein_id_present": 0,
+          "protein_missing": 22,
+          "protein_present": 0,
+          "rna_missing": 0,
+          "rna_present": 22,
+          "rows": 22
+        },
+        "transcript": {
+          "cds_missing": 25902,
+          "cds_present": 0,
+          "missing_protein_with_cds": 0,
+          "missing_protein_with_id": 0,
+          "protein_id_missing": 25902,
+          "protein_id_present": 0,
+          "protein_missing": 25902,
+          "protein_present": 0,
+          "rna_missing": 0,
+          "rna_present": 25902,
+          "rows": 25902
+        }
+      },
+      "field": "RNA_type_gff"
+    },
+    "length_distributions": {
+      "Protein": {
+        "counts": [
+          18205,
+          35264,
+          21479,
+          10526,
+          35,
+          1848,
+          2924,
+          1,
+          2,
+          894,
+          56,
+          7
+        ],
+        "missing": 86974,
+        "present": 91241,
+        "upper_bounds": [
+          100,
+          300,
+          600,
+          1022,
+          1024,
+          1200,
+          2046,
+          2047,
+          2048,
+          5000,
+          10000,
+          null
+        ]
+      },
+      "RNA": {
+        "counts": [
+          6729,
+          21818,
+          71456,
+          30973,
+          37668,
+          8968,
+          47,
+          1,
+          486,
+          61,
+          4,
+          4
+        ],
+        "missing": 0,
+        "present": 178215,
+        "upper_bounds": [
+          200,
+          500,
+          1000,
+          2000,
+          5000,
+          12000,
+          12282,
+          12288,
+          20000,
+          50000,
+          100000,
+          null
+        ]
+      }
+    },
+    "mappings": {
+      "examples": {
+        "genes_with_multiple_chromosomes": [
+          "ENSG00000147862.15",
+          "ENSG00000184304.14"
+        ],
+        "genes_with_multiple_strands": [
+          "ENSG00000147862.15",
+          "ENSG00000184304.14",
+          "ENSG00000188234.13",
+          "ENSG00000273520.4"
+        ],
+        "protein_ids_with_multiple_sequences": [],
+        "transcripts_with_multiple_gene_ids": [],
+        "transcripts_with_multiple_protein_sequences": [],
+        "transcripts_with_multiple_rna_sequences": []
+      },
+      "genes_with_multiple_chromosomes": 2,
+      "genes_with_multiple_strands": 4,
+      "missing_gene_ids": 0,
+      "missing_transcript_ids": 0,
+      "protein_ids_with_multiple_sequences": 0,
+      "transcripts_with_multiple_gene_ids": 0,
+      "transcripts_with_multiple_protein_sequences": 0,
+      "transcripts_with_multiple_rna_sequences": 0
+    },
+    "overlaps": {
+      "Protein": {
+        "missing_rows": 86974,
+        "pairs": [
+          {
+            "example_transcript_ids_a": [
+              "ENST00000356476.2"
+            ],
+            "example_transcript_ids_b": [
+              "ENST00000369163.3"
+            ],
+            "rows_a": 2,
+            "rows_b": 1,
+            "shared_unique_values": 1,
+            "split_a": "eval",
+            "split_b": "test"
+          },
+          {
+            "example_transcript_ids_a": [
+              "ENST00000530328.5",
+              "ENST00000330181.9",
+              "ENST00000351581.4",
+              "ENST00000623042.1",
+              "ENST00000617705.1"
+            ],
+            "example_transcript_ids_b": [
+              "ENST00000526520.5",
+              "ENST00000251303.10",
+              "ENST00000345535.8",
+              "ENST00000398664.4",
+              "ENST00000569420.1"
+            ],
+            "rows_a": 20,
+            "rows_b": 42,
+            "shared_unique_values": 18,
+            "split_a": "eval",
+            "split_b": "train"
+          },
+          {
+            "example_transcript_ids_a": [
+              "ENST00000617807.2",
+              "ENST00000515005.1",
+              "ENST00000581138.2",
+              "ENST00000313835.13",
+              "ENST00000460277.5"
+            ],
+            "example_transcript_ids_b": [
+              "ENST00000323770.7",
+              "ENST00000436464.1",
+              "ENST00000581164.1",
+              "ENST00000314163.11",
+              "ENST00000488165.5"
+            ],
+            "rows_a": 52,
+            "rows_b": 97,
+            "shared_unique_values": 38,
+            "split_a": "test",
+            "split_b": "train"
+          }
+        ],
+        "unique_values": 79606
+      },
+      "RNA": {
+        "missing_rows": 0,
+        "pairs": [
+          {
+            "example_transcript_ids_a": [
+              "ENST00000253848.3",
+              "ENST00000584160.1",
+              "ENST00000365387.1",
+              "ENST00000598668.1"
+            ],
+            "example_transcript_ids_b": [
+              "ENST00000253838.3",
+              "ENST00000582974.1",
+              "ENST00000363511.1",
+              "ENST00000363043.1"
+            ],
+            "rows_a": 4,
+            "rows_b": 7,
+            "shared_unique_values": 4,
+            "split_a": "eval",
+            "split_b": "test"
+          },
+          {
+            "example_transcript_ids_a": [
+              "ENST00000610531.1",
+              "ENST00000616922.4",
+              "ENST00000546959.1",
+              "ENST00000444357.5",
+              "ENST00000569199.1"
+            ],
+            "example_transcript_ids_b": [
+              "ENST00000549484.5",
+              "ENST00000619938.1",
+              "ENST00000458623.1",
+              "ENST00000609679.1",
+              "ENST00000565347.1"
+            ],
+            "rows_a": 43,
+            "rows_b": 80,
+            "shared_unique_values": 42,
+            "split_a": "eval",
+            "split_b": "train"
+          },
+          {
+            "example_transcript_ids_a": [
+              "ENST00000568534.1",
+              "ENST00000565111.1",
+              "ENST00000562229.1",
+              "ENST00000564795.1",
+              "ENST00000624181.1"
+            ],
+            "example_transcript_ids_b": [
+              "ENST00000565126.5",
+              "ENST00000569220.1",
+              "ENST00000569679.1",
+              "ENST00000564458.1",
+              "ENST00000623227.1"
+            ],
+            "rows_a": 39,
+            "rows_b": 75,
+            "shared_unique_values": 35,
+            "split_a": "test",
+            "split_b": "train"
+          }
+        ],
+        "unique_values": 177733
+      },
+      "gene_id": {
+        "missing_rows": 0,
+        "pairs": [
+          {
+            "example_transcript_ids_a": [],
+            "example_transcript_ids_b": [],
+            "rows_a": 0,
+            "rows_b": 0,
+            "shared_unique_values": 0,
+            "split_a": "eval",
+            "split_b": "test"
+          },
+          {
+            "example_transcript_ids_a": [],
+            "example_transcript_ids_b": [],
+            "rows_a": 0,
+            "rows_b": 0,
+            "shared_unique_values": 0,
+            "split_a": "eval",
+            "split_b": "train"
+          },
+          {
+            "example_transcript_ids_a": [],
+            "example_transcript_ids_b": [],
+            "rows_a": 0,
+            "rows_b": 0,
+            "shared_unique_values": 0,
+            "split_a": "test",
+            "split_b": "train"
+          }
+        ],
+        "unique_values": 42378
+      },
+      "transcript_id": {
+        "missing_rows": 0,
+        "pairs": [
+          {
+            "example_transcript_ids_a": [],
+            "example_transcript_ids_b": [],
+            "rows_a": 0,
+            "rows_b": 0,
+            "shared_unique_values": 0,
+            "split_a": "eval",
+            "split_b": "test"
+          },
+          {
+            "example_transcript_ids_a": [],
+            "example_transcript_ids_b": [],
+            "rows_a": 0,
+            "rows_b": 0,
+            "shared_unique_values": 0,
+            "split_a": "eval",
+            "split_b": "train"
+          },
+          {
+            "example_transcript_ids_a": [],
+            "example_transcript_ids_b": [],
+            "rows_a": 0,
+            "rows_b": 0,
+            "shared_unique_values": 0,
+            "split_a": "test",
+            "split_b": "train"
+          }
+        ],
+        "unique_values": 178215
+      }
+    },
+    "policy_impacts": {
+      "definitions": {
+        "cds_missing": "No CDS string supplied.",
+        "dna_boundary_excluded": "Coordinates fail the inference example's chromosome-window checks.",
+        "protein_id_missing": "No associated Ensembl protein transcript ID supplied.",
+        "protein_length_gt_1200": "Supplied protein exceeds 1,200 characters.",
+        "protein_length_gt_2048": "Supplied protein exceeds 2,048 characters.",
+        "protein_missing": "No protein string supplied; this does not establish a noncoding annotation.",
+        "rna_after_3prime_12000_tokens_gt_2048": "Hypothetical 12,000-character RNA suffix exceeds 2,048 tokens.",
+        "rna_after_3prime_12282_tokens_gt_2048": "Hypothetical 12,282-character RNA suffix exceeds 2,048 tokens.",
+        "rna_after_3prime_12288_tokens_gt_2048": "Hypothetical 12,288-character RNA suffix exceeds 2,048 tokens.",
+        "rna_missing": "No RNA string supplied under the exact missing-marker rule.",
+        "rna_tokens_gt_2048": "Unchanged supplied RNA exceeds 2,048 unpadded tokens."
+      },
+      "groups": [
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "lnc_RNA",
+          "dna_eligible": 2874,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000444968.1",
+              "ENST00000480479.5",
+              "ENST00000463260.5",
+              "ENST00000496007.5",
+              "ENST00000482365.5"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000425566.1",
+              "ENST00000599829.1",
+              "ENST00000593801.1",
+              "ENST00000482508.5",
+              "ENST00000481861.1"
+            ],
+            "protein_id_missing": [
+              "ENST00000444968.1",
+              "ENST00000480479.5",
+              "ENST00000463260.5",
+              "ENST00000496007.5",
+              "ENST00000482365.5"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000444968.1",
+              "ENST00000480479.5",
+              "ENST00000463260.5",
+              "ENST00000496007.5",
+              "ENST00000482365.5"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [
+              "ENST00000626826.1",
+              "ENST00000458178.2",
+              "ENST00000510626.5",
+              "ENST00000473186.5"
+            ],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": [
+              "ENST00000626826.1",
+              "ENST00000458178.2",
+              "ENST00000510626.5",
+              "ENST00000473186.5"
+            ]
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 16,
+            "cds_missing & protein_id_missing": 2890,
+            "cds_missing & protein_missing": 2890,
+            "cds_missing & rna_after_3prime_12288_tokens_gt_2048": 4,
+            "cds_missing & rna_tokens_gt_2048": 4,
+            "dna_boundary_excluded & protein_id_missing": 16,
+            "dna_boundary_excluded & protein_missing": 16,
+            "protein_id_missing & protein_missing": 2890,
+            "protein_id_missing & rna_after_3prime_12288_tokens_gt_2048": 4,
+            "protein_id_missing & rna_tokens_gt_2048": 4,
+            "protein_missing & rna_after_3prime_12288_tokens_gt_2048": 4,
+            "protein_missing & rna_tokens_gt_2048": 4,
+            "rna_after_3prime_12288_tokens_gt_2048 & rna_tokens_gt_2048": 4
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 2890,
+            "dna_boundary_excluded": 16,
+            "protein_id_missing": 2890,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 2890,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 4,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 4
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 2890,
+          "rows": 2890,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 4610,
+          "annotation": "mRNA",
+          "dna_eligible": 4610,
+          "example_ids": {
+            "cds_missing": [],
+            "dna_boundary_excluded": [
+              "ENST00000252951.2",
+              "ENST00000253023.7",
+              "ENST00000595957.5",
+              "ENST00000596985.1",
+              "ENST00000451211.6"
+            ],
+            "protein_id_missing": [],
+            "protein_length_gt_1200": [
+              "ENST00000493964.5",
+              "ENST00000370571.6",
+              "ENST00000361915.7",
+              "ENST00000370165.7",
+              "ENST00000370163.7"
+            ],
+            "protein_length_gt_2048": [
+              "ENST00000529681.5",
+              "ENST00000325212.10",
+              "ENST00000452508.6",
+              "ENST00000278616.8",
+              "ENST00000260197.11"
+            ],
+            "protein_missing": [],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [
+              "ENST00000369787.7",
+              "ENST00000271417.7",
+              "ENST00000367866.6",
+              "ENST00000271411.8",
+              "ENST00000429375.6"
+            ],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": [
+              "ENST00000369787.7",
+              "ENST00000271417.7",
+              "ENST00000367866.6",
+              "ENST00000271411.8",
+              "ENST00000429375.6"
+            ]
+          },
+          "overlapping_reason_pairs": {
+            "dna_boundary_excluded & protein_length_gt_1200": 2,
+            "dna_boundary_excluded & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "dna_boundary_excluded & rna_tokens_gt_2048": 1,
+            "protein_length_gt_1200 & protein_length_gt_2048": 60,
+            "protein_length_gt_1200 & rna_after_3prime_12288_tokens_gt_2048": 18,
+            "protein_length_gt_1200 & rna_tokens_gt_2048": 18,
+            "protein_length_gt_2048 & rna_after_3prime_12288_tokens_gt_2048": 14,
+            "protein_length_gt_2048 & rna_tokens_gt_2048": 14,
+            "rna_after_3prime_12288_tokens_gt_2048 & rna_tokens_gt_2048": 39
+          },
+          "protein_present": 4656,
+          "reasons": {
+            "cds_missing": 0,
+            "dna_boundary_excluded": 46,
+            "protein_id_missing": 0,
+            "protein_length_gt_1200": 224,
+            "protein_length_gt_2048": 60,
+            "protein_missing": 0,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 39,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 39
+          },
+          "rna_and_protein_present": 4656,
+          "rna_present": 4656,
+          "rows": 4656,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "miRNA",
+          "dna_eligible": 106,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000619216.1",
+              "ENST00000614019.2",
+              "ENST00000581357.1",
+              "ENST00000617385.1",
+              "ENST00000619620.1"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000619216.1",
+              "ENST00000615957.1"
+            ],
+            "protein_id_missing": [
+              "ENST00000619216.1",
+              "ENST00000614019.2",
+              "ENST00000581357.1",
+              "ENST00000617385.1",
+              "ENST00000619620.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000619216.1",
+              "ENST00000614019.2",
+              "ENST00000581357.1",
+              "ENST00000617385.1",
+              "ENST00000619620.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 2,
+            "cds_missing & protein_id_missing": 108,
+            "cds_missing & protein_missing": 108,
+            "dna_boundary_excluded & protein_id_missing": 2,
+            "dna_boundary_excluded & protein_missing": 2,
+            "protein_id_missing & protein_missing": 108
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 108,
+            "dna_boundary_excluded": 2,
+            "protein_id_missing": 108,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 108,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 108,
+          "rows": 108,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "rRNA",
+          "dna_eligible": 1,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000365387.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000365387.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000365387.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 1,
+            "cds_missing & protein_missing": 1,
+            "protein_id_missing & protein_missing": 1
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 1,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 1,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 1,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 1,
+          "rows": 1,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "scRNA",
+          "dna_eligible": 2,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000458748.1",
+              "ENST00000629045.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000458748.1",
+              "ENST00000629045.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000458748.1",
+              "ENST00000629045.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 2,
+            "cds_missing & protein_missing": 2,
+            "protein_id_missing & protein_missing": 2
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 2,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 2,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 2,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 2,
+          "rows": 2,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "snRNA",
+          "dna_eligible": 89,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000516769.1",
+              "ENST00000411130.1",
+              "ENST00000363093.1",
+              "ENST00000362515.1",
+              "ENST00000516941.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000516769.1",
+              "ENST00000411130.1",
+              "ENST00000363093.1",
+              "ENST00000362515.1",
+              "ENST00000516941.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000516769.1",
+              "ENST00000411130.1",
+              "ENST00000363093.1",
+              "ENST00000362515.1",
+              "ENST00000516941.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 89,
+            "cds_missing & protein_missing": 89,
+            "protein_id_missing & protein_missing": 89
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 89,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 89,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 89,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 89,
+          "rows": 89,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "snoRNA",
+          "dna_eligible": 45,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000391322.1",
+              "ENST00000384512.1",
+              "ENST00000391236.2",
+              "ENST00000364921.1",
+              "ENST00000459095.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000391322.1",
+              "ENST00000384512.1",
+              "ENST00000391236.2",
+              "ENST00000364921.1",
+              "ENST00000459095.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000391322.1",
+              "ENST00000384512.1",
+              "ENST00000391236.2",
+              "ENST00000364921.1",
+              "ENST00000459095.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 45,
+            "cds_missing & protein_missing": 45,
+            "protein_id_missing & protein_missing": 45
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 45,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 45,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 45,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 45,
+          "rows": 45,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "tRNA",
+          "dna_eligible": 0,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000387460.2"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000387460.2"
+            ],
+            "protein_id_missing": [
+              "ENST00000387460.2"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000387460.2"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 1,
+            "cds_missing & protein_id_missing": 1,
+            "cds_missing & protein_missing": 1,
+            "dna_boundary_excluded & protein_id_missing": 1,
+            "dna_boundary_excluded & protein_missing": 1,
+            "protein_id_missing & protein_missing": 1
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 1,
+            "dna_boundary_excluded": 1,
+            "protein_id_missing": 1,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 1,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 1,
+          "rows": 1,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "transcript",
+          "dna_eligible": 1320,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000505849.5",
+              "ENST00000469113.5",
+              "ENST00000471930.5",
+              "ENST00000491212.1",
+              "ENST00000486765.5"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000491389.1",
+              "ENST00000498151.1",
+              "ENST00000465063.5",
+              "ENST00000487575.6",
+              "ENST00000495302.5"
+            ],
+            "protein_id_missing": [
+              "ENST00000505849.5",
+              "ENST00000469113.5",
+              "ENST00000471930.5",
+              "ENST00000491212.1",
+              "ENST00000486765.5"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000505849.5",
+              "ENST00000469113.5",
+              "ENST00000471930.5",
+              "ENST00000491212.1",
+              "ENST00000486765.5"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [
+              "ENST00000367865.5"
+            ],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": [
+              "ENST00000367865.5"
+            ]
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 8,
+            "cds_missing & protein_id_missing": 1328,
+            "cds_missing & protein_missing": 1328,
+            "cds_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "cds_missing & rna_tokens_gt_2048": 1,
+            "dna_boundary_excluded & protein_id_missing": 8,
+            "dna_boundary_excluded & protein_missing": 8,
+            "protein_id_missing & protein_missing": 1328,
+            "protein_id_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "protein_id_missing & rna_tokens_gt_2048": 1,
+            "protein_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "protein_missing & rna_tokens_gt_2048": 1,
+            "rna_after_3prime_12288_tokens_gt_2048 & rna_tokens_gt_2048": 1
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 1328,
+            "dna_boundary_excluded": 8,
+            "protein_id_missing": 1328,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 1328,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 1,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 1
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 1328,
+          "rows": 1328,
+          "split": "eval"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "lnc_RNA",
+          "dna_eligible": 2761,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000450983.1",
+              "ENST00000412666.1",
+              "ENST00000635159.1",
+              "ENST00000473798.1",
+              "ENST00000497869.5"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000470787.6",
+              "ENST00000478107.5",
+              "ENST00000497847.1",
+              "ENST00000534660.5",
+              "ENST00000483791.6"
+            ],
+            "protein_id_missing": [
+              "ENST00000450983.1",
+              "ENST00000412666.1",
+              "ENST00000635159.1",
+              "ENST00000473798.1",
+              "ENST00000497869.5"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000450983.1",
+              "ENST00000412666.1",
+              "ENST00000635159.1",
+              "ENST00000473798.1",
+              "ENST00000497869.5"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [
+              "ENST00000623440.1"
+            ],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": [
+              "ENST00000623440.1"
+            ]
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 22,
+            "cds_missing & protein_id_missing": 2783,
+            "cds_missing & protein_missing": 2783,
+            "cds_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "cds_missing & rna_tokens_gt_2048": 1,
+            "dna_boundary_excluded & protein_id_missing": 22,
+            "dna_boundary_excluded & protein_missing": 22,
+            "protein_id_missing & protein_missing": 2783,
+            "protein_id_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "protein_id_missing & rna_tokens_gt_2048": 1,
+            "protein_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "protein_missing & rna_tokens_gt_2048": 1,
+            "rna_after_3prime_12288_tokens_gt_2048 & rna_tokens_gt_2048": 1
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 2783,
+            "dna_boundary_excluded": 22,
+            "protein_id_missing": 2783,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 2783,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 1,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 1
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 2783,
+          "rows": 2783,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 4346,
+          "annotation": "mRNA",
+          "dna_eligible": 4346,
+          "example_ids": {
+            "cds_missing": [],
+            "dna_boundary_excluded": [
+              "ENST00000463519.5",
+              "ENST00000306601.8",
+              "ENST00000366471.7",
+              "ENST00000412341.6",
+              "ENST00000451251.5"
+            ],
+            "protein_id_missing": [],
+            "protein_length_gt_1200": [
+              "ENST00000377022.7",
+              "ENST00000433342.5",
+              "ENST00000430799.7",
+              "ENST00000324856.11",
+              "ENST00000457599.6"
+            ],
+            "protein_length_gt_2048": [
+              "ENST00000324856.11",
+              "ENST00000457599.6",
+              "ENST00000294383.6",
+              "ENST00000484447.5",
+              "ENST00000368586.9"
+            ],
+            "protein_missing": [],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [
+              "ENST00000609129.1",
+              "ENST00000357731.9",
+              "ENST00000637265.1",
+              "ENST00000328654.9",
+              "ENST00000322527.3"
+            ],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": [
+              "ENST00000609129.1",
+              "ENST00000357731.9",
+              "ENST00000637265.1",
+              "ENST00000328654.9",
+              "ENST00000322527.3"
+            ]
+          },
+          "overlapping_reason_pairs": {
+            "protein_length_gt_1200 & protein_length_gt_2048": 42,
+            "protein_length_gt_1200 & rna_after_3prime_12288_tokens_gt_2048": 4,
+            "protein_length_gt_1200 & rna_tokens_gt_2048": 4,
+            "protein_length_gt_2048 & rna_after_3prime_12288_tokens_gt_2048": 4,
+            "protein_length_gt_2048 & rna_tokens_gt_2048": 4,
+            "rna_after_3prime_12288_tokens_gt_2048 & rna_tokens_gt_2048": 18
+          },
+          "protein_present": 4363,
+          "reasons": {
+            "cds_missing": 0,
+            "dna_boundary_excluded": 17,
+            "protein_id_missing": 0,
+            "protein_length_gt_1200": 153,
+            "protein_length_gt_2048": 42,
+            "protein_missing": 0,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 18,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 18
+          },
+          "rna_and_protein_present": 4363,
+          "rna_present": 4363,
+          "rows": 4363,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "miRNA",
+          "dna_eligible": 89,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000585139.1",
+              "ENST00000618792.1",
+              "ENST00000581187.1",
+              "ENST00000583845.1",
+              "ENST00000385227.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000585139.1",
+              "ENST00000618792.1",
+              "ENST00000581187.1",
+              "ENST00000583845.1",
+              "ENST00000385227.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000585139.1",
+              "ENST00000618792.1",
+              "ENST00000581187.1",
+              "ENST00000583845.1",
+              "ENST00000385227.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 89,
+            "cds_missing & protein_missing": 89,
+            "protein_id_missing & protein_missing": 89
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 89,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 89,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 89,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 89,
+          "rows": 89,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "rRNA",
+          "dna_eligible": 6,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000618635.1",
+              "ENST00000363511.1",
+              "ENST00000363473.1",
+              "ENST00000363500.1",
+              "ENST00000619782.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000618635.1",
+              "ENST00000363511.1",
+              "ENST00000363473.1",
+              "ENST00000363500.1",
+              "ENST00000619782.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000618635.1",
+              "ENST00000363511.1",
+              "ENST00000363473.1",
+              "ENST00000363500.1",
+              "ENST00000619782.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 6,
+            "cds_missing & protein_missing": 6,
+            "protein_id_missing & protein_missing": 6
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 6,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 6,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 6,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 6,
+          "rows": 6,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "scRNA",
+          "dna_eligible": 2,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000516956.1",
+              "ENST00000516409.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000516956.1",
+              "ENST00000516409.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000516956.1",
+              "ENST00000516409.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 2,
+            "cds_missing & protein_missing": 2,
+            "protein_id_missing & protein_missing": 2
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 2,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 2,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 2,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 2,
+          "rows": 2,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "snRNA",
+          "dna_eligible": 100,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000364855.1",
+              "ENST00000384367.1",
+              "ENST00000517196.1",
+              "ENST00000637979.1",
+              "ENST00000383973.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000364855.1",
+              "ENST00000384367.1",
+              "ENST00000517196.1",
+              "ENST00000637979.1",
+              "ENST00000383973.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000364855.1",
+              "ENST00000384367.1",
+              "ENST00000517196.1",
+              "ENST00000637979.1",
+              "ENST00000383973.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 100,
+            "cds_missing & protein_missing": 100,
+            "protein_id_missing & protein_missing": 100
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 100,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 100,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 100,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 100,
+          "rows": 100,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "snoRNA",
+          "dna_eligible": 54,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000517238.1",
+              "ENST00000365074.1",
+              "ENST00000390885.1",
+              "ENST00000458762.1",
+              "ENST00000636377.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000517238.1",
+              "ENST00000365074.1",
+              "ENST00000390885.1",
+              "ENST00000458762.1",
+              "ENST00000636377.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000517238.1",
+              "ENST00000365074.1",
+              "ENST00000390885.1",
+              "ENST00000458762.1",
+              "ENST00000636377.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 54,
+            "cds_missing & protein_missing": 54,
+            "protein_id_missing & protein_missing": 54
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 54,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 54,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 54,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 54,
+          "rows": 54,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "tRNA",
+          "dna_eligible": 0,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000387400.1"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000387400.1"
+            ],
+            "protein_id_missing": [
+              "ENST00000387400.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000387400.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 1,
+            "cds_missing & protein_id_missing": 1,
+            "cds_missing & protein_missing": 1,
+            "dna_boundary_excluded & protein_id_missing": 1,
+            "dna_boundary_excluded & protein_missing": 1,
+            "protein_id_missing & protein_missing": 1
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 1,
+            "dna_boundary_excluded": 1,
+            "protein_id_missing": 1,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 1,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 1,
+          "rows": 1,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "transcript",
+          "dna_eligible": 1153,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000453580.1",
+              "ENST00000467651.2",
+              "ENST00000472614.2",
+              "ENST00000493183.5",
+              "ENST00000474659.5"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000495731.5",
+              "ENST00000533614.5",
+              "ENST00000493672.1",
+              "ENST00000489233.6",
+              "ENST00000494962.6"
+            ],
+            "protein_id_missing": [
+              "ENST00000453580.1",
+              "ENST00000467651.2",
+              "ENST00000472614.2",
+              "ENST00000493183.5",
+              "ENST00000474659.5"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000453580.1",
+              "ENST00000467651.2",
+              "ENST00000472614.2",
+              "ENST00000493183.5",
+              "ENST00000474659.5"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 5,
+            "cds_missing & protein_id_missing": 1158,
+            "cds_missing & protein_missing": 1158,
+            "dna_boundary_excluded & protein_id_missing": 5,
+            "dna_boundary_excluded & protein_missing": 5,
+            "protein_id_missing & protein_missing": 1158
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 1158,
+            "dna_boundary_excluded": 5,
+            "protein_id_missing": 1158,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 1158,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 1158,
+          "rows": 1158,
+          "split": "test"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "lnc_RNA",
+          "dna_eligible": 50370,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000456328.2",
+              "ENST00000473358.1",
+              "ENST00000469289.1",
+              "ENST00000417324.1",
+              "ENST00000461467.1"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000456328.2",
+              "ENST00000473358.1",
+              "ENST00000469289.1",
+              "ENST00000417324.1",
+              "ENST00000461467.1"
+            ],
+            "protein_id_missing": [
+              "ENST00000456328.2",
+              "ENST00000473358.1",
+              "ENST00000469289.1",
+              "ENST00000417324.1",
+              "ENST00000461467.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000456328.2",
+              "ENST00000473358.1",
+              "ENST00000469289.1",
+              "ENST00000417324.1",
+              "ENST00000461467.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [
+              "ENST00000289893.8",
+              "ENST00000603233.1",
+              "ENST00000392097.4",
+              "ENST00000366527.4",
+              "ENST00000443374.6"
+            ],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": [
+              "ENST00000289893.8",
+              "ENST00000603233.1",
+              "ENST00000392097.4",
+              "ENST00000366527.4",
+              "ENST00000443374.6"
+            ]
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 186,
+            "cds_missing & protein_id_missing": 50556,
+            "cds_missing & protein_missing": 50556,
+            "cds_missing & rna_after_3prime_12288_tokens_gt_2048": 35,
+            "cds_missing & rna_tokens_gt_2048": 35,
+            "dna_boundary_excluded & protein_id_missing": 186,
+            "dna_boundary_excluded & protein_missing": 186,
+            "protein_id_missing & protein_missing": 50556,
+            "protein_id_missing & rna_after_3prime_12288_tokens_gt_2048": 35,
+            "protein_id_missing & rna_tokens_gt_2048": 35,
+            "protein_missing & rna_after_3prime_12288_tokens_gt_2048": 35,
+            "protein_missing & rna_tokens_gt_2048": 35,
+            "rna_after_3prime_12288_tokens_gt_2048 & rna_tokens_gt_2048": 35
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 50556,
+            "dna_boundary_excluded": 186,
+            "protein_id_missing": 50556,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 50556,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 35,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 35
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 50556,
+          "rows": 50556,
+          "split": "train"
+        },
+        {
+          "all_three_present_after_boundary": 82076,
+          "annotation": "mRNA",
+          "dna_eligible": 82076,
+          "example_ids": {
+            "cds_missing": [],
+            "dna_boundary_excluded": [
+              "ENST00000355360.8",
+              "ENST00000329291.5",
+              "ENST00000568584.5",
+              "ENST00000564130.2",
+              "ENST00000568866.5"
+            ],
+            "protein_id_missing": [],
+            "protein_length_gt_1200": [
+              "ENST00000379370.6",
+              "ENST00000620552.4",
+              "ENST00000378486.7",
+              "ENST00000419816.6",
+              "ENST00000278878.6"
+            ],
+            "protein_length_gt_2048": [
+              "ENST00000361445.8",
+              "ENST00000620676.4",
+              "ENST00000613099.4",
+              "ENST00000011700.10",
+              "ENST00000375759.7"
+            ],
+            "protein_missing": [],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [
+              "ENST00000377252.4",
+              "ENST00000409273.5",
+              "ENST00000286437.7"
+            ],
+            "rna_after_3prime_12288_tokens_gt_2048": [
+              "ENST00000620676.4",
+              "ENST00000613099.4",
+              "ENST00000375759.7",
+              "ENST00000438066.1",
+              "ENST00000375254.7"
+            ],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": [
+              "ENST00000620676.4",
+              "ENST00000613099.4",
+              "ENST00000375759.7",
+              "ENST00000438066.1",
+              "ENST00000375254.7"
+            ]
+          },
+          "overlapping_reason_pairs": {
+            "dna_boundary_excluded & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "dna_boundary_excluded & rna_tokens_gt_2048": 1,
+            "protein_length_gt_1200 & protein_length_gt_2048": 855,
+            "protein_length_gt_1200 & rna_after_3prime_12282_tokens_gt_2048": 1,
+            "protein_length_gt_1200 & rna_after_3prime_12288_tokens_gt_2048": 279,
+            "protein_length_gt_1200 & rna_tokens_gt_2048": 279,
+            "protein_length_gt_2048 & rna_after_3prime_12282_tokens_gt_2048": 1,
+            "protein_length_gt_2048 & rna_after_3prime_12288_tokens_gt_2048": 230,
+            "protein_length_gt_2048 & rna_tokens_gt_2048": 230,
+            "rna_after_3prime_12282_tokens_gt_2048 & rna_after_3prime_12288_tokens_gt_2048": 3,
+            "rna_after_3prime_12282_tokens_gt_2048 & rna_tokens_gt_2048": 3,
+            "rna_after_3prime_12288_tokens_gt_2048 & rna_tokens_gt_2048": 460
+          },
+          "protein_present": 82222,
+          "reasons": {
+            "cds_missing": 0,
+            "dna_boundary_excluded": 146,
+            "protein_id_missing": 0,
+            "protein_length_gt_1200": 3507,
+            "protein_length_gt_2048": 855,
+            "protein_missing": 0,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 3,
+            "rna_after_3prime_12288_tokens_gt_2048": 460,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 460
+          },
+          "rna_and_protein_present": 82222,
+          "rna_present": 82222,
+          "rows": 82222,
+          "split": "train"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "miRNA",
+          "dna_eligible": 1671,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000607096.1",
+              "ENST00000612080.1",
+              "ENST00000621981.1",
+              "ENST00000384997.3",
+              "ENST00000384875.3"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000607096.1",
+              "ENST00000612080.1",
+              "ENST00000580432.1",
+              "ENST00000408734.1",
+              "ENST00000621186.1"
+            ],
+            "protein_id_missing": [
+              "ENST00000607096.1",
+              "ENST00000612080.1",
+              "ENST00000621981.1",
+              "ENST00000384997.3",
+              "ENST00000384875.3"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000607096.1",
+              "ENST00000612080.1",
+              "ENST00000621981.1",
+              "ENST00000384997.3",
+              "ENST00000384875.3"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 9,
+            "cds_missing & protein_id_missing": 1680,
+            "cds_missing & protein_missing": 1680,
+            "dna_boundary_excluded & protein_id_missing": 9,
+            "dna_boundary_excluded & protein_missing": 9,
+            "protein_id_missing & protein_missing": 1680
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 1680,
+            "dna_boundary_excluded": 9,
+            "protein_id_missing": 1680,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 1680,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 1680,
+          "rows": 1680,
+          "split": "train"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "rRNA",
+          "dna_eligible": 39,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000517021.2",
+              "ENST00000621941.1",
+              "ENST00000622298.1",
+              "ENST00000362482.1",
+              "ENST00000364718.1"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000389680.2",
+              "ENST00000387347.2"
+            ],
+            "protein_id_missing": [
+              "ENST00000517021.2",
+              "ENST00000621941.1",
+              "ENST00000622298.1",
+              "ENST00000362482.1",
+              "ENST00000364718.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000517021.2",
+              "ENST00000621941.1",
+              "ENST00000622298.1",
+              "ENST00000362482.1",
+              "ENST00000364718.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 2,
+            "cds_missing & protein_id_missing": 41,
+            "cds_missing & protein_missing": 41,
+            "dna_boundary_excluded & protein_id_missing": 2,
+            "dna_boundary_excluded & protein_missing": 2,
+            "protein_id_missing & protein_missing": 41
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 41,
+            "dna_boundary_excluded": 2,
+            "protein_id_missing": 41,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 41,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 41,
+          "rows": 41,
+          "split": "train"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "scRNA",
+          "dna_eligible": 46,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000516595.1",
+              "ENST00000517276.1",
+              "ENST00000516057.1",
+              "ENST00000516381.1",
+              "ENST00000516882.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000516595.1",
+              "ENST00000517276.1",
+              "ENST00000516057.1",
+              "ENST00000516381.1",
+              "ENST00000516882.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000516595.1",
+              "ENST00000517276.1",
+              "ENST00000516057.1",
+              "ENST00000516381.1",
+              "ENST00000516882.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 46,
+            "cds_missing & protein_missing": 46,
+            "protein_id_missing & protein_missing": 46
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 46,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 46,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 46,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 46,
+          "rows": 46,
+          "split": "train"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "snRNA",
+          "dna_eligible": 1711,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000410691.1",
+              "ENST00000614007.1",
+              "ENST00000411249.1",
+              "ENST00000517213.1",
+              "ENST00000384328.1"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000410691.1",
+              "ENST00000363625.1",
+              "ENST00000410293.1",
+              "ENST00000459076.1",
+              "ENST00000620287.1"
+            ],
+            "protein_id_missing": [
+              "ENST00000410691.1",
+              "ENST00000614007.1",
+              "ENST00000411249.1",
+              "ENST00000517213.1",
+              "ENST00000384328.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000410691.1",
+              "ENST00000614007.1",
+              "ENST00000411249.1",
+              "ENST00000517213.1",
+              "ENST00000384328.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 5,
+            "cds_missing & protein_id_missing": 1716,
+            "cds_missing & protein_missing": 1716,
+            "dna_boundary_excluded & protein_id_missing": 5,
+            "dna_boundary_excluded & protein_missing": 5,
+            "protein_id_missing & protein_missing": 1716
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 1716,
+            "dna_boundary_excluded": 5,
+            "protein_id_missing": 1716,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 1716,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 1716,
+          "rows": 1716,
+          "split": "train"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "snoRNA",
+          "dna_eligible": 842,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000408156.1",
+              "ENST00000517160.1",
+              "ENST00000459326.1",
+              "ENST00000459201.1",
+              "ENST00000364938.1"
+            ],
+            "dna_boundary_excluded": [],
+            "protein_id_missing": [
+              "ENST00000408156.1",
+              "ENST00000517160.1",
+              "ENST00000459326.1",
+              "ENST00000459201.1",
+              "ENST00000364938.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000408156.1",
+              "ENST00000517160.1",
+              "ENST00000459326.1",
+              "ENST00000459201.1",
+              "ENST00000364938.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & protein_id_missing": 842,
+            "cds_missing & protein_missing": 842,
+            "protein_id_missing & protein_missing": 842
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 842,
+            "dna_boundary_excluded": 0,
+            "protein_id_missing": 842,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 842,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 842,
+          "rows": 842,
+          "split": "train"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "tRNA",
+          "dna_eligible": 0,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000387314.1",
+              "ENST00000387342.1",
+              "ENST00000386347.1",
+              "ENST00000387365.1",
+              "ENST00000387372.1"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000387314.1",
+              "ENST00000387342.1",
+              "ENST00000386347.1",
+              "ENST00000387365.1",
+              "ENST00000387372.1"
+            ],
+            "protein_id_missing": [
+              "ENST00000387314.1",
+              "ENST00000387342.1",
+              "ENST00000386347.1",
+              "ENST00000387365.1",
+              "ENST00000387372.1"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000387314.1",
+              "ENST00000387342.1",
+              "ENST00000386347.1",
+              "ENST00000387365.1",
+              "ENST00000387372.1"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": []
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 20,
+            "cds_missing & protein_id_missing": 20,
+            "cds_missing & protein_missing": 20,
+            "dna_boundary_excluded & protein_id_missing": 20,
+            "dna_boundary_excluded & protein_missing": 20,
+            "protein_id_missing & protein_missing": 20
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 20,
+            "dna_boundary_excluded": 20,
+            "protein_id_missing": 20,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 20,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 0,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 0
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 20,
+          "rows": 20,
+          "split": "train"
+        },
+        {
+          "all_three_present_after_boundary": 0,
+          "annotation": "transcript",
+          "dna_eligible": 23380,
+          "example_ids": {
+            "cds_missing": [
+              "ENST00000478729.1",
+              "ENST00000496938.1",
+              "ENST00000487214.1",
+              "ENST00000464905.1",
+              "ENST00000482816.5"
+            ],
+            "dna_boundary_excluded": [
+              "ENST00000462488.1",
+              "ENST00000537151.1",
+              "ENST00000544511.1",
+              "ENST00000459107.1",
+              "ENST00000484246.5"
+            ],
+            "protein_id_missing": [
+              "ENST00000478729.1",
+              "ENST00000496938.1",
+              "ENST00000487214.1",
+              "ENST00000464905.1",
+              "ENST00000482816.5"
+            ],
+            "protein_length_gt_1200": [],
+            "protein_length_gt_2048": [],
+            "protein_missing": [
+              "ENST00000478729.1",
+              "ENST00000496938.1",
+              "ENST00000487214.1",
+              "ENST00000464905.1",
+              "ENST00000482816.5"
+            ],
+            "rna_after_3prime_12000_tokens_gt_2048": [],
+            "rna_after_3prime_12282_tokens_gt_2048": [],
+            "rna_after_3prime_12288_tokens_gt_2048": [
+              "ENST00000361558.7"
+            ],
+            "rna_missing": [],
+            "rna_tokens_gt_2048": [
+              "ENST00000361558.7"
+            ]
+          },
+          "overlapping_reason_pairs": {
+            "cds_missing & dna_boundary_excluded": 36,
+            "cds_missing & protein_id_missing": 23416,
+            "cds_missing & protein_missing": 23416,
+            "cds_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "cds_missing & rna_tokens_gt_2048": 1,
+            "dna_boundary_excluded & protein_id_missing": 36,
+            "dna_boundary_excluded & protein_missing": 36,
+            "protein_id_missing & protein_missing": 23416,
+            "protein_id_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "protein_id_missing & rna_tokens_gt_2048": 1,
+            "protein_missing & rna_after_3prime_12288_tokens_gt_2048": 1,
+            "protein_missing & rna_tokens_gt_2048": 1,
+            "rna_after_3prime_12288_tokens_gt_2048 & rna_tokens_gt_2048": 1
+          },
+          "protein_present": 0,
+          "reasons": {
+            "cds_missing": 23416,
+            "dna_boundary_excluded": 36,
+            "protein_id_missing": 23416,
+            "protein_length_gt_1200": 0,
+            "protein_length_gt_2048": 0,
+            "protein_missing": 23416,
+            "rna_after_3prime_12000_tokens_gt_2048": 0,
+            "rna_after_3prime_12282_tokens_gt_2048": 0,
+            "rna_after_3prime_12288_tokens_gt_2048": 1,
+            "rna_missing": 0,
+            "rna_tokens_gt_2048": 1
+          },
+          "rna_and_protein_present": 0,
+          "rna_present": 23416,
+          "rows": 23416,
+          "split": "train"
+        }
+      ]
+    },
+    "representative_rows": {
+      "first_rows": [
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 1657,
+          "RNA_tokens": 278,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000223972.5",
+          "protein_id_present": false,
+          "row_number": 1,
+          "split": "train",
+          "transcript_id": "ENST00000456328.2"
+        },
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 712,
+          "RNA_tokens": 123,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000243485.5",
+          "protein_id_present": false,
+          "row_number": 2,
+          "split": "train",
+          "transcript_id": "ENST00000473358.1"
+        },
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 535,
+          "RNA_tokens": 91,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000243485.5",
+          "protein_id_present": false,
+          "row_number": 3,
+          "split": "train",
+          "transcript_id": "ENST00000469289.1"
+        },
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 1187,
+          "RNA_tokens": 203,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000237613.2",
+          "protein_id_present": false,
+          "row_number": 4,
+          "split": "train",
+          "transcript_id": "ENST00000417324.1"
+        },
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 590,
+          "RNA_tokens": 101,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000237613.2",
+          "protein_id_present": false,
+          "row_number": 5,
+          "split": "train",
+          "transcript_id": "ENST00000461467.1"
+        }
+      ],
+      "longest_Protein": {
+        "Protein_length": 35991,
+        "Protein_tokens": 35993,
+        "RNA_length": 109224,
+        "RNA_tokens": 18205,
+        "annotation": "mRNA",
+        "cds_present": true,
+        "gene_id": "ENSG00000155657.26",
+        "protein_id_present": true,
+        "row_number": 110046,
+        "split": "train",
+        "transcript_id": "ENST00000589042.5"
+      },
+      "longest_RNA": {
+        "Protein_length": null,
+        "Protein_tokens": null,
+        "RNA_length": 205012,
+        "RNA_tokens": 34173,
+        "annotation": "lnc_RNA",
+        "cds_present": false,
+        "gene_id": "ENSG00000281344.1",
+        "protein_id_present": false,
+        "row_number": 11618,
+        "split": "eval",
+        "transcript_id": "ENST00000626826.1"
+      },
+      "missing_protein_examples": [
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 1657,
+          "RNA_tokens": 278,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000223972.5",
+          "protein_id_present": false,
+          "row_number": 1,
+          "split": "train",
+          "transcript_id": "ENST00000456328.2"
+        },
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 712,
+          "RNA_tokens": 123,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000243485.5",
+          "protein_id_present": false,
+          "row_number": 2,
+          "split": "train",
+          "transcript_id": "ENST00000473358.1"
+        },
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 535,
+          "RNA_tokens": 91,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000243485.5",
+          "protein_id_present": false,
+          "row_number": 3,
+          "split": "train",
+          "transcript_id": "ENST00000469289.1"
+        },
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 1187,
+          "RNA_tokens": 203,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000237613.2",
+          "protein_id_present": false,
+          "row_number": 4,
+          "split": "train",
+          "transcript_id": "ENST00000417324.1"
+        },
+        {
+          "Protein_length": null,
+          "Protein_tokens": null,
+          "RNA_length": 590,
+          "RNA_tokens": 101,
+          "annotation": "lnc_RNA",
+          "cds_present": false,
+          "gene_id": "ENSG00000237613.2",
+          "protein_id_present": false,
+          "row_number": 5,
+          "split": "train",
+          "transcript_id": "ENST00000461467.1"
+        }
+      ]
+    },
+    "row_count": 178215,
+    "targets": {
+      "columns": {
+        "Adipose Tissue": {
+          "finite": 178215,
+          "max": 13.355211458765512,
+          "mean": 2.0829585104348074,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.639084788739568,
+          "zero": 6824
+        },
+        "Adrenal Gland": {
+          "finite": 178215,
+          "max": 14.29855974879418,
+          "mean": 2.0021416956227798,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.588182675291471,
+          "zero": 11117
+        },
+        "Bladder": {
+          "finite": 178215,
+          "max": 13.307292824345556,
+          "mean": 2.0674825459629975,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.646992421789094,
+          "zero": 26531
+        },
+        "Blood": {
+          "finite": 178215,
+          "max": 15.434689621568776,
+          "mean": 1.7838319472180821,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.183009902086584,
+          "zero": 8141
+        },
+        "Blood Vessel": {
+          "finite": 178215,
+          "max": 12.86179964300927,
+          "mean": 2.003596355014196,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.554381534746709,
+          "zero": 7009
+        },
+        "Brain": {
+          "finite": 178215,
+          "max": 14.572472609163336,
+          "mean": 2.012798322849391,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.4768513033988,
+          "zero": 5064
+        },
+        "Breast": {
+          "finite": 178215,
+          "max": 13.386457742507249,
+          "mean": 2.1400671862707767,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.653883018966443,
+          "zero": 8090
+        },
+        "Cervix Uteri": {
+          "finite": 178215,
+          "max": 12.464367507596632,
+          "mean": 2.1124103779210883,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.71185726678212,
+          "zero": 26983
+        },
+        "Colon": {
+          "finite": 178215,
+          "max": 13.886893114556642,
+          "mean": 2.096695575858717,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.654638545450612,
+          "zero": 7309
+        },
+        "Esophagus": {
+          "finite": 178215,
+          "max": 13.488538995077384,
+          "mean": 2.060295067638491,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.599001538777364,
+          "zero": 6356
+        },
+        "Fallopian Tube": {
+          "finite": 178215,
+          "max": 12.827377541736526,
+          "mean": 2.0998810327117052,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.726733205480536,
+          "zero": 36500
+        },
+        "Heart": {
+          "finite": 178215,
+          "max": 14.941673163619411,
+          "mean": 1.8366125330470586,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.185291145884152,
+          "zero": 7861
+        },
+        "Kidney": {
+          "finite": 178215,
+          "max": 14.389335870596144,
+          "mean": 2.0206868344253093,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.512320210792823,
+          "zero": 15276
+        },
+        "Liver": {
+          "finite": 178215,
+          "max": 14.324884483393197,
+          "mean": 1.737473191671352,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.095005312147917,
+          "zero": 12963
+        },
+        "Lung": {
+          "finite": 178215,
+          "max": 13.05453401032086,
+          "mean": 2.181210691542359,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.70709870802662,
+          "zero": 7893
+        },
+        "Muscle": {
+          "finite": 178215,
+          "max": 14.36133308509492,
+          "mean": 1.7208432591599754,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.114419213873116,
+          "zero": 7891
+        },
+        "Nerve": {
+          "finite": 178215,
+          "max": 12.78486311354576,
+          "mean": 2.1411794644698388,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.757571430440666,
+          "zero": 8130
+        },
+        "Ovary": {
+          "finite": 178215,
+          "max": 12.746691477719391,
+          "mean": 2.07084723171209,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.66853061825751,
+          "zero": 12033
+        },
+        "Pancreas": {
+          "finite": 178215,
+          "max": 14.399742324296838,
+          "mean": 1.74156695331079,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 3.919004989432243,
+          "zero": 11086
+        },
+        "Pituitary": {
+          "finite": 178215,
+          "max": 13.833701777510514,
+          "mean": 2.199166654540809,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.750045699097324,
+          "zero": 8904
+        },
+        "Prostate": {
+          "finite": 178215,
+          "max": 13.475992659448483,
+          "mean": 2.1490648519910107,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.735045062282668,
+          "zero": 9524
+        },
+        "Salivary Gland": {
+          "finite": 178215,
+          "max": 14.071650068416648,
+          "mean": 2.10725536967505,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.552224218783993,
+          "zero": 11461
+        },
+        "Skin": {
+          "finite": 178215,
+          "max": 13.484187183581575,
+          "mean": 2.1217280473850937,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.646510452768888,
+          "zero": 5635
+        },
+        "Small Intestine": {
+          "finite": 178215,
+          "max": 13.996032594631888,
+          "mean": 2.1593326011769953,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.734639617710487,
+          "zero": 10994
+        },
+        "Spleen": {
+          "finite": 178215,
+          "max": 13.265258874485662,
+          "mean": 2.059990541969402,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.819127358277134,
+          "zero": 12049
+        },
+        "Stomach": {
+          "finite": 178215,
+          "max": 14.607819392465908,
+          "mean": 1.956919619566532,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.3100982736413895,
+          "zero": 9526
+        },
+        "Testis": {
+          "finite": 178215,
+          "max": 13.270501587162451,
+          "mean": 2.5688142845512347,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.638750564356488,
+          "zero": 5749
+        },
+        "Thyroid": {
+          "finite": 178215,
+          "max": 13.19244274387313,
+          "mean": 2.162718150702841,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.759142685582647,
+          "zero": 7526
+        },
+        "Uterus": {
+          "finite": 178215,
+          "max": 12.721488306965425,
+          "mean": 2.0942848854250915,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.725320952090034,
+          "zero": 13407
+        },
+        "Vagina": {
+          "finite": 178215,
+          "max": 12.967534565753208,
+          "mean": 2.1129404762879176,
+          "min": 0.0,
+          "missing": 0,
+          "negative": 0,
+          "nonfinite": 0,
+          "nonnumeric": 0,
+          "present": true,
+          "rows": 178215,
+          "variance": 4.630396291058617,
+          "zero": 12261
+        }
+      },
+      "expected_order": [
+        "Adipose Tissue",
+        "Adrenal Gland",
+        "Bladder",
+        "Blood",
+        "Blood Vessel",
+        "Brain",
+        "Breast",
+        "Cervix Uteri",
+        "Colon",
+        "Esophagus",
+        "Fallopian Tube",
+        "Heart",
+        "Kidney",
+        "Liver",
+        "Lung",
+        "Muscle",
+        "Nerve",
+        "Ovary",
+        "Pancreas",
+        "Pituitary",
+        "Prostate",
+        "Salivary Gland",
+        "Skin",
+        "Small Intestine",
+        "Spleen",
+        "Stomach",
+        "Testis",
+        "Thyroid",
+        "Uterus",
+        "Vagina"
+      ],
+      "missing_columns": [],
+      "observed_order": [
+        "Adipose Tissue",
+        "Adrenal Gland",
+        "Bladder",
+        "Blood",
+        "Blood Vessel",
+        "Brain",
+        "Breast",
+        "Cervix Uteri",
+        "Colon",
+        "Esophagus",
+        "Fallopian Tube",
+        "Heart",
+        "Kidney",
+        "Liver",
+        "Lung",
+        "Muscle",
+        "Nerve",
+        "Ovary",
+        "Pancreas",
+        "Pituitary",
+        "Prostate",
+        "Salivary Gland",
+        "Skin",
+        "Small Intestine",
+        "Spleen",
+        "Stomach",
+        "Testis",
+        "Thyroid",
+        "Uterus",
+        "Vagina"
+      ],
+      "order_matches": true
+    },
+    "version": "gtex-data-checks-v1"
+  },
+  "data_checks_implementation_sha256": "8ab1d8eff3668260ce4dfc74484b1a440a10b0b614b0ce1d2dd157fce2ef2f26",
+  "dataset_revision": "330ab1795abca683e692c7ee138a2e89c0c882f1",
+  "duplicate_transcript_ids": 0,
+  "example_boundary_exclusions": {
+    "additional_shifted_filter": 156,
+    "chrMT": 37,
+    "main_window": 329
+  },
+  "example_boundary_policy": {
+    "exclusions": {
+      "chrMT": 37,
+      "extra_shifted_boundary": 156,
+      "main_boundary": 329
+    },
+    "purpose": "Historical inference-example boundary scenario; not a recovered training cohort",
+    "retained_rows": 177693
+  },
+  "fallback_rows": {
+    "Protein": 59,
+    "RNA": 0
+  },
+  "finished_utc": "2026-11-09T11:33:43.642467+00:00",
+  "host": "cDesktopLab",
+  "implementation_sha256": "1caf65ed0354cc869ed14f89453f8eec56fa470d8329144a0bce267c49e211da",
+  "missing_sequences": {
+    "Protein": 86974,
+    "RNA": 0
+  },
+  "model_revision": "afac2a386c8f2241faf8fad3c5971a9307c13775",
+  "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+  "row_count": 178215,
+  "schema_version": 1,
+  "scope": "released_csv_measurement_not_historical_training_cohort",
+  "scopes": {
+    "all": {
+      "counts": {
+        "Protein_length_gt_1024": 5732,
+        "Protein_length_gt_1200": 3884,
+        "Protein_length_gt_2047": 959,
+        "Protein_length_gt_2048": 957,
+        "Protein_tokenizer_fallback": 59,
+        "Protein_tokens_gt_1024": 5767,
+        "Protein_tokens_gt_2048": 960,
+        "RNA_after_3prime_12000_tokens_gt_1024": 5503,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_1024": 5503,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_1024": 5503,
+        "RNA_after_3prime_12288_tokens_gt_2048": 559,
+        "RNA_length_gt_12000": 603,
+        "RNA_length_gt_12282": 556,
+        "RNA_length_gt_12288": 555,
+        "RNA_tokenizer_fallback": 0,
+        "RNA_tokens_gt_1024": 5503,
+        "RNA_tokens_gt_2048": 559,
+        "duplicate_transcript_ids": 0,
+        "missing_Protein": 86974,
+        "missing_RNA": 0
+      },
+      "rows": 178215,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "min": 1,
+          "n": 91241,
+          "sum": 34397975
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "min": 3,
+          "n": 91241,
+          "sum": 34580451
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "min": 9,
+          "n": 178215,
+          "sum": 48507304
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "min": 9,
+          "n": 178215,
+          "sum": 48534590
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "min": 9,
+          "n": 178215,
+          "sum": 48535146
+        },
+        "RNA_length": {
+          "max": 205012,
+          "min": 41,
+          "n": 178215,
+          "sum": 290590606
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "min": 9,
+          "n": 178215,
+          "sum": 48980686
+        }
+      },
+      "unique_transcript_ids": 178215
+    },
+    "example_boundary_policy": {
+      "counts": {
+        "Protein_length_gt_1024": 5729,
+        "Protein_length_gt_1200": 3882,
+        "Protein_length_gt_2047": 959,
+        "Protein_length_gt_2048": 957,
+        "Protein_tokenizer_fallback": 59,
+        "Protein_tokens_gt_1024": 5764,
+        "Protein_tokens_gt_2048": 960,
+        "RNA_after_3prime_12000_tokens_gt_1024": 5499,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_1024": 5499,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_1024": 5499,
+        "RNA_after_3prime_12288_tokens_gt_2048": 557,
+        "RNA_length_gt_12000": 601,
+        "RNA_length_gt_12282": 554,
+        "RNA_length_gt_12288": 553,
+        "RNA_tokenizer_fallback": 0,
+        "RNA_tokens_gt_1024": 5499,
+        "RNA_tokens_gt_2048": 557,
+        "duplicate_transcript_ids": 0,
+        "missing_Protein": 86661,
+        "missing_RNA": 0
+      },
+      "rows": 177693,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "min": 1,
+          "n": 91032,
+          "sum": 34336336
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "min": 3,
+          "n": 91032,
+          "sum": 34518394
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "min": 9,
+          "n": 177693,
+          "sum": 48394631
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "min": 9,
+          "n": 177693,
+          "sum": 48421823
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "min": 9,
+          "n": 177693,
+          "sum": 48422377
+        },
+        "RNA_length": {
+          "max": 205012,
+          "min": 41,
+          "n": 177693,
+          "sum": 289921989
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "min": 9,
+          "n": 177693,
+          "sum": 48867677
+        }
+      },
+      "unique_transcript_ids": 177693
+    },
+    "example_boundary_policy:eval": {
+      "counts": {
+        "Protein_length_gt_1024": 301,
+        "Protein_length_gt_1200": 222,
+        "Protein_length_gt_2047": 60,
+        "Protein_length_gt_2048": 60,
+        "Protein_tokenizer_fallback": 0,
+        "Protein_tokens_gt_1024": 302,
+        "Protein_tokens_gt_2048": 60,
+        "RNA_after_3prime_12000_tokens_gt_1024": 314,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_1024": 314,
+        "RNA_after_3prime_12282_tokens_gt_2048": 0,
+        "RNA_after_3prime_12288_tokens_gt_1024": 314,
+        "RNA_after_3prime_12288_tokens_gt_2048": 43,
+        "RNA_length_gt_12000": 48,
+        "RNA_length_gt_12282": 43,
+        "RNA_length_gt_12288": 43,
+        "RNA_tokenizer_fallback": 0,
+        "RNA_tokens_gt_1024": 314,
+        "RNA_tokens_gt_2048": 43,
+        "duplicate_transcript_ids": 0,
+        "missing_Protein": 4437,
+        "missing_RNA": 0
+      },
+      "rows": 9047,
+      "stats": {
+        "Protein_length": {
+          "max": 5762,
+          "min": 3,
+          "n": 4610,
+          "sum": 1785950
+        },
+        "Protein_tokens": {
+          "max": 5764,
+          "min": 5,
+          "n": 4610,
+          "sum": 1795170
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "min": 10,
+          "n": 9047,
+          "sum": 2545411
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2048,
+          "min": 10,
+          "n": 9047,
+          "sum": 2547555
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2049,
+          "min": 10,
+          "n": 9047,
+          "sum": 2547598
+        },
+        "RNA_length": {
+          "max": 205012,
+          "min": 50,
+          "n": 9047,
+          "sum": 15461101
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "min": 10,
+          "n": 9047,
+          "sum": 2604793
+        }
+      },
+      "unique_transcript_ids": 9047
+    },
+    "example_boundary_policy:test": {
+      "counts": {
+        "Protein_length_gt_1024": 257,
+        "Protein_length_gt_1200": 153,
+        "Protein_length_gt_2047": 42,
+        "Protein_length_gt_2048": 42,
+        "Protein_tokenizer_fallback": 3,
+        "Protein_tokens_gt_1024": 257,
+        "Protein_tokens_gt_2048": 42,
+        "RNA_after_3prime_12000_tokens_gt_1024": 261,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_1024": 261,
+        "RNA_after_3prime_12282_tokens_gt_2048": 0,
+        "RNA_after_3prime_12288_tokens_gt_1024": 261,
+        "RNA_after_3prime_12288_tokens_gt_2048": 19,
+        "RNA_length_gt_12000": 25,
+        "RNA_length_gt_12282": 19,
+        "RNA_length_gt_12288": 19,
+        "RNA_tokenizer_fallback": 0,
+        "RNA_tokens_gt_1024": 261,
+        "RNA_tokens_gt_2048": 19,
+        "duplicate_transcript_ids": 0,
+        "missing_Protein": 4165,
+        "missing_RNA": 0
+      },
+      "rows": 8511,
+      "stats": {
+        "Protein_length": {
+          "max": 7081,
+          "min": 1,
+          "n": 4346,
+          "sum": 1579071
+        },
+        "Protein_tokens": {
+          "max": 7083,
+          "min": 3,
+          "n": 4346,
+          "sum": 1587763
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "min": 10,
+          "n": 8511,
+          "sum": 2371674
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2048,
+          "min": 10,
+          "n": 8511,
+          "sum": 2372727
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2049,
+          "min": 10,
+          "n": 8511,
+          "sum": 2372746
+        },
+        "RNA_length": {
+          "max": 21679,
+          "min": 54,
+          "n": 8511,
+          "sum": 14132306
+        },
+        "RNA_tokens": {
+          "max": 3615,
+          "min": 10,
+          "n": 8511,
+          "sum": 2381727
+        }
+      },
+      "unique_transcript_ids": 8511
+    },
+    "example_boundary_policy:train": {
+      "counts": {
+        "Protein_length_gt_1024": 5171,
+        "Protein_length_gt_1200": 3507,
+        "Protein_length_gt_2047": 857,
+        "Protein_length_gt_2048": 855,
+        "Protein_tokenizer_fallback": 56,
+        "Protein_tokens_gt_1024": 5205,
+        "Protein_tokens_gt_2048": 858,
+        "RNA_after_3prime_12000_tokens_gt_1024": 4924,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_1024": 4924,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_1024": 4924,
+        "RNA_after_3prime_12288_tokens_gt_2048": 495,
+        "RNA_length_gt_12000": 528,
+        "RNA_length_gt_12282": 492,
+        "RNA_length_gt_12288": 491,
+        "RNA_tokenizer_fallback": 0,
+        "RNA_tokens_gt_1024": 4924,
+        "RNA_tokens_gt_2048": 495,
+        "duplicate_transcript_ids": 0,
+        "missing_Protein": 78059,
+        "missing_RNA": 0
+      },
+      "rows": 160135,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "min": 1,
+          "n": 82076,
+          "sum": 30971315
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "min": 3,
+          "n": 82076,
+          "sum": 31135461
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "min": 9,
+          "n": 160135,
+          "sum": 43477546
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "min": 9,
+          "n": 160135,
+          "sum": 43501541
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "min": 9,
+          "n": 160135,
+          "sum": 43502033
+        },
+        "RNA_length": {
+          "max": 109224,
+          "min": 41,
+          "n": 160135,
+          "sum": 260328582
+        },
+        "RNA_tokens": {
+          "max": 18205,
+          "min": 9,
+          "n": 160135,
+          "sum": 43881157
+        }
+      },
+      "unique_transcript_ids": 160135
+    },
+    "split:eval": {
+      "counts": {
+        "Protein_length_gt_1024": 303,
+        "Protein_length_gt_1200": 224,
+        "Protein_length_gt_2047": 60,
+        "Protein_length_gt_2048": 60,
+        "Protein_tokenizer_fallback": 0,
+        "Protein_tokens_gt_1024": 304,
+        "Protein_tokens_gt_2048": 60,
+        "RNA_after_3prime_12000_tokens_gt_1024": 316,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_1024": 316,
+        "RNA_after_3prime_12282_tokens_gt_2048": 0,
+        "RNA_after_3prime_12288_tokens_gt_1024": 316,
+        "RNA_after_3prime_12288_tokens_gt_2048": 44,
+        "RNA_length_gt_12000": 49,
+        "RNA_length_gt_12282": 44,
+        "RNA_length_gt_12288": 44,
+        "RNA_tokenizer_fallback": 0,
+        "RNA_tokens_gt_1024": 316,
+        "RNA_tokens_gt_2048": 44,
+        "duplicate_transcript_ids": 0,
+        "missing_Protein": 4464,
+        "missing_RNA": 0
+      },
+      "rows": 9120,
+      "stats": {
+        "Protein_length": {
+          "max": 5762,
+          "min": 3,
+          "n": 4656,
+          "sum": 1797769
+        },
+        "Protein_tokens": {
+          "max": 5764,
+          "min": 5,
+          "n": 4656,
+          "sum": 1807081
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "min": 10,
+          "n": 9120,
+          "sum": 2566829
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2048,
+          "min": 10,
+          "n": 9120,
+          "sum": 2569020
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2049,
+          "min": 10,
+          "n": 9120,
+          "sum": 2569064
+        },
+        "RNA_length": {
+          "max": 205012,
+          "min": 50,
+          "n": 9120,
+          "sum": 15588932
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "min": 10,
+          "n": 9120,
+          "sum": 2626312
+        }
+      },
+      "unique_transcript_ids": 9120
+    },
+    "split:test": {
+      "counts": {
+        "Protein_length_gt_1024": 257,
+        "Protein_length_gt_1200": 153,
+        "Protein_length_gt_2047": 42,
+        "Protein_length_gt_2048": 42,
+        "Protein_tokenizer_fallback": 3,
+        "Protein_tokens_gt_1024": 257,
+        "Protein_tokens_gt_2048": 42,
+        "RNA_after_3prime_12000_tokens_gt_1024": 261,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_1024": 261,
+        "RNA_after_3prime_12282_tokens_gt_2048": 0,
+        "RNA_after_3prime_12288_tokens_gt_1024": 261,
+        "RNA_after_3prime_12288_tokens_gt_2048": 19,
+        "RNA_length_gt_12000": 25,
+        "RNA_length_gt_12282": 19,
+        "RNA_length_gt_12288": 19,
+        "RNA_tokenizer_fallback": 0,
+        "RNA_tokens_gt_1024": 261,
+        "RNA_tokens_gt_2048": 19,
+        "duplicate_transcript_ids": 0,
+        "missing_Protein": 4193,
+        "missing_RNA": 0
+      },
+      "rows": 8556,
+      "stats": {
+        "Protein_length": {
+          "max": 7081,
+          "min": 1,
+          "n": 4363,
+          "sum": 1582820
+        },
+        "Protein_tokens": {
+          "max": 7083,
+          "min": 3,
+          "n": 4363,
+          "sum": 1591546
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "min": 10,
+          "n": 8556,
+          "sum": 2379926
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2048,
+          "min": 10,
+          "n": 8556,
+          "sum": 2380979
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2049,
+          "min": 10,
+          "n": 8556,
+          "sum": 2380998
+        },
+        "RNA_length": {
+          "max": 21679,
+          "min": 54,
+          "n": 8556,
+          "sum": 14180973
+        },
+        "RNA_tokens": {
+          "max": 3615,
+          "min": 10,
+          "n": 8556,
+          "sum": 2389979
+        }
+      },
+      "unique_transcript_ids": 8556
+    },
+    "split:train": {
+      "counts": {
+        "Protein_length_gt_1024": 5172,
+        "Protein_length_gt_1200": 3507,
+        "Protein_length_gt_2047": 857,
+        "Protein_length_gt_2048": 855,
+        "Protein_tokenizer_fallback": 56,
+        "Protein_tokens_gt_1024": 5206,
+        "Protein_tokens_gt_2048": 858,
+        "RNA_after_3prime_12000_tokens_gt_1024": 4926,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_1024": 4926,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_1024": 4926,
+        "RNA_after_3prime_12288_tokens_gt_2048": 496,
+        "RNA_length_gt_12000": 529,
+        "RNA_length_gt_12282": 493,
+        "RNA_length_gt_12288": 492,
+        "RNA_tokenizer_fallback": 0,
+        "RNA_tokens_gt_1024": 4926,
+        "RNA_tokens_gt_2048": 496,
+        "duplicate_transcript_ids": 0,
+        "missing_Protein": 78317,
+        "missing_RNA": 0
+      },
+      "rows": 160539,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "min": 1,
+          "n": 82222,
+          "sum": 31017386
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "min": 3,
+          "n": 82222,
+          "sum": 31181824
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "min": 9,
+          "n": 160539,
+          "sum": 43560549
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "min": 9,
+          "n": 160539,
+          "sum": 43584591
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "min": 9,
+          "n": 160539,
+          "sum": 43585084
+        },
+        "RNA_length": {
+          "max": 109224,
+          "min": 41,
+          "n": 160539,
+          "sum": 260820701
+        },
+        "RNA_tokens": {
+          "max": 18205,
+          "min": 9,
+          "n": 160539,
+          "sum": 43964395
+        }
+      },
+      "unique_transcript_ids": 160539
+    }
+  },
+  "source_bytes": 644594050,
+  "source_sha256": "99f86bb787cc37b7b016ed7ec1dc49aacaa5605a4679b7ddff1e8c090f7667fd",
+  "source_url": "https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/resolve/330ab1795abca683e692c7ee138a2e89c0c882f1/transcript_expression/GTEx_final.csv",
+  "splits": {
+    "eval": 9120,
+    "test": 8556,
+    "train": 160539
+  },
+  "started_utc": "2026-11-09T11:27:06.782168+00:00",
+  "token_count_validation": {
+    "actual_row_checks": 1838,
+    "actual_sequence_checks": 8293,
+    "interval_rows": 97,
+    "synthetic_checks": {
+      "Protein": 39,
+      "RNA": 24
+    }
+  },
+  "transformers": "5.15.1",
+  "unique_transcript_ids": 178215,
+  "vocabulary_sha256": {
+    "protein": "0f32181752cb8dd5766f8fa6dc0adb69d56df3fc7db1135e7006feeab3c0b8d7",
+    "rna": "c00e0ad166d6ab3f7540ebc92270392e581bb3106763412f29034b49323e1052"
+  }
+}

@@ -1,0 +1,1119 @@
+{
+  "alphabets": {
+    "Protein": {
+      "*": 307,
+      "A": 2386125,
+      "C": 757949,
+      "D": 1659952,
+      "E": 2476055,
+      "F": 1241089,
+      "G": 2229207,
+      "H": 893335,
+      "I": 1498181,
+      "K": 2001029,
+      "L": 3395554,
+      "M": 762006,
+      "N": 1247767,
+      "P": 2146093,
+      "Q": 1649647,
+      "R": 1952113,
+      "S": 2870007,
+      "T": 1837514,
+      "U": 118,
+      "V": 2056382,
+      "W": 422651,
+      "X": 6844,
+      "Y": 908050
+    },
+    "RNA": {
+      "A": 75841578,
+      "C": 70672660,
+      "G": 72135084,
+      "N": 1,
+      "T": 71941283
+    }
+  },
+  "chromosome_sizes_sha256": "e1d9152418038457a959e949d99c9caf7ae3e4f87cfbb4ffe7d8b9a54ba1202b",
+  "chromosomes": {
+    "chr1": 15750,
+    "chr10": 5810,
+    "chr11": 11063,
+    "chr12": 10556,
+    "chr13": 2766,
+    "chr14": 6537,
+    "chr15": 6712,
+    "chr16": 9103,
+    "chr17": 11774,
+    "chr18": 3346,
+    "chr19": 11851,
+    "chr2": 13008,
+    "chr20": 3956,
+    "chr21": 2088,
+    "chr22": 3978,
+    "chr3": 11020,
+    "chr4": 6849,
+    "chr5": 8249,
+    "chr6": 7520,
+    "chr7": 8187,
+    "chr8": 6921,
+    "chr9": 5747,
+    "chrMT": 37,
+    "chrX": 5059,
+    "chrY": 328
+  },
+  "dataset_revision": "330ab1795abca683e692c7ee138a2e89c0c882f1",
+  "duplicate_transcript_ids": 0,
+  "example_boundary_exclusions": {
+    "additional_shifted_filter": 156,
+    "chrMT": 37,
+    "main_window": 329
+  },
+  "fallback_rows": {
+    "Protein": 59
+  },
+  "finished_utc": "2026-11-09T07:41:24.614490+00:00",
+  "longest": {
+    "Protein": [
+      [
+        35991,
+        "ENST00000589042.5",
+        "train"
+      ],
+      [
+        34350,
+        "ENST00000591111.5",
+        "train"
+      ],
+      [
+        33423,
+        "ENST00000342992.10",
+        "train"
+      ],
+      [
+        27118,
+        "ENST00000342175.11",
+        "train"
+      ],
+      [
+        27051,
+        "ENST00000359218.10",
+        "train"
+      ]
+    ],
+    "RNA": [
+      [
+        205012,
+        "ENST00000626826.1",
+        "eval"
+      ],
+      [
+        109224,
+        "ENST00000589042.5",
+        "train"
+      ],
+      [
+        104301,
+        "ENST00000591111.5",
+        "train"
+      ],
+      [
+        101520,
+        "ENST00000342992.10",
+        "train"
+      ],
+      [
+        91667,
+        "ENST00000597346.1",
+        "train"
+      ]
+    ]
+  },
+  "missing_sequences": {
+    "Protein": 86974
+  },
+  "model_revision": "afac2a386c8f2241faf8fad3c5971a9307c13775",
+  "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+  "row_count": 178215,
+  "scopes": {
+    "all": {
+      "counts": {
+        "Protein_has_unknown": 59,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 6,
+        "Protein_length_eq_1024": 19,
+        "Protein_length_eq_1200": 8,
+        "Protein_length_eq_2046": 2,
+        "Protein_length_eq_2047": 1,
+        "Protein_length_eq_2048": 2,
+        "Protein_length_gt_1022": 5767,
+        "Protein_length_gt_1024": 5732,
+        "Protein_length_gt_1200": 3884,
+        "Protein_length_gt_2046": 960,
+        "Protein_length_gt_2047": 959,
+        "Protein_length_gt_2048": 957,
+        "Protein_tokens_eq_1024": 6,
+        "Protein_tokens_eq_2048": 2,
+        "Protein_tokens_gt_1024": 5767,
+        "Protein_tokens_gt_2048": 960,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_2048": 559,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 603,
+        "RNA_length_gt_12282": 556,
+        "RNA_length_gt_12288": 555,
+        "RNA_length_le_12282_tokens_gt_2048": 3,
+        "RNA_length_le_12288_tokens_gt_2048": 4,
+        "RNA_tokens_eq_1024": 22,
+        "RNA_tokens_eq_2048": 1,
+        "RNA_tokens_gt_1024": 5503,
+        "RNA_tokens_gt_2048": 559,
+        "both_tokens_gt_1024": 2562,
+        "either_tokens_gt_1024": 8172
+      },
+      "rows": 178215,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "median": 230,
+          "min": 1,
+          "n": 91241,
+          "p90": 828,
+          "p99": 2083,
+          "sum": 34397975
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "median": 232,
+          "min": 3,
+          "n": 91241,
+          "p90": 830,
+          "p99": 2085,
+          "sum": 34580451
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 144,
+          "min": 9,
+          "n": 178215,
+          "p90": 630,
+          "p99": 1466.859999999986,
+          "sum": 48507304
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 178215,
+          "p90": 630,
+          "p99": 1466.859999999986,
+          "sum": 48534590
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 178215,
+          "p90": 630,
+          "p99": 1466.859999999986,
+          "sum": 48535146
+        },
+        "RNA_length": {
+          "max": 205012,
+          "median": 848,
+          "min": 41,
+          "n": 178215,
+          "p90": 3761,
+          "p99": 8779.859999999986,
+          "sum": 290590606
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "median": 144,
+          "min": 9,
+          "n": 178215,
+          "p90": 630,
+          "p99": 1466.859999999986,
+          "sum": 48980686
+        }
+      }
+    },
+    "example_boundary_policy": {
+      "counts": {
+        "Protein_has_unknown": 59,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 6,
+        "Protein_length_eq_1024": 19,
+        "Protein_length_eq_1200": 8,
+        "Protein_length_eq_2046": 2,
+        "Protein_length_eq_2047": 1,
+        "Protein_length_eq_2048": 2,
+        "Protein_length_gt_1022": 5764,
+        "Protein_length_gt_1024": 5729,
+        "Protein_length_gt_1200": 3882,
+        "Protein_length_gt_2046": 960,
+        "Protein_length_gt_2047": 959,
+        "Protein_length_gt_2048": 957,
+        "Protein_tokens_eq_1024": 6,
+        "Protein_tokens_eq_2048": 2,
+        "Protein_tokens_gt_1024": 5764,
+        "Protein_tokens_gt_2048": 960,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_2048": 557,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 601,
+        "RNA_length_gt_12282": 554,
+        "RNA_length_gt_12288": 553,
+        "RNA_length_le_12282_tokens_gt_2048": 3,
+        "RNA_length_le_12288_tokens_gt_2048": 4,
+        "RNA_tokens_eq_1024": 22,
+        "RNA_tokens_eq_2048": 1,
+        "RNA_tokens_gt_1024": 5499,
+        "RNA_tokens_gt_2048": 557,
+        "both_tokens_gt_1024": 2559,
+        "either_tokens_gt_1024": 8168
+      },
+      "rows": 177693,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "median": 230,
+          "min": 1,
+          "n": 91032,
+          "p90": 828,
+          "p99": 2084,
+          "sum": 34336336
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "median": 232,
+          "min": 3,
+          "n": 91032,
+          "p90": 830,
+          "p99": 2086,
+          "sum": 34518394
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 144,
+          "min": 9,
+          "n": 177693,
+          "p90": 631,
+          "p99": 1467,
+          "sum": 48394631
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 177693,
+          "p90": 631,
+          "p99": 1467,
+          "sum": 48421823
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 177693,
+          "p90": 631,
+          "p99": 1467,
+          "sum": 48422377
+        },
+        "RNA_length": {
+          "max": 205012,
+          "median": 848,
+          "min": 41,
+          "n": 177693,
+          "p90": 3765,
+          "p99": 8785.239999999962,
+          "sum": 289921989
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "median": 144,
+          "min": 9,
+          "n": 177693,
+          "p90": 631,
+          "p99": 1467,
+          "sum": 48867677
+        }
+      }
+    },
+    "example_boundary_policy:eval": {
+      "counts": {
+        "Protein_has_unknown": 0,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 0,
+        "Protein_length_eq_1024": 0,
+        "Protein_length_eq_1200": 0,
+        "Protein_length_eq_2046": 1,
+        "Protein_length_eq_2047": 0,
+        "Protein_length_eq_2048": 0,
+        "Protein_length_gt_1022": 302,
+        "Protein_length_gt_1024": 301,
+        "Protein_length_gt_1200": 222,
+        "Protein_length_gt_2046": 60,
+        "Protein_length_gt_2047": 60,
+        "Protein_length_gt_2048": 60,
+        "Protein_tokens_eq_1024": 0,
+        "Protein_tokens_eq_2048": 1,
+        "Protein_tokens_gt_1024": 302,
+        "Protein_tokens_gt_2048": 60,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 0,
+        "RNA_after_3prime_12288_tokens_gt_2048": 43,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 48,
+        "RNA_length_gt_12282": 43,
+        "RNA_length_gt_12288": 43,
+        "RNA_length_le_12282_tokens_gt_2048": 0,
+        "RNA_length_le_12288_tokens_gt_2048": 0,
+        "RNA_tokens_eq_1024": 0,
+        "RNA_tokens_eq_2048": 0,
+        "RNA_tokens_gt_1024": 314,
+        "RNA_tokens_gt_2048": 43,
+        "both_tokens_gt_1024": 149,
+        "either_tokens_gt_1024": 434
+      },
+      "rows": 9047,
+      "stats": {
+        "Protein_length": {
+          "max": 5762,
+          "median": 235,
+          "min": 3,
+          "n": 4610,
+          "p90": 866.1000000000004,
+          "p99": 2296.1899999999987,
+          "sum": 1785950
+        },
+        "Protein_tokens": {
+          "max": 5764,
+          "median": 237,
+          "min": 5,
+          "n": 4610,
+          "p90": 868.1000000000004,
+          "p99": 2298.1899999999987,
+          "sum": 1795170
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 146,
+          "min": 10,
+          "n": 9047,
+          "p90": 665,
+          "p99": 1594.079999999998,
+          "sum": 2545411
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2048,
+          "median": 146,
+          "min": 10,
+          "n": 9047,
+          "p90": 665,
+          "p99": 1594.079999999998,
+          "sum": 2547555
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2049,
+          "median": 146,
+          "min": 10,
+          "n": 9047,
+          "p90": 665,
+          "p99": 1594.079999999998,
+          "sum": 2547598
+        },
+        "RNA_length": {
+          "max": 205012,
+          "median": 858,
+          "min": 50,
+          "n": 9047,
+          "p90": 3966.600000000002,
+          "p99": 9546.179999999984,
+          "sum": 15461101
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "median": 146,
+          "min": 10,
+          "n": 9047,
+          "p90": 665,
+          "p99": 1594.079999999998,
+          "sum": 2604793
+        }
+      }
+    },
+    "example_boundary_policy:test": {
+      "counts": {
+        "Protein_has_unknown": 3,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 0,
+        "Protein_length_eq_1024": 0,
+        "Protein_length_eq_1200": 0,
+        "Protein_length_eq_2046": 0,
+        "Protein_length_eq_2047": 0,
+        "Protein_length_eq_2048": 0,
+        "Protein_length_gt_1022": 257,
+        "Protein_length_gt_1024": 257,
+        "Protein_length_gt_1200": 153,
+        "Protein_length_gt_2046": 42,
+        "Protein_length_gt_2047": 42,
+        "Protein_length_gt_2048": 42,
+        "Protein_tokens_eq_1024": 0,
+        "Protein_tokens_eq_2048": 0,
+        "Protein_tokens_gt_1024": 257,
+        "Protein_tokens_gt_2048": 42,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 0,
+        "RNA_after_3prime_12288_tokens_gt_2048": 19,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 25,
+        "RNA_length_gt_12282": 19,
+        "RNA_length_gt_12288": 19,
+        "RNA_length_le_12282_tokens_gt_2048": 0,
+        "RNA_length_le_12288_tokens_gt_2048": 0,
+        "RNA_tokens_eq_1024": 2,
+        "RNA_tokens_eq_2048": 1,
+        "RNA_tokens_gt_1024": 261,
+        "RNA_tokens_gt_2048": 19,
+        "both_tokens_gt_1024": 94,
+        "either_tokens_gt_1024": 395
+      },
+      "rows": 8511,
+      "stats": {
+        "Protein_length": {
+          "max": 7081,
+          "median": 236,
+          "min": 1,
+          "n": 4346,
+          "p90": 778,
+          "p99": 1902.5500000000002,
+          "sum": 1579071
+        },
+        "Protein_tokens": {
+          "max": 7083,
+          "median": 238,
+          "min": 3,
+          "n": 4346,
+          "p90": 780,
+          "p99": 1904.5500000000002,
+          "sum": 1587763
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 149,
+          "min": 10,
+          "n": 8511,
+          "p90": 624,
+          "p99": 1491.9999999999964,
+          "sum": 2371674
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2048,
+          "median": 149,
+          "min": 10,
+          "n": 8511,
+          "p90": 624,
+          "p99": 1491.9999999999964,
+          "sum": 2372727
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2049,
+          "median": 149,
+          "min": 10,
+          "n": 8511,
+          "p90": 624,
+          "p99": 1491.9999999999964,
+          "sum": 2372746
+        },
+        "RNA_length": {
+          "max": 21679,
+          "median": 878,
+          "min": 54,
+          "n": 8511,
+          "p90": 3723,
+          "p99": 8927.499999999984,
+          "sum": 14132306
+        },
+        "RNA_tokens": {
+          "max": 3615,
+          "median": 149,
+          "min": 10,
+          "n": 8511,
+          "p90": 624,
+          "p99": 1491.9999999999964,
+          "sum": 2381727
+        }
+      }
+    },
+    "example_boundary_policy:train": {
+      "counts": {
+        "Protein_has_unknown": 56,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 6,
+        "Protein_length_eq_1024": 19,
+        "Protein_length_eq_1200": 8,
+        "Protein_length_eq_2046": 1,
+        "Protein_length_eq_2047": 1,
+        "Protein_length_eq_2048": 2,
+        "Protein_length_gt_1022": 5205,
+        "Protein_length_gt_1024": 5171,
+        "Protein_length_gt_1200": 3507,
+        "Protein_length_gt_2046": 858,
+        "Protein_length_gt_2047": 857,
+        "Protein_length_gt_2048": 855,
+        "Protein_tokens_eq_1024": 6,
+        "Protein_tokens_eq_2048": 1,
+        "Protein_tokens_gt_1024": 5205,
+        "Protein_tokens_gt_2048": 858,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_2048": 495,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 528,
+        "RNA_length_gt_12282": 492,
+        "RNA_length_gt_12288": 491,
+        "RNA_length_le_12282_tokens_gt_2048": 3,
+        "RNA_length_le_12288_tokens_gt_2048": 4,
+        "RNA_tokens_eq_1024": 20,
+        "RNA_tokens_eq_2048": 0,
+        "RNA_tokens_gt_1024": 4924,
+        "RNA_tokens_gt_2048": 495,
+        "both_tokens_gt_1024": 2316,
+        "either_tokens_gt_1024": 7339
+      },
+      "rows": 160135,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "median": 230,
+          "min": 1,
+          "n": 82076,
+          "p90": 828,
+          "p99": 2080,
+          "sum": 30971315
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "median": 232,
+          "min": 3,
+          "n": 82076,
+          "p90": 830,
+          "p99": 2082,
+          "sum": 31135461
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 144,
+          "min": 9,
+          "n": 160135,
+          "p90": 629,
+          "p99": 1462,
+          "sum": 43477546
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 160135,
+          "p90": 629,
+          "p99": 1462,
+          "sum": 43501541
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 160135,
+          "p90": 629,
+          "p99": 1462,
+          "sum": 43502033
+        },
+        "RNA_length": {
+          "max": 109224,
+          "median": 846,
+          "min": 41,
+          "n": 160135,
+          "p90": 3757,
+          "p99": 8752,
+          "sum": 260328582
+        },
+        "RNA_tokens": {
+          "max": 18205,
+          "median": 144,
+          "min": 9,
+          "n": 160135,
+          "p90": 629,
+          "p99": 1462,
+          "sum": 43881157
+        }
+      }
+    },
+    "split:eval": {
+      "counts": {
+        "Protein_has_unknown": 0,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 0,
+        "Protein_length_eq_1024": 0,
+        "Protein_length_eq_1200": 0,
+        "Protein_length_eq_2046": 1,
+        "Protein_length_eq_2047": 0,
+        "Protein_length_eq_2048": 0,
+        "Protein_length_gt_1022": 304,
+        "Protein_length_gt_1024": 303,
+        "Protein_length_gt_1200": 224,
+        "Protein_length_gt_2046": 60,
+        "Protein_length_gt_2047": 60,
+        "Protein_length_gt_2048": 60,
+        "Protein_tokens_eq_1024": 0,
+        "Protein_tokens_eq_2048": 1,
+        "Protein_tokens_gt_1024": 304,
+        "Protein_tokens_gt_2048": 60,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 0,
+        "RNA_after_3prime_12288_tokens_gt_2048": 44,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 49,
+        "RNA_length_gt_12282": 44,
+        "RNA_length_gt_12288": 44,
+        "RNA_length_le_12282_tokens_gt_2048": 0,
+        "RNA_length_le_12288_tokens_gt_2048": 0,
+        "RNA_tokens_eq_1024": 0,
+        "RNA_tokens_eq_2048": 0,
+        "RNA_tokens_gt_1024": 316,
+        "RNA_tokens_gt_2048": 44,
+        "both_tokens_gt_1024": 151,
+        "either_tokens_gt_1024": 436
+      },
+      "rows": 9120,
+      "stats": {
+        "Protein_length": {
+          "max": 5762,
+          "median": 233.5,
+          "min": 3,
+          "n": 4656,
+          "p90": 865,
+          "p99": 2292.0499999999984,
+          "sum": 1797769
+        },
+        "Protein_tokens": {
+          "max": 5764,
+          "median": 235.5,
+          "min": 5,
+          "n": 4656,
+          "p90": 867,
+          "p99": 2294.0499999999984,
+          "sum": 1807081
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 146.5,
+          "min": 10,
+          "n": 9120,
+          "p90": 661.1000000000004,
+          "p99": 1598.239999999998,
+          "sum": 2566829
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2048,
+          "median": 146.5,
+          "min": 10,
+          "n": 9120,
+          "p90": 661.1000000000004,
+          "p99": 1598.239999999998,
+          "sum": 2569020
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2049,
+          "median": 146.5,
+          "min": 10,
+          "n": 9120,
+          "p90": 661.1000000000004,
+          "p99": 1598.239999999998,
+          "sum": 2569064
+        },
+        "RNA_length": {
+          "max": 205012,
+          "median": 861,
+          "min": 50,
+          "n": 9120,
+          "p90": 3943.2000000000007,
+          "p99": 9575.869999999986,
+          "sum": 15588932
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "median": 146.5,
+          "min": 10,
+          "n": 9120,
+          "p90": 661.1000000000004,
+          "p99": 1598.239999999998,
+          "sum": 2626312
+        }
+      }
+    },
+    "split:test": {
+      "counts": {
+        "Protein_has_unknown": 3,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 0,
+        "Protein_length_eq_1024": 0,
+        "Protein_length_eq_1200": 0,
+        "Protein_length_eq_2046": 0,
+        "Protein_length_eq_2047": 0,
+        "Protein_length_eq_2048": 0,
+        "Protein_length_gt_1022": 257,
+        "Protein_length_gt_1024": 257,
+        "Protein_length_gt_1200": 153,
+        "Protein_length_gt_2046": 42,
+        "Protein_length_gt_2047": 42,
+        "Protein_length_gt_2048": 42,
+        "Protein_tokens_eq_1024": 0,
+        "Protein_tokens_eq_2048": 0,
+        "Protein_tokens_gt_1024": 257,
+        "Protein_tokens_gt_2048": 42,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 0,
+        "RNA_after_3prime_12288_tokens_gt_2048": 19,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 25,
+        "RNA_length_gt_12282": 19,
+        "RNA_length_gt_12288": 19,
+        "RNA_length_le_12282_tokens_gt_2048": 0,
+        "RNA_length_le_12288_tokens_gt_2048": 0,
+        "RNA_tokens_eq_1024": 2,
+        "RNA_tokens_eq_2048": 1,
+        "RNA_tokens_gt_1024": 261,
+        "RNA_tokens_gt_2048": 19,
+        "both_tokens_gt_1024": 94,
+        "either_tokens_gt_1024": 395
+      },
+      "rows": 8556,
+      "stats": {
+        "Protein_length": {
+          "max": 7081,
+          "median": 235,
+          "min": 1,
+          "n": 4363,
+          "p90": 776.8000000000002,
+          "p99": 1902.38,
+          "sum": 1582820
+        },
+        "Protein_tokens": {
+          "max": 7083,
+          "median": 237,
+          "min": 3,
+          "n": 4363,
+          "p90": 778.8000000000002,
+          "p99": 1904.38,
+          "sum": 1591546
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 149,
+          "min": 10,
+          "n": 8556,
+          "p90": 622.5,
+          "p99": 1487.5000000000073,
+          "sum": 2379926
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2048,
+          "median": 149,
+          "min": 10,
+          "n": 8556,
+          "p90": 622.5,
+          "p99": 1487.5000000000073,
+          "sum": 2380979
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2049,
+          "median": 149,
+          "min": 10,
+          "n": 8556,
+          "p90": 622.5,
+          "p99": 1487.5000000000073,
+          "sum": 2380998
+        },
+        "RNA_length": {
+          "max": 21679,
+          "median": 878,
+          "min": 54,
+          "n": 8556,
+          "p90": 3716,
+          "p99": 8907.250000000033,
+          "sum": 14180973
+        },
+        "RNA_tokens": {
+          "max": 3615,
+          "median": 149,
+          "min": 10,
+          "n": 8556,
+          "p90": 622.5,
+          "p99": 1487.5000000000073,
+          "sum": 2389979
+        }
+      }
+    },
+    "split:train": {
+      "counts": {
+        "Protein_has_unknown": 56,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 6,
+        "Protein_length_eq_1024": 19,
+        "Protein_length_eq_1200": 8,
+        "Protein_length_eq_2046": 1,
+        "Protein_length_eq_2047": 1,
+        "Protein_length_eq_2048": 2,
+        "Protein_length_gt_1022": 5206,
+        "Protein_length_gt_1024": 5172,
+        "Protein_length_gt_1200": 3507,
+        "Protein_length_gt_2046": 858,
+        "Protein_length_gt_2047": 857,
+        "Protein_length_gt_2048": 855,
+        "Protein_tokens_eq_1024": 6,
+        "Protein_tokens_eq_2048": 1,
+        "Protein_tokens_gt_1024": 5206,
+        "Protein_tokens_gt_2048": 858,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_2048": 496,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 529,
+        "RNA_length_gt_12282": 493,
+        "RNA_length_gt_12288": 492,
+        "RNA_length_le_12282_tokens_gt_2048": 3,
+        "RNA_length_le_12288_tokens_gt_2048": 4,
+        "RNA_tokens_eq_1024": 20,
+        "RNA_tokens_eq_2048": 0,
+        "RNA_tokens_gt_1024": 4926,
+        "RNA_tokens_gt_2048": 496,
+        "both_tokens_gt_1024": 2317,
+        "either_tokens_gt_1024": 7341
+      },
+      "rows": 160539,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "median": 230,
+          "min": 1,
+          "n": 82222,
+          "p90": 828,
+          "p99": 2079.7899999999936,
+          "sum": 31017386
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "median": 232,
+          "min": 3,
+          "n": 82222,
+          "p90": 830,
+          "p99": 2081.7899999999936,
+          "sum": 31181824
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 144,
+          "min": 9,
+          "n": 160539,
+          "p90": 629,
+          "p99": 1461,
+          "sum": 43560549
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 160539,
+          "p90": 629,
+          "p99": 1461,
+          "sum": 43584591
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 160539,
+          "p90": 629,
+          "p99": 1461,
+          "sum": 43585084
+        },
+        "RNA_length": {
+          "max": 109224,
+          "median": 845,
+          "min": 41,
+          "n": 160539,
+          "p90": 3754,
+          "p99": 8747.859999999986,
+          "sum": 260820701
+        },
+        "RNA_tokens": {
+          "max": 18205,
+          "median": 144,
+          "min": 9,
+          "n": 160539,
+          "p90": 629,
+          "p99": 1461,
+          "sum": 43964395
+        }
+      }
+    },
+    "without_chrMT": {
+      "counts": {
+        "Protein_has_unknown": 59,
+        "Protein_has_whitespace": 0,
+        "Protein_length_eq_1022": 6,
+        "Protein_length_eq_1024": 19,
+        "Protein_length_eq_1200": 8,
+        "Protein_length_eq_2046": 2,
+        "Protein_length_eq_2047": 1,
+        "Protein_length_eq_2048": 2,
+        "Protein_length_gt_1022": 5767,
+        "Protein_length_gt_1024": 5732,
+        "Protein_length_gt_1200": 3884,
+        "Protein_length_gt_2046": 960,
+        "Protein_length_gt_2047": 959,
+        "Protein_length_gt_2048": 957,
+        "Protein_tokens_eq_1024": 6,
+        "Protein_tokens_eq_2048": 2,
+        "Protein_tokens_gt_1024": 5767,
+        "Protein_tokens_gt_2048": 960,
+        "RNA_after_3prime_12000_tokens_gt_2048": 0,
+        "RNA_after_3prime_12282_tokens_gt_2048": 3,
+        "RNA_after_3prime_12288_tokens_gt_2048": 559,
+        "RNA_has_unknown": 0,
+        "RNA_has_whitespace": 0,
+        "RNA_length_eq_12000": 0,
+        "RNA_length_eq_12282": 0,
+        "RNA_length_eq_12288": 0,
+        "RNA_length_gt_12000": 603,
+        "RNA_length_gt_12282": 556,
+        "RNA_length_gt_12288": 555,
+        "RNA_length_le_12282_tokens_gt_2048": 3,
+        "RNA_length_le_12288_tokens_gt_2048": 4,
+        "RNA_tokens_eq_1024": 22,
+        "RNA_tokens_eq_2048": 1,
+        "RNA_tokens_gt_1024": 5503,
+        "RNA_tokens_gt_2048": 559,
+        "both_tokens_gt_1024": 2562,
+        "either_tokens_gt_1024": 8172
+      },
+      "rows": 178178,
+      "stats": {
+        "Protein_length": {
+          "max": 35991,
+          "median": 230,
+          "min": 1,
+          "n": 91228,
+          "p90": 828,
+          "p99": 2083,
+          "sum": 34394186
+        },
+        "Protein_tokens": {
+          "max": 35993,
+          "median": 232,
+          "min": 3,
+          "n": 91228,
+          "p90": 830,
+          "p99": 2085,
+          "sum": 34576636
+        },
+        "RNA_after_3prime_12000_tokens": {
+          "max": 2001,
+          "median": 144,
+          "min": 9,
+          "n": 178178,
+          "p90": 630,
+          "p99": 1467,
+          "sum": 48504621
+        },
+        "RNA_after_3prime_12282_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 178178,
+          "p90": 630,
+          "p99": 1467,
+          "sum": 48531907
+        },
+        "RNA_after_3prime_12288_tokens": {
+          "max": 2051,
+          "median": 144,
+          "min": 9,
+          "n": 178178,
+          "p90": 630,
+          "p99": 1467,
+          "sum": 48532463
+        },
+        "RNA_length": {
+          "max": 205012,
+          "median": 848,
+          "min": 41,
+          "n": 178178,
+          "p90": 3763,
+          "p99": 8780,
+          "sum": 290575190
+        },
+        "RNA_tokens": {
+          "max": 34173,
+          "median": 144,
+          "min": 9,
+          "n": 178178,
+          "p90": 630,
+          "p99": 1467,
+          "sum": 48978003
+        }
+      }
+    }
+  },
+  "source_bytes": 644594050,
+  "source_sha256": "99f86bb787cc37b7b016ed7ec1dc49aacaa5605a4679b7ddff1e8c090f7667fd",
+  "source_url": "https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/resolve/330ab1795abca683e692c7ee138a2e89c0c882f1/transcript_expression/GTEx_final.csv",
+  "splits": {
+    "eval": 9120,
+    "test": 8556,
+    "train": 160539
+  },
+  "started_utc": "2026-11-09T07:32:37.041587+00:00",
+  "synthetic_checks": 528,
+  "tokenizer_row_checks": 2779,
+  "transformers": "5.15.1",
+  "unique_transcript_ids": 178215,
+  "vocabulary_sha256": {
+    "protein": "0f32181752cb8dd5766f8fa6dc0adb69d56df3fc7db1135e7006feeab3c0b8d7",
+    "rna": "c00e0ad166d6ab3f7540ebc92270392e581bb3106763412f29034b49323e1052"
+  }
+}

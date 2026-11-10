@@ -12,6 +12,8 @@ The tests use Python's built-in `unittest` runner and the existing notebook depe
 
 ## What the checks cover
 
+- [IsoFormer GTEx audit checks](test_isoformer_cohort.py) use invented CSVs and tokenizer substitutes to verify file-identity refusal, missing fields, strict length/token thresholds, 3′ suffix counts, unusual symbols, raw partitions, genomic-window predicates and long CSV fields. Extended fixtures check exact annotation groups, protein/CDS availability, mapping conflicts, cross-partition identity counts, target-column order and invalid values, hand-calculated target statistics, fixed-bin distributions, overlapping policy reasons and bounded identifier examples. Storage checks cover completed-report validation, versioned extended evidence, atomic publication, equivalent-result reuse and preservation on conflicts, failures or a competing destination. Isolated notebook-function checks cover offline `read_results`, named predecessor selection only when a preferred file is absent, `run_audit` saving, download hashes and temporary-file cleanup while preserving local inputs. They do not run the [GTEx audit notebook](../Code/stage4/tier2_isoformer_gtex_audit.ipynb), measure the full dataset or establish the historical trainer's behavior.
+
 - [Setup checks](test_notebook_setup.py) execute only the `## Setup` sections of the [stability](../Code/stage1/Stage1_stability.ipynb) and [GTEx](../Code/stage1/Stage1_gtex.ipynb) notebooks, each in its own namespace. They check local configuration, encoder selections, GTEx pairs, and an explicit PyTorch seed call. Known project computation, data-loading, model-loading, and network entry points are blocked during setup execution.
 - The setup suite also compiles every code cell and scans for global names missing from that notebook's preceding code. This is a conservative static check: it does not prove that every branch initializes a variable, and function-body references are checked where defined rather than where called.
 - [Dataset-path checks](test_dataset_paths.py) verify that default inputs resolve to the repository's `datasets/` folder when called from the repository root, `Code/`, or another working directory. Tiny fixtures also check that explicit absolute and relative `data_dir` overrides load the supplied files. These checks do not read the research CSVs.
@@ -48,6 +50,23 @@ The tests use Python's built-in `unittest` runner and the existing notebook depe
 - [GTEx coordinates](test_gtex_coordinates.py) checks strand-aware endpoints, requested length, TSS position, unchanged boundaries, and prior-expression equivalence using invented rows. [GTEx input/output](test_gtex_io.py) checks downloads, schema, response validation, bounded retry decisions, and CSV publication with local fixtures and mocked requests.
 
 The tests do not run the research bodies or update notebooks. Setup uses separate namespaces in one Python process, not separate Jupyter kernels. Passing these checks does not reproduce scientific results or verify how a notebook viewer renders or follows links. The blocked entry points guard against accidental execution; they are not a sandbox for untrusted code.
+
+## IsoFormer reference foundations
+
+The separate [Enformer-reference notebook](../Code/stage4/tier2_isoformer_reproduction.ipynb) has concrete adapters but no pretrained loader or training route. These focused checks use only invented tables/strings and tiny CPU tensors:
+
+```shell
+python -B -m unittest discover -s tests -p "test_isoformer_reference.py" -v
+python -B -m unittest discover -s tests -p "test_isoformer_inputs.py" -v
+python -B -m unittest discover -s tests -p "test_isoformer_adapters.py" -v
+python -B -m unittest discover -s tests -p "test_isoformer_protocol.py" -v
+```
+
+[Reference tests](test_isoformer_reference.py) check hand-calculated attention, update order, masks, pooling and gradients. Missing-protein fixtures cover exact all-present preservation, compact mixed-row order, complete bias-inclusive bypass, all-absent encoder skipping and gradient isolation. [Input tests](test_isoformer_inputs.py) check missing versus malformed fields, RNA suffixes, whole-row long-protein exclusions, unchanged targets/source indices, raw-eval exclusion before validation, and released window rules. Eligibility fixtures cover strict right-boundary equality, shifted-only and overlapping boundary failures, strand-specific anchors, mitochondrial exclusions, invalid/missing chromosome sizes and preserved train/test labels. Schema reading retains raw `eval` for inspection; validation still refuses accidentally unfiltered rows.
+
+[Adapter tests](test_isoformer_adapters.py) exercise the Enformer embedding request and final NT/ESM hidden-state selection with small substitute backbones, including mixed/all-absent composition with the live wrapper. They check special-token and mask contracts, non-truncating per-example padding and refusal of unequal lengths. No real tokenizers or checkpoint weights are loaded. [Readiness tests](test_isoformer_protocol.py) execute isolated local settings and preparation branches with invented rows and tiny temporary chromosome-size files. They check agreed values, unresolved decisions, checksums and malformed metadata, eligibility routing, no-data behavior and refusal before optional data access when training is enabled. Separate static checks compile notebook code and inspect producer calls; they do not require saved outputs to be empty.
+
+These tests perform no optimizer updates, research-data loading, pretrained downloads, embedding extraction or result publication. Actual tokenizer/backbone compatibility, real-cohort eligibility, normalization, stopping and GPU behavior are not verified. The old [pilot tests](test_isoformer.py) address a different model and remain separate. On Windows, preserve NumPy-before-PyTorch import order rather than bypassing an OpenMP runtime conflict with unsafe environment flags.
 
 ## Forward-only codon-grid checks
 

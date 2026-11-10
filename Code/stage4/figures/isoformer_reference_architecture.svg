@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="790" viewBox="0 0 1240 790" role="img" aria-labelledby="title desc">
+  <title id="title">Released IsoFormer: DNA reads RNA, then protein</title>
+  <desc id="desc">Enformer DNA embeddings provide queries to RNA and then protein cross-attention. Only the updated DNA stream is pooled and read by a 30-tissue expression head. Pooling coordinates and protein fusion masking remain unresolved choices. This is a source schematic, not measured attention or a training result.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#455368"/></marker>
+    <pattern id="dna" width="24" height="28" patternUnits="userSpaceOnUse"><rect width="19" height="24" rx="3" fill="#386fb2"/></pattern>
+    <pattern id="rna" width="24" height="28" patternUnits="userSpaceOnUse"><rect width="19" height="24" rx="3" fill="#24836e"/></pattern>
+    <pattern id="protein" width="24" height="28" patternUnits="userSpaceOnUse"><rect width="19" height="24" rx="3" fill="#bb6c21"/></pattern>
+    <style>text{font-family:Arial,sans-serif;fill:#1b2d42}.title{font-size:27px;font-weight:700}.label{font-size:20px;font-weight:700}.body{font-size:17px}.small{font-size:15px}.flow{fill:none;stroke:#455368;stroke-width:2.3;marker-end:url(#arrow)}.box{fill:#f5f7fa;stroke:#c5ced9;stroke-width:1.5}</style>
+  </defs>
+  <rect width="1240" height="790" fill="#fff"/>
+  <text x="40" y="43" class="title">Three sequences → one updated DNA representation → tissue expression</text>
+  <text x="40" y="73" class="body">The released all-three operator; pooling and masking choices are visible before training.</text>
+
+  <text x="70" y="122" class="label" style="fill:#386fb2">Genomic DNA</text>
+  <text x="70" y="149" class="body">196,608 nucleotides around an anchor</text>
+  <rect x="70" y="165" width="286" height="28" fill="url(#dna)"/>
+  <rect x="70" y="211" width="286" height="66" rx="8" fill="#edf3fb" stroke="#386fb2"/>
+  <text x="213" y="239" text-anchor="middle" class="label">Enformer</text>
+  <text x="213" y="263" text-anchor="middle" class="small">3,072 features per output bin</text>
+  <path d="M213 193 V211" class="flow"/>
+
+  <text x="475" y="122" class="label" style="fill:#24836e">Spliced transcript</text>
+  <text x="475" y="149" class="body">RNA context retained from the 3′ end</text>
+  <rect x="475" y="165" width="286" height="28" fill="url(#rna)"/>
+  <rect x="475" y="211" width="286" height="66" rx="8" fill="#edf8f3" stroke="#24836e"/>
+  <text x="618" y="239" text-anchor="middle" class="label">NT v2 250M</text>
+  <text x="618" y="263" text-anchor="middle" class="small">768 features; transcript in DNA letters</text>
+  <path d="M618 193 V211" class="flow"/>
+
+  <text x="875" y="122" class="label" style="fill:#bb6c21">Protein sequence</text>
+  <text x="875" y="149" class="body">Amino acids supplied with the transcript</text>
+  <rect x="875" y="165" width="286" height="28" fill="url(#protein)"/>
+  <rect x="875" y="211" width="286" height="66" rx="8" fill="#fff4e8" stroke="#bb6c21"/>
+  <text x="1018" y="239" text-anchor="middle" class="label">ESM-2 150M</text>
+  <text x="1018" y="263" text-anchor="middle" class="small">640 features per token</text>
+  <path d="M1018 193 V211" class="flow"/>
+
+  <path d="M213 277 V365 H420" class="flow"/>
+  <text x="245" y="348" class="body">DNA queries</text>
+  <path d="M618 277 V322" class="flow"/>
+  <text x="631" y="305" class="small">RNA keys / values</text>
+  <rect x="420" y="325" width="325" height="80" rx="8" class="box"/>
+  <text x="582" y="352" text-anchor="middle" class="label">Read RNA with 8 attention heads</text>
+  <text x="582" y="378" text-anchor="middle" class="body">Output projection + DNA residual</text>
+  <text x="70" y="411" class="small">RNA padding is excluded</text>
+  <text x="70" y="432" class="small">separately for each example.</text>
+
+  <path d="M582 405 V472" class="flow"/>
+  <text x="596" y="457" class="small">Updated DNA queries</text>
+  <path d="M1018 277 V515 H745" class="flow"/>
+  <text x="818" y="489" class="body">Protein keys / values</text>
+  <rect x="420" y="475" width="325" height="80" rx="8" class="box"/>
+  <text x="582" y="503" text-anchor="middle" class="label">Read protein with 8 heads</text>
+  <text x="582" y="530" text-anchor="middle" class="body">Output projection + DNA residual</text>
+  <text x="780" y="549" class="small">Protein fusion mask:</text>
+  <text x="780" y="570" class="small">release omission or declared correction</text>
+
+  <path d="M582 555 V603" class="flow"/>
+  <rect x="420" y="606" width="325" height="62" rx="8" fill="#fff9e8" stroke="#9d791d" stroke-dasharray="6 4"/>
+  <text x="582" y="632" text-anchor="middle" class="label">Mean over selected DNA bins</text>
+  <text x="582" y="654" text-anchor="middle" class="small">Pooling coordinates remain unresolved</text>
+  <path d="M745 637 H797" class="flow"/>
+  <rect x="800" y="606" width="363" height="62" rx="8" class="box"/>
+  <text x="981" y="632" text-anchor="middle" class="label">3,072 → 6,144 → 30 tissues</text>
+  <text x="981" y="654" text-anchor="middle" class="small">Linear → Softplus → linear predictions</text>
+  <text x="70" y="716" class="body">Only DNA is updated by these fusion blocks. RNA and protein provide information it can read.</text>
+  <text x="70" y="742" class="small">No fusion gate, LayerNorm or feed-forward block is added. Actual pretrained adapters and training remain future work.</text>
+  <text x="70" y="766" class="small">Source schematic: InstaDeepAI/isoformer, revision afac2a386c8f2241faf8fad3c5971a9307c13775. Not a biological interaction map.</text>
+</svg>
