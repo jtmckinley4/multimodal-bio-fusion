@@ -139,3 +139,10 @@ class CrossModalFusion(nn.Module):
 
 
 FUSIONS = {"concat": ConcatFusion, "mil": GatedMILFusion, "cross": CrossModalFusion}
+
+# The project's own designs register here so that blf.build and the trainer reach them by
+# name. Phase A and Phase B list their heads explicitly and never iterate this dictionary.
+# Imported last: coupled_mamba depends on nothing in this file.
+from .coupled_mamba import DESIGNS as _COUPLED_MAMBA_DESIGNS  # noqa: E402
+
+FUSIONS.update(_COUPLED_MAMBA_DESIGNS)
