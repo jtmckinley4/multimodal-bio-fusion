@@ -1,6 +1,6 @@
 # Saved Stage 1 figures
 
-These are deliberately shared figure bundles from captured completed results. Open the PNG or SVG files directly; no kernel restart or Python execution is needed to view them. The JSON snapshots preserve the numeric inputs needed for the figure cells, not an entire Jupyter session. Embedding weights and large embedding caches remain local.
+These are shared figure bundles from captured completed results. Open the PNG or SVG files directly; no kernel restart or Python execution is needed to view them. The JSON snapshots preserve the numeric inputs needed for the figure cells, not an entire Jupyter session. Embedding weights and large embedding caches remain local. The separate [manuscript figures](../notes/figures/README.md) use their own retained tables and plotting scripts.
 
 | Bundle | Contents | Recorded result state |
 | --- | --- | --- |
@@ -18,7 +18,7 @@ python Code/export_figures.py gtex
 
 The [exporter](../../Code/export_figures.py) executes only the tagged plotting cells in the selected notebook, in a separate Python namespace. It loads `results.json` from the selected bundle and writes SVG, 300-dpi PNG, CSV and `manifest.json` back there. It never connects to a kernel or executes the research sections. NumPy, pandas and Matplotlib are needed. Use `--output <folder>` to keep a new render separate, or `--source <results.json>` to explicitly select another compatible snapshot. Missing snapshots stop; the exporter does not compute replacements.
 
-To display the recorded figures inside a notebook, run its Figure export settings cell and Figure exports section. Those cells read the same saved snapshot, so they also work without rerunning the analysis. They do not automatically adopt newer kernel variables. Both notebooks' original scientific outputs and execution counts are preserved.
+To display the recorded figures inside a notebook, run its Figure export settings cell and Figure exports section. Those cells read the same saved snapshot, so they also work without rerunning the analysis. They do not automatically adopt newer kernel variables.
 
 ## Read the evidence with the image
 

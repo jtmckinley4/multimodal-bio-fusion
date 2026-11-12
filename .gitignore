@@ -41,3 +41,6 @@ Claude outputs/
 /Code/*/results/**/*.weights.pt
 /Code/*/results/**/*.weights.pt.*.partial
 /Code/*/results/**/*.json.*.partial
+
+# Personal deferred reference work stays local, including its navigation notes.
+/Code/deferred/

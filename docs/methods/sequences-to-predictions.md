@@ -14,7 +14,7 @@ The detailed procedures primarily describe Stage 1's pooled-embedding analyses. 
 
 The opening pipeline in [Stage1_stability.ipynb](../../Code/stage1/Stage1_stability.ipynb) prepares matched biological inputs, loads a frozen encoder, and turns its token representations into one vector per sequence. The notebook keeps the actual settings, checks, saved results, and local interpretations. Use [Setup](../../README.md#setup) for installation and loading-message guidance.
 
-Along the [gene-expression pathway](data-and-targets.md#connecting-the-targets-to-gene-expression), the supplied sequence can describe different biological regions. Genomic DNA may include parts of a gene and surrounding regulatory sequence. In a typical intron-containing eukaryotic gene, RNA processing removes introns and joins the retained segments, called exons. The mature transcript contains a coding sequence (CDS) and untranslated regions (UTRs) before and after it; exons need not be entirely protein-coding. The 5′ and 3′ UTRs are transcribed sequence outside the main protein-coding region and can help control how the RNA is used. A protein sequence omits those regions and the synonymous codon distinctions within the CDS. [Molecular Biology of the Cell, 7th ed., ch. 6, RNA processing and splicing; ch. 7, p. 456](../sources.md#molecular-biology-of-the-cell-7th-edition).
+Along the [gene-expression pathway](data-and-targets.md#connecting-the-targets-to-gene-expression), the supplied sequence can describe different biological regions. Genomic DNA may include parts of a gene and surrounding regulatory sequence. In a typical intron-containing eukaryotic gene, RNA processing removes introns and joins the retained segments, called exons. For a protein-coding transcript, the mature RNA contains a coding sequence (CDS) and untranslated regions (UTRs) before and after it; exons need not be entirely protein-coding. The 5′ and 3′ UTRs are transcribed sequence outside the main protein-coding region and can help control how the RNA is used. A protein sequence omits those regions and the synonymous codon distinctions within the CDS. [Molecular Biology of the Cell, 7th ed., ch. 6, RNA processing and splicing; ch. 7, p. 456](../sources.md#molecular-biology-of-the-cell-7th-edition).
 
 The main stability analysis starts from one coding sequence per row. DNA and RNA inputs differ in their letter convention; the protein input is translated and loses synonymous codon distinctions. A common sequence origin therefore does not imply identical information in every input. The [GTEx experiment](../../Code/stage1/Stage1_gtex.ipynb#Distinct-inputs:-GTEx-transcript-expression) uses a separate path: genomic DNA, full transcripts for single-nucleotide RNA encoders, coding sequences for codon RNA encoders, and supplied proteins. `Dataset.inputs_for` prepares those inputs, which are passed to embedding with `prepared=True`; the stability path performs coding-sequence conversion inside the embedding helper.
 
@@ -42,7 +42,7 @@ In this notation:
 - $\bmod$ gives the remainder after integer division.
 - The divisor 3 is the number of nucleotides per codon; a remainder of 0 means the length can be divided into complete groups of three.
 
-**Connection to the code.** This equation is the Boolean test `len(seq) % 3 == 0` inside `is_in_frame_and_starts_correctly`; `%` is Python's remainder operator. The function combines that test with `seq.startswith(("ATG", "AUG"))` using `and`, so both must hold.
+**Connection to the code.** `is_in_frame_and_starts_correctly` combines `len(seq) % 3 == 0` with `seq.startswith(("ATG", "AUG"))` using `and`: the remainder (`%`) must be zero and the start must match.
 
 A 12-nucleotide sequence contains four complete codons and passes the length check; a 13-nucleotide sequence has one nucleotide left over and fails it. Passing the length check alone is insufficient: the starting letters must also match.
 
@@ -54,7 +54,7 @@ This is a preliminary filter. It does not validate the nucleotide alphabet, chec
 
 For the biological codon-to-amino-acid mapping, use [NCBI's Standard Code, table 1](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG1). Its tables use T in place of RNA's U and list alternative genetic codes separately. The helper's default is an implementation choice; it does not establish the appropriate code for every organism or sequence in a dataset.
 
-Before translation, `len(seq) % 3` gives the number of trailing characters outside a complete codon. Subtracting that remainder identifies where to end the slice: an input of length 13 would be trimmed to length 12. In the current callers, surrounding whitespace has already been removed and the preceding length check requires a multiple of three, so this trimming normally removes nothing. It remains part of the helper's behavior when called independently. The protein input ends at the first in-frame stop, while the nucleotide inputs retain the supplied sequence after it. Invalid symbols can cause translation to raise an error; these filters do not guarantee that every malformed sequence becomes a counted rejection.
+The helper removes `len(seq) % 3` trailing characters before translation. The current callers have already removed surrounding whitespace and required a multiple-of-three length, so this trimming normally removes nothing. The protein input ends at the first in-frame stop, while the nucleotide inputs retain the supplied sequence after it. Invalid symbols can cause translation to raise an error; these filters do not guarantee that every malformed sequence becomes a counted rejection.
 
 This stop-at-first-stop behavior belongs to the Stage 1 pooled-input path. The Stage 4 BioLangFusion token path uses a different translation helper that retains translated positions and replaces stop symbols with `X`, then preserves content-token vectors for fusion. Its [token embedding implementation](../../Code/shared_code/fusion/token_embeddings.py) and experiment notebooks own that procedure; the pooled-input and cache descriptions here do not specify the token-grid experiment.
 
@@ -84,7 +84,11 @@ The encoder input limits are measured in tokens and recorded in the registry; th
 
 ### Loading an encoder
 
-`encoders.load_encoder(encoder, device)` loads the tokenizer and pretrained encoder for one registry entry at its recorded revision, moves the model to `DEVICE`, and returns the tokenizer and model together. Checkpoints that load with the Transformers auto classes use them directly. Nucleotide Transformer v2 and DNABERT-2 ship their own model code, written for an earlier Transformers version; `load_encoder` builds those models from their configuration, loads the checkpoint weights, and raises an error if any weight other than the unused pooler fails to match. ProtBERT's checkpoint does not name its model type, so `load_encoder` loads it with the BERT tokenizer, with letter case preserved, and the BERT model class directly; its protein input has residues separated by spaces. For ProtBERT, `protein_input` also replaces U, Z, O, and B with X. Importing the package does not load an encoder. Each analysis loads an encoder when it needs one and releases it afterwards with `encoders.free_memory`, so only one model occupies memory at a time.
+`encoders.load_encoder(encoder, device)` loads the tokenizer and pretrained encoder for one registry entry at its recorded revision, moves the model to `DEVICE`, and returns the tokenizer and model together. Importing the package does not load an encoder.
+
+Checkpoints that load with the Transformers auto classes use them directly. Nucleotide Transformer v2 and DNABERT-2 ship their own model code, written for an earlier Transformers version; `load_encoder` builds those models from their configuration, loads the checkpoint weights, and raises an error if any weight other than the unused pooler fails to match. ProtBERT's checkpoint does not name its model type, so `load_encoder` uses the BERT tokenizer with letter case preserved and the BERT model class directly. Its `protein_input` separates residues with spaces and replaces U, Z, O, and B with X.
+
+The [pooled-extraction loop](../../Code/shared_code/embeddings.py) loads one encoder at a time, deletes its model/tokenizer references after extraction, then calls `encoders.free_memory` for garbage collection and unused backend allocations. This is the loop's cleanup behavior, not a guarantee that no other model or live tensor occupies memory.
 
 `model.eval()` switches layers with distinct training and evaluation behavior, such as dropout, into evaluation mode. It does not disable gradient tracking or set the model's parameters to `requires_grad=False`. The separate `@torch.no_grad()` decorator on `embed` disables gradient tracking during embedding extraction, avoiding the memory cost of recording operations for a backward pass. The encoders remain unchanged because this workflow does not perform training updates. See the PyTorch documentation for [evaluation mode](https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html#torch.nn.Module.eval) and [gradient tracking](https://docs.pytorch.org/docs/2.14/generated/torch.no_grad.html).
 
@@ -154,7 +158,7 @@ The helper validates scalar metadata and a real numeric, two-dimensional matrix 
 | Valid version 1, changed input/checkpoint/revision/token limit | Compute a replacement; return `(matrix, False)`. |
 | Legacy, incompatible version, missing metadata, or damaged matrix/archive | Raise a recovery error before loading a model; preserve the existing file. |
 
-**Recovery.** Preserve an old or damaged file and its known producing evidence. For a deliberately authorized new computation, select a fresh cache directory in the notebook setup or archive the specific old file before retrying. Do not relabel an old archive as version 1: its effective inputs and producing code have not been established by that edit. Existing team caches were not migrated by this software change.
+**Recovery.** Preserve an old or damaged file and its known producing evidence. For a deliberately authorized new computation, select a fresh cache directory in the notebook setup or archive the specific old file before retrying. Do not relabel an old archive as version 1: its effective inputs and producing code have not been established by that edit.
 
 New matrices are written to a unique temporary sibling, reopened and checked, then published with `os.replace`. Failure before replacement preserves the last completed cache. A cleanup failure retains the primary error and, where supported by Python, adds the temporary path as an exception note. This prevents partial publication within the helper; it is not a guarantee against filesystem failure or concurrent writers to the same destination.
 
@@ -296,7 +300,11 @@ In this notation:
 - $H$ is the SHA-256 hash of that text, read as a nonnegative integer. See [Python's hashlib](https://docs.python.org/3/library/hashlib.html).
 - $\bmod 5$ keeps the remainder after division by five.
 
-**Interpretation.** Identical retained sequence strings receive the same fold, so they stay together across the outer train/test boundary. With the same normalized group strings, seed, fold count, and hash procedure, the fold assignment is independent of the machine and library version; a sequence keeps its fold in any sample that contains it. This fixes partition membership, not numerical equality of embeddings or scores across environments. Fold sizes vary slightly around one fifth of the groups, and a fold with no rows raises an error. Both notebooks explicitly pass `PROBE_SEED = 42` to single-encoder tables, concatenated-pair comparisons, and baseline probes. The public helpers retain `seed=42` as their default. Sampling, CCA, and PyTorch initialization use `SEED` separately; further probe assignments retain seeds 0 through `N_FOLD_ASSIGNMENTS - 1`. Changing the pinned seed requires corresponding single and pair results from that same partition. scikit-learn's [GroupKFold](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupKFold.html) is not used because it orders groups of equal size with NumPy's default sort, which is not stable, so its folds can differ between library versions and machines; see [NumPy's sort documentation](https://numpy.org/doc/stable/reference/generated/numpy.sort.html).
+**Interpretation.** Identical retained sequence strings receive the same fold, so they stay together across the outer train/test boundary. With the same normalized group strings, seed, fold count, and hash procedure, a sequence keeps its fold across machines and in any sample that contains it. This fixes partition membership, not numerical equality of embeddings or scores across environments. The [hash assignment](../../Code/shared_code/splits.py) does not balance group or row counts; a fold with no rows raises an error. The earlier description of sizes varying only slightly around one fifth overstated this guarantee. This clarification does not change assignments or recompute scores.
+
+**Seed roles.** Both notebooks explicitly pass `PROBE_SEED = 42` to single-encoder tables, concatenated-pair comparisons, and baseline probes. The public helpers retain `seed=42` as their default. Sampling, CCA, and PyTorch initialization use `SEED` separately; further probe assignments retain seeds 0 through `N_FOLD_ASSIGNMENTS - 1`. Changing the pinned seed requires corresponding single and pair results from that same partition.
+
+The custom hash rule avoids depending on the ordering of size-tied groups in the unshuffled [GroupKFold](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupKFold.html) implementation. That branch uses NumPy's default sort, which does not guarantee stable tie ordering; see [NumPy's sort documentation](https://numpy.org/doc/stable/reference/generated/numpy.sort.html). This rationale concerns that implementation branch, not every GroupKFold configuration.
 
 For each outer fold, `cross_val_score` fits the pipeline on the other four folds and evaluates its predictions on the held-out fold. Within that outer training subset, `RidgeCV` selects an alpha using its default efficient leave-one-out procedure, with negative mean squared error as its selection score. This internal model selection differs from the outer $R^2$ evaluation. See [RidgeCV](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html).
 
@@ -468,7 +476,7 @@ For example, `AUG | GCC | AAA` has third bases `G, C, A`, so GC3 is $2/3$, appro
 | `gc_content(third_positions)` | One scalar fraction | Count G and C in that string and divide by its length, which is the number of complete codons. |
 | `np.array([gc3_content(s) for s in kept_seqs])` | Target array `seq_gc3`, shape `(n,)` | Calculate one value for each of the `n` retained examples, preserving their order. |
 
-The slice's first 2 is a zero-based starting index; the 3 is the step between selected indices. Its omitted stop means to continue to the end of the string. An incomplete trailing codon has no third base to select. See [Python's slicing rules](https://docs.python.org/3/builtins/stdtypes.html#common-sequence-operations). The helper expects an uppercase sequence with at least one complete codon and adds no normalization or alphabet validation.
+An incomplete trailing codon has no third base to select under [Python's slicing rules](https://docs.python.org/3/builtins/stdtypes.html#common-sequence-operations). The helper expects an uppercase sequence with at least one complete codon and adds no normalization or alphabet validation.
 
 The calculation uses the full retained input sequence, including complete codons after any translated stop or beyond the encoder's input limit. `kept_seqs` supplies the same retained order as in the [GC-content calculation](#gc-content-prediction); the earlier filters do not establish experimentally verified complete coding sequences. The probes reuse the existing [linear-probe procedure](#linear-probing), with `groups=kept_seqs` keeping exact repeated sequence strings within the same outer fold. The GC3 calculation is deterministic and needs no additional seed.
 
@@ -633,7 +641,7 @@ $$
 
 **Connection to the code.**
 
-These equations describe the NumPy calculation in `analysis.centroid_spread`. There is no fitted model. The mathematical names for the centroid and individual distances explain intermediate results that the function calculates in one expression.
+These equations describe the NumPy calculation in `analysis.centroid_spread`; there is no fitted model.
 
 For one encoder's matrix `Z`, the calculation performs the following operations in order.
 
@@ -644,7 +652,7 @@ For one encoder's matrix `Z`, the calculation performs the following operations 
 | `np.linalg.norm(..., axis=1)` | `(n, d)` → `(n,)` | Combine the feature differences within each row into its distance $r_i$. |
 | The final `.mean()` | `(n,)` → scalar | Average the distances to obtain $\operatorname{spread}(Z)$. |
 
-The `...` in the table stands for the centered matrix from the preceding row. NumPy applies the centroid subtraction to every row automatically. With `axis=1` and the default norm setting, `np.linalg.norm` calculates Euclidean length across each row's features; see [NumPy's norm definition](https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html).
+The `...` denotes the centered matrix from the preceding row. With `axis=1`, `np.linalg.norm` calculates [Euclidean length](https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html) across each row's features.
 
 **Small worked example.**
 

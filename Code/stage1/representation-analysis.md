@@ -2,7 +2,7 @@
 
 Once sequences have been encoded, we can ask two related questions: do the encoders organize the same examples similarly, and which sequence positions receive attention inside a nucleotide encoder? The first concerns representation geometry across examples; the second concerns model behavior within a sequence. Neither representation similarity nor an attention pattern alone establishes predictive benefit or a biological mechanism.
 
-This guide retains the equations, worked examples, implementation details and interpretation limits behind the Stage 1 analyses. The [stability notebook](Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) uses both representation comparisons and exploratory attention analyses. GTEx reuses the representation comparisons in [Track B](Stage1_gtex.ipynb#GTEx-Track-B:-Cross-modal-geometry) and its [alignment and similarity diagnostics](Stage1_gtex.ipynb#Alignment,-prediction-error,-and-representational-similarity-on-GTEx); the attention walkthrough below follows the stability notebook. The notebooks retain experiment settings, code calls, saved outputs and result interpretations. Section return links lead to the stability walkthrough unless explicitly labeled GTEx; references to notebook cells and tables mean those linked cells, unless an explanatory table appears here.
+This guide explains the methods behind the [stability notebook's representation comparisons](Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) and exploratory attention analysis. GTEx reuses the comparisons in [Track B](Stage1_gtex.ipynb#GTEx-Track-B:-Cross-modal-geometry) and its [alignment and similarity diagnostics](Stage1_gtex.ipynb#Alignment,-prediction-error,-and-representational-similarity-on-GTEx). The notebooks retain experiment settings, code calls, saved outputs and result interpretations. Return links below lead to the stability walkthrough unless labeled GTEx.
 
 Read [Data and biological targets](../../docs/methods/data-and-targets.md) for what the observations and labels mean, and [From sequences to predictions](../../docs/methods/sequences-to-predictions.md) for sequence preparation, pooling and target prediction. Here, [comparing representations](#comparing-representations) asks how the encoded examples relate across feature spaces, while [attention and candidate motifs](#attention-and-candidate-motifs) asks how model attention relates to sequence-pattern annotations.
 
@@ -27,9 +27,9 @@ Return to [Final-layer representation similarity: linear CKA](Stage1_stability.i
 
 Linear centered kernel alignment (CKA) compares the final-layer mean-pooled representations of the same retained examples, one pair of encoders at a time, for every pair in `PAIRS`. Corresponding rows refer to the same example, while the feature counts can differ.
 
-Each calculation uses two separate embedding matrices, not their concatenation. It asks whether relationships between examples are similar across the two representations. The helper centers each feature across rows, computes dot products within and between the representations, and normalizes the comparison. The equation and notation are explained in [Linear centered kernel alignment](#linear-centered-kernel-alignment) below.
+Each calculation uses two separate embedding matrices, not their concatenation. The helper centers each feature across rows, computes dot products within and between representations, and normalizes the comparison as derived in [Linear centered kernel alignment](#linear-centered-kernel-alignment).
 
-Unlike the predictive probes, this calculation does not fit a prediction model or use stability labels. The probes ask which target properties a simple model can recover; CKA asks how similarly two representations organize the same examples.
+CKA uses no stability labels and fits no prediction model. It measures representational similarity; the probes ask which target properties a fitted model can recover.
 
 In the derived stability setting, pairs within one modality provide a reference for pairs across modalities. The nucleotide encoders start from the same coding sequence in DNA or RNA letters; protein encoders receive its translation. Architecture, pretraining, tokenization, model size, and input truncation can all affect this comparison. GTEx has distinct inputs, including full transcripts for single-nucleotide RNA encoders and CDS inputs for codon encoders.
 
@@ -45,12 +45,7 @@ $$
 \bar x_j=\frac{1}{n}\sum_{i=1}^{n}x_{ij}.
 $$
 
-In this notation:
-
-- $n$ is the shared number of example rows; $p$ and $q$ are the numbers of features in $X$ and $Y$, respectively.
-- $x_{ij}$ is the scalar entry of $X$ in example row $i$, feature column $j$.
-- $\bar x_j$ is the mean of that feature across all $n$ rows. The bar denotes an average.
-- $\sum_{i=1}^{n}$ adds the feature values across rows; division by $n$ takes their average.
+Here, $X$ and $Y$ have $n$ matched example rows and $p$ and $q$ features, respectively. The scalar $x_{ij}$ is feature $j$ of example $i$, and $\bar x_j$ is that feature's mean across rows.
 
 Subtract that mean from each value in the feature:
 
@@ -58,11 +53,7 @@ $$
 (X_c)_{ij}=x_{ij}-\bar x_j.
 $$
 
-In this notation:
-
-- $X_c$ is the centered matrix, still of shape $(n,p)$; the subscript $c$ labels centering.
-- $(X_c)_{ij}$ selects its entry at row $i$, column $j$.
-- $x_{ij}$ and $\bar x_j$ have the meanings above: each row loses the same mean for feature $j$.
+The centered matrix $X_c$ retains shape $(n,p)$: every row loses the same mean for feature $j$.
 
 The code applies the same two operations independently to `Y` to obtain $Y_c$, with shape $(n,q)$. It subtracts each representation's own column means. Unlike the probe's standardization, CKA centering does not divide by feature standard deviations.
 
@@ -74,12 +65,7 @@ $$
 \|A\|_F=\sqrt{\sum_{a=1}^{r}\sum_{b=1}^{s}A_{ab}^{\,2}}.
 $$
 
-In this notation:
-
-- $A$ is any real-valued matrix of shape $(r,s)$, and $A_{ab}$ is its entry in row $a$, column $b$.
-- $r$ and $s$ are its row and column counts; $a$ and $b$ index those entries.
-- The two summations add over every row and column. The exponent $2$ squares each entry, and the square root converts the total to a norm.
-- $\|\cdot\|_F$ names the Frobenius norm. The subscript $F$ identifies the norm; it does not denote an evaluation fold here.
+For a real matrix $A$ of shape $(r,s)$, $A_{ab}$ is its entry in row $a$, column $b$. The Frobenius norm $\|\cdot\|_F$ takes the square root of the sum of squared entries across the entire matrix.
 
 For example, the matrix with rows $(1,2)$ and $(2,4)$ has norm $\sqrt{1^2+2^2+2^2+4^2}=5$. Its squared Frobenius norm is $25$. These are illustrative values, not encoder results. NumPy implements this matrix norm with `np.linalg.norm(..., ord="fro")`; see [NumPy's norm definition](https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html).
 
@@ -91,15 +77,12 @@ $$
 {\|X_c^\top X_c\|_F\,\|Y_c^\top Y_c\|_F}.
 $$
 
-In this notation:
+The terms correspond to these matrix operations:
 
-- $\operatorname{CKA}(X,Y)$ is the scalar linear CKA value returned by `linear_cka` for the two input matrices.
-- $X_c$ and $Y_c$ are the centered matrices defined above.
-- $\top$, written `.T` in NumPy, means transpose: exchange rows and columns.
-- Juxtaposing matrices, as in $Y_c^\top X_c$, means matrix multiplication, written `@` in NumPy. Each output entry sums products along the shared dimension.
-- $Y_c^\top X_c$ has shape $(q,p)$ and contains dot products between centered features in the two representations.
-- $X_c^\top X_c$ has shape $(p,p)$, and $Y_c^\top Y_c$ has shape $(q,q)$. They contain feature dot products within each representation.
-- $\|\cdot\|_F$ has the definition above. The numerator squares that norm; the denominator multiplies two unsquared scalar norms.
+- Transpose $\top$ is `.T` in NumPy; adjacent matrices are multiplied with `@`.
+- $Y_c^\top X_c$ has shape $(q,p)$ and contains cross-representation dot products between centered features.
+- $X_c^\top X_c$ and $Y_c^\top Y_c$ have shapes $(p,p)$ and $(q,q)$ and contain within-representation feature dot products.
+- `linear_cka` returns one scalar: the squared Frobenius norm of the cross-representation matrix divided by the product of the two unsquared within-representation norms.
 
 **Connection to the code.**
 
@@ -114,7 +97,7 @@ This is a direct NumPy calculation in `linear_cka`; no model is fitted. The tabl
 | `X_centered.T @ X_centered`, then its Frobenius norm | `(p, n)` and `(n, p)` → `(p, p)` → scalar | Obtain `norm_x`; the corresponding `Y` operation gives `norm_y` through a `(q, q)` matrix. |
 | `numerator / (norm_x * norm_y)` | Three scalars → scalar | Return the normalized CKA value. |
 
-The `...` stands for the matrix product in the preceding row. NumPy broadcasts the `(1, p)` or `(1, q)` mean row during subtraction, applying it to every example row.
+The `...` stands for the matrix product in the preceding row; the subtraction applies each mean row to every example.
 
 This feature-based calculation is equivalent to comparing the centered example-similarity matrices $X_cX_c^\top$ and $Y_cY_c^\top$, each of shape $(n,n)$. An entry in either matrix is the dot product between two centered example embeddings. The common normalization factor from the Hilbert-Schmidt independence criterion (HSIC) cancels in the CKA ratio, so the code names the unnormalized top term `numerator`.
 
@@ -155,7 +138,7 @@ In this notation:
 
 For example, for a pair of transformer encoders in the DNA-protein matrix, $C_{2,3}$ compares the pooled DNA vectors after DNA transformer block 2 with the pooled protein vectors after protein transformer block 3, across the same retained examples. It is one score for two whole matrices, not a comparison between example rows 2 and 3.
 
-**Connection to the code.** For each pair in `PAIRS`, `analysis.layerwise_cka` calls `linear_cka` once for each state pair and stores the result. `analysis.layerwise_summary` reports each matrix's largest entry and its final-state pair, `matrix[-1, -1]`; Python index `-1` selects the last state on each axis. With twelve encoders there are 66 matrices, so the table summarizes all of them and heatmaps are drawn for `LAYERWISE_PLOT_PAIRS`. These are descriptive comparisons of representations, not fitted cross-modal projections or evidence that a particular layer pair improves prediction.
+**Connection to the code.** For each pair in `PAIRS`, `analysis.layerwise_cka` calls `linear_cka` for every state pair. `analysis.layerwise_summary` reports the matrix's largest entry and its final-state pair, `matrix[-1, -1]`. For twelve encoders, this produces 66 matrices; the table summarizes all pairs and heatmaps show `LAYERWISE_PLOT_PAIRS`. These descriptive comparisons do not fit cross-modal projections or establish that a particular layer pair improves prediction.
 
 **Check the role of the second encoder's embedding output.** A maximum at state 0 of an encoder occurs at the initial embedding output before the later encoder layers. For each pair, `layerwise_summary` also repeats the maximum search after excluding state 0 of the second encoder in the pair.
 
@@ -173,15 +156,12 @@ $$
 o_i = \frac{\left|N_X(i)\cap N_Y(i)\right|}{k}.
 $$
 
-In this notation:
+The comparison uses:
 
-- $X$ and $Y$ are the two embedding matrices of one encoder pair, such as `EMBEDDINGS["nt500m"]` with shape `(n, p)` and `EMBEDDINGS["esm2_35m"]` with shape `(n, q)`. The matrices contain $n$ matched examples; $p$ and $q$ are their respective feature counts.
-- $i$ identifies the query example, from 1 through $n$ in the equation. Python indexes those same rows from 0 through `n - 1`.
-- $k$ is the number of neighbor indices retained per query in each space; the notebook call uses $k=10$. Requesting one extra neighbor requires $1\le k\le n-1$.
-- $N_X(i)$ and $N_Y(i)$ are the sets of retained neighbor-row indices for query $i$ in the spaces of $X$ and $Y$, respectively. Parentheses specify which query's set is being selected.
-- $\cap$ means set intersection: keep only indices appearing in both sets.
-- The vertical bars $|\cdot|$ count the indices in that intersection. They denote a set's size, not a vector norm.
-- $o_i$ is the shared-neighbor fraction for row $i$, a scalar between 0 and 1. Dividing the shared count by $k$ puts queries on the same scale.
+- $X$ and $Y$, the two embedding matrices of one encoder pair, such as `EMBEDDINGS["nt500m"]` with shape `(n, p)` and `EMBEDDINGS["esm2_35m"]` with shape `(n, q)`. They contain $n$ matched examples and can have different feature counts.
+- $k$ retained neighbors per query row $i$, with $k=10$ in the notebook. Requesting one extra neighbor requires $1\le k\le n-1$.
+- $N_X(i)$ and $N_Y(i)$, the retained neighbor-row index sets in each space. Their intersection contains the shared indices, and $|\cdot|$ counts them.
+- $o_i$, the shared count divided by $k$: one fraction between zero and one per query.
 
 For example, if 3 of a row's 10 retained neighbors are shared, its fraction is $o_i=3/10=0.3$.
 
@@ -192,16 +172,13 @@ $$
 =\frac{1}{n}\sum_{i=1}^{n}o_i.
 $$
 
-In this notation:
-
-- $\operatorname{overlap@}k$ names the final mean overlap at the chosen neighbor count $k$. The `@` reads “at”; it is part of the metric's name.
-- $\sum_{i=1}^{n}$ adds the scalar fractions $o_i$ over all $n$ query rows; dividing by $n$ takes their mean.
+$\operatorname{overlap@}k$ is the mean of the $n$ query-level fractions $o_i$; it gives every query equal weight.
 
 **Connection to the code.** `analysis.mutual_knn_alignment` calculates each $o_i$ in its `overlaps` list and returns their mean with `np.mean(overlaps)`. Despite the helper's name, this is overlap between two neighbor sets, not a check that neighbor relationships are reciprocal.
 
 The helper uses the default Euclidean distance of [`NearestNeighbors`](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestNeighbors.html). It requests $k+1$ neighbors and removes the first returned index with `[i, 1:]`, intending to exclude the query itself. With duplicate vectors or distance ties, that first index need not be the query's own index; explicit self-exclusion remains an evaluation issue. The sets in the equations describe what the code retains under this rule, rather than guaranteeing that all retained neighbors are other rows.
 
-**The chance reference uses an idealized selection rule.** For two independent, uniformly selected sets of $k$ nonself neighbors among $n-1$ candidates, the expected overlap fraction is $k/(n-1)$. Here, $n-1$ excludes the query row. Each of the $k$ neighbors in one set has probability $k/(n-1)$ of appearing in the other. The printed chance level uses $k/(n-1)$. This reference is not a simulated random-embedding result or a significance test, and disagreement with CKA would not by itself invalidate either metric.
+**The chance reference uses an idealized selection rule.** For two independent, uniformly selected sets of $k$ nonself neighbors among $n-1$ candidates, the expected overlap fraction is $k/(n-1)$, the printed reference. Each neighbor in one set has that probability of appearing in the other. This is neither a simulated random-embedding result nor a significance test; disagreement with CKA would not by itself invalidate either metric.
 
 ### Canonical correlation and cross-modal retrieval
 
@@ -211,7 +188,9 @@ The previous metrics compare the representations without learning a cross-modal 
 
 **1. Fit the transformations on training rows.**
 
-`splits.grouped_holdout_split` assigns each retained sequence to the training or test side from the SHA-256 hash of `SEED` and the sequence string, using the same grouped-hash idea as the probe folds. This CCA call explicitly receives the notebook's `SEED`; `probe_table` separately receives `PROBE_SEED` for its pinned folds, as explained in the [linear-probing guide](../../docs/methods/sequences-to-predictions.md#evaluation-and-interpretation). About 30% of rows become test rows, and every copy of an identical sequence falls on the same side. The same indices select every encoder's matrix, so every pair uses the same training and test rows. Write $n_{\mathrm{train}}$ for the number of training pairs and $n_{\mathrm{test}}$ for the number of test pairs; $p$ and $q$ are the embedding widths of the pair's first and second encoders.
+`splits.grouped_holdout_split` assigns each retained sequence to training or testing from the SHA-256 hash of `SEED` and the sequence string. The [implementation](../shared_code/splits.py) uses a threshold targeting a 30% test share; it does not balance row counts, and every copy of an identical sequence stays on the same side. The same indices select every encoder's matrix, giving every pair the same training and test rows.
+
+This CCA call receives `SEED`; `probe_table` separately receives `PROBE_SEED` for its pinned folds, as explained in the [linear-probing guide](../../docs/methods/sequences-to-predictions.md#evaluation-and-interpretation). Write $n_{\mathrm{train}}$ and $n_{\mathrm{test}}$ for the numbers of training and test pairs, and $p$ and $q$ for the pair's embedding widths.
 
 Each encoder's representation receives a separate principal component analysis (PCA), fitted only on its training matrix, requesting 50 components, capped at `min(50, n_train - 1, p, q)`. The 50-component shapes below describe the saved configuration where this cap does not reduce the request. PCA supplies a smaller feature space using directions of large training-set variation. The implementation centers features without standardizing their variances before PCA. See [the PCA definition and implementation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html).
 
@@ -239,15 +218,11 @@ $$
 \mathbf v = \widetilde Y_{\mathrm{train}}\mathbf b.
 $$
 
-In this notation:
+The projected quantities have different roles:
 
-- $n_{\mathrm{train}}$ and $n_{\mathrm{test}}$ count the paired training and test examples. The subscripts identify their partitions.
-- $p$ and $q$ are the respective original embedding widths of the first and second encoders, before PCA reduces each to 50 features.
-- $\widetilde X_{\mathrm{train}}$ and $\widetilde Y_{\mathrm{train}}$ are the first and second encoders' training matrices after PCA reduction and CCA's internal centering and scaling. Each has shape `(n_train, 50)`.
-- The tilde, read as “X tilde” or “Y tilde,” marks these processed matrices. It does not mean an approximation here. The subscript “train” identifies their training rows.
-- $\mathbf a$ and $\mathbf b$ are coefficient vectors with 50 entries each: one coefficient for each PCA feature in the respective representation. Bold lowercase symbols here represent vectors.
-- Matrix-vector multiplication, such as $\widetilde X_{\mathrm{train}}\mathbf a$, multiplies each row's 50 feature values by the corresponding 50 coefficients and adds them. It produces one number per training row.
-- $\mathbf u$ and $\mathbf v$ are therefore vectors of length $n_{\mathrm{train}}$, containing one canonical coordinate per training example in each representation. They are not the 50 coefficients themselves.
+- $\widetilde X_{\mathrm{train}}$ and $\widetilde Y_{\mathrm{train}}$ contain paired training rows after PCA reduction and CCA's internal centering and scaling. Each has shape `(n_train, 50)`; the tilde marks this preprocessing.
+- $\mathbf a$ and $\mathbf b$ are coefficient vectors with 50 entries, one per PCA feature in the respective representation.
+- $\mathbf u$ and $\mathbf v$ each contain $n_{\mathrm{train}}$ coordinates, one per training example. Multiplying a processed matrix by its coefficient vector produces these coordinates; they are distinct from the 50 coefficients.
 
 For a small illustration with only two features, a processed row `[2, 3]` and coefficients `[0.5, -1]` give the single coordinate $2(0.5)+3(-1)=-2$. The actual calculation combines 50 features per row. These illustrative values are not fitted notebook results.
 
@@ -261,12 +236,7 @@ $$
                           \widetilde Y_{\mathrm{train}}\mathbf b\right).
 $$
 
-In this notation:
-
-- $\operatorname{corr}$ means Pearson correlation across paired training rows: it measures how the two projected vectors vary together. Both projected vectors must have nonzero variance for this correlation to be defined.
-- $\operatorname{arg\,max}$ means “find coefficient vectors that make the correlation as large as possible.” It returns the coefficient choices, rather than the maximum correlation value.
-- The $\mathbf a,\mathbf b$ below the operator identify the quantities being chosen; the processed training matrices remain fixed.
-- The stars in $\mathbf a^\star$ and $\mathbf b^\star$ label optimizing coefficient vectors. They do not mean multiplication or another power. Each selected vector still has 50 entries.
+Here, $\operatorname{corr}$ is Pearson correlation across paired training rows; both projected vectors need nonzero variance. The $\operatorname{arg\,max}$ selects coefficient vectors $\mathbf a^\star,\mathbf b^\star$ that maximize it while keeping the processed training matrices fixed. It returns those vectors, not the correlation value.
 
 This equation describes the first-pair mathematical objective behind the library method. The notebook delegates fitting to `CCA.fit`; it does not implement this optimization itself. The library learns subsequent pairs after removing previously captured variation and constructs the transformations used by `CCA.transform`. Requesting 10 components therefore yields 10 coordinates per example in each representation, with each coordinate formed from the 50 input features. A canonical coordinate is a learned numerical combination, not an identified biological mechanism. See [CCA](https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.CCA.html) and the [cross-decomposition guide](https://scikit-learn.org/stable/modules/cross_decomposition.html#canonical-correlation-analysis).
 
@@ -284,17 +254,14 @@ $$
 \mathbf{1}\!\left\{i\in R_k(i)\right\}.
 $$
 
-In this notation:
+For retrieval:
 
-- $k$ is the number of retrieved candidates considered per query. The notebook reports 1, 5 and 10; the formula assumes $1\le k\le n_{\mathrm{test}}$.
-- $i$ identifies a paired test row, from 1 through $n_{\mathrm{test}}$ in the equation. Python uses indices 0 through `n_test - 1`. These are positions within the test arrays, not the original dataset's row numbers.
-- $R_k(i)$ is the set of the first $k$ indices of the second encoder returned for query $i$; the subscript $k$ records the chosen candidate count.
-- $\in$ means “belongs to,” also read as “is an element of” or “is a member of.” These are equivalent expressions for set membership. Thus, $i\in R_k(i)$ asks whether the designated row index belongs to the retrieved candidate set.
-- $\mathbf{1}\{\cdot\}$ is an indicator: it returns the scalar 1 if the statement in braces is true and 0 otherwise. This bold 1 is not an embedding vector.
-- $\sum_{i=1}^{n_{\mathrm{test}}}$ adds the successful-match indicators, and division by $n_{\mathrm{test}}$ gives the fraction of successful queries.
-- $\operatorname{Recall@}k$ names that fraction, read as “recall at k.” There is one designated correct match per query here.
+- $k$ is the candidate count, reported at 1, 5 and 10; the formula assumes $1\le k\le n_{\mathrm{test}}$.
+- $i$ identifies a paired row within the test arrays, not its original dataset row number.
+- $R_k(i)$ contains the first $k$ retrieved indices of the second encoder. The indicator $\mathbf{1}\{i\in R_k(i)\}$ is 1 when the designated match is present and 0 otherwise.
+- $\operatorname{Recall@}k$ averages those indicators over test queries. There is one designated correct match per query.
 
-**Plain-English interpretation.** Take each test entry of the first encoder in turn and retrieve the $k$ nearest test entries of the second encoder using their coordinates from the fitted CCA transformations. Check whether the entry from the same test row appears among those candidates. Count one success if it appears and zero otherwise, then divide the total successes by the number of test queries. The result is the fraction of queries whose designated partner appears within the first $k$ positions. A different row containing an identical sequence does not count as that designated partner.
+**Plain-English interpretation.** Recall@k is the fraction of test queries whose designated partner appears among the first $k$ retrieved rows in the fitted CCA coordinates. A different row containing an identical sequence does not count as that partner.
 
 For example, if query 4 returns protein indices `[8, 4, 2]`, it fails at $k=1$ but succeeds at $k=3$. In the code, `i in neighbors[i, :k]` performs the membership check, and the mean over queries gives the reported fraction. Tied distances at the cutoff inherit the library's returned ordering.
 
@@ -306,7 +273,7 @@ Training the transformations only on training rows avoids fitting those transfor
 
 Return to [Composition control](Stage1_stability.ipynb#Composition-control) in the notebook.
 
-The [layer-wise CKA](Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) and [GC-content](Stage1_stability.ipynb#GC-content-prediction) results suggest a hypothesis: the representations may agree largely because each tracks sequence composition. This analysis tests that hypothesis by removing composition from every embedding and repeating two of the preceding notebook comparisons.
+The [layer-wise CKA](Stage1_stability.ipynb#Layerwise-representation-similarity:-linear-CKA) and [GC-content](Stage1_stability.ipynb#GC-content-prediction) results suggest a hypothesis: the representations may agree largely because each tracks sequence composition. This analysis subtracts the component predicted linearly by specified composition features from every embedding, then repeats two of the preceding notebook comparisons.
 
 **1. Describe each sequence by its composition.**
 
@@ -354,7 +321,7 @@ For every pair of encoders, the cell reports linear CKA and CCA Recall@1 before 
 
 **Interpretation.** Residualization removes the fitted linear component associated with the specified features on these rows. A decrease shows that the comparison is sensitive to removing that component. Nonlinear composition effects and other shared influences can remain, so residual agreement alone does not identify a biological mechanism.
 
-**Connection to the code.** `sequences.composition_features` computes one row of $\mathbf f(s)$, counting non-overlapping codons from the first nucleotide to match `translate_cds`. `analysis.residualize` fits the least-squares regression on all retained rows and returns $X^{\perp}$, and `analysis.composition_share` computes $R^2_{\mathrm{comp}}$. The regression uses composition only, never stability labels. It is linear, so nonlinear functions of composition can remain in the residuals.
+**Connection to the code.** `sequences.composition_features` computes one row of $\mathbf f(s)$, counting non-overlapping codons from the first nucleotide to match `translate_cds`. `analysis.residualize` returns the all-row least-squares residual $X^{\perp}$, and `analysis.composition_share` computes $R^2_{\mathrm{comp}}$.
 
 **Fitting boundary.** Residualization is fitted on all retained rows before the train/test indices select inputs to PCA and CCA. PCA/CCA are still fitted on their training subset, but the preceding residualization includes their test rows. No stability labels enter this composition fit.
 
@@ -402,17 +369,14 @@ c_i = \frac{\mathbf u_i^\top\mathbf v_i}
 {\|\mathbf u_i\|_2\,\|\mathbf v_i\|_2}.
 $$
 
-In this notation:
+For this diagnostic:
 
-- $n$ is the number of paired examples supplied to this diagnostic; each input coordinate matrix has shape `(n, d)`.
-- $i$ identifies one example, from 1 through $n$ in the equations. Python indexes those rows from 0 through `n - 1`.
-- $d$ is the number of CCA coordinates per vector, currently 10.
-- $\mathbf u_i$ and $\mathbf v_i$ are the CCA vectors of the pair's first and second encoders for example $i$. Bold symbols denote vectors; each has $d$ coordinates. The mathematics treats them as column vectors even though the NumPy matrices store examples in rows.
-- $\top$ means transpose: it turns the mathematical column $\mathbf u_i$ into a row so that $\mathbf u_i^\top\mathbf v_i$ is a dot product. This multiplies corresponding coordinates and sums those products, giving one scalar.
-- $\|\mathbf u_i\|_2$ and $\|\mathbf v_i\|_2$ are Euclidean lengths: square the coordinates, add them, and take the square root. The subscript 2 names the norm, not the number of coordinates.
-- $c_i$ is one cosine score, between $-1$ and $1$ for nonzero vectors. A larger value means their directions are more similar in the fitted CCA coordinates. It is a chosen per-example alignment score, not a biological measurement.
+- $\mathbf u_i$ and $\mathbf v_i$ are paired CCA vectors for example $i$, with $d=10$ coordinates. Their input matrices have shape `(n, d)` for $n$ paired examples.
+- The equation treats these as column vectors, while NumPy stores examples in rows. Their transposed product is a scalar dot product.
+- $\|\mathbf u_i\|_2$ and $\|\mathbf v_i\|_2$ are Euclidean lengths.
+- $c_i$ is one cosine score in $[-1,1]$ for nonzero vectors. Larger values mean more similar directions in the fitted CCA coordinates, not a biological measurement.
 
-The notebook delegates this calculation to [scikit-learn's `cosine_similarity`](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html). Each `i:i+1` slice retains shape `(1, d)`; the resulting `(1, 1)` similarity matrix contains one score, selected by `[0, 0]`. The displayed ratio is undefined for a zero vector, whereas the library returns zero for a comparison involving a zero vector; that value does not define its direction.
+`analysis.alignment_error_association` calls [scikit-learn's `cosine_similarity`](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html) for each paired row. The displayed ratio is undefined for a zero vector, whereas the library returns zero for a comparison involving one; that value does not define its direction.
 
 **2. Combine the coordinates and obtain an error from a model that did not train on that row.**
 
@@ -422,11 +386,7 @@ $$
 \mathbf z_i = [\mathbf u_i;\mathbf v_i].
 $$
 
-In this notation:
-
-- $\mathbf z_i$ is the combined feature vector for example $i$, with $2d$ coordinates, currently 20.
-- The brackets and semicolon mean to append the two vectors' coordinates in the stated order. They do not average or multiply the vectors.
-- The NumPy array `fused` stores these combined vectors as rows, with shape `(n, 2d)`.
+$\mathbf z_i$ appends the two vectors in order, giving $2d=20$ coordinates for example $i$. The array `fused` stores these combined vectors as rows with shape `(n, 2d)`.
 
 The code divides these $n$ examples into five shuffled folds using `SEED`. For each fold, scikit-learn's `LinearRegression().fit(...)` fits an intercept and coefficients on the other folds by ordinary least squares. Its `.predict(...)` call predicts the held-out fold. The notebook then calculates each row's absolute error:
 
@@ -434,15 +394,13 @@ $$
 e_i = \left|y_i - \hat f_{-F(i)}(\mathbf z_i)\right|.
 $$
 
-In this notation:
+The prediction and error are defined by:
 
-- $y_i$ is the observed stability label for example $i$, a scalar.
-- $F(i)$ identifies the set of rows in the held-out regression fold containing example $i$.
-- $\hat f_{-F(i)}$ is the regression predictor fitted using all the other folds. The hat marks a fitted predictor; the subscript $-F(i)$ means that this fold was excluded from fitting, not that a negative function was calculated.
-- $\hat f_{-F(i)}(\mathbf z_i)$ is the scalar prediction obtained by giving that predictor the combined vector for row $i$.
-- $e_i$ is the absolute prediction error. The single vertical bars mean absolute value: predictions equally far above and below the observed label have equal error. They are different from the double bars used for vector norms above.
+- $y_i$, the observed scalar stability label.
+- $F(i)$, the held-out regression fold containing example $i$, and $\hat f_{-F(i)}$, the predictor fitted on the other folds. Giving it $\mathbf z_i$ produces that row's scalar prediction.
+- $e_i$, the absolute difference between prediction and label: equally distant overpredictions and underpredictions have the same error.
 
-The mathematical name $\hat f_{-F(i)}$ describes each fitted `reg` object; there is no Python function with that name. This diagnostic fits its regression folds within the earlier CCA test subset. Those rows were held out when PCA and CCA were fitted, and each is held out again from its own regression fit. No PCA or CCA refitting occurs inside the regression loop.
+These regression folds lie within the earlier CCA test subset. Those rows were held out when PCA and CCA were fitted, and each is held out again from its own regression fit. No PCA or CCA refitting occurs inside the regression loop.
 
 **3. Relate alignment ranks to error ranks.**
 
@@ -452,13 +410,11 @@ $$
 \right).
 $$
 
-In this notation:
+The rank comparison uses:
 
-- $\mathbf c$ collects the $n$ scores $c_i$ in row order, stored as `local_alignment` with shape `(n,)`.
-- $\mathbf e$ collects the matching $n$ errors $e_i$, stored as `errors` with shape `(n,)`.
-- $\operatorname{rank}$ replaces values by their positions when sorted from smallest to largest, retaining the original row order. Ties receive their average rank; for example, values `(4, 4, 9)` have ranks `(1.5, 1.5, 3)`.
-- $\operatorname{corr}$ denotes Pearson correlation between the two rank vectors. Applying it to ranks produces Spearman correlation.
-- $\rho_s$, read as "rho sub s," is the resulting scalar Spearman coefficient; the subscript identifies the rank-correlation statistic.
+- $\mathbf c$ and $\mathbf e$, the matching row-ordered cosine scores and errors, stored as `local_alignment` and `errors`, each with shape `(n,)`.
+- $\operatorname{rank}$, which replaces values by their sorted positions while retaining row order. Ties receive their average rank; for example, values `(4, 4, 9)` have ranks `(1.5, 1.5, 3)`.
+- $\rho_s$, the scalar Spearman coefficient obtained by Pearson correlation of those rank vectors.
 
 SciPy's [`spearmanr`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html) performs the ranking and correlation and returns a coefficient and nominal p-value. The notebook does not separately create rank arrays. If all alignment scores or all errors are equal, their rank correlation is undefined; SciPy returns `NaN` with a constant-input warning. A negative coefficient means higher alignment tends to accompany smaller errors; a near-zero coefficient indicates little rank association in this sample. `analysis.alignment_error_association` returns this coefficient and its nominal p-value; it does not fit or return a regression slope between alignment and error.
 
@@ -480,14 +436,11 @@ $$
 \bar x_i = \frac{1}{p}\sum_{k=1}^{p}x_{ik}.
 $$
 
-In this notation:
+For this calculation:
 
-- $X$ is the first encoder's embedding matrix with shape `(n, p)`; $Y$ is the second encoder's embedding matrix with shape `(n, q)`. For Nucleotide Transformer 500M and ESM-2 35M, for example, these are `EMBEDDINGS["nt500m"]` and `EMBEDDINGS["esm2_35m"]`.
-- $n$ is the number of matched examples, while $p$ and $q$ are the two encoders' feature counts. The latter may differ.
-- $i$ identifies an example row, from 1 through $n$ in the equations. Python indexes those same rows from 0 through `n - 1`.
-- $k$ identifies a feature of $X$, from 1 through $p$; $x_{ik}$ is the scalar value of feature $k$ in example $i$. Python feature indices begin at 0.
-- $\bar x_i$, read as "x bar sub i," is the mean of the feature values within row $i$, a scalar. The bar marks that average.
-- $\sum_{k=1}^{p}$ adds this row's $p$ feature values, and dividing by $p$ takes their mean.
+- $X$ and $Y$ have shapes `(n, p)` and `(n, q)` for $n$ matched examples and their respective feature counts. For Nucleotide Transformer 500M and ESM-2 35M, these are `EMBEDDINGS["nt500m"]` and `EMBEDDINGS["esm2_35m"]`.
+- $x_{ik}$ is feature $k$ of example row $i$ in $X$.
+- $\bar x_i$ is the mean across that row's $p$ features, not a feature mean across examples.
 
 Subtract that mean from every coordinate of the row:
 
@@ -496,14 +449,9 @@ $$
 = \mathbf x_i - \bar x_i\mathbf 1_p.
 $$
 
-In this notation:
+$\mathbf x_i$ is row $i$'s embedding vector, and $\mathbf 1_p$ is a vector of $p$ ones. Subtracting $\bar x_i\mathbf 1_p$ gives the centered vector $\widetilde{\mathbf x}_i$, still with $p$ coordinates. This centers each row across features, unlike CKA's feature centering across examples.
 
-- $\mathbf x_i$ is the full embedding vector of $X$ for example $i$, with $p$ coordinates. Bold symbols denote vectors.
-- $\mathbf 1_p$ is a vector of $p$ ones. Multiplying it by the scalar $\bar x_i$ gives a vector with that mean in every coordinate.
-- $\widetilde{\mathbf x}_i$, read as "x tilde sub i," is the centered row vector; the tilde distinguishes it from the original embedding. Its length is still $p$ coordinates.
-- The subtraction acts coordinate by coordinate. It centers each row across its features, unlike CKA's centering of each feature across example rows.
-
-The same construction applies to a row of $Y$ using its own $q$ coordinates and its own mean. These are explanatory intermediate quantities for the correlation-distance calculation inside SciPy; the notebook does not create variables named `x_bar` or `x_tilde`.
+The same construction applies within $Y$, using each row's own $q$ coordinates and mean. SciPy performs this centering inside its correlation-distance calculation.
 
 **2. Calculate the correlation distance between two rows of the same representation.**
 
@@ -513,13 +461,7 @@ d_X(i,j)
 {\|\widetilde{\mathbf x}_i\|_2\,\|\widetilde{\mathbf x}_j\|_2}.
 $$
 
-In this notation:
-
-- $i$ and $j$ identify two different examples in $X$; each vector has the same $p$ features within this representation.
-- $d_X(i,j)$ is their scalar correlation distance. The subscript $X$ names the representation being compared, and the parentheses identify the pair of rows.
-- $\top$ means transpose. Treating the mathematical vectors as columns, it turns the first vector into a row so their product is a dot product: multiply corresponding coordinates and sum the products.
-- $\|\cdot\|_2$ is Euclidean length: square the vector's coordinates, sum those squares, and take the square root. The subscript 2 identifies the norm.
-- The fraction is the Pearson correlation of the two original feature profiles, calculated by normalizing the centered dot product. Subtracting it from 1 changes similarity into distance.
+Here, $d_X(i,j)$ is the scalar distance between distinct examples $i$ and $j$, each with $p$ features. The ratio is their centered dot product divided by their Euclidean lengths: Pearson correlation of the original feature profiles. Subtracting it from 1 changes similarity into distance.
 
 Correlation 1 gives distance 0, correlation 0 gives distance 1, and correlation $-1$ gives distance 2. A row whose features are all identical becomes a zero vector after centering, making this distance undefined. The helper adds no special handling for that case. See [SciPy's definition](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.correlation.html). Applying the same calculation within $Y$ gives $d_Y(i,j)$, using its $q$ features; no individual feature of $X$ is matched to an individual feature of $Y$.
 
@@ -531,11 +473,7 @@ $$
 M = \frac{n(n-1)}{2}.
 $$
 
-In this notation:
-
-- $M$ is the number of distances in each comparison vector.
-- There are $n$ choices for the first example and $n-1$ other examples. Dividing by 2 removes the reversed duplicate of every pair.
-- Keeping only $i<j$ selects each distinct pair once and excludes comparisons of a row with itself. For $n=3$, the order is $(1,2)$, $(1,3)$, $(2,3)$; Python labels those pairs `(0, 1)`, `(0, 2)`, `(1, 2)`.
+$M$ counts the distances in each comparison vector. The factor of two removes reversed pairs; keeping $i<j$ selects each pair once and excludes self-comparisons. For $n=3$, the order is $(1,2)$, $(1,3)$, $(2,3)$; Python labels those pairs `(0, 1)`, `(0, 2)`, `(1, 2)`.
 
 SciPy's [`pdist`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html) returns these values as a one-dimensional condensed distance vector, rather than a square distance matrix. Because the input rows correspond, the two distance vectors use matching pair order. For a 981-row input, each vector contains 480,690 pair distances; those distances are not 480,690 independent examples.
 
@@ -549,16 +487,15 @@ $$
 \right).
 $$
 
-In this notation:
+The comparison uses:
 
-- $\mathbf d_X$ and $\mathbf d_Y$ are the distance vectors of $X$ and $Y$, each with $M$ scalar entries in matching pair order. `dist_a` and `dist_b` in the table below are illustrative aliases; the actual helper passes both `pdist` results directly into `spearmanr`.
-- $\operatorname{rank}$ assigns positions from smallest to largest distance, retaining the original pair order and assigning tied distances their average rank.
-- $\operatorname{corr}$ denotes Pearson correlation of those rank vectors, which is Spearman correlation.
-- $\rho_{\mathrm{RSA}}$, read as "rho sub RSA," is the resulting scalar coefficient. The subscript labels this RSA statistic.
+- $\mathbf d_X$ and $\mathbf d_Y$, each containing $M$ distances in matching pair order. `dist_a` and `dist_b` are illustrative table aliases; the helper passes both `pdist` results directly to `spearmanr`.
+- $\operatorname{rank}$, which orders distances from smallest to largest, assigns ties their average rank, and retains pair order.
+- $\rho_{\mathrm{RSA}}$, the scalar Spearman coefficient: Pearson correlation of those rank vectors.
 
 If either distance vector is constant, the rank correlation is undefined and SciPy returns `NaN` with a constant-input warning. This is distinct from a single constant feature profile making its pair distances undefined. A positive coefficient indicates agreement in which pairs are more or less dissimilar. It describes geometry; it does not identify a particular shared subspace or biological mechanism.
 
-**Connection to the code.** `analysis.compute_rsa` is a wrapper around three library calls. The equations explain those library calculations; the code contains no handwritten centering, distance, or ranking implementation.
+**Connection to the code.** `analysis.compute_rsa` delegates the distance and rank calculations to SciPy:
 
 | Code operation | Input shape → output shape | Connection to the mathematics |
 |---|---|---|
@@ -608,18 +545,19 @@ The maintained implementation is in [embeddings.py](../shared_code/embeddings.py
 
 Return to [Extracting self-attention from the frozen nucleotide encoders](Stage1_stability.ipynb#Extracting-self-attention-from-the-frozen-nucleotide-encoders) in the notebook.
 
-The notebook's [representation comparisons](Stage1_stability.ipynb#Track-B:-Cross-modal-geometry) use extracted representations, including those from intermediate layers. Here, `embeddings.attention_maps` requests `output_attentions=True` for one nucleotide sequence from one encoder at a time. These are **self-attention** weights: query and key positions belong to the same sequence and the same encoder, rather than to separate modalities.
+`embeddings.attention_maps` requests `output_attentions=True` for one nucleotide sequence and encoder. Each query and key therefore belongs to that same input, rather than to separate modalities. This follows the [representation comparisons](Stage1_stability.ipynb#Track-B:-Cross-modal-geometry), which use extracted embeddings instead.
 
 Each layer returns an array with shape `(1, H, T, T)`. The leading 1 is the one-sequence batch size. Removing that axis leaves `(H, T, T)`: heads, query positions and key positions.
 
-In this notation:
+The array axes are:
 
-- $H$ is the number of attention heads in this layer. A head is one of the parallel attention computations.
-- $T$ is the number of processed input tokens, including special tokens.
-- $h$ identifies a head, while $q$ and $k$ identify a query and a key token position. The equations below count heads from 1 through $H$ and positions from 1 through $T$; NumPy indexes their axes from zero.
-- $A^{(h)}_{qk}$ is one scalar weight assigned by query position $q$ to key position $k$ in head $h$. The parenthesized superscript selects a head; it is not a power. The two subscripts select a row and column of that head's attention matrix.
+- $H$ attention heads, indexed by $h$; each head is a parallel attention computation.
+- $T$ processed input tokens, including special tokens, with query index $q$ and key index $k$.
+- $A^{(h)}_{qk}$, the scalar weight assigned by query $q$ to key $k$ in head $h$. Within a head's matrix, queries occupy rows and keys occupy columns.
 
-**Connection to the code.** Inside `attention_maps`, the model output's `attentions` holds the per-layer arrays. Indexing `[0]` removes the batch axis, and `.float().cpu().numpy()` returns that layer's weights as a NumPy array. `layers` selects which layers to convert; the current analysis converts only the final layer to NumPy, reducing the returned arrays. The model call first requests attention outputs, so this selection does not establish that attention is computed or stored only for the final layer. The returned list preserves the requested layer order, and the token strings come from the same model call. These weights participate in a weighted combination of value vectors; they are not a complete decomposition of the final representation or a direct measure of biological importance. See the attention construction in [Vaswani et al. (2017), Section 3.2](https://arxiv.org/html/1706.03762v7#S3.SS2) and the [ESM output definitions](https://huggingface.co/docs/transformers/en/model_doc/esm#transformers.EsmModel). RNA-FM, RiNALMo, mRNA-FM, and CaLM, loaded through `multimolecule`, return attention arrays with the same layout.
+**Connection to the code.** Inside `attention_maps`, `attentions` holds the per-layer arrays. Indexing `[0]` removes the batch axis, and `.float().cpu().numpy()` returns that layer's weights as a NumPy array. `layers` selects which arrays to convert; the current analysis retains only the final layer. The model call first requests attention outputs, so this selection does not establish that attention is computed or stored only for that layer. The returned list preserves the requested layer order, and its token strings come from the same call.
+
+These weights contribute to a weighted combination of value vectors; they do not fully decompose the final representation or directly measure biological importance. See [Vaswani et al. (2017), Section 3.2](https://arxiv.org/html/1706.03762v7#S3.SS2) and the [ESM output definitions](https://huggingface.co/docs/transformers/en/model_doc/esm#transformers.EsmModel). RNA-FM, RiNALMo, mRNA-FM, and CaLM, loaded through `multimolecule`, return attention arrays with the same layout.
 
 `encoders.load_encoder(encoder, device, eager_attention=True)` loads an encoder with `attn_implementation="eager"` to obtain the explicit attention weights used below; encoders built from their own model code use that code's attention implementation. This is a choice for attention inspection in this pipeline; support for returning weights depends on the model and attention backend. The [Transformers attention-backend documentation](https://huggingface.co/docs/transformers/en/attention_interface) explains how that argument selects the implementation. The embeddings computed earlier are unaffected.
 
@@ -640,13 +578,7 @@ $$
 \bar A_{qk}=\frac{1}{H}\sum_{h=1}^{H}A^{(h)}_{qk}.
 $$
 
-In this notation:
-
-- $A^{(h)}_{qk}$ is the selected layer's weight from query token $q$ to key token $k$ in head $h$, as defined above.
-- $H$ is the number of heads; $h$ runs from 1 through $H$ in the equation.
-- $q$ and $k$ each run from 1 through $T$, where $T$ is the processed token count, including special tokens.
-- $\bar A$ is a `(T, T)` matrix. The bar means an average across heads at each fixed query/key pair; it does not average token positions.
-- $\sum$ adds the $H$ weights for that pair, and division by $H$ gives their mean.
+$\bar A$ has shape `(T, T)`: each query/key entry is averaged over the $H$ heads. Query positions remain rows and key positions remain columns; this step does not average token positions.
 
 **2. Sum incoming weight for each key token.**
 
@@ -654,11 +586,7 @@ $$
 s_k=\sum_{q=1}^{T}\bar A_{qk}.
 $$
 
-In this notation:
-
-- $s_k$ is the incoming score for key token $k$ before rescaling.
-- The sum varies the query index $q$ while holding $k$ fixed: it adds one column of $\bar A$.
-- The full score vector has $T$ entries. It is a summary of attention weights, not an embedding vector of biological features.
+$s_k$ adds one column of $\bar A$: all queries' weights for the fixed key $k$. The resulting $T$-entry vector summarizes incoming attention before rescaling; it is not a sequence embedding.
 
 **3. Rescale scores within this sequence.**
 
@@ -735,14 +663,12 @@ $$
 \bar\alpha_M=\frac{1}{n_M}\sum_{p\in M}\alpha_p.
 $$
 
-In this notation:
+The matched-position mean uses:
 
-- $L$ is the length of `attention_score`, the expanded array. Its Python positions run from 0 through `L - 1`; this need not cover the full original sequence after truncation.
-- $p$ is one nucleotide-array position, rather than an example row or a p-value.
-- $\alpha_p$ is the expanded attention score at position $p$. The Greek letter alpha names the value; it is not a biological measurement or a fitted coefficient.
-- $M$ is the set of positions inside at least one of the spans being compared; $n_M=|M|$ is its size. The bars count distinct positions, so overlaps do not increase the count twice.
-- $p\in M$ means that $p$ belongs to that set. The summation adds the scores at those positions, and division by $n_M$ takes their mean.
-- $\bar\alpha_M$ is the resulting scalar mean. The bar denotes an average, and subscript $M$ identifies the group.
+- `attention_score`, an expanded array of length $L$ that may cover only part of the original sequence after truncation.
+- $\alpha_p$, the score at nucleotide-array position $p$, not an example row or a p-value. This score is not a biological measurement or a fitted coefficient.
+- $M$, the union of positions in the matched spans, with $n_M=|M|$ distinct positions; overlaps are counted once.
+- $\bar\alpha_M$, the mean score across those positions.
 
 **2. Average the scores at the other positions.**
 
@@ -750,11 +676,7 @@ $$
 \bar\alpha_O=\frac{1}{n_O}\sum_{p\in O}\alpha_p.
 $$
 
-In this notation:
-
-- $O$ is the complement of $M$ within the expanded array: every covered position that is not in $M$.
-- $n_O=|O|$ counts those other positions; together, $n_M+n_O=L$.
-- $\bar\alpha_O$ is their scalar mean. The summation and bar have the same meanings as in step 1, applied to the other group.
+$O$ contains every covered position outside $M$, with $n_O=|O|$ and $n_M+n_O=L$. Its mean score is $\bar\alpha_O$.
 
 Both means require a nonempty group. The nested `_test` helper returns `None` if either group is empty. That marks an unavailable comparison, not a zero effect; an unavailable pooled comparison makes the outer function return `None` too.
 
@@ -766,10 +688,7 @@ $$
 \Delta=\bar\alpha_M-\bar\alpha_O.
 $$
 
-In this notation:
-
-- $\Delta$, read as “delta,” is the matched-minus-other mean gap. Positive values mean the matched group has a larger average score; negative values mean it has a smaller one.
-- The two mean symbols refer to steps 1 and 2. Their difference is in the same rescaled score units, rather than a probability.
+$\Delta$ is the matched-minus-other mean gap: positive when matched positions have the larger average score, negative when they have the smaller one. Its units are the rescaled attention-score units, not probability.
 
 For example, matched scores `(0.2, 0.4)` have mean 0.3, while other scores `(0.1, 0.1)` have mean 0.1. Their gap is 0.2. This illustrative calculation does not determine the rank test's p-value.
 
@@ -784,7 +703,7 @@ The one-sided Mann-Whitney U call uses `alternative="greater"` to examine a tend
 | `mannwhitneyu(at, off, alternative="greater")` | A U statistic and a nominal p-value | SciPy performs the rank test; the dictionary retains its p-value. |
 | Later, in `analysis.attention_summary` | One difference per usable sequence, followed by an average | Subtract the dictionary's two mean fields to compute each $\Delta$. |
 
-There is no returned `Delta` field or separate gap function in `attention_motif_overlap`. The equation names a quantity formed from its outputs by `attention_summary` in [Running the attention-motif analysis](#running-the-attention-motif-analysis).
+`attention_motif_overlap` returns the means, not a `Delta` field. [The multi-sequence summary](#running-the-attention-motif-analysis) forms the gap from those outputs.
 
 Treat the p-values as **nominal**: they are the test's reported values without calibration for this positional setting. Expanding token scores repeats values; neighboring positions are dependent; patterns can overlap; and many sequence/pattern comparisons are performed without multiplicity correction. Sequence composition and tokenization can also affect both masks and scores. A small p-value or positive mean gap identifies a candidate association for follow-up, not evidence that the encoder learned functional RNA regulation. Calibrated null models and experimentally supported annotations require a separate methodological decision.
 
@@ -794,7 +713,9 @@ Return to [Running the attention-motif analysis](Stage1_stability.ipynb#Running-
 
 The first execution follows one retained sequence through the complete pipeline for each nucleotide encoder in `ATTENTION_ENCODERS`: convert its alphabet for that encoder, extract attention, summarize the final layer, expand token scores, scan candidate patterns, compare groups, and plot the result. `embeddings.nucleotide_attention` performs the first four steps. The printed sequence and attention-array lengths help inspect coverage, but they are not an assertion that the coordinates agree for every input.
 
-The second execution repeats the attention extraction for the **first `ATTENTION_N_ROWS` retained sequences**, currently 100, separately for each encoder. `embeddings.attention_profiles` returns each sequence's expanded attention array, kept in `attention_profiles` for the permutation tests below, and `analysis.attention_motif_tests` runs the pattern comparison on each array and keeps rows with an available pooled comparison. The per-sequence comparison dictionaries are stored in `attention_results`. `analysis.attention_summary` then calculates two summaries per encoder and pattern and returns the DataFrame displayed by the notebook. The equations below describe this second execution, the code cell after the single-example result.
+The second execution uses the **first `ATTENTION_N_ROWS` retained sequences**, currently 100, separately for each encoder. `embeddings.attention_profiles` returns their expanded arrays in `attention_profiles` for the later permutation tests. `analysis.attention_motif_tests` compares each array and keeps rows with an available pooled comparison in `attention_results`.
+
+`analysis.attention_summary` calculates two summaries per encoder and pattern for the notebook's displayed DataFrame. The following equations describe that summary, after the single-example walkthrough.
 
 **1. Count nominal threshold crossings.**
 
@@ -802,13 +723,11 @@ $$
 f_{0.05}=\frac{1}{m}\sum_{i=1}^{m}\mathbf{1}\{p_i<0.05\}.
 $$
 
-In this notation:
+The threshold summary uses:
 
-- $m$ is the number of sequences with a usable comparison, and must be greater than zero for this calculation.
-- $i$ indexes those usable sequences from 1 through $m$. It does not index nucleotide positions within one sequence.
-- $p_i$ is the nominal Mann-Whitney p-value returned for sequence $i$.
-- $\mathbf{1}\{p_i<0.05\}$ is an indicator: 1 if that p-value is below 0.05, otherwise 0. The braces state the condition being counted.
-- $\sum$ adds these zeros and ones; dividing by $m$ gives the fraction $f_{0.05}$. Its subscript identifies the chosen threshold, not a sequence position.
+- $m>0$ usable sequences, indexed by $i$ rather than nucleotide position.
+- $p_i$, sequence $i$'s nominal Mann-Whitney p-value.
+- $\mathbf{1}\{p_i<0.05\}$, equal to 1 below the threshold and 0 otherwise. Averaging these indicators gives the fraction $f_{0.05}$.
 
 **2. Average the per-sequence mean gaps.**
 
@@ -816,11 +735,7 @@ $$
 \overline{\Delta}=\frac{1}{m}\sum_{i=1}^{m}\Delta_i.
 $$
 
-In this notation:
-
-- $\Delta_i$ is the matched-minus-other mean attention gap for sequence $i$, as defined in the comparison section. It is calculated from that sequence's two returned mean fields.
-- $\overline{\Delta}$ is the mean of those gaps; the bar marks the average across sequences.
-- $m$, $i$ and the summation refer to the same usable sequence set as in step 1. Each sequence has equal weight, irrespective of its number of nucleotide positions or matches.
+$\Delta_i$ is sequence $i$'s gap calculated from its two returned means. $\overline{\Delta}$ averages these gaps over the same $m$ usable sequences as the threshold summary. Each sequence has equal weight, irrespective of its number of nucleotide positions or matches.
 
 For example, if three usable sequences have p-values `(0.01, 0.20, 0.04)` and gaps `(0.02, -0.01, 0.05)`, the threshold fraction is $2/3$ and the mean gap is $0.06/3=0.02$. These are illustrative values. The fraction is not itself a p-value, and the average gap is not a test pooling all nucleotide positions across sequences.
 
@@ -835,7 +750,7 @@ For example, if three usable sequences have p-values `(0.01, 0.20, 0.04)` and ga
 
 Each pattern row repeats these operations using only dictionaries with an available comparison for that pattern. Its usable count can differ from the pooled count or another pattern's count. A pattern with no usable comparison appears with zero sequences and empty summary columns.
 
-The table's label “fraction with nominal p < 0.05” refers only to crossing the unadjusted 0.05 threshold. They do not establish calibrated statistical significance under the dependence and multiple-comparison limitations described above. The single example illustrates the calculation; the 100-sequence summary describes the selected sample under the same procedure.
+The “fraction with nominal p < 0.05” counts unadjusted threshold crossings, subject to the [dependence and multiple-comparison limits](#comparing-attention-at-matched-and-other-positions). It is not calibrated significance. The single example illustrates the calculation; the multi-sequence summary describes the selected sample under the same procedure.
 
 ### Controlling the attention test for position and codons
 
@@ -875,7 +790,7 @@ In this notation:
 - $R$ is the number of shuffles and $G^{(r)}$ the statistic after shuffle $r$.
 - $\#\{\cdot\}$ counts the shuffles whose statistic reaches the observed one; adding 1 to the count and to $R$ keeps $p$ above zero, so the smallest attainable value is $1/(R+1)$, about 0.002 with 500 shuffles.
 
-The table reports $G$, the mean of the shuffled statistics, their difference (the excess gap), and $p$, for each encoder, pattern, and null. A small p-value identifies a departure from the particular null that was implemented. The position null preserves bin-level occupancy rather than exact positions, and the codon null preserves the stated codon/frame grouping; neither establishes a regulatory mechanism. Shuffling matched labels within strata assumes those labels are exchangeable there under the chosen null, and shuffled masks need not form intact motif occurrences. Patterns with no usable sequence, such as a pattern that never occurs, are omitted. The tests reuse the same 100 sequences and are not corrected for the number of encoders, patterns, and nulls.
+The table reports $G$, the mean shuffled statistic, their difference (the excess gap), and $p$ for each encoder, pattern and null. A small p-value identifies a departure from the implemented null, not a regulatory mechanism. Each null preserves only the counts listed above; shuffling assumes matched labels are exchangeable within those strata, and shuffled masks need not form intact motif occurrences. Patterns with no usable sequence, such as a pattern that never occurs, are omitted. The tests reuse the same selected sequences and are not corrected for the number of encoders, patterns and nulls.
 
 ### Reusing the method on untranslated regions
 

@@ -1,8 +1,6 @@
 # Data and biological targets
 
-The prediction tasks in this project connect biological sequences with outcomes such as RNA stability and protein production. Understanding a result starts with knowing what one dataset row represents, what was measured, and how that measurement became the model's prediction target.
-
-Each section follows that path from the source experiment to the stored target, then explains how to interpret predictions and evaluation metrics. Several datasets name their target column `Value`, but its contents differ: a stability score, logged expression and a protein-production class describe different outcomes on different scales. GTEx and the full-transcript benchmarks use other target-column names and transformations.
+Use this guide to trace **one dataset row → source measurement → target transformation → meaning of the prediction score**. Several datasets call their target `Value`, but a stability score, logged expression and a protein-production class describe different outcomes on different scales. GTEx and the full-transcript benchmarks use other target-column names. Read the relevant dataset section beside its notebook's loading and results cells; the sections below retain the assay provenance, equations, examples and interpretation limits shared across analyses.
 
 | Dataset or reader question | Where to read |
 | --- | --- |
@@ -14,9 +12,9 @@ Each section follows that path from the source experiment to the stored target, 
 | GTEx: what are the 30 tissue labels? | [Tissue-averaged transcript abundance](#gtex-tissue-expression-labels) |
 | Full transcripts: are half-life and TE direct physical quantities? | [Consensus stability, adjusted occupancy and ribosome load](#full-transcript-targets-half-life-and-translation) |
 
-Each explanation distinguishes steps described by the source study, transformations verified against source rows, and remaining gaps. The [October 28 target trace](../run-records.md#2026-10-28-dataset-target-provenance) records the checked releases and numerical comparisons. The notebooks keep the shorter explanation needed beside their loading and results cells.
+Source-described steps, numerically verified mappings and unrecovered procedures are identified separately. The [October 28 target trace](../run-records.md#2026-10-28-dataset-target-provenance) records the checked releases and numerical comparisons.
 
-Our analyses also use [calculated targets and controls](sequences-to-predictions.md#calculated-targets-and-controls). Length, GC, GC3 and Nussinov pairing fraction come from sequence strings; the synonymous-recoding check tests whether the embedding pipeline behaves as expected. [From sequences to predictions](sequences-to-predictions.md) explains those calculations and how the supplied sequences and targets enter prediction and evaluation.
+For sequence-derived length, GC, GC3 and Nussinov pairing fraction, see [calculated targets and controls](sequences-to-predictions.md#calculated-targets-and-controls). [From sequences to predictions](sequences-to-predictions.md) connects those calculations, the synonymous-recoding check and the supplied targets to model inputs and evaluation.
 
 ## Connecting the targets to gene expression
 
@@ -30,7 +28,7 @@ The datasets below observe different parts of this process. The fungal and GTEx 
 
 Stability concerns how long an mRNA persists before degradation. In [mRNA_Stability.csv](../../datasets/mRNA_Stability.csv), each row pairs a protein-coding nucleotide sequence in `Sequence` with a stability score in `Value`. A sequence can occur in more than one row, so each row represents a sequence-and-score observation, not necessarily a distinct gene.
 
-The source measurements are grouped into **experimental profiles**, defined by species, cell type and measurement technique. The collection combines nine profiles spanning zebrafish and Xenopus embryos, human cell lines and mouse embryonic stem cells. Scores are standardized separately within these profiles, making a higher `Value` indicate greater stability relative to other RNAs in the same profile. The measurement and standardization steps below explain how that relative score is obtained. [Medina-Munoz et al., estimation of mRNA stability and data allocation](https://doi.org/10.1186/s13059-020-02251-5), [iCodon, training data](https://doi.org/10.1038/s41598-022-15526-7)
+The measurements form nine **experimental profiles**, defined by species, cell type and technique, spanning zebrafish and Xenopus embryos, human cell lines and mouse embryonic stem cells. Scores are standardized within each profile: a higher `Value` means greater stability relative to other RNAs in that profile. [Medina-Munoz et al., estimation of mRNA stability and data allocation](https://doi.org/10.1186/s13059-020-02251-5), [iCodon, training data](https://doi.org/10.1038/s41598-022-15526-7)
 
 Biologically, degradation involves enzymes breaking down RNA. In the eukaryotic examples described in the textbook, shortening the poly-A tail and removing the 5′ cap can expose an mRNA to further degradation. Proteins that recognize particular RNA regions can alter these processes. This provides a reason to investigate sequence information, but the observed lifetime depends on the surrounding cellular machinery as well. These examples do not establish a single decay mechanism for every organism or profile in the benchmark. [Molecular Biology of the Cell, 7th ed., ch. 7, “Changes in mRNA Stability Can Control Gene Expression,” pp. 459–460](../sources.md#molecular-biology-of-the-cell-7th-edition).
 
@@ -49,14 +47,7 @@ $$
 N(t)=N_0 e^{\beta t}.
 $$
 
-**In this notation:**
-
-- $t$ is elapsed time, and $N(t)$ is RNA abundance at that time.
-- $N_0$ is the starting abundance, at $t=0$.
-- $e$ is the base of the natural exponential function.
-- $\beta$ controls the rate of change and is measured per unit of time. For decaying RNA, it is negative.
-
-**Interpretation.** With a negative $\beta$, the amount of RNA decreases as time passes. A value closer to zero describes slower loss. The model describes the decline in abundance; it is not yet the standardized score stored in `Value`.
+$N(t)$ is RNA abundance at elapsed time $t$, $N_0$ is starting abundance, and $\beta$ is the log-abundance slope per unit of time. For decay, $\beta<0$; a value closer to zero means slower loss. This describes abundance before conversion to the standardized `Value`.
 
 Taking the natural logarithm makes this relationship a straight line:
 
@@ -64,20 +55,13 @@ $$
 \ln N(t)=\ln N_0+\beta t.
 $$
 
-Here $\ln$ denotes the natural logarithm. On this log-abundance scale, $\ln N_0$ is the starting value and $\beta$ is the slope: the change in log abundance per unit of time.
-
-Half-life expresses the same model in terms of the time required for abundance to fall to half its starting value. Its relationship to the slope is:
+Here $\ln N_0$ is the starting log abundance. Half-life $h$ is the time needed to reach half the original RNA abundance $N_0$:
 
 $$
 \beta=-\frac{\ln 2}{h}.
 $$
 
-**In this notation:**
-
-- $h$ is the half-life, in the same time units as $t$.
-- $\beta$ is the signed slope defined above. The usual positive decay constant is $k=-\beta$.
-
-**Interpretation.** A longer half-life gives a slope closer to zero. This is why a larger, less negative slope indicates slower degradation.
+The half-life uses the same time units as $t$; the usual positive decay constant is $k=-\beta$. A longer half-life therefore gives a larger, less negative slope.
 
 **Illustrative example.** Half-lives of two and four hours correspond to slopes of about $-0.347$ and $-0.173$ per hour. These values illustrate the sign and scale; they are not rows from our file.
 
@@ -110,7 +94,7 @@ The local file also matches the pinned CodonBERT release after line-ending norma
 
 Our loaders retain the supplied `Value` scores without applying another logarithm or target standardization. Stage 1's ridge probes predict these standardized stability scores and evaluate the predictions with $R^2$. Their feature standardization acts on the embeddings used as predictor inputs; it does not standardize the stability targets again.
 
-Stage 4's fusion models fit squared error on the same supplied target and report Spearman correlation, which measures how well predictions order the scores. These results concern prediction of relative stability. Neither metric establishes accuracy in hours or a percentage change in biological persistence. `Value` itself is neither a half-life in hours nor a percentage of RNA remaining, and it differs from the target used in the later [full-transcript half-life benchmark](#full-transcript-targets-half-life-and-translation).
+Stage 4's fusion models fit squared error on the same target and report Spearman correlation, which measures how well predictions order relative stability. Neither metric measures accuracy in hours or a percentage change in persistence. This target also differs from the later [full-transcript half-life benchmark](#full-transcript-targets-half-life-and-translation).
 
 The released four-column file omits the source profile identifiers. The same coding sequence can therefore occur with different scores from different cells or assays. Those differences cannot all be treated as noise from repeating the same measurement: the experimental context may have changed.
 
@@ -122,7 +106,7 @@ The mRFP target is the **natural logarithm of GFPuv-normalized mean red fluoresc
 
 ### From engineered bacteria to fluorescence measurements
 
-A fluorescent reporter connects several steps: transcription produces its RNA, translation produces its protein chain, and folding and maturation produce a fluorescent form that the instrument can excite and detect. The textbook's GFP example illustrates the distinction between making a protein chain and forming its light-emitting group, or **chromophore**, after translation. This helps explain why a reporter signal can reflect multiple steps in gene expression; it does not identify which step accounts for a particular mRFP variant's value. The source study below establishes the actual reporter constructs and assay. [Molecular Biology of the Cell, 7th ed., ch. 9, “Individual Proteins Can Be Fluorescently Tagged in Living Cells and Organisms,” pp. 573–574, Fig. 9–16](../sources.md#molecular-biology-of-the-cell-7th-edition).
+Transcription produces reporter RNA, and translation produces its protein chain. Protein folding and maturation of the light-emitting group, or **chromophore**, produce a fluorescent form. Its signal can therefore reflect several steps in gene expression. The textbook's GFP example explains this mechanism; the mRFP study below establishes the actual constructs and assay. [Molecular Biology of the Cell, 7th ed., ch. 9, “Individual Proteins Can Be Fluorescently Tagged in Living Cells and Organisms,” pp. 573–574, Fig. 9–16](../sources.md#molecular-biology-of-the-cell-7th-edition).
 
 Nieuwkoop et al. expressed synonymous mRFP coding variants in *E. coli* DH10B, with a separately expressed GFPuv reporter as an internal reference. Flow cytometry measured red and green fluorescence in cell populations from individual clones. The instrument supplied excitation light and detected emitted light; these measurements are fluorescence signals, not counts of spontaneously emitted bioluminescent photons. The paper describes gating out GFPuv outliers and checking sequence quality, the expected protein sequence, cell populations and agreement with plate-reader measurements. [Original study, Materials and Methods](https://academic.oup.com/nar/article/51/5/2363/7016452)
 
@@ -170,9 +154,7 @@ $$
 
 An equal fold change therefore becomes an equal additive difference. Increasing corrected fluorescence from 100 to 200, or from 10,000 to 20,000, adds the same $\ln(2)\approx0.693$ to `Value`. In squared-error fitting, predicting twice the observed corrected fluorescence consequently produces the same log-scale error at either brightness. On the raw scale, those errors would be 100 and 10,000. Logging reduces the dominance of large absolute signals and makes errors depend on proportional discrepancies.
 
-This mathematical explanation does not establish why the original benchmark authors chose the transformation. CodonBERT applies `np.log`, not `log2`, `log10` or `log1p`, and adds no pseudocount in this step; its inspected code does not state the rationale. Natural log and log base 2 express the same fold relationships in different units: a doubling is $\ln(2)$ in natural-log units and 1 in log-base-2 units. The base has no special biological meaning here. [CodonBERT preparation notebook at commit `451a1b1`](https://github.com/Sanofi-Public/CodonBERT/blob/451a1b167c06028dfbf2ff7aa2cfdea46fbcc4f4/benchmarks/notebooks/0_download_data.ipynb)
-
-Logging can make multiplicative variation easier to model because products become sums. It can reduce right skew or unequal error variance, but those improvements are not guaranteed or established by the transformation alone. It does not remove biological confounding or turn fluorescence into an absolute protein quantity.
+CodonBERT applies `np.log` without a pseudocount, not `log2`, `log10` or `log1p`; its inspected code does not explain that choice. The argument above describes the mathematical effect, not the authors' recovered rationale. A log may reduce skew or unequal error variance, but does not guarantee either improvement, remove confounding or turn fluorescence into an absolute protein quantity. [CodonBERT preparation notebook at commit `451a1b1`](https://github.com/Sanofi-Public/CodonBERT/blob/451a1b167c06028dfbf2ff7aa2cfdea46fbcc4f4/benchmarks/notebooks/0_download_data.ipynb)
 
 **Traced example.** The first data row of our CSV matches validated-sheet row 137, sample `THNI0088 crRFP-M`, well `03E01`. Its red mean is 19,179 and green mean is 24,002. The factor is approximately $32{,}502.8060/24{,}002=1.3541707371$, giving corrected fluorescence $25{,}971.6405666$. Its natural log is $10.1647604743$, matching the stored `Value` of `10.164760474265888` within floating-point precision. Exponentiating `Value` recovers this corrected fluorescence scale, not a protein count.
 
@@ -221,7 +203,7 @@ Our loader uses `Value` directly. Fusion training minimizes mean squared error o
 
 ## Fungal and E. coli benchmark targets
 
-Training fits the supplied `Value` column. In both files, a row is a sequence-label observation with a supplied split assignment; it is not automatically a distinct gene, organism or independent experimental replicate. Their four fields, `Sequence`, `Value`, `Dataset` and `Split`, omit accession, organism and assay identifiers. Source matching now resolves the target transformations below, while some earlier assay metadata remain unknown.
+Both files supply sequence-label observations and split assignments in `Sequence`, `Value`, `Dataset` and `Split`. A row is not automatically a distinct gene, organism or independent replicate; accession, organism and assay identifiers are absent. Source matching resolves the target transformations below, while some earlier assay metadata remain unknown.
 
 [BioLangFusion, Appendix A.2 and Table 2](../../Papers/core/BioLangFusion.pdf), obtains these benchmarks through CodonBERT. The [CodonBERT release](../sources.md#codonbert-repository) identifies Wint et al. for fungal expression and Ding et al.'s MPEPE study for E. coli. The numerical matches below connect those references to the local observations.
 
@@ -229,7 +211,7 @@ Training fits the supplied `Value` column. In both files, a row is a sequence-la
 
 This target concerns RNA expression associated with a coding sequence. The cited study obtained expression evidence through RNA sequencing: RNA was collected, converted into sequencing libraries, and sequenced to estimate which transcripts were more abundant. Most transcriptomes in the wider study pooled material across conditions. RNA abundance reflects both RNA production and removal; it is not a direct count of proteins produced or a measurement of translation efficiency. [Wint et al., RNA sequencing](https://pmc.ncbi.nlm.nih.gov/articles/PMC8826637/)
 
-The downstream numerical step is now traceable. All 7,089 local observations match a subset of the author's [example expression table](https://github.com/rhondene/Codon2Vec/blob/1d3e5df41425753502076927b3bf2f0aa9e927a5/test_input/test_exprs.csv) and [coding-sequence file](https://github.com/rhondene/Codon2Vec/blob/1d3e5df41425753502076927b3bf2f0aa9e927a5/test_input/test_CDS.fasta), with:
+All 7,089 local observations match a subset of the author's [example expression table](https://github.com/rhondene/Codon2Vec/blob/1d3e5df41425753502076927b3bf2f0aa9e927a5/test_input/test_exprs.csv) and [coding-sequence file](https://github.com/rhondene/Codon2Vec/blob/1d3e5df41425753502076927b3bf2f0aa9e927a5/test_input/test_CDS.fasta), with:
 
 $$
 \mathrm{Value}_i = \ln(\mathrm{Exprs}_i).
@@ -269,7 +251,7 @@ The [saved split audit](../../Code/stage3/01_blf_datasets.ipynb#Published-splits
 
 For the protein stream, [`grid_protein`](../../Code/shared_code/fusion/token_embeddings.py) translates complete triplets from the first supplied base and represents stops with `X`. Preserving one position per triplet does not verify biological reading frame, the original construct's boundaries, or the authors' protein-input policy. The [sequence checks](../../Code/stage3/01_blf_datasets.ipynb#Sequence-checks) explain that implementation choice without changing the supplied benchmark.
 
-The resulting comparisons test prediction on the retained benchmark rows under the declared input and evaluation rules. Keep missing source identities and biological qualifications beside the claims. This source review changes the interpretation boundary, not the labels, splits, saved metrics or completed fits.
+The comparisons therefore test prediction on the retained benchmark rows under these input and evaluation rules; missing source identities limit claims about transfer to other organisms or assays.
 
 ## GTEx tissue expression labels
 

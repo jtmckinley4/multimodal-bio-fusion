@@ -1,78 +1,64 @@
 # Research documentation
 
-This directory brings together the team's research plans, bibliography, and explanations connecting biological questions, analyses, and evidence for DNA, RNA, and protein foundation models. It supports code development, experiment planning, and manuscript writing in the [multimodal-bio-fusion Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f).
+Use this page to find the explanation, evidence or instructions you need. The [project README](../README.md) connects the investigation; the [Overleaf manuscript](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f) develops its written argument.
 
 ## How these documents work together
 
-Choose the level of detail that answers the question you are reading for. A brief local reminder can accompany a notebook or summary; the linked guide or record holds the fuller explanation and evidence.
-
-| Location | Purpose |
+| Reader question | Starting point |
 | --- | --- |
-| [Project README](../README.md) and stage READMEs | The project README connects the overall investigation, setup and layout. Each stage README connects that stage's questions, experiments, findings and unresolved issues. |
-| Experiment notebooks | Keep a specific research question, inputs, choices, executable steps, saved outputs and interpretation together. The stage READMEs locate them. |
-| [Shared research guides](#understand-the-methods) | Explain dataset meaning and reusable biological, mathematical and computational procedures, with worked examples and their limits. |
-| [Shared code](../Code/shared_code/) and [software checks](../tests/README.md) | Implement shared calculations and check software behavior. Dataset files, caches and saved results supply the actual inputs and numerical artifacts; see the [artifact policy](../README.md#results-caches-and-intermediate-files). |
-| [Run records](run-records.md) | Identify what was inspected or executed, its code/input versions and settings, retained outputs and unresolved evidence. These records support the explanations without replacing them. |
-| [Research plan](#follow-the-research-plan) and [Stage 4 runbook](../Code/stage4/RUNBOOK.md) | The Gantt records planned work and dependencies; the runbook provides execution and recovery guidance. Recorded status is dated evidence. |
-| [Selected sources](sources.md), [paper catalog](../Papers/README.md) and [individual reviews](notes/Reviews/) | Record reading scope and relevance, locate retained papers, and preserve attributed interpretations. |
-| [Repository instructions](../AGENTS.md), project skills and [agent context](agent-context.md) | Guide AI work and maintenance practices and point to unresolved project questions. |
+| How do the stages connect? | [Research progression](../README.md#research-progression), including Stage 2's alignment definition. |
+| Where are the models built and checked? | [Stage 3](../Code/stage3/README.md): dataset checks, token caches and reference implementations. |
+| Where are the prediction comparisons? | [Stage 4](../Code/stage4/README.md): controls, encoder swaps, fusion and input-region comparisons. |
+| What fusion hypotheses are proposed for testing? | [Stage 5](../Code/stage5/README.md): controlled correction, gate, attention and region-correspondence experiments. Existing-comparison follow-ups remain in Stage 4. |
+| What produced a saved result? | [Run records](run-records.md), the producing notebook and [artifact policy](../README.md#results-caches-and-intermediate-files). |
+| Where are agent instructions? | [AGENTS.md](../AGENTS.md) routes to maintained workflows; [agent context](agent-context.md) points to research cautions and unresolved questions. |
 
 ## Read the Stage 1 analyses
 
-Start with the biological question and model choices in the overview. Follow the stability experiment for the first method walkthrough, then compare it with GTEx. Each experiment links its methods, implementation, and interpretations at the relevant cells.
+Start with the [Stage 1 guide](../Code/stage1/README.md), then read [stability](../Code/stage1/Stage1_stability.ipynb) before [GTEx](../Code/stage1/Stage1_gtex.ipynb). Stability introduces the shared methods; GTEx changes the input regions and tissue targets. This reading order is not an execution dependency.
 
-| Question | Starting point |
+| Find | Location |
 | --- | --- |
-| What biological question motivates the analysis? | The [project background](../README.md#project-background) and [Stage 1 overview](stage1-overview.md), which holds the model context, research questions, and cross-dataset Summary. |
-| Where do I follow the mRNA stability experiment? | The [stability notebook](../Code/stage1/Stage1_stability.ipynb): input preparation, embeddings, prediction, geometry, recoding control, attention, and the BioLangFusion comparison. |
-| Where do I compare distinct DNA, transcript, and protein inputs? | The [GTEx notebook](../Code/stage1/Stage1_gtex.ipynb): expression across 30 tissues, length and composition baselines, representation comparisons, attention, and the IsoFormer comparison. |
-| What do the sequences and labels represent? | The [dataset overview](../README.md#data), [stability data preparation](../Code/stage1/Stage1_stability.ipynb#Data), [stability dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons), and [GTEx data and expression labels](../Code/stage1/Stage1_gtex.ipynb#GTEx-data). Check what a row and its label mean, how the label was obtained, and which examples enter the analysis. |
-| How are Stage 1 representations and attention patterns examined? | The [representation-analysis guide](../Code/stage1/representation-analysis.md) explains geometry, composition controls, retrieval, prediction-error comparisons, attention, candidate motifs and permutation controls, with return links to the notebooks. |
-| What did Stage 1 find? | The overview's [Summary](stage1-overview.md#summary) and [result tables](stage1-overview.md#result-tables), with the producing outputs and local interpretations in each experiment notebook. |
-| Where are the saved figures and their numeric inputs? | The [figure guide](figures/README.md), with stability/GTEx panels, result snapshots and commands that regenerate figures without rerunning models. |
-| How do the frozen encoders compare with published fusion studies? | The [comparison overview](stage1-overview.md#published-comparisons-and-distinct-inputs), [BioLangFusion published-split comparison](../Code/stage1/Stage1_stability.ipynb#Published-split-comparison), and [IsoFormer published-split comparison](../Code/stage1/Stage1_gtex.ipynb#GTEx-published-split-comparison). |
-| Where are methods and results written up for the manuscript? | The [Overleaf project](https://www.overleaf.com/project/6ab8535fb63c8540bed7e56f), including its Stage 1 metric definitions and published-split comparisons. |
-| What does alignment mean here, and what comes next? | [Stage 2: defining alignment](../README.md#stage-2-defining-alignment), [Stage 3 fusion experiments](../README.md#stage-3-building-and-checking-models), and the Stage 2 section of the Overleaf project. |
+| Encoder settings and consolidated findings | [Stage 1 overview](stage1-overview.md), [result tables](stage1-overview.md#result-tables) and [summary](stage1-overview.md#summary). |
+| Row/target meaning and retained examples | [Data overview](../README.md#data), stability's [dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons), and [GTEx data](../Code/stage1/Stage1_gtex.ipynb#GTEx-data). |
+| Comparisons with published studies | [Scope and limitations](stage1-overview.md#published-comparisons-and-distinct-inputs), with the producing notebook sections linked there. |
+| Figures and their numeric inputs | [Figure guide](figures/README.md): saved snapshots and figure regeneration without model reruns. |
 
-The October 3 comparison entry in the [Gantt workbook](Research_Project_Plan_Gantt.xlsx) names `Stage1_analysis.ipynb`, the single notebook the two experiment notebooks replaced. Use the overview and the two experiment notebooks linked above for current navigation.
+Older planning entries name `Stage1_analysis.ipynb`, which the two linked experiment notebooks replaced.
 
 ## Understand the methods
 
-The two shared research guides explain what the data measure and how sequences become predictions. They retain equations, worked examples, implementation links and interpretation limits used across notebooks. Each guide states its scope. Stage 1 pooled-vector procedures do not automatically describe Stage 4 token-grid or fusion training. The [Stage 1 representation-analysis guide](../Code/stage1/representation-analysis.md) develops that stage's geometry and attention methods alongside its experiment notebooks.
-
-| Reader question | Guide |
+| Question | Guide |
 | --- | --- |
-| What does each dataset row and target mean? | [Data and biological targets](methods/data-and-targets.md): assays, label transformations, source-to-local-data verification, examples and limits on interpreting scores. |
-| How do sequences become representations and predictions? | [From sequences to predictions](methods/sequences-to-predictions.md): input preparation, tokens, pooling, cache reuse, linear probes and evaluation; [calculated targets and controls](methods/sequences-to-predictions.md#calculated-targets-and-controls) cover length, GC, GC3, folding and synonymous recoding. |
+| What does each biological target measure? | [Data and biological targets](methods/data-and-targets.md): assays, transformations, source checks and interpretation limits. |
+| How do sequences become predictions? | [From sequences to predictions](methods/sequences-to-predictions.md): preparation, tokens, pooling, cache reuse, probes and evaluation, including [calculated controls](methods/sequences-to-predictions.md#calculated-targets-and-controls). |
+| How are representations and attention examined? | [Stage 1 representation analysis](../Code/stage1/representation-analysis.md): geometry, composition control, retrieval and exploratory diagnostics. |
 
-Notebooks retain enough local explanation to follow their experiment, together with the actual settings, calls, saved outputs and interpretation. Guide links return to the relevant analyses for those choices and results.
+Guides hold reusable explanations and examples; notebooks hold the actual experiment settings, outputs and local interpretation. Stage 1 pooled-vector procedures do not automatically describe Stage 4 token-level fusion.
 
 ## Inspect or run the implementation
 
-Both experiment notebooks use the shared [shared_code package](../Code/shared_code/), with their own Setup sections. See [environment setup](../README.md#setup) before a new run; neither experiment requires executing the other. The overview is a Markdown document for reading the shared context and cross-dataset summary.
+Follow [environment setup](../README.md#setup) and the selected notebook's own settings before execution. [Reading implementation code](../README.md#reading-implementation-code) explains source links and `SHOW_IMPLEMENTATION`; [shared code](../Code/shared_code/) contains the reused calculations.
 
-Use [Reading implementation code](../README.md#reading-implementation-code) to follow a compact source link or display a function in full with `SHOW_IMPLEMENTATION`. See the [notebook checks](../tests/README.md) for setup, source-display, and synthetic calculation checks after an edit. These checks do not reproduce research results.
+Use [software checks](../tests/README.md) after edits; synthetic checks do not reproduce research results. [Run records](run-records.md) identify producing versions, inputs, evaluation settings and retained evidence. The [Stage 4 runbook](../Code/stage4/RUNBOOK.md) owns execution and recovery routes.
 
-Use [run records](run-records.md) to connect a shared result to its producing notebook version, settings, inputs, outputs, environment, and evaluation split. Compare it with the relevant baselines. Check whether those observations support the claim and retain unresolved discrepancies between versions.
-
-The [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md) guides executable-code work for both contributors' agents. The [coding review and implementation plan](shared-coding-proposal.md) records its rationale, bounded batches, and verification status.
+For code changes, consult the [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md). The [coding review and implementation plan](shared-coding-proposal.md) retains its rationale and verification history.
 
 ## Follow the research plan
 
-Open the [Gantt workbook](Research_Project_Plan_Gantt.xlsx) to follow the team's research sequence. In `Gantt`, locate the task ID, recorded status and scheduled window; then find the same ID in `Details` for its prerequisites and expected output or review condition. The [Gantt presentation](Research_Project_Plan_Gantt.pptx) provides an overview for meetings. Cite the task ID when explaining how a notebook, literature finding or manuscript addition relates to the plan.
+Read the [Research Canvas](Research_Canvas.pptx) for project framing and [Mina's revised protocol](Biological_Fusion_Plan.docx) for proposed comparisons. [Stage 5](../Code/stage5/README.md#organize-the-proposed-notebooks-around-questions) connects those comparisons to existing work and planning task IDs.
 
-The plan distinguishes initial input mapping and published-split probes from later trained fusion comparisons: see `Details` task 9, task 17 for BioLangFusion-style comparisons, and conditional task 25 for IsoFormer-style fusion. Read the plan's as-of date and check current evidence before relying on a recorded status. The [agent planning instructions](../AGENTS.md#research-planning) explain how agents follow the plan and surface proposed changes.
+In the [Gantt workbook](Research_Project_Plan_Gantt.xlsx), find a task's ID, recorded status and window on `Gantt`, then match that ID in `Details` for prerequisites and expected outputs or review conditions. Cite the task ID when connecting work to the plan. Recorded status is dated; check evidence before treating it as completion.
 
-## Find plans and literature
+The [Gantt presentation](Research_Project_Plan_Gantt.pptx) is an earlier overview, not updated for the revised protocol. The [planning instructions](../AGENTS.md#research-planning) explain how agents follow the workbook and surface proposed changes.
 
-| Question | Starting point |
+## Find literature and meeting material
+
+| Material | Location and role |
 | --- | --- |
-| What are we proposing to investigate? | The [Research Canvas](Research_Canvas.pptx). |
-| What is the project schedule? | Start with [Follow the research plan](#follow-the-research-plan), then use the [Gantt presentation](Research_Project_Plan_Gantt.pptx) or [editable Gantt workbook](Research_Project_Plan_Gantt.xlsx). |
-| Where is the annotated bibliography? | The [team bibliography](Annotated_Bibliography.docx). |
-| Where is the comparative literature review? | [Comparative draft v5 (PDF)](<Literature Review - Biological Foundation Models - Comparative Draft v5.pdf>) and its [editable Word source](<Literature Review - Biological Foundation Models - Comparative Draft v5.docx>), dated October 14, 2026, by Chase Di Maria Breisinger and Julian McKinley. It connects biological inputs, model choices, and evaluation; unresolved draft notes remain. |
-| Where is the earlier annotated review? | [Annotated October 12 review (PDF)](<annotated-Literature Review - Biological Foundation Models-2.pdf>), retained with its existing annotations. |
-| How do we develop a review beyond individual paper summaries? | The [review-writing guidance](sources.md#pautasso-and-purdue-owl-writing-a-literature-review) explains synthesis, critical comparison, and open questions. |
-| Which readings are worth returning to? | [Selected sources and readings](sources.md), with reasons to retain them, reading scope, and local relevance. The [research software section](sources.md#organizing-and-checking-research-software) explains practices behind the notebook and shared-code organization. |
-| Where are the meeting slides, and what does each slide mean? | [docs/notes/Slides/](notes/Slides/) holds the meeting decks. The [October 22 slide guide](notes/Slides/Mina_Progress_Slides_2026-10-22_Guide.md) explains every slide of the Stage 4 progress deck: why each experiment was run, how, what the numbers mean, and the advisor's questions with their answers; the deck's speaker notes carry the same text. |
-| Where are the papers and contributor interpretations? | The [paper catalog](../Papers/README.md) identifies core and supporting papers, retained versions, and source links. The [individual reviews](notes/Reviews/) include Julian's [BioLangFusion review](notes/Reviews/Julian/BioLangFusion.md) and [alignment paper review](notes/Reviews/Julian/Alignment_Theory_Paper_Review.md). Read each interpretation alongside its source paper. |
+| Bibliography and retained papers | [Team bibliography](Annotated_Bibliography.docx), [paper catalog](../Papers/README.md) and [selected sources](sources.md), which record reading scope and relevance. |
+| Comparative literature review | [Draft v5 PDF](<Literature Review - Biological Foundation Models - Comparative Draft v5.pdf>) and [Word source](<Literature Review - Biological Foundation Models - Comparative Draft v5.docx>), October 14, 2026, by Chase Di Maria Breisinger and Julian McKinley. Unresolved draft notes remain. |
+| Earlier annotated review | [October 12 PDF](<annotated-Literature Review - Biological Foundation Models-2.pdf>), preserved with its annotations. |
+| Review-writing guidance | [Synthesis, critical comparison and open questions](sources.md#pautasso-and-purdue-owl-writing-a-literature-review). |
+| Meeting material | [Slides](notes/Slides/) and the [progress-deck slide guide](notes/Slides/Mina_Progress_Slides_2026-10-22_Guide.md). Historical presentations are not live result inventories. |
+| Contributor interpretations | [Individual reviews](notes/Reviews/), including Julian's [BioLangFusion](notes/Reviews/Julian/BioLangFusion.md) and [alignment-paper](notes/Reviews/Julian/Alignment_Theory_Paper_Review.md) reviews. Read attributed interpretations alongside their source papers. |
