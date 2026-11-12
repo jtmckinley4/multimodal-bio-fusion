@@ -68,6 +68,26 @@ class ReadOnlyLucaCacheTests(unittest.TestCase):
 
 
 class FocusedNotebookTests(unittest.TestCase):
+    def test_phase_a_context_errors_are_isolated_only_in_read_mode(self):
+        read_results = Mock(side_effect=ValueError("invented ambiguous records"))
+        messages = Mock()
+        namespace = {
+            "BENCHMARK": "fixture", "STAGE4_DIR": Path("unused-fixture"),
+            "READ_SAVED_RESULTS": True, "print": messages,
+            "swap_results": SimpleNamespace(read_results=read_results),
+            "train": SimpleNamespace(TrainConfig=lambda **settings: SimpleNamespace(**settings)),
+            "blf": SimpleNamespace(ENCODER_OF_MODALITY={"dna": "fixture-encoder"}),
+        }
+        # Defining the shared display helper must not inspect files or compute results.
+        exec(cell("phasea-context-def"), namespace)
+        read_results.assert_not_called()
+        exec(cell("dc6ff652"), namespace)
+        self.assertIn("continuing to IsoFormer coverage", messages.call_args.args[0])
+        namespace["READ_SAVED_RESULTS"] = False
+        with self.assertRaisesRegex(ValueError, "invented ambiguous records"):
+            exec(cell("dc6ff652"), namespace)
+        self.assertEqual(read_results.call_count, 2)
+
     def test_disabled_followup_does_not_open_inputs(self):
         forbidden = Mock(side_effect=AssertionError("no input read"))
         namespace = {"RUN_LUCAONE_COMPARISON": False, "print": lambda *args: None,

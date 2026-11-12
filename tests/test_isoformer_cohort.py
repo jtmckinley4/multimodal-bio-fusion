@@ -753,7 +753,7 @@ class NotebookAuditPathTests(unittest.TestCase):
             "data-check-status", "row-examples", "target-table", "target-range-plot",
             "annotation-table", "annotation-plot", "mapping-checks", "overlap-table",
             "overlap-plot", "length-distribution-plot", "longest-input-examples",
-            "policy-table", "policy-by-split-plot", "policy-overlap-examples",
+            "policy-table", "policy-split-rates", "policy-by-split-plot", "policy-overlap-examples",
         )
         output = io.StringIO()
         with patch("urllib.request.urlopen", side_effect=AssertionError("No network")):

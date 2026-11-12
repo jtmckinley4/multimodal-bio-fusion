@@ -1,0 +1,196 @@
+{
+  "schema": "blf.reference-reuse.v1",
+  "scope": "tier4_designs.references",
+  "qualification": "qualified legacy reference reuse",
+  "authorization": "Chase approved scoped comparison reuse of these 24 references; no retraining or replacement of results.",
+  "verified_utc": "2026-11-12T11:32:57.901961+00:00",
+  "verified_on_host": "cDesktopLab",
+  "assumptions": [
+    "The later audit cohort is accepted as the intended historical cohort for these named reference fits. Matching data, row-selection source and saved targets support consistency, not proof of the original training inputs.",
+    "The original encoder mapping below is accepted from the historical notebook and run records. The paired reports do not themselves record encoders in their context.",
+    "Original per-fit producer code, environment and exact cache-to-fit binding remain unestablished. This record is comparison evidence, not a fusion.run.v1 identity, cache approval or training-resume authorization.",
+    "Only source files with the listed relative paths and exact bytes qualify. Missing prediction arrays remain missing and cannot be used for a paired contrast."
+  ],
+  "inspection_evidence": {
+    "result_commits": [
+      "86c942e",
+      "8b8dd12",
+      "97e2863"
+    ],
+    "dataset_and_row_selection": "All four dataset Git blobs and the blf_benchmark_rows function AST agree across those commits and the inspected HEAD.",
+    "saved_targets": "All 22 available test_truth arrays match the historical supplied test partitions at trainer target precision; no predictions or scores were recomputed.",
+    "missing_predictions": [
+      "fungal_expression/unimodal:rna",
+      "fungal_expression/unimodal:prot"
+    ]
+  },
+  "encoders": {
+    "dna": "ntv2_100m",
+    "rna": "rnafm",
+    "prot": "esm2_8m"
+  },
+  "audits": {
+    "ecoli_proteins": {
+      "path": "Code/stage4/results/phaseB/analyses/paired-report-v1/ecoli_proteins__e9027c8e90be4c415cb3.json",
+      "sha256": "06882737ca9c962ca5e797941ae39510924a66ed3b247f77ef0e5557f058d2a5"
+    },
+    "cov_vac_degradation": {
+      "path": "Code/stage4/results/phaseB/analyses/paired-report-v1/cov_vac_degradation__9c0f130491382c1bc2ad.json",
+      "sha256": "8c54eb503354f4f230ddca4e4c28e9a295dce0d5831cf88fe3726a43d2753a72"
+    },
+    "fungal_expression": {
+      "path": "Code/stage4/results/phaseB/analyses/paired-report-v1/fungal_expression__d2173df49ec55ed37414.json",
+      "sha256": "c9c4cf7a70c482a713a35b420282f50ccf420bf87315d8d79fdcafbd7d7d376d"
+    },
+    "mrna_stability": {
+      "path": "Code/stage4/results/phaseB/analyses/paired-report-v1/mrna_stability__d703113ac8fcdabfd4bd.json",
+      "sha256": "bd53ff643fb1b0f2e6bd985d0aab7171b6dd883c4aff230daf9c26b0d7dcfd9a"
+    }
+  },
+  "references": [
+    {
+      "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "d256695d34522ac62afcb871443e17c99f7238d673fab1f67ab7a89e6b7f4817",
+      "benchmark": "ecoli_proteins",
+      "variant": "concat"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "61542bc38572907a67133401c4481c5d24fb6142b8c67e4e9fceffec9c7cb2f0",
+      "benchmark": "ecoli_proteins",
+      "variant": "cross"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "c5ca90ac24bee5050ba0b4d7847337e5b47debd98df3683cd47bb6b0d6f2052d",
+      "benchmark": "ecoli_proteins",
+      "variant": "unimodal:dna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "b05106839da79a6f06ebe2eb73690f9869e0451d20d5889b01b88e80d50e7b8c",
+      "benchmark": "ecoli_proteins",
+      "variant": "unimodal-grid:rna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "fbec7c6dc8e97e0049e00ce170a4734833b4fada4ad285fe8293134a752bb124",
+      "benchmark": "ecoli_proteins",
+      "variant": "unimodal:prot"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "364dd75c78594b244bd6ad7cfc407a1eff97051ed6e705f0d2ed40b9bb0af87e",
+      "benchmark": "ecoli_proteins",
+      "variant": "unimodal:rna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__concat__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "e4e75ef0671a1bc78b659195d000559e615976a3349ad5e8f7b16de53d3d073e",
+      "benchmark": "cov_vac_degradation",
+      "variant": "concat"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__cross__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "436395ba801f2f8063b1c8919c854d847cf283e9bd025ae6f6ef9dfc8e88dd7b",
+      "benchmark": "cov_vac_degradation",
+      "variant": "cross"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "e41c98c4e59426586cf0fef6a0b323ab05673684a0ad75285194dd95dd79ea9d",
+      "benchmark": "cov_vac_degradation",
+      "variant": "unimodal:dna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "d88cd6a5003c5ebcdac5bd1c04b706b5bcda54a00a3992a729199b65ea603729",
+      "benchmark": "cov_vac_degradation",
+      "variant": "unimodal-grid:rna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "8c5b376007017e2195439e1854d084a6f5073ad6c233a186d9323ae8c71391ff",
+      "benchmark": "cov_vac_degradation",
+      "variant": "unimodal:prot"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "ee6e76dd8ef6221fb6ab699a5801ac50d371b7c74cce71fb049380b95daf2b81",
+      "benchmark": "cov_vac_degradation",
+      "variant": "unimodal:rna"
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__concat__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "0eefbec823b3c63175b03d85a715f907522aaeb6d33567ef26a1067a0cb9acfc",
+      "benchmark": "fungal_expression",
+      "variant": "concat"
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__cross__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "6890eae9dfb80ae74d03171ba66f4b12fde3312349dcc827b3d3ad73f12d5899",
+      "benchmark": "fungal_expression",
+      "variant": "cross"
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "2bef0487b0de4a06e9536be8d6c999e5a39c3364a6bf1372485143a4947cf53d",
+      "benchmark": "fungal_expression",
+      "variant": "unimodal:dna"
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__appendix__seed0.json",
+      "sha256": "5be5b3248ba49c60836d035d1c2fe87bd00e4e5adb78630f2be27bb09901841a",
+      "benchmark": "fungal_expression",
+      "variant": "unimodal:prot"
+    },
+    {
+      "path": "Code/stage3/results/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__appendix__seed0.json",
+      "sha256": "d6aeb5cc09cb00d833e1323ee7d94b777bc08387c45c1a40499193478876b481",
+      "benchmark": "fungal_expression",
+      "variant": "unimodal:rna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "35fc65adbfa7948181ba7bd8749936aa005bc10d78cde327e11bb79f5ef57472",
+      "benchmark": "fungal_expression",
+      "variant": "unimodal-grid:rna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/mrna_stability/mrna_stability__concat__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "f85e195b7a7c29f3773286ab1068c6f486705ac0227ef7ec8f6fe170ca05b2b2",
+      "benchmark": "mrna_stability",
+      "variant": "concat"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/mrna_stability/mrna_stability__cross__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "b46934fec06b693e0c86b46a3890232546dffdc65be9229f1a24831e3e5586c2",
+      "benchmark": "mrna_stability",
+      "variant": "cross"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/mrna_stability/mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "c3b524b5f9f84c22248e5e6398d869bb3f2d434c113dab8c91d171c616ef62cf",
+      "benchmark": "mrna_stability",
+      "variant": "unimodal:dna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/mrna_stability/mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "89e44892505d993688ad48d93c72d21eba0141f154b900bd2e0f6a044dd82460",
+      "benchmark": "mrna_stability",
+      "variant": "unimodal-grid:rna"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/mrna_stability/mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "47a6973b734045d401de18d8c924c3df3af15f03ed06e13d9f75b6dd29075d28",
+      "benchmark": "mrna_stability",
+      "variant": "unimodal:prot"
+    },
+    {
+      "path": "Code/stage4/results/phaseA/mrna_stability/mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "sha256": "d85adaa752456d62a6e2865b2b98bfa749c51edb93ea932ed9db4fdf92462059",
+      "benchmark": "mrna_stability",
+      "variant": "unimodal:rna"
+    }
+  ]
+}

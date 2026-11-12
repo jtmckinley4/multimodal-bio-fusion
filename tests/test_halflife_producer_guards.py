@@ -17,6 +17,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "Code"))
 from shared_code import mrnabench as MB
 
+CALCULATION_CELLS = {
+    "8911ff86": "halflife-gate-calculation",
+    "d3c29f9e": "halflife-baseline-calculation",
+    "fc21afe3": "halflife-encoder-calculation",
+    "398d1d5f": "halflife-gains-calculation",
+}
+
 
 def forbidden(*args, **kwargs):
     raise AssertionError("A fixture reached a real load or writer")
@@ -79,8 +86,21 @@ class ProducerGuardTests(unittest.TestCase):
         self.writes.append(Path(path).name)
 
     def run_cell(self, cell):
+        # Keep each reader and its separately guarded producer in notebook order.
+        selected = [cell]
+        if cell in CALCULATION_CELLS:
+            selected.append(CALCULATION_CELLS[cell])
         with redirect_stdout(io.StringIO()):
-            exec(compile(self.cells[cell], f"fixture:{cell}", "exec"), self.env)
+            for cell_id in selected:
+                exec(compile(self.cells[cell_id], f"fixture:{cell_id}", "exec"), self.env)
+
+    def test_separate_calculation_cells_skip_without_inputs_in_saved_mode(self):
+        for cell in CALCULATION_CELLS.values():
+            with self.subTest(cell=cell):
+                # No data, models or writer names are available if a guard fails.
+                env = {"READ_SAVED_RESULTS": True}
+                exec(compile(self.cells[cell], f"fixture:{cell}", "exec"), env)
+                self.assertEqual(set(env) - {"__builtins__"}, {"READ_SAVED_RESULTS"})
 
     def test_every_producer_refuses_a_mixed_valid_invalid_cohort_before_work(self):
         self.env["frames"]["rnahl-mouse"].at[0, "target"] = np.nan

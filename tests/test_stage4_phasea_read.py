@@ -1,4 +1,4 @@
-"""Execute only saved-reading branches against invented files and blocked producers.
+"""Check saved readers and diagnostic cleanup against synthetic dependencies.
 
 Selected notebook source cells run only in a synthetic namespace. No actual
 datasets, caches or research records are read, and no research calculations run.
@@ -16,7 +16,7 @@ import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 import pandas as pd
@@ -56,6 +56,100 @@ def code_cells(name):
     book = json.loads((ROOT / "Code/stage4" / name).read_text(encoding="utf-8"))
     return [(cell["id"], "".join(cell["source"]))
             for cell in book["cells"] if cell["cell_type"] == "code"]
+
+
+class PhaseAFungalCleanupTests(unittest.TestCase):
+    """Exercise the notebook's owned stream lifetime without loading or fitting."""
+
+    def setUp(self):
+        self.events = []
+        self.fit_error = None
+        self.close_error = None
+        self.fail_fit = None
+        self.calls = []
+
+        def close():
+            self.events.append("close")
+            if self.close_error is not None:
+                raise self.close_error
+
+        self.streams = SimpleNamespace(close=Mock(side_effect=close))
+        self.open_streams = Mock(return_value=self.streams)
+
+        def run_recorded(streams, variant, config, device, destination):
+            self.events.append(variant)
+            self.calls.append((streams, variant, config, device, destination))
+            if len(self.calls) == self.fail_fit:
+                raise self.fit_error
+
+        self.namespace = {
+            "READ_SAVED_RESULTS": False,
+            "blf": SimpleNamespace(BenchmarkStreams=SimpleNamespace(open=self.open_streams)),
+            "CACHE_ROOT": "synthetic-cache", "DEVICE": "synthetic-device", "FUNGAL_LAMBDA": 0.5,
+            "run_recorded": run_recorded,
+            "config": lambda **updates: SimpleNamespace(
+                **{"channels": 100, "entropy_lambda": 0.0, **updates}
+            ),
+            "results_dir": lambda key: "synthetic-results/" + key,
+        }
+        source = dict(code_cells("tier2_blf_phaseA.ipynb"))["phasea-fungal-fit-def"]
+        exec(compile(source, "synthetic:fungal-definition", "exec"), self.namespace)
+        self.open_streams.assert_not_called()
+
+    def run_diagnostics(self):
+        with redirect_stdout(io.StringIO()):
+            self.namespace["fungal_diagnostics"]()
+
+    def test_success_closes_once_after_both_unchanged_fit_requests(self):
+        self.run_diagnostics()
+        self.open_streams.assert_called_once_with("fungal_expression", "synthetic-cache")
+        self.assertEqual(self.events, ["unimodal-grid:rna", "mil", "close"])
+        self.streams.close.assert_called_once_with()
+        first, second = self.calls
+        self.assertIs(first[0], self.streams)
+        self.assertIs(second[0], self.streams)
+        self.assertEqual(vars(first[2]), {"channels": 100, "entropy_lambda": 0.0})
+        self.assertEqual(vars(second[2]), {"channels": 1280, "entropy_lambda": 0.5})
+        self.assertIsNot(first[2], second[2])
+        self.assertEqual(first[3:], ("synthetic-device", "synthetic-results/fungal_expression"))
+        self.assertEqual(second[3:], first[3:])
+
+    def test_each_fit_failure_or_interruption_closes_and_keeps_original_error(self):
+        for fail_fit in (1, 2):
+            for error_type in (RuntimeError, KeyboardInterrupt):
+                for close_fails in (False, True):
+                    with self.subTest(fit=fail_fit, error=error_type, close_fails=close_fails):
+                        self.events.clear()
+                        self.calls.clear()
+                        self.streams.close.reset_mock()
+                        self.fail_fit = fail_fit
+                        self.fit_error = error_type("synthetic fit stopped")
+                        self.close_error = OSError("synthetic close failed") if close_fails else None
+                        with self.assertRaises(error_type) as caught:
+                            self.run_diagnostics()
+                        self.assertIs(caught.exception, self.fit_error)
+                        self.assertEqual(len(self.calls), fail_fit)
+                        self.assertEqual(
+                            self.events, ["unimodal-grid:rna", "mil"][:fail_fit] + ["close"]
+                        )
+                        self.streams.close.assert_called_once_with()
+
+    def test_close_only_failure_propagates_after_successful_fits(self):
+        self.close_error = OSError("synthetic close failed")
+        with self.assertRaises(OSError) as caught:
+            self.run_diagnostics()
+        self.assertIs(caught.exception, self.close_error)
+        self.assertEqual(self.events, ["unimodal-grid:rna", "mil", "close"])
+        self.streams.close.assert_called_once_with()
+
+    def test_failed_open_does_not_attempt_fits_or_cleanup(self):
+        error = OSError("synthetic open failed")
+        self.open_streams.side_effect = error
+        with self.assertRaises(OSError) as caught:
+            self.run_diagnostics()
+        self.assertIs(caught.exception, error)
+        self.assertEqual(self.calls, [])
+        self.streams.close.assert_not_called()
 
 
 class PhaseASavedReadingTests(unittest.TestCase):

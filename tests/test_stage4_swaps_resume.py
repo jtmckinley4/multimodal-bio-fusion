@@ -10,6 +10,7 @@ import tempfile
 import time
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
@@ -121,14 +122,16 @@ class SwapResumeNotebookTests(unittest.TestCase):
             CACHE_VERIFICATION=object(),
             time=time, pd=pd, np=np, json=json, display=lambda value: None,
         )
-        exec(compile(self.sources["swaps-training-defs"], "fixture orchestration definitions", "exec"), env)
+        for cell_id in ("swaps-stream-defs", "swaps-training-defs"):
+            exec(compile(self.sources[cell_id], "fixture orchestration definitions", "exec"), env)
         env["open_fit_streams"] = self.fake_open
         return env
 
     def execute_plan(self, env):
         # Metadata inspection only, with invented folders and no real data paths.
         with redirect_stdout(io.StringIO()):
-            exec(compile(self.sources["swaps-execution-plan"], "fixture metadata plan", "exec"), env)
+            for cell_id in ("swaps-plan-defs", "swaps-execution-plan"):
+                exec(compile(self.sources[cell_id], "fixture metadata plan", "exec"), env)
         # Only the downstream fit identity is stubbed; the metadata plan above
         # must itself avoid current inputs for completed historical scores.
         env["requested_identity"] = lambda key, variant, config, mapping, **kw: {
@@ -158,6 +161,30 @@ class SwapResumeNotebookTests(unittest.TestCase):
         self.assertEqual(env["SELECTION_SEED"], 0)
         self.assertFalse(env["RUN_BOOTSTRAP"])
 
+    def test_nondefault_recipe_reaches_planning_and_both_result_readers(self):
+        env = self.namespace(seed=2)
+        env.update(BATCH_SIZE=7, MAX_EPOCHS=17, CHANNELS=23, TCONV="appendix",
+                   swap_results=swap_results)
+        expected = {**RECIPE, "batch_size": 7, "max_epochs": 17,
+                    "channels": 23, "tconv": "appendix", "seed": 2}
+        empty_plan = SimpleNamespace(runs=[], issues=[], rows=lambda: [],
+                                     require_ready=lambda: [])
+        with patch.object(swap_plan, "plan_benchmark", return_value=empty_plan) as planner:
+            self.execute_plan(env)
+        self.assertEqual(planner.call_args.kwargs["config"], expected)
+
+        for cell_id in ("swaps-original-selectors", "swaps-replacement-reader"):
+            exec(compile(self.sources[cell_id], "fixture result-reader definitions", "exec"), env)
+        with patch.object(swap_results, "read_results") as reader:
+            env["original_report"](BENCHMARK, 2)
+            self.assertEqual(reader.call_args.kwargs["config"], expected)
+            env["swap_report"](BENCHMARK, "rna", "rinalmo", 2, 0.01)
+            self.assertEqual(reader.call_args.kwargs["config"], expected)
+        # Selection can request another seed without changing the fit settings.
+        self.assertEqual(env["result_recipe"](0), {**expected, "seed": 0})
+        self.assertEqual(self.calls, [])
+        self.assertEqual(self.opened, [])
+
     def test_complete_plan_opens_no_stream_and_calls_no_fit(self):
         self.complete_seed_zero()
         before = self.snapshot()
@@ -167,9 +194,38 @@ class SwapResumeNotebookTests(unittest.TestCase):
         self.assertEqual(env["PENDING_CACHE_KEYS"], set())
         with redirect_stdout(io.StringIO()):
             # No dataset or token producer may be reached by these no-work branches.
-            for cell_id in ("diskproj", "3e310c7e", "c397d229", "de27ae73"):
+            for cell_id in ("diskproj", "3e310c7e", "swaps-cache-preflight", "c397d229", "de27ae73"):
                 exec(compile(self.sources[cell_id], "fixture no-work cache orchestration", "exec"), env)
         self.execute_training_branch(env)
+        self.assertEqual(self.calls, [])
+        self.assertEqual(self.opened, [])
+        self.assertEqual(before, self.snapshot())
+
+    def test_blocked_cache_preflight_stops_before_extraction(self):
+        env = self.namespace()
+        before = self.snapshot()
+        cache_plan = SimpleNamespace(
+            status="blocked", reusable_shards=[], missing_shards=[0],
+            provenance="recorded_input", issues=["fixture input mismatch"],
+            ready=False, summary="fixture input mismatch",
+        )
+        rows = pd.DataFrame({"sequence": ["AAA"]})
+        env.update(
+            PENDING_CACHE_KEYS={(BENCHMARK, "rinalmo")},
+            required_encoders=lambda key: ["rinalmo"],
+            ENCODERS={"rinalmo": SimpleNamespace(label="rinalmo")},
+            datasets=SimpleNamespace(blf_benchmark_rows=lambda key: rows),
+        )
+        env["tokens"].inputs_for_rows = lambda encoder, sequences: sequences
+        env["tokens"].inspect_cache = lambda *args, **kwargs: cache_plan
+        env["tokens"].CacheRecoveryRequired = InjectedFailure
+        # The extraction entry point remains forbidden. A blocked preflight must
+        # stop the ordered cells before extraction rather than merely display an issue.
+        with redirect_stdout(io.StringIO()), self.assertRaisesRegex(
+            InjectedFailure, "fixture input mismatch",
+        ):
+            for cell_id in ("3e310c7e", "swaps-cache-preflight", "c397d229"):
+                exec(compile(self.sources[cell_id], "fixture blocked preflight", "exec"), env)
         self.assertEqual(self.calls, [])
         self.assertEqual(self.opened, [])
         self.assertEqual(before, self.snapshot())
@@ -220,6 +276,48 @@ class SwapResumeNotebookTests(unittest.TestCase):
         self.assertEqual(len(env["PENDING_RUNS"]), 1)
         self.write_result(run.path, run.variant, run.config, run.encoders)
         self.execute_training_branch(env)
+        self.assertEqual(self.calls, [])
+        self.assertEqual(self.opened, [])
+
+    def test_references_then_all_non_cross_swaps_then_cross_across_benchmarks(self):
+        env = self.namespace()
+        benchmarks = ("first_benchmark", "second_benchmark")
+        swaps = (("rna", "rinalmo"), ("prot", "protbert"))
+        ready, observed = [], []
+        plans = {}
+        for benchmark in benchmarks:
+            runs = [
+                SimpleNamespace(role="original", encoder_key=None, variant=variant)
+                for variant in ("unimodal:prot", "concat")
+            ]
+            for modality, encoder_key in swaps:
+                runs.extend(
+                    SimpleNamespace(role="replacement", encoder_key=encoder_key, variant=variant)
+                    for variant in (f"unimodal:{modality}", "concat", "mil", "cross")
+                )
+            plans[benchmark] = SimpleNamespace(
+                runs=runs, require_ready=lambda key=benchmark: ready.append(key),
+            )
+
+        def record_group(benchmark, encoder_key, runs):
+            self.assertEqual(ready, list(benchmarks))
+            observed.append((benchmark, encoder_key, tuple(run.variant for run in runs)))
+
+        env.update(BENCHMARKS=benchmarks, swaps_for=lambda key: swaps,
+                   execution_plan=lambda key: plans[key], run_pending_group=record_group)
+        self.execute_training_branch(env)
+        self.assertEqual(observed, [
+            ("first_benchmark", None, ("unimodal:prot", "concat")),
+            ("second_benchmark", None, ("unimodal:prot", "concat")),
+            ("first_benchmark", "rinalmo", ("unimodal:rna", "concat", "mil")),
+            ("first_benchmark", "protbert", ("unimodal:prot", "concat", "mil")),
+            ("second_benchmark", "rinalmo", ("unimodal:rna", "concat", "mil")),
+            ("second_benchmark", "protbert", ("unimodal:prot", "concat", "mil")),
+            ("first_benchmark", "rinalmo", ("cross",)),
+            ("first_benchmark", "protbert", ("cross",)),
+            ("second_benchmark", "rinalmo", ("cross",)),
+            ("second_benchmark", "protbert", ("cross",)),
+        ])
         self.assertEqual(self.calls, [])
         self.assertEqual(self.opened, [])
 
@@ -288,11 +386,14 @@ class SwapResumeNotebookTests(unittest.TestCase):
         })
         env["train"].Result = SimpleNamespace(load=lambda path: SimpleNamespace(
             **json.loads(Path(path).read_text(encoding="utf-8"))))
-        for cell_id in ("swaps-original-selectors", "swaps-result-selectors", "swaps-summary"):
+        for cell_id in (
+            "swaps-original-selectors", "swaps-replacement-reader",
+            "swaps-result-selectors", "swaps-single-selection", "swaps-summary",
+        ):
             exec(compile(self.sources[cell_id], "fixture result selection", "exec"), env)
-        current = env["triple"](BENCHMARK, "rna", "rinalmo")
-        self.assertEqual(env["best_single"](current, "rna", "rinalmo"), "unimodal:dna")
-        table = env["summary"](BENCHMARK)
+        current = env["results_for_encoder_set"](BENCHMARK, "rna", "rinalmo")
+        self.assertEqual(env["validation_selected_single"](current, "rna", "rinalmo"), "unimodal:dna")
+        table = env["benchmark_score_table"](BENCHMARK)
         self.assertEqual(table.loc[("rna", "rinalmo"), "best single"], "unimodal:rna")
         self.assertEqual(table.loc[("rna", "rinalmo"), "best single score"], 0.23)
         self.assertEqual(self.calls, [])
@@ -319,7 +420,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
             tokens=SimpleNamespace(summarize=summarize),
             blf=SimpleNamespace(BenchmarkStreams=forbidden),
         )
-        exec(compile(self.sources["swaps-training-defs"], "fixture cleanup definitions", "exec"), env)
+        exec(compile(self.sources["swaps-stream-defs"], "fixture cleanup definitions", "exec"), env)
         with self.assertRaisesRegex(InjectedFailure, "second cache") as caught:
             env["open_fit_streams"](BENCHMARK, ORIGINAL)
         self.assertEqual(closed, attempted[:1])

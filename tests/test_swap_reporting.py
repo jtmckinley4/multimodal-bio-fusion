@@ -9,7 +9,7 @@ import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 import pandas as pd
@@ -248,17 +248,26 @@ class SwapReportingTests(unittest.TestCase):
         state = {"READ_SAVED_RESULTS": True, "RESULTS_ROOT": self.root}
         exec(guard, state)
         self.assertFalse(state["RUN_SAVED_COMPARISONS"])
+        # Defining the helper must not require datasets or start report production.
+        exec(cells["swaps-paired-report-def"], state)
+        state["build_or_reuse_report"] = Mock(
+            side_effect=AssertionError("Disabled reporting invoked its producer"))
         with redirect_stdout(io.StringIO()):
             exec(cells["swaps-paired-report-run"], state)
         self.assertEqual(state["SAVED_COMPARISON_REPORTS"], {})
+        state["build_or_reuse_report"].assert_not_called()
         with self.assertRaisesRegex(ValueError, "training and extraction"):
             exec(guard.replace("RUN_SAVED_COMPARISONS = False", "RUN_SAVED_COMPARISONS = True"),
                  {"READ_SAVED_RESULTS": False, "RESULTS_ROOT": self.root})
+        # The caller also guards against a mode changed after Setup was run.
+        state.update(RUN_SAVED_COMPARISONS=True, READ_SAVED_RESULTS=False)
+        with self.assertRaisesRegex(ValueError, "requires READ_SAVED_RESULTS"):
+            exec(cells["swaps-paired-report-run"], state)
+        state["build_or_reuse_report"].assert_not_called()
 
     def test_enabled_notebook_report_uses_synthetic_saved_results_only(self):
         notebook = json.loads((ROOT / "Code/stage4/tier2_encoder_swaps.ipynb").read_text(encoding="utf8"))
-        source = next("".join(c["source"]) for c in notebook["cells"]
-                      if c.get("id") == "swaps-paired-report-run")
+        cells = {c.get("id"): "".join(c["source"]) for c in notebook["cells"]}
         def forbidden(*args, **kwargs):
             raise AssertionError("Reporting attempted training or extraction")
         state = dict(
@@ -282,9 +291,78 @@ class SwapReportingTests(unittest.TestCase):
             kwargs["swap_root"] = self.swaps
             return original_collect(**kwargs)
         with redirect_stdout(io.StringIO()), patch.object(swap_reporting, "collect", collect_fixture):
-            exec(source, state)
+            exec(cells["swaps-paired-report-def"], state)
+            exec(cells["swaps-paired-report-run"], state)
         self.assertEqual(len(list((self.root / "reports").glob("*.json"))), 1)
         self.assertIn("fixture", state["SAVED_COMPARISON_REPORTS"])
+
+    def test_notebook_report_helper_preserves_inputs_and_analysis_settings(self):
+        notebook = json.loads((ROOT / "Code/stage4/tier2_encoder_swaps.ipynb").read_text(encoding="utf8"))
+        source = next("".join(cell["source"]) for cell in notebook["cells"]
+                      if cell.get("id") == "swaps-paired-report-def")
+        # Interleaved partitions and non-default indices expose row-order mistakes.
+        # A class present only in training still contributes to the output width.
+        frame = pd.DataFrame({
+            "sequence": ["train-row", "test-second", "val-row", "test-first"],
+            "Value": [2, 1, 0, 0],
+            "Split": ["train", "test", "val", "test"],
+        }, index=[7, 3, 11, 2])
+
+        for task, expected_classes in (("classification", 3), ("regression", None)):
+            with self.subTest(task=task):
+                context, inventory = {"context": "fixture"}, {"inventory": "fixture"}
+                report_result = ({"analysis": "fixture"}, self.root / "report.json", False)
+                reporting = SimpleNamespace(
+                    benchmark_context=Mock(return_value=context),
+                    collect=Mock(return_value=inventory),
+                    report=Mock(return_value=report_result),
+                )
+                load_rows = Mock(return_value=frame)
+                recipe = {**RECIPE, "seed": 0}
+                state = dict(
+                    np=np,
+                    datasets=SimpleNamespace(
+                        blf_benchmark_rows=load_rows,
+                        DATASETS={"fixture": SimpleNamespace(
+                            task=task, label_column="Value", split_column="Split")},
+                    ),
+                    SEED=2, result_recipe=Mock(return_value=recipe),
+                    ORIGINAL_RESULTS={"fixture": [self.original]}, ORIGINAL=ORIGINAL,
+                    swaps_for=lambda benchmark: [("rna", "codon-fixture"), ("dna", "base-fixture")],
+                    tokens=SimpleNamespace(grid_resolution=lambda encoder: (
+                        "codon" if encoder == "codon-fixture" else "nucleotide")),
+                    RESULTS_ROOT=self.root / "fits", COMPARISON_SEEDS=(2, 1),
+                    COMPARISON_DIR=self.root / "reports", COMPARISON_DRAWS=17,
+                    COMPARISON_BOOTSTRAP_SEED=11, CODE_DIR=self.root / "Code",
+                )
+                exec(source, state)
+                load_rows.assert_not_called()
+                reporting.report.assert_not_called()
+
+                result = state["build_or_reuse_report"]("fixture", reporting)
+
+                self.assertEqual(result, report_result)
+                load_rows.assert_called_once_with("fixture")
+                state["result_recipe"].assert_called_once_with(0)
+                reporting.benchmark_context.assert_called_once_with(
+                    frame, task=task, label_column="Value", split_column="Split")
+                reporting.collect.assert_called_once_with(
+                    benchmark="fixture", config=recipe,
+                    original_folders=[self.original], original_encoders=ORIGINAL,
+                    swaps=[("rna", "codon-fixture", False), ("dna", "base-fixture", True)],
+                    swap_root=self.root / "fits" / "fixture", seeds=(2, 1),
+                )
+                reporting.report.assert_called_once()
+                args, kwargs = reporting.report.call_args
+                self.assertEqual(args, (inventory,))
+                np.testing.assert_array_equal(kwargs["truth"], [1, 0])
+                np.testing.assert_array_equal(kwargs["groups"], ["test-second", "test-first"])
+                self.assertEqual(
+                    {key: value for key, value in kwargs.items() if key not in {"truth", "groups"}},
+                    dict(task=task, context=context, output_dir=self.root / "reports",
+                         draws=17, bootstrap_seed=11, n_classes=expected_classes,
+                         repository=self.root),
+                )
 
 
 if __name__ == "__main__":

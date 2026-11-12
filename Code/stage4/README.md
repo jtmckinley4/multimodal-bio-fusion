@@ -33,6 +33,8 @@ The `tier` prefixes group investigations within Stage 4; they are not execution 
 
 Saved notebook outputs can be read without running cells. For a reading-only Run All of the retained experiment notebooks, explicitly set `READ_SAVED_RESULTS = True` and leave the separate follow-up switches off. A notebook saved after computation may retain different settings. This route reads available results and refreshes displays; missing or incompatible evidence is reported rather than computed. Follow the [reading instructions](RUNBOOK.md#read-saved-results-without-starting-work) for the applicable switches and the separate audit/preparation modes.
 
+The GTEx audit uses `AUDIT_MODE = "read_results"` instead. In the Mamba notebook, `READ_SAVED_RESULTS` skips training, but the final section can still recalculate bootstrap intervals from eligible saved predictions; see the same reading instructions for its qualified legacy-reference policy.
+
 Reading historical records does not recover unknown producer settings or establish that current code reproduces them. For computation, use the [runbook](RUNBOOK.md): encoder swaps have a missing-work continuation route, but setting another notebook's reading flag to false does not guarantee that only missing work will run. Cache recovery, checkpoint identity and repair history remain in the [repair record](RUNBOOK.md#concrete-repair-list).
 
 ## The current experiments

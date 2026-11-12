@@ -234,6 +234,188 @@ class IdentityTests(unittest.TestCase):
             identity.validate_identity(changed)
 
 
+class RecordedBLFInputsTests(unittest.TestCase):
+    """Saved comparison metadata needs no model, cache or prediction loading."""
+
+    def record(self, *, sequences=None, splits=None, task="regression"):
+        sequences = sequences or ["ATGAAA", "ATGCCC", "ATGGGG", "ATGTTT"]
+        rows = pd.DataFrame({"sequence": sequences, "length": [6] * 4})
+        labels = np.ones(4, dtype=np.float32 if task == "regression" else np.int64)
+        splits = splits or {"train": [0, 1], "val": [2], "test": [3]}
+        inputs = {
+            "encoders": {"dna": "dna-fixture", "rna": "rna-fixture", "prot": "protein-fixture"},
+            "rows": identity._rows_record(rows, ("sequence", "length")),
+            "targets": {**identity.array_record(labels), "columns": ["Value"],
+                        "task": task, "transform": "as_supplied"},
+            "splits": {name: identity.array_record(indices, np.int64)
+                       for name, indices in splits.items()},
+            "split_targets": {name: identity.array_record(labels[indices])
+                              for name, indices in splits.items()},
+            "caches": {"fixture": "never opened"},
+        }
+        config = {"batch_size": 2, "seed": 0}
+        made = identity.make_identity(
+            benchmark="fixture", variant="concat", config=config, inputs=inputs,
+            model={"contract": "synthetic-model"},
+            loader=identity.blf_loader_spec(config, identity.MODALITIES),
+        )
+        return {"benchmark": "fixture", "variant": "concat", "config": config, "identity": made}
+
+    def test_signature_needs_no_predictions_and_does_not_mutate_or_alias_record(self):
+        record = self.record()
+        before = deepcopy(record)
+        signature = identity.recorded_blf_inputs(record)
+        self.assertEqual(set(signature), {"encoders", "rows", "targets", "splits", "split_targets"})
+        self.assertEqual(record, before)
+        signature["rows"]["sha256"] = "0" * 64
+        self.assertEqual(record, before)
+        self.assertNotIn("test_truth", record)
+        self.assertNotIn("test_prediction", record)
+
+    def test_identity_must_match_result_metadata(self):
+        for field, value in (("benchmark", "other"), ("variant", "cross"),
+                             ("config", {"batch_size": 2, "seed": 1})):
+            with self.subTest(field=field):
+                record = self.record()
+                record[field] = value
+                with self.assertRaisesRegex(ValueError, field):
+                    identity.recorded_blf_inputs(record)
+        for field in ("benchmark", "variant", "config", "identity"):
+            record = self.record()
+            del record[field]
+            with self.subTest(missing=field), self.assertRaises(ValueError):
+                identity.recorded_blf_inputs(record)
+
+    def test_missing_or_partial_input_metadata_is_rejected(self):
+        for field in ("encoders", "rows", "targets", "splits", "split_targets"):
+            for replacement in (None, {}, []):
+                record = self.record()
+                record["identity"]["inputs"][field] = replacement
+                with self.subTest(field=field, value=replacement), self.assertRaises(ValueError):
+                    identity.recorded_blf_inputs(record)
+        for field in ("splits", "split_targets"):
+            record = self.record()
+            del record["identity"]["inputs"][field]["val"]
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                identity.recorded_blf_inputs(record)
+
+    def test_each_recorded_hash_must_be_valid_sha256(self):
+        paths = [("rows",), ("targets",)] + [
+            (field, name) for field in ("splits", "split_targets") for name in identity.SPLITS
+        ]
+        for path in paths:
+            for invalid in (None, "", "a" * 63, "z" * 64, "A" * 64):
+                record = self.record()
+                descriptor = record["identity"]["inputs"]
+                for key in path:
+                    descriptor = descriptor[key]
+                descriptor["sha256"] = invalid
+                with self.subTest(path=path, sha=invalid), self.assertRaisesRegex(ValueError, "SHA-256"):
+                    identity.recorded_blf_inputs(record)
+
+    def test_scalar_shapes_counts_dtypes_and_declared_target_are_checked(self):
+        changes = [
+            (("rows", "count"), True), (("rows", "count"), 0),
+            (("rows", "columns"), ["length", "sequence"]),
+            (("targets", "columns"), ["other"]), (("targets", "transform"), "log"),
+            (("targets", "task"), "expression"), (("targets", "dtype"), "<f8"),
+            (("targets", "shape"), [4, 1]), (("targets", "shape"), [3]),
+            (("splits", "train", "shape"), [True]),
+            (("splits", "train", "dtype"), "<f4"),
+            (("split_targets", "test", "shape"), [2]),
+            (("split_targets", "test", "dtype"), "<i8"),
+            (("encoders", "rna"), ""), (("encoders", "prot"), None),
+        ]
+        for path, value in changes:
+            record = self.record()
+            target = record["identity"]["inputs"]
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = value
+            with self.subTest(path=path, value=value), self.assertRaises(ValueError):
+                identity.recorded_blf_inputs(record)
+        record = self.record()
+        for field in ("splits", "split_targets"):
+            record["identity"]["inputs"][field]["train"]["shape"] = [1]
+        with self.assertRaisesRegex(ValueError, "total rows.count"):
+            identity.recorded_blf_inputs(record)
+
+    def test_classification_requires_int64_targets(self):
+        record = self.record(task="classification")
+        self.assertEqual(identity.recorded_blf_inputs(record)["targets"]["dtype"], np.dtype(np.int64).str)
+        record["identity"]["inputs"]["targets"]["dtype"] = np.dtype(np.float32).str
+        with self.assertRaisesRegex(ValueError, "dtype"):
+            identity.recorded_blf_inputs(record)
+
+    def test_each_completed_fit_partition_must_be_nonempty(self):
+        for empty in identity.SPLITS:
+            splits = {name: [] for name in identity.SPLITS}
+            other = [name for name in identity.SPLITS if name != empty]
+            splits[other[0]], splits[other[1]] = [0, 1, 2], [3]
+            record = self.record(splits=splits)
+            inputs = record["identity"]["inputs"]
+            self.assertEqual(sum(item["shape"][0] for item in inputs["splits"].values()), 4)
+            self.assertEqual(inputs["split_targets"][empty]["shape"], [0])
+            with self.subTest(empty=empty), self.assertRaisesRegex(ValueError, empty + " must contain rows"):
+                identity.recorded_blf_inputs(record)
+
+    def test_malformed_nested_records_raise_value_error(self):
+        paths = [
+            ("identity", "inputs"), ("identity", "model"), ("identity", "loader"),
+            ("identity", "loader", "recovery"),
+            ("identity", "inputs", "rows"), ("identity", "inputs", "targets"),
+        ] + [("identity", "inputs", field, name)
+             for field in ("splits", "split_targets") for name in identity.SPLITS]
+        for path in paths:
+            for invalid in (None, [], {}, False, "invalid", 1):
+                record = self.record()
+                parent = record
+                for key in path[:-1]:
+                    parent = parent[key]
+                parent[path[-1]] = invalid
+                with self.subTest(path=path, value=invalid), self.assertRaises(ValueError):
+                    identity.recorded_blf_inputs(record)
+
+    def test_equal_target_values_do_not_establish_equal_rows_or_partitions(self):
+        original = identity.recorded_blf_inputs(self.record())
+        reordered = identity.recorded_blf_inputs(self.record(
+            sequences=["ATGCCC", "ATGAAA", "ATGGGG", "ATGTTT"],
+        ))
+        repartitioned = identity.recorded_blf_inputs(self.record(
+            splits={"train": [0, 2], "val": [1], "test": [3]},
+        ))
+        for changed in (reordered, repartitioned):
+            self.assertEqual(original["targets"], changed["targets"])
+            self.assertEqual(original["split_targets"], changed["split_targets"])
+            self.assertNotEqual(original, changed)
+        self.assertNotEqual(original["rows"], reordered["rows"])
+        self.assertNotEqual(original["splits"], repartitioned["splits"])
+
+    def test_model_and_cache_differences_are_excluded_but_encoders_are_retained(self):
+        record = self.record()
+        signature = identity.recorded_blf_inputs(record)
+        record["variant"] = record["identity"]["variant"] = "cross"
+        record["identity"]["model"] = {"contract": "another-head"}
+        record["identity"]["inputs"]["caches"] = {"different": "still never opened"}
+        self.assertEqual(signature, identity.recorded_blf_inputs(record))
+        record["identity"]["inputs"]["encoders"]["rna"] = "other-rna"
+        self.assertNotEqual(signature, identity.recorded_blf_inputs(record))
+
+    def test_non_blf_or_malformed_record_is_not_promoted(self):
+        for record in (None, [], SimpleNamespace(), {"identity": {}}):
+            with self.subTest(record=record), self.assertRaises(ValueError):
+                identity.recorded_blf_inputs(record)
+        for loader_kind in ("isoformer", "custom"):
+            record = self.record()
+            record["identity"]["loader"]["kind"] = loader_kind
+            with self.subTest(kind=loader_kind), self.assertRaisesRegex(ValueError, "BLF loader"):
+                identity.recorded_blf_inputs(record)
+        record = self.record()
+        record["identity"]["config"]["unsupported"] = object()
+        with self.assertRaises(ValueError):
+            identity.recorded_blf_inputs(record)
+
+
 class GTExRecoveryTests(unittest.TestCase):
     """A qualified receipt admits only its exact tiny pilot fixtures, without writes."""
 

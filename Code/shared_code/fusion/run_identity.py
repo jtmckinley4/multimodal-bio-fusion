@@ -162,6 +162,199 @@ def validate_identity(identity, *, config=None, variant=None, benchmark=None):
     return made
 
 
+def recorded_blf_inputs(record):
+    """Validate a saved BLF input signature without opening data or requiring predictions.
+
+    Equality binds the recorded row order, targets, partitions and encoder choices.
+    It does not independently verify source files or recover missing provenance.
+    Cache contents and model settings are excluded so different heads can be compared.
+    """
+    def require(condition, detail):
+        if not condition:
+            raise ValueError(f"Recorded BLF inputs: {detail}")
+
+    require(isinstance(record, dict), "result must be a saved JSON object.")
+    for field in ("benchmark", "variant"):
+        require(isinstance(record.get(field), str) and bool(record[field].strip()),
+                f"result {field} must be a nonempty string.")
+    require(isinstance(record.get("config"), dict), "result config must be an object.")
+    try:
+        made = validate_identity(record.get("identity"), config=record["config"],
+                                 variant=record["variant"], benchmark=record["benchmark"])
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"Recorded BLF inputs: invalid result identity: {error}") from error
+    require(made["loader"]["kind"] == "blf", "a BLF loader identity is required.")
+    return _validated_blf_inputs(made["inputs"])
+
+
+def _validated_blf_inputs(inputs):
+    """Check comparison metadata without assigning it a producer identity."""
+    def require(condition, detail):
+        if not condition:
+            raise ValueError(f"Recorded BLF inputs: {detail}")
+
+    def valid_sha(value):
+        return (isinstance(value, str) and len(value) == 64
+                and all(character in "0123456789abcdef" for character in value))
+
+    def array_count(descriptor, dtype, name):
+        require(isinstance(descriptor, dict), f"{name} must be an array record.")
+        shape = descriptor.get("shape")
+        require(isinstance(shape, list) and len(shape) == 1
+                and type(shape[0]) is int and shape[0] >= 0,
+                f"{name} must describe a one-dimensional array.")
+        require(descriptor.get("dtype") == np.dtype(dtype).str,
+                f"{name} must record dtype {np.dtype(dtype).str}.")
+        require(valid_sha(descriptor.get("sha256")), f"{name} needs a valid SHA-256.")
+        return shape[0]
+
+    require(isinstance(inputs, dict), "inputs must be an object.")
+    encoders = inputs.get("encoders")
+    require(isinstance(encoders, dict) and set(encoders) == set(MODALITIES)
+            and all(isinstance(value, str) and value.strip() for value in encoders.values()),
+            "encoders must identify DNA, RNA and protein encoder IDs.")
+
+    rows = inputs.get("rows")
+    require(isinstance(rows, dict), "ordered rows metadata is required.")
+    require(rows.get("columns") == ["sequence", "length"],
+            "row columns must be sequence and length in that order.")
+    count = rows.get("count")
+    require(type(count) is int and count > 0, "rows.count must be a positive integer.")
+    require(valid_sha(rows.get("sha256")), "ordered rows need a valid SHA-256.")
+
+    targets = inputs.get("targets")
+    require(isinstance(targets, dict), "target metadata is required.")
+    require(targets.get("columns") == ["Value"] and targets.get("transform") == "as_supplied",
+            "targets must record the supplied Value column without a new transform.")
+    task = targets.get("task")
+    require(task in ("regression", "classification"), "only scalar BLF targets are supported.")
+    target_dtype = np.float32 if task == "regression" else np.int64
+    require(array_count(targets, target_dtype, "targets") == count,
+            "target count must equal rows.count.")
+
+    splits, split_targets = inputs.get("splits"), inputs.get("split_targets")
+    for name, descriptors in (("splits", splits), ("split_targets", split_targets)):
+        require(isinstance(descriptors, dict) and set(descriptors) == set(SPLITS),
+                f"{name} must record train, val and test.")
+    split_count = 0
+    for name in SPLITS:
+        size = array_count(splits[name], np.int64, f"splits.{name}")
+        require(size > 0, f"{name} must contain rows for a completed fit and validation selection.")
+        require(array_count(split_targets[name], target_dtype, f"split_targets.{name}") == size,
+                f"{name} target and index counts differ.")
+        split_count += size
+    require(split_count == count, "split counts must total rows.count.")
+    return {name: inputs[name] for name in ("encoders", "rows", "targets", "splits", "split_targets")}
+
+
+def legacy_reference_inputs(record, *, path, repository, recovery_path):
+    """Read explicitly qualified comparison evidence for a listed historical reference.
+
+    This does not reconstruct the fit's producer, verify its caches, or authorize
+    training reuse. The original result stays untouched. Modern identities always
+    take the strict route, including malformed identities that must not fall back.
+    """
+    def require(condition, detail):
+        if not condition:
+            raise ValueError(f"Legacy reference reuse: {detail}")
+
+    require(isinstance(record, dict), "result must be a saved JSON object.")
+    if "identity" in record:
+        return recorded_blf_inputs(record)
+
+    root = Path(repository).resolve()
+
+    def inside_root(value):
+        candidate = Path(value)
+        candidate = (candidate if candidate.is_absolute() else root / candidate).resolve()
+        require(candidate.is_relative_to(root), "a path resolves outside the repository.")
+        return candidate
+
+    def relative_file(value):
+        require(isinstance(value, str) and bool(value)
+                and "\\" not in value and ":" not in value
+                and not any(part in ("", ".", "..") for part in value.split("/")),
+                "manifest paths must be repository-relative POSIX paths.")
+        return inside_root(value)
+
+    def read_json(candidate, expected_sha=None):
+        try:
+            payload = candidate.read_bytes()
+            if expected_sha is not None:
+                require(hashlib.sha256(payload).hexdigest() == expected_sha,
+                        f"file checksum differs: {candidate.name}.")
+            return json.loads(payload)
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            raise ValueError(f"Legacy reference reuse: cannot read {candidate.name}: {error}") from error
+
+    manifest = read_json(inside_root(recovery_path))
+    require(isinstance(manifest, dict), "recovery record must be an object.")
+    require(manifest.get("schema") == "blf.reference-reuse.v1"
+            and manifest.get("scope") == "tier4_designs.references",
+            "recovery schema or scope differs.")
+    require(manifest.get("encoders") == {
+        "dna": "ntv2_100m", "rna": "rnafm", "prot": "esm2_8m",
+    }, "only the original three encoder references are eligible.")
+    references = manifest.get("references")
+    require(isinstance(references, list) and bool(references), "references must be a nonempty list.")
+    variants = {"concat", "cross", "unimodal:dna", "unimodal:rna", "unimodal:prot",
+                "unimodal-grid:rna"}
+    paths, identities, approved = set(), set(), None
+    source_path = inside_root(path)
+    for entry in references:
+        require(isinstance(entry, dict), "reference entries must be objects.")
+        reference_path = relative_file(entry.get("path"))
+        benchmark, variant = entry.get("benchmark"), entry.get("variant")
+        require(isinstance(benchmark, str) and bool(benchmark)
+                and isinstance(variant, str) and variant in variants,
+                "invalid reference benchmark or variant.")
+        key = (benchmark, variant)
+        require(reference_path not in paths and key not in identities,
+                "duplicate approved reference path or benchmark/variant.")
+        paths.add(reference_path)
+        identities.add(key)
+        if reference_path == source_path:
+            approved = entry
+    require(approved is not None, "result path is not an approved reference.")
+    require(record.get("benchmark") == approved["benchmark"]
+            and record.get("variant") == approved["variant"],
+            "result benchmark or variant differs from the approved reference.")
+    config = record.get("config")
+    require(isinstance(config, dict) and type(config.get("seed")) is int and config["seed"] == 0,
+            "only the approved seed-0 references are eligible.")
+    require(isinstance(approved.get("sha256"), str), "reference SHA-256 is missing.")
+    saved = read_json(source_path, approved["sha256"])
+    require(saved == record, "supplied result differs from the approved file contents.")
+
+    audits = manifest.get("audits")
+    require(isinstance(audits, dict), "audit links must be an object.")
+    audit = audits.get(record["benchmark"])
+    require(isinstance(audit, dict) and isinstance(audit.get("sha256"), str),
+            "benchmark audit link or SHA-256 is missing.")
+    report = read_json(relative_file(audit.get("path")), audit["sha256"])
+    identity = report.get("identity") if isinstance(report, dict) else None
+    require(isinstance(identity, dict) and identity.get("schema") == "swap.paired-report.v1"
+            and identity.get("benchmark") == record["benchmark"],
+            "audit schema or benchmark differs.")
+    sources = identity.get("sources")
+    require(isinstance(sources, dict), "audit source hashes are missing.")
+    # Reports retain historical Windows roots. Only the exact repository-relative
+    # suffix is portable; repeated separators do not change the recorded source.
+    relative = approved["path"]
+    bindings = []
+    for name, digest in sources.items():
+        require(isinstance(name, str), "invalid audit source path.")
+        normalized = "/".join(part for part in name.replace("\\", "/").split("/") if part)
+        if normalized == relative or normalized.endswith("/" + relative):
+            bindings.append(digest)
+    require(bindings == [approved["sha256"]], "audit does not uniquely bind this reference hash.")
+    context = identity.get("context")
+    require(isinstance(context, dict), "audit comparison context is missing.")
+    require("encoders" not in context or context["encoders"] == manifest["encoders"],
+            "audit encoder context contradicts the approved mapping.")
+    return _validated_blf_inputs({**context, "encoders": dict(manifest["encoders"])})
+
+
 def blf_loader_spec(config, modalities):
     config = _config(config)
     generator = {"type": "torch.utils.data.dataloader.DataLoader", "fields": ["generator"]}
