@@ -188,7 +188,8 @@ class PhaseAExporterTests(unittest.TestCase):
     def evaluate(self, book=None):
         return self.module.evaluate_notebook(book or self.book, self.runtime, Path("fixture-cache"))
 
-    def test_export_target_is_appendix(self):
+    def test_archived_exporter_retains_its_original_appendix_path(self):
+        # This source snapshot is preserved with its results, not a current CLI route.
         self.assertEqual(self.module.NOTEBOOK_RELATIVE.name, "tier2_blf_phaseA_appendix.ipynb")
 
     def test_synthetic_cells_receive_only_in_memory_settings_override(self):

@@ -202,7 +202,7 @@ class MrfpSavedReadingTests(unittest.TestCase):
             mrfp_cache.complete_groups(table, {"a": [("a", 0), ("a", 0)]})
 
     def notebook_sources(self):
-        notebook = Path(__file__).resolve().parents[1] / "Code/stage4/tier1_mrfp_control.ipynb"
+        notebook = Path(__file__).resolve().parents[1] / "Code/stage1/mrfp_representation_control.ipynb"
         return {cell["id"]: "".join(cell["source"])
                 for cell in json.loads(notebook.read_text(encoding="utf-8"))["cells"]}
 

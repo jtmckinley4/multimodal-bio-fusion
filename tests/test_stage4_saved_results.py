@@ -144,7 +144,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         self.messages = io.StringIO()
 
     def branch(self, notebook, cell_id, namespace):
-        doc = json.loads((ROOT / "Code" / "stage4" / notebook).read_text(encoding="utf-8"))
+        doc = json.loads((ROOT / "Code" / notebook).read_text(encoding="utf-8"))
         cell = next(c for c in doc["cells"] if c["id"] == cell_id)
         tree = ast.parse("".join(cell["source"]))
         self.assertEqual(len(tree.body), 1, cell_id)
@@ -174,8 +174,8 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         return {p.name: p.read_bytes() for p in self.folder.iterdir()}
 
     def test_default_settings_are_read_only(self):
-        for notebook in ("tier2_lucaone_isoformer.ipynb", "tier3_halflife_te.ipynb"):
-            doc = json.loads((ROOT / "Code/stage4" / notebook).read_text(encoding="utf-8"))
+        for notebook in ("stage1/lucaone_representation_comparison.ipynb", "stage4/halflife_translation_efficiency.ipynb"):
+            doc = json.loads((ROOT / "Code" / notebook).read_text(encoding="utf-8"))
             assignments = [
                 node.value.value
                 for cell in doc["cells"] if cell["cell_type"] == "code"
@@ -216,18 +216,27 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         before = self.snapshot()
         for cell_id in (
             "74c94f4f", "166c1b45", "1941755b", "9d482c82", "45007ed7", "6886c65d",
-            "399c1745", "d5abb6f5", "0aee3c7f", "47fd36d1", "f9d1f49b",
+            "399c1745", "d5abb6f5", "0aee3c7f", "47fd36d1",
         ):
-            self.branch("tier2_lucaone_isoformer.ipynb", cell_id, env)
+            self.branch("stage1/lucaone_representation_comparison.ipynb", cell_id, env)
         self.assertEqual(len(self.displayed), 2)
         self.assertEqual(env["predictions"], {})
         self.assertEqual(before, self.snapshot())
+
+    def test_gtex_repeat_read_branch_blocks_fits_with_compute_flag_on(self):
+        # The GTEx repeat branch now lives with its pilot, separate from LucaOne probes.
+        env = self.namespace()
+        env["RUN_ISOFORMER_SEEDS"] = True
+        before = self.snapshot()
+        self.branch("stage3/gtex_frozen_fusion_reference.ipynb", "f9d1f49b", env)
+        self.assertEqual(before, self.snapshot())
+        self.assertIn("seed fits skipped", self.messages.getvalue())
 
     def test_lucaone_comparisons_still_display_when_probe_file_missing(self):
         env = self.lucaone_fixture()
         (self.folder / "invented_probe_scores.csv").unlink()
         for cell_id in ("0aee3c7f", "47fd36d1"):
-            self.branch("tier2_lucaone_isoformer.ipynb", cell_id, env)
+            self.branch("stage1/lucaone_representation_comparison.ipynb", cell_id, env)
         self.assertIsNone(env["summary"])
         self.assertEqual(len(self.displayed), 1)
         self.assertIn("unavailable", self.messages.getvalue())
@@ -266,7 +275,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
             "8911ff86", "d2cdfe59", "9f809fa4", "d3c29f9e", "bc1b7b69",
             "6260d5de", "fc21afe3", "398d1d5f",
         ):
-            self.branch("tier3_halflife_te.ipynb", cell_id, env)
+            self.branch("stage4/halflife_translation_efficiency.ipynb", cell_id, env)
         self.assertEqual(len(self.displayed), 5)
         self.assertEqual(env["embedded"], {})
         self.assertEqual(before, self.snapshot())
@@ -275,7 +284,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         env = self.halflife_fixture()
         (self.folder / "gate.csv").unlink()
         for cell_id in ("8911ff86", "d3c29f9e", "fc21afe3", "398d1d5f"):
-            self.branch("tier3_halflife_te.ipynb", cell_id, env)
+            self.branch("stage4/halflife_translation_efficiency.ipynb", cell_id, env)
         self.assertIsNone(env["gate"])
         self.assertIsNone(env["baselines"])
         self.assertEqual(len(self.displayed), 2)
@@ -301,7 +310,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         write_csv(self.folder / "gate.csv", tuple(blocked), [gate_row(), blocked])
         before = self.snapshot()
         for cell_id in ("8911ff86", "d2cdfe59"):
-            self.branch("tier3_halflife_te.ipynb", cell_id, env)
+            self.branch("stage4/halflife_translation_efficiency.ipynb", cell_id, env)
         self.assertEqual(len(self.displayed), 2)
         self.assertEqual(list(env["gate"].index), ["synthetic", "blocked"])
         self.assertTrue(env["gate"].loc["blocked", list(unavailable)].isna().all())
@@ -309,7 +318,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
 
         # This selection cell contains only metadata filtering and printing. It must
         # use the saved verdict, without loading inputs or recomputing a live gate.
-        doc = json.loads((ROOT / "Code/stage4/tier3_halflife_te.ipynb").read_text(encoding="utf-8"))
+        doc = json.loads((ROOT / "Code/stage4/halflife_translation_efficiency.ipynb").read_text(encoding="utf-8"))
         cell = next(c for c in doc["cells"] if c["id"] == "c56eac35")
         with redirect_stdout(self.messages), patch.object(Path, "mkdir", forbidden), \
                 patch.object(pd.DataFrame, "to_csv", forbidden):
@@ -329,7 +338,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         )
         write_csv(self.folder / "gate.csv", tuple(row), [row])
         before = self.snapshot()
-        self.branch("tier3_halflife_te.ipynb", "8911ff86", env)
+        self.branch("stage4/halflife_translation_efficiency.ipynb", "8911ff86", env)
         self.assertIsNotNone(env["gate"])
         self.assertTrue(pd.isna(env["gate"].loc["synthetic", "rows with a 3' region"]))
         self.assertEqual(env["gate"].loc["synthetic", "rows with a coding region"], 0)
@@ -338,7 +347,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
             with self.subTest(changes=changes):
                 malformed = {**row, **changes}
                 write_csv(self.folder / "gate.csv", tuple(malformed), [malformed])
-                self.branch("tier3_halflife_te.ipynb", "8911ff86", env)
+                self.branch("stage4/halflife_translation_efficiency.ipynb", "8911ff86", env)
                 self.assertIsNone(env["gate"])
 
     def test_passing_or_unexplained_gate_cannot_hide_missing_diagnostics(self):
@@ -353,7 +362,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
                 row = gate_row(verdict=verdict, caveats=caveats, **{"median transcript nt": ""})
                 write_csv(self.folder / "gate.csv", tuple(row), [row])
                 before = self.snapshot()
-                self.branch("tier3_halflife_te.ipynb", "8911ff86", env)
+                self.branch("stage4/halflife_translation_efficiency.ipynb", "8911ff86", env)
                 self.assertIsNone(env["gate"])
                 self.assertEqual(before, self.snapshot())
 
@@ -377,7 +386,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
             with self.subTest(case=index):
                 write_csv(self.folder / "gate.csv", tuple(blocked), rows)
                 before = self.snapshot()
-                self.branch("tier3_halflife_te.ipynb", "8911ff86", env)
+                self.branch("stage4/halflife_translation_efficiency.ipynb", "8911ff86", env)
                 self.assertIsNone(env["gate"])
                 self.assertEqual(before, self.snapshot())
 
@@ -386,7 +395,7 @@ class SavedNotebookBranchesTests(unittest.TestCase):
         path = self.folder / "encoder_probes.csv"
         path.write_text(path.read_text(encoding="utf-8").replace("0.3", "nan"), encoding="utf-8")
         for cell_id in ("fc21afe3", "398d1d5f"):
-            self.branch("tier3_halflife_te.ipynb", cell_id, env)
+            self.branch("stage4/halflife_translation_efficiency.ipynb", cell_id, env)
         self.assertIsNone(env["encoder_scores"])
         self.assertEqual(len(self.displayed), 1)
 

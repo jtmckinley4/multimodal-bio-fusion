@@ -692,7 +692,7 @@ def grid_protein(seq):
     This matters most on CoV-Vac, whose 81-nucleotide fragments are cut from a construct
     rather than being coding sequences: under the stop-at-first-stop rule only 0.7% of them
     translate to a full reading frame and 6.2% translate to nothing at all. The choice is
-    recorded as a deviation in Code/stage3/01_blf_datasets.ipynb; BioLangFusion does not
+    recorded as a deviation in Code/stage3/blf_datasets.ipynb; BioLangFusion does not
     state how it fed such fragments to its protein encoder.
     """
     from Bio.Seq import Seq

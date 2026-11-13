@@ -37,7 +37,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.code = self.root / "Code"
         self.code.mkdir()
-        self.cells = json.loads((ROOT / "Code/stage4/tier2_encoder_swaps.ipynb").read_text(
+        self.cells = json.loads((ROOT / "Code/stage4/encoder_swaps.ipynb").read_text(
             encoding="utf-8"))["cells"]
 
     def result(self, relative, variant, **changes):

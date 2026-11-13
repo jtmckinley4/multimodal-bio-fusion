@@ -241,7 +241,7 @@ class SwapReportingTests(unittest.TestCase):
         self.assertFalse((self.root / "analyses").exists())
 
     def test_notebook_switch_defaults_off_and_stops_training_combination_in_setup(self):
-        notebook = json.loads((ROOT / "Code/stage4/tier2_encoder_swaps.ipynb").read_text(encoding="utf8"))
+        notebook = json.loads((ROOT / "Code/stage4/encoder_swaps.ipynb").read_text(encoding="utf8"))
         cells = {c.get("id"): "".join(c["source"]) for c in notebook["cells"]}
         source = cells["swaps-settings"]
         guard = source[source.index("RUN_SAVED_COMPARISONS ="):source.index("# Cache chunking")]
@@ -266,7 +266,7 @@ class SwapReportingTests(unittest.TestCase):
         state["build_or_reuse_report"].assert_not_called()
 
     def test_enabled_notebook_report_uses_synthetic_saved_results_only(self):
-        notebook = json.loads((ROOT / "Code/stage4/tier2_encoder_swaps.ipynb").read_text(encoding="utf8"))
+        notebook = json.loads((ROOT / "Code/stage4/encoder_swaps.ipynb").read_text(encoding="utf8"))
         cells = {c.get("id"): "".join(c["source"]) for c in notebook["cells"]}
         def forbidden(*args, **kwargs):
             raise AssertionError("Reporting attempted training or extraction")
@@ -297,7 +297,7 @@ class SwapReportingTests(unittest.TestCase):
         self.assertIn("fixture", state["SAVED_COMPARISON_REPORTS"])
 
     def test_notebook_report_helper_preserves_inputs_and_analysis_settings(self):
-        notebook = json.loads((ROOT / "Code/stage4/tier2_encoder_swaps.ipynb").read_text(encoding="utf8"))
+        notebook = json.loads((ROOT / "Code/stage4/encoder_swaps.ipynb").read_text(encoding="utf8"))
         source = next("".join(cell["source"]) for cell in notebook["cells"]
                       if cell.get("id") == "swaps-paired-report-def")
         # Interleaved partitions and non-default indices expose row-order mistakes.

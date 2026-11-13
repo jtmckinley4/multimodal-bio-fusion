@@ -4,7 +4,7 @@ This folder holds manuscript figures in [paper/](paper/) as vector PDFs for Over
 
 ## Paper figures
 
-The catalog covers the six numbered Stage 1 figures and fifteen additional analysis or conceptual figures, using the retained pair tables, values recorded in the manuscript and earlier project plans. **Historical plan** entries describe the plans drawn in those images, not current completion or scheduling. Use the [Stage 4](../../../Code/stage4/README.md) and [Stage 5](../../../Code/stage5/README.md) guides for the current investigation and the [planning route](../../README.md#follow-the-research-plan) for task status.
+The catalog covers the six numbered Stage 1 figures and fifteen additional analysis or conceptual figures, using the retained pair tables, values recorded in the manuscript and earlier project plans. **Historical plan** entries describe the plans drawn in those images, not current completion or scheduling. Use the [Stage 4 investigation and proposals](../../../Code/stage4/README.md) for the current direction and the [planning route](../../README.md#follow-the-research-plan) for task status.
 
 | File | What it shows |
 | --- | --- |

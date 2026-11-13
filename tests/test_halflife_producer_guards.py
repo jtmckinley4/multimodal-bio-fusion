@@ -31,7 +31,7 @@ def forbidden(*args, **kwargs):
 
 class ProducerGuardTests(unittest.TestCase):
     def setUp(self):
-        doc = json.loads((ROOT / "Code/stage4/tier3_halflife_te.ipynb").read_text(encoding="utf-8"))
+        doc = json.loads((ROOT / "Code/stage4/halflife_translation_efficiency.ipynb").read_text(encoding="utf-8"))
         self.cells = {c["id"]: "".join(c["source"]) for c in doc["cells"] if c["cell_type"] == "code"}
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

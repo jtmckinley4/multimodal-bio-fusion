@@ -95,31 +95,31 @@ DATASETS = {
 }
 
 
-# BioLangFusion's five benchmarks. Ab1 is not registered: its file is not in the public
-# CodonBERT release, and Code/stage3/01_blf_datasets.ipynb records what is known about it.
+# Four available BioLangFusion benchmarks. Ab1 was not located in the inspected
+# CodonBERT release; Code/stage3/blf_datasets.ipynb records that limitation.
 BLF_BENCHMARKS = ("fungal_expression", "ecoli_proteins", "mrna_stability", "cov_vac_degradation")
 
-# BioLangFusion states a 1,000-token input limit for its encoders. Keeping sequences of at
-# most 999 nucleotides reproduces its reported "used" counts exactly on all four registered
-# benchmarks (3,138 fungal, 4,450 E. coli, 23,929 mRNA stability, 2,400 CoV-Vac), so the
-# limit is read as 999 nucleotides plus one start token, and longer sequences are dropped
-# rather than truncated.
+# Keeping at most 999 nucleotides matches the paper's reported retained counts for the
+# four available files. This is our inferred row filter, not a recovered historical
+# preprocessing rule or a common tokenizer limit. Count agreement does not establish
+# identical row membership or resolve the paper's different truncation description.
+# Longer rows are dropped here, not truncated.
 BLF_LENGTH_LIMIT = 999
 
 
 def blf_benchmark_rows(key, split=None, data_dir=DEFAULT_DATA_DIR, length_limit=BLF_LENGTH_LIMIT):
-    """Return one BioLangFusion benchmark's rows under its published preprocessing.
+    """Return benchmark rows under the project's inferred length filter.
 
-    Keeps the file's own ``Split`` assignment and drops sequences longer than length_limit
-    nucleotides; with split, returns only that split's rows. The returned frame carries the
-    original file index, the stripped uppercase sequence in a ``sequence`` column, and its
-    ``length``.
+    Drops rows missing a sequence and strips/uppercases the remaining strings. Keeps the
+    file's own ``Split`` assignment and drops sequences longer than length_limit
+    nucleotides; with split, returns only that split's rows. The returned frame retains
+    the original file index and adds normalized ``sequence`` and ``length`` columns.
 
-    The Stage 1 filters of is_retained are deliberately not applied: they require an in-frame
-    ATG start, which holds for only 1.6% of the 81-nucleotide CoV-Vac fragments, so applying
-    them would discard a benchmark BioLangFusion reports. How each stream reaches the codon
-    grid, including the protein stream for sequences without a start codon, is decided in the
-    reproduction itself rather than here.
+    The Stage 1 is_retained filter is deliberately not applied: its coding-sequence
+    requirements would exclude most designed CoV-Vac fragments.
+
+    Encoder inputs are prepared separately by fusion.token_embeddings.inputs_for_rows,
+    including its grid-preserving translation of complete triplets for the protein stream.
     """
     if key not in BLF_BENCHMARKS:
         raise ValueError(f"{key} is not one of the registered BioLangFusion benchmarks: {BLF_BENCHMARKS}")

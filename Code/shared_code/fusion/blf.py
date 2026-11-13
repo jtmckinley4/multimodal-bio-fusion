@@ -6,7 +6,7 @@ same head on one stream at its own resolution, which is what "single-modal basel
 mean when no alignment is needed.
 
 Reading the streams is the part the paper does not describe. The caches written in
-Code/stage3/02_token_embeddings.ipynb hold one row per benchmark sequence, in the file's
+Code/stage3/blf_token_embeddings.ipynb hold one row per benchmark sequence, in the file's
 own order, so a row index selects the same sequence in all three caches and in the
 benchmark frame. Rows are padded to the longest in their batch, each stream on its own
 time axis, and the number of codons in each row travels with the batch: it is what the

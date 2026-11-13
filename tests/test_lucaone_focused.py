@@ -18,7 +18,7 @@ from shared_code import lucaone, matrix_cache
 
 
 def cell(cell_id):
-    book = json.loads((ROOT / "Code/stage4/tier2_lucaone_isoformer.ipynb").read_text(encoding="utf-8"))
+    book = json.loads((ROOT / "Code/stage1/lucaone_representation_comparison.ipynb").read_text(encoding="utf-8"))
     return "".join(next(c for c in book["cells"] if c.get("id") == cell_id)["source"])
 
 
@@ -169,7 +169,7 @@ class FocusedNotebookTests(unittest.TestCase):
         self.assertIsNone(namespace["lucaone_followup_inputs"])
 
     def test_conflicting_flags_are_rejected_inside_setup(self):
-        book = json.loads((ROOT / "Code/stage4/tier2_lucaone_isoformer.ipynb").read_text(encoding="utf-8"))
+        book = json.loads((ROOT / "Code/stage1/lucaone_representation_comparison.ipynb").read_text(encoding="utf-8"))
         setup = next("".join(c["source"]) for c in book["cells"]
                      if c["cell_type"] == "code" and "RUN_LUCAONE_COMPARISON = False" in "".join(c["source"]))
         tree = ast.parse(setup)

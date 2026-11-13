@@ -36,8 +36,69 @@ class Cohort:
     duplicate_keys: list
 
 
+def _prediction_shape(payload, expected_shape):
+    """Require finite rectangular panels without computing scores or importing ML."""
+    shapes = []
+    for name in ("test_truth", "test_prediction"):
+        values = payload.get(name)
+        if (not isinstance(values, list) or not values
+                or not isinstance(values[0], list) or not values[0]):
+            raise ValueError(f"{name} must be a nonempty two-dimensional panel")
+        width = len(values[0])
+        for row in values:
+            if not isinstance(row, list) or len(row) != width:
+                raise ValueError(f"{name} has inconsistent panel widths")
+            if any(isinstance(value, bool) or not isinstance(value, (int, float))
+                   or not math.isfinite(value) for value in row):
+                raise ValueError(f"{name} contains a nonfinite or nonnumeric value")
+        shapes.append((len(values), width))
+    if shapes[0] != shapes[1]:
+        raise ValueError("saved target and prediction panel shapes differ")
+    if expected_shape is not None and shapes[0] != expected_shape:
+        raise ValueError(f"saved panel shape {shapes[0]} differs from expected {expected_shape}")
+    return shapes[0]
+
+
+def _check_recorded_identity(payload, *, label, n_heads, budget, val_fraction, shape):
+    """Validate a present versioned identity; never reinterpret a malformed one as legacy."""
+    if "identity" not in payload:
+        return
+    # Import only for records that claim an identity. Ordinary legacy score reading
+    # retains this module's standard-library-only import path.
+    from . import run_identity
+
+    identity = run_identity.validate_identity(
+        payload["identity"], config=payload["config"],
+        variant=payload["variant"], benchmark="gtex_pilot",
+    )
+    loader = identity["loader"]
+    if loader["kind"] != "isoformer":
+        raise ValueError("recorded loader is not the IsoFormer pilot loader")
+    requested = {
+        "n_heads": n_heads, "budget": budget, "val_fraction": val_fraction,
+        "batch_size": payload["config"]["batch_size"], "seed": payload["config"]["seed"],
+    }
+    for key, value in requested.items():
+        if key in loader and loader[key] != value:
+            raise ValueError(f"recorded loader {key} differs from the requested cohort")
+    model = identity["model"]
+    kwargs = model.get("kwargs", {})
+    if not isinstance(kwargs, dict):
+        raise ValueError("recorded model kwargs must be an object")
+    if "n_heads" in kwargs and kwargs["n_heads"] != n_heads:
+        raise ValueError("recorded model n_heads differs from the requested cohort")
+    if "modalities" in model and model["modalities"] != label.split("+"):
+        raise ValueError("recorded model modalities differ from the requested combination")
+    if shape is not None:
+        if "n_outputs" in model and model["n_outputs"] != shape[1]:
+            raise ValueError("recorded model output width differs from the saved panel")
+    # Recorded split targets use dataset-index order. BudgetedBatches emits rows
+    # in attention-cost order, so that fingerprint cannot validate the saved
+    # prediction order. The cohort check compares the emitted target panels only.
+
+
 def _read_record(path, *, reference, config, variants, seeds, n_heads, budget,
-                 val_fraction):
+                 val_fraction, require_predictions, expected_shape):
     """Return a reader row or raise a concrete exclusion reason."""
     match = _TAG.fullmatch(path.stem)
     if match is None:
@@ -80,18 +141,26 @@ def _read_record(path, *, reference, config, variants, seeds, n_heads, budget,
     epochs = payload.get("epochs")
     if type(epochs) is not int or epochs <= 0:
         raise ValueError("record does not report a positive completed epoch count")
-    return {
+    shape = _prediction_shape(payload, expected_shape) if require_predictions else None
+    _check_recorded_identity(
+        payload, label=label, n_heads=n_heads, budget=budget,
+        val_fraction=val_fraction, shape=shape,
+    )
+    row = {
         "variant": label,
         "seed": seed,
         "Spearman": score,
         "path": str(path),
         "identity": "historical label mapped" if legacy else "stored modality label",
     }
+    if require_predictions:
+        row["result"] = payload
+    return row
 
 
-def read_cohort(reference_dir, repeats_dir, *, train_config, variants=VARIANTS,
+def read_cohort(reference_dir, repeats_dir=None, *, train_config, variants=VARIANTS,
                 expected_seeds=(0, 1, 2), n_heads=8, budget=300_000_000,
-                val_fraction=0.05):
+                val_fraction=0.05, require_predictions=False, expected_shape=None):
     """Inventory compatible saved records; never fit, write, or drop duplicate keys.
 
     ``train_config`` is the notebook's complete TrainConfig dictionary. Its seed is
@@ -100,9 +169,21 @@ def read_cohort(reference_dir, repeats_dir, *, train_config, variants=VARIANTS,
     Unbudgeted siblings and unknown labels are reported as exclusions. Duplicate
     modality/seed keys are removed from selection and block the notebook summary.
 
-    Budget/heads can be checked only against the tag, and validation fraction is a
-    caller setting absent from these JSONs. These limitations are always reported;
-    input/cache identity and the historical implementation are not verified here.
+    ``repeats_dir=None`` reads only the reference directory. The default returns
+    score rows without requiring predictions. With ``require_predictions=True``,
+    each accepted row also contains its validated JSON under ``result``; target
+    and prediction panels must be finite, nonempty and identically shaped, with
+    optional ``expected_shape=(rows, targets)``. All selected target panels must
+    agree in row and target-column order. Conflicting panels block the entire
+    selected prediction cohort because this reader has no independent target
+    source from which to choose the correct order. Matching emitted target panels
+    does not recover evaluation row identity; dataset-order fingerprints cannot
+    establish the budgeted loader's emission order. No scores are recomputed.
+
+    Historical budget/heads come from the tag and validation fraction is absent
+    from those JSONs. Present versioned identities must validate, and any recorded
+    request settings must agree. Neither route independently verifies input/cache
+    contents or reconstructs the historical producing implementation.
     """
     variants, seeds = tuple(variants), tuple(expected_seeds)
     if not variants or len(set(variants)) != len(variants) or set(variants) - set(VARIANTS):
@@ -115,10 +196,19 @@ def read_cohort(reference_dir, repeats_dir, *, train_config, variants=VARIANTS,
         raise ValueError("budget must be a positive whole number of million attention cells")
     if not isinstance(val_fraction, (int, float)) or not 0 < val_fraction < 1:
         raise ValueError("val_fraction must lie strictly between zero and one")
+    if type(require_predictions) is not bool:
+        raise ValueError("require_predictions must be a Boolean")
+    if expected_shape is not None:
+        if not require_predictions:
+            raise ValueError("expected_shape requires require_predictions=True")
+        if (not isinstance(expected_shape, (tuple, list)) or len(expected_shape) != 2
+                or any(type(size) is not int or size < 1 for size in expected_shape)):
+            raise ValueError("expected_shape must contain two positive integer dimensions")
+        expected_shape = tuple(expected_shape)
     config = dict(train_config)
     config.pop("seed", None)
-    folders = (Path(reference_dir), Path(repeats_dir))
-    if folders[0].resolve() == folders[1].resolve():
+    folders = (Path(reference_dir),) if repeats_dir is None else (Path(reference_dir), Path(repeats_dir))
+    if len(folders) == 2 and folders[0].resolve() == folders[1].resolve():
         raise ValueError("reference and repeats must be different directories")
 
     by_key = defaultdict(list)
@@ -133,6 +223,7 @@ def read_cohort(reference_dir, repeats_dir, *, train_config, variants=VARIANTS,
                 row = _read_record(
                     path, reference=index == 0, config=config, variants=variants,
                     seeds=seeds, n_heads=n_heads, budget=budget, val_fraction=val_fraction,
+                    require_predictions=require_predictions, expected_shape=expected_shape,
                 )
             except (OSError, UnicodeError, ValueError, TypeError) as error:
                 issues.append({"file": str(path), "status": "excluded", "reason": str(error)})
@@ -150,12 +241,23 @@ def read_cohort(reference_dir, repeats_dir, *, train_config, variants=VARIANTS,
             records.append(rows[0])
     order = {variant: index for index, variant in enumerate(variants)}
     records.sort(key=lambda row: (order[row["variant"]], row["seed"]))
+    if require_predictions and records:
+        targets = records[0]["result"]["test_truth"]
+        if any(row["result"]["test_truth"] != targets for row in records[1:]):
+            for row in records:
+                issues.append({
+                    "file": row["path"], "status": "excluded",
+                    "reason": "selected target panels disagree in values, shape or order; "
+                              "the entire prediction cohort is withheld without an independent target reference",
+                })
+            records = []
     if records:
         issues.append({
             "file": "selected cohort", "status": "provenance limit",
-            "reason": "Stored training settings match; heads/budget come from filenames. "
-                      f"Validation fraction {val_fraction}, input identity and historical "
-                      "code/model settings are not established by these records.",
+            "reason": "Stored training settings match. Historical heads/budget come from filenames; "
+                      "available versioned settings are checked against the request. "
+                      f"Validation fraction {val_fraction} is checked when recorded. Actual input/cache "
+                      "contents and historical producing code/model settings are not established here.",
         })
 
     coverage = []

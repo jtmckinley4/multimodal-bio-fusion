@@ -18,13 +18,13 @@ A stronger replacement can improve a fused model without making fusion beneficia
 
 ## Research progression
 
-Stage 1 characterizes representations; Stage 2 defines what alignment means; Stage 3 checks implementations; Stage 4 compares their predictions; Stage 5 proposes tests of the explanations. This is a reading route, not a requirement to execute every stage in order. Findings can send us back to an input rule, baseline or implementation.
+Stage 1 characterizes representations; Stage 2 defines what alignment means; Stage 3 establishes reference methods and baselines; Stage 4 investigates when and why fusion helps. Reference validation can include predictive comparisons and repeated fits. Stage 4 brings comparative and explanatory experiments together, including proposals that previously appeared under Stage 5. This is a reading route, not a requirement to execute every stage in order.
 
 ### Stage 1 analysis
 
 The [stability and GTEx notebooks](Code/stage1/README.md) compare twelve frozen encoders using pooled vectors and fitted ridge predictors. Stability supplies DNA/RNA views and a translation of the same coding sequence. GTEx supplies genomic, transcript and protein contexts with 30 tissue-expression targets. Because both inputs and targets change, differences between these tasks cannot isolate the value of extra context.
 
-The analyses examine individual prediction, representation agreement and pairwise concatenation; selected attention diagnostics generate hypotheses. The mRFP synonymous control checks behavior when nucleotide sequences vary but the protein stays fixed. Detailed encoder settings and pair coverage belong in the [Stage 1 overview](docs/stage1-overview.md).
+The analyses examine individual prediction, representation agreement and pairwise concatenation; selected attention diagnostics generate hypotheses. The [mRFP control](Code/stage1/mrfp_representation_control.ipynb) tests what nucleotide embeddings add beyond calculated features when protein input stays fixed. The [LucaOne comparison](Code/stage1/lucaone_representation_comparison.ipynb) compares separately encoded nucleotide and protein representations with the same ridge predictor family; it does not locally reproduce LucaOne's pretraining or a learned fusion architecture. Detailed encoder settings and pair coverage belong in the [Stage 1 overview](docs/stage1-overview.md).
 
 **Findings.** Retained probes make codon-level RNA and protein encoders useful stability candidates. Composition explains substantial measured agreement, and transcript length is a strong GTEx reference. These are findings under the chosen probes, not proof that enforcing alignment or adding complex fusion will improve prediction. See the [result tables and qualifications](docs/stage1-overview.md#result-tables).
 
@@ -40,11 +40,11 @@ Initial designs begin without an explicit alignment loss and use positional corr
 
 Stage 2 is a definition and interpretation step, without a separate executable folder. The [October alignment discussion](docs/notes/Slides/Mina_Meeting_Slides_2026-10-07.pptx), manuscript and [Gantt Details tasks 7/23](docs/Research_Project_Plan_Gantt.xlsx) retain its rationale and conditional comparison.
 
-### Stage 3: building and checking models
+### Stage 3: reference methods and baselines
 
-The [Stage 3 guide](Code/stage3/README.md) connects four notebooks: benchmark audit → token extraction → BioLangFusion build comparison → LucaOne feasibility and the IsoFormer-style GTEx pilot. Token-level fusion retains positions that Stage 1's pooled vectors summarize away. Grid and input checks establish what the implementation computes; matching array dimensions alone does not establish biological correspondence.
+The [Stage 3 guide](Code/stage3/README.md) connects BioLangFusion's data and token preparation, build checks and reference benchmark comparisons; the GTEx input audit and frozen IsoFormer-style reference; and the adapted Coupled-Mamba reference and its controls. These notebooks establish what later experiments use as baselines, including predictive validation and repeats. Token-level fusion retains positions that Stage 1's pooled vectors summarize away; matching array dimensions alone does not establish biological correspondence.
 
-The available BLF comparison uses four benchmarks; Ab1 was absent from the inspected public release. Initial fungal fits and the GTEx pilot provide research evidence as well as implementation checks, so Stage 3 and Stage 4 overlap in purpose.
+The available BLF comparison uses four benchmarks; Ab1 was absent from the inspected public release. The GTEx and Coupled-Mamba implementations record their adaptations explicitly. Establishing a usable reference does not establish a complete published reproduction or make its input assumptions suitable for a different task.
 
 #### Architecture priorities
 
@@ -52,19 +52,15 @@ The [September 23 meeting](docs/notes/Slides/Mina_Meeting_Slides_2026-09-23.pptx
 
 Fuller IsoFormer reproduction is [deferred](Code/stage4/RUNBOOK.md#isoformer-reproduction-specification), distinct from the retained frozen GTEx pilot. Its preparation is preserved for possible reuse; controlled fusion comparisons do not require completion of the paper's entire training pipeline. The [runbook](Code/stage4/RUNBOOK.md#current-investigation-scope) retains the current scope and earlier decisions.
 
-### Stage 4: controlled comparisons
+### Stage 4: comparative and explanatory experiments
 
-The [Stage 4 investigation](Code/stage4/README.md) separates original BLF comparisons from one-encoder substitutions, mRFP controls, LucaOne representations, the GTEx pilot, and full-transcript half-life/translation-efficiency probes. These ask different questions; LucaOne stability and IsoFormer-style GTEx scores are not a direct contest.
+The [Stage 4 investigation](Code/stage4/README.md) uses those references to test encoder substitutions, biological sequence context and the value of combining representations. The existing encoder-swap and full-transcript half-life/translation-efficiency notebooks sit beside proposed tests of auxiliary correction, gate behavior, anchor-preserving attention and molecular-partner inputs.
 
-Stage 4 remains active. Completed evidence shows task-dependent outcomes and the importance of a strong single-encoder reference. Seed-0 swaps cover the available benchmark/replacement combinations, while repeat coverage varies. Existing-comparison repeats, missing matched comparisons and the separate stability evaluation without sequence overlap belong here. Read each notebook's saved-result inventory and [run records](docs/run-records.md) before forming a multi-seed claim; repetitions do not remove overlap.
+Stage 4 remains active. Completed evidence shows task-dependent outcomes and the importance of a strong single-encoder reference. Seed-0 swaps cover the available benchmark/replacement combinations, while repeat coverage varies. Existing-comparison repeats, missing matched comparisons and the separate stability evaluation without sequence overlap remain part of their investigations. Read each notebook's saved-result inventory and [run records](docs/run-records.md) before forming a multi-seed claim; repetitions do not remove overlap.
 
 The findings characterize these settings and motivate hypotheses. A prospective rule needs a stated expectation, simpler controls and an evaluation not already used to develop it. Fungal species/condition transfer remains a candidate setting, not a selected dataset or implemented experiment.
 
-### Stage 5: controlled tests of fusion hypotheses
-
-The [Stage 5 plan](Code/stage5/README.md) tests explanations suggested by Stage 4: auxiliary correction of a strong predictor, gate competition and position-specific contributions, anchor-preserving attention, and CDS/UTR correspondence. Its proposed notebooks have not been implemented or run. Molecular-partner tasks are conditional transfer studies.
-
-Existing results and their follow-ups remain in Stage 4; each new Stage 5 comparison includes its own matched baselines and repeats. A new split requires a distinct experiment identity, not automatically a new stage. The [Gantt and Details sheets](docs/Research_Project_Plan_Gantt.xlsx) map reliability to tasks 24/28, correction to 45, gates to 46, attention to 25, regions to 42 and conditional partner tasks to 47/48. Recorded statuses and historical dates do not establish execution.
+The explanatory comparisons remain proposals, with no implemented notebooks or completed runs. Each new experiment includes its own matched baselines and repeats; a new split requires a distinct experiment identity. The [Gantt and Details sheets](docs/Research_Project_Plan_Gantt.xlsx) map reliability to tasks 24/28, correction to 45, gates to 46, attention to 25, regions to 42 and conditional partner tasks to 47/48. Recorded statuses and historical dates do not establish execution.
 
 ## Repo structure
 
@@ -93,7 +89,7 @@ The ≤999-nucleotide filter matches BLF's reported used-row count without provi
 
 ### mRFP expression control
 
-[mRFP_Expression.csv](datasets/mRFP_Expression.csv) contains 1,459 observations of synonymous variants encoding one red fluorescent protein. Stage 1 checks representation behavior; Stage 4 tests expression prediction beyond calculated controls.
+[mRFP_Expression.csv](datasets/mRFP_Expression.csv) contains 1,459 observations of synonymous variants encoding one red fluorescent protein. Stage 1 checks representation behavior and expression prediction beyond calculated controls.
 
 `Value` is the natural log of mean red fluorescence normalized against GFPuv. Normalization addresses variation shared proportionally by the reporters; the log expresses equal fold changes as equal differences. It is not a molecule count, and the loader does not log it again. The [target guide](docs/methods/data-and-targets.md#mrfp-fluorescence-to-the-value-column) retains the formulas, example and limitations; the [control guide](docs/methods/sequences-to-predictions.md#pipeline-control-synonymous-recoding) explains its role.
 
@@ -107,7 +103,7 @@ Targets are released `log(x + 1)` tissue-averaged TPM values. The inspected rele
 
 ### Other BioLangFusion benchmarks
 
-The [Stage 3 audit](Code/stage3/01_blf_datasets.ipynb) introduces these alongside stability; GTEx and mRFP are separate from BLF's five-benchmark suite.
+The [Stage 3 audit](Code/stage3/blf_datasets.ipynb) introduces these alongside stability; GTEx and mRFP are separate from BLF's five-benchmark suite.
 
 | Supplied table | Target and interpretation |
 | --- | --- |
@@ -117,7 +113,7 @@ The [Stage 3 audit](Code/stage3/01_blf_datasets.ipynb) introduces these alongsid
 
 ### Full-transcript half-life and translation efficiency
 
-The [Stage 4 notebook](Code/stage4/tier3_halflife_te.ipynb) downloads separate mRNABench tables with transcript-region information; they are not expanded versions of the stability CSV. The [stage guide](Code/stage4/README.md#full-transcript-half-life-and-translation-efficiency) distinguishes screened tables from the primary human encoder comparisons.
+The [Stage 4 notebook](Code/stage4/halflife_translation_efficiency.ipynb) downloads separate mRNABench tables with transcript-region information; they are not expanded versions of the stability CSV. The [stage guide](Code/stage4/README.md#full-transcript-half-life-and-translation-efficiency) distinguishes screened tables from the primary human encoder comparisons.
 
 The primary half-life target is a consensus stability component, not time in hours. Human TE is an RNA-abundance-adjusted ribosome-occupancy score, not a raw ribosome/RNA ratio or completed proteins per second. [Target provenance](docs/methods/data-and-targets.md#full-transcript-targets-half-life-and-translation) explains their transformations. Better prediction of these scores does not mean proportional increases in lifetime or protein production.
 
@@ -131,7 +127,7 @@ Use the project's Python environment. Install PyTorch through its [official sele
 python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biopython "transformers==5.15.1" multimolecule einops ipykernel ViennaRNA
 ```
 
-`ViennaRNA` is imported as `RNA` for folding calculations in the [mRFP notebook](Code/stage4/tier1_mrfp_control.ipynb). Its calculation mode also uses pooled embeddings from [Stage 1's control analysis](Code/stage1/Stage1_stability.ipynb); reading saved results requires neither ViennaRNA nor those embeddings.
+`ViennaRNA` is imported as `RNA` for folding calculations in the [mRFP notebook](Code/stage1/mrfp_representation_control.ipynb). Its calculation mode also uses pooled embeddings from [Stage 1's control analysis](Code/stage1/Stage1_stability.ipynb); reading saved results requires neither ViennaRNA nor those embeddings.
 
 In VS Code, use the Python/Jupyter extensions and [select that environment as the notebook kernel](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management). Stage 1 expects `Code/stage1/` as the kernel working directory for imports and relative embedding paths; dataset loaders resolve the repository's `datasets/` independently. Other notebooks retain their own settings and prerequisites.
 
@@ -164,6 +160,8 @@ Follow [tests/README.md](tests/README.md) from the repository root in the notebo
 ## Results, caches, and intermediate files
 
 Keep routine model caches and regenerable intermediates local under specific ignore paths; retain supplied datasets and notebooks in Git. Share selected results deliberately, with [run records](docs/run-records.md) connecting inputs, code, checkpoints, settings, environment and outputs. Avoid blanket scientific-format ignores. Preserve evidence before any deliberate recomputation that could overwrite it.
+
+Notebook locations follow their research roles; existing result and cache directories retain their historical paths. For example, Stage 3's BLF benchmark reader still uses `Code/stage4/results/phaseA/`, while Stage 1's moved controls retain their existing Stage 4 result locations. A directory name is not an experiment identity, and moving a reader does not change its recorded evidence.
 
 When an output changes, update this inventory and its handling, adjusting [.gitignore](.gitignore) only for the relevant paths. Cache reuse must match the recorded input/extraction identity; an existing file alone is insufficient. The [cache guide](docs/methods/sequences-to-predictions.md#embedding-matrices-and-cache-reuse) explains verification and recovery.
 

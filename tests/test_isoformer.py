@@ -9,6 +9,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
@@ -190,6 +191,176 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(result.epochs, 2, variant)
             self.assertIsNotNone(result.test_prediction, variant)
             self.assertEqual(np.asarray(result.test_prediction).shape, (4, len(TISSUES)))
+
+
+class TrackingCache:
+    """Synthetic token rows that fail immediately if an unused stream is read."""
+
+    def __init__(self, modality, lengths, readable=True):
+        self.lengths = np.asarray(lengths)
+        self.width = WIDTHS[modality]
+        self.readable = readable
+        self.accessed = []
+
+    def __getitem__(self, index):
+        if not self.readable:
+            raise AssertionError("an unused token cache was indexed")
+        self.accessed.append(index)
+        shape = (int(self.lengths[index]), self.width)
+        return (np.arange(np.prod(shape)).reshape(shape) + index).astype(np.float16)
+
+
+class SelectedStreamLoadingTests(unittest.TestCase):
+    def streams(self, selected=isoformer.MODALITIES):
+        lengths = {"dna": [6] * 20, "rna": [2 + i % 8 for i in range(20)],
+                   "prot": [1 + i % 6 for i in range(20)]}
+        rows = pd.DataFrame({"split": ["train"] * 14 + ["test"] * 6,
+                             **{t: np.arange(20) + j for j, t in enumerate(TISSUES)}})
+        caches = {m: TrackingCache(m, lengths[m], readable=m in selected)
+                  for m in isoformer.MODALITIES}
+        return isoformer.GTExStreams("stub", rows, caches, TISSUES)
+
+    def test_selected_streams_preserve_splits_batches_labels_and_tensors(self):
+        # Distinct lengths make the all-three budget consequential, even for single fits.
+        settings = dict(batch_size=4, val_fraction=0.25, seed=7, budget=2_000)
+        for selected in (("dna",), ("rna",), ("prot",), ("dna", "rna"),
+                         ("dna", "prot"), ("rna", "prot"), isoformer.MODALITIES):
+            with self.subTest(modalities=selected):
+                original = isoformer.loaders_for(self.streams(), **settings)
+                streams = self.streams(selected)
+                narrowed = isoformer.loaders_for(streams, modalities=selected, **settings)
+                for split in ("train", "val", "test"):
+                    left, right = original[split], narrowed[split]
+                    np.testing.assert_array_equal(left.dataset.indices, right.dataset.indices)
+                    self.assertEqual(left.batch_sampler.batches, right.batch_sampler.batches)
+                    self.assertEqual(left.dataset.modalities, isoformer.MODALITIES)
+                    self.assertEqual(right.dataset.modalities, selected)
+                    for epoch in range(3):
+                        # Iterating loaders consumes a PyTorch base seed even without workers.
+                        torch.manual_seed(epoch)
+                        full_batches = list(left)
+                        full_rng = torch.get_rng_state()
+                        torch.manual_seed(epoch)
+                        selected_batches = list(right)
+                        self.assertTrue(torch.equal(full_rng, torch.get_rng_state()))
+                        self.assertEqual(len(full_batches), len(selected_batches))
+                        for full, only in zip(full_batches, selected_batches):
+                            self.assertEqual(tuple(only.streams), selected)
+                            self.assertEqual(tuple(only.masks), selected)
+                            torch.testing.assert_close(full.labels, only.labels, rtol=0, atol=0)
+                            for modality in selected:
+                                torch.testing.assert_close(full.streams[modality], only.streams[modality],
+                                                           rtol=0, atol=0)
+                                self.assertTrue(torch.equal(full.masks[modality], only.masks[modality]))
+                            moved = only.to("cpu")
+                            self.assertEqual(tuple(moved.streams), selected)
+                            torch.testing.assert_close(moved.labels, only.labels, rtol=0, atol=0)
+                for modality, cache in streams.caches.items():
+                    self.assertEqual(bool(cache.accessed), modality in selected)
+
+    def test_direct_dataset_reads_only_selected_streams(self):
+        streams = self.streams(("rna",))
+        dataset = isoformer.ExpressionDataset(streams, np.array([4, 1]), modalities=("rna",))
+        tokens, label = dataset[0]
+        self.assertEqual(tuple(tokens), ("rna",))
+        self.assertEqual(streams.caches["rna"].accessed, [4])
+        np.testing.assert_array_equal(label, streams.labels[4])
+
+    def test_invalid_selections_are_rejected_before_cache_access(self):
+        streams = self.streams(())
+        for selection in ((), ("rna", "rna"), ("protein",), "rna", 7, (["rna"],), (None,)):
+            with self.subTest(selection=selection):
+                with self.assertRaisesRegex(ValueError, "modalities"):
+                    isoformer.loaders_for(streams, modalities=selection)
+                with self.assertRaisesRegex(ValueError, "modalities"):
+                    isoformer.ExpressionDataset(streams, np.array([0]), modalities=selection)
+        self.assertTrue(all(not cache.accessed for cache in streams.caches.values()))
+
+    def test_missing_selected_cache_is_rejected(self):
+        streams = self.streams()
+        del streams.caches["rna"]
+        with self.assertRaisesRegex(ValueError, "no caches.*rna"):
+            isoformer.ExpressionDataset(streams, np.array([0]), modalities=("rna",))
+
+    def test_collation_refuses_empty_unknown_and_mixed_stream_selections(self):
+        label = np.zeros(len(TISSUES), dtype=np.float32)
+        tokens = np.ones((2, WIDTHS["rna"]), dtype=np.float32)
+        cases = [[], [({}, label)], [({"unknown": tokens}, label)],
+                 [({"rna": tokens}, label), ({"dna": tokens}, label)], [(tokens, label)]]
+        for batch in cases:
+            with self.subTest(batch_size=len(batch)):
+                with self.assertRaises(ValueError):
+                    isoformer.collate(batch)
+
+
+class GTExStreamCleanupTests(unittest.TestCase):
+    def setUp(self):
+        self.rows = pd.DataFrame({"split": ["train"], **{
+            tissue: [0.0] for tissue in isoformer.datasets_module.GTEX_TISSUES}})
+        self.caches = [MagicMock() for _ in isoformer.MODALITIES]
+        for cache in self.caches:
+            cache.__len__.return_value = 1
+
+    def test_partial_open_failure_closes_only_opened_caches(self):
+        failure = OSError("third cache failed to open")
+        with patch("pandas.read_csv", return_value=self.rows), \
+                patch.object(isoformer, "summarize", side_effect=[*self.caches[:2], failure]):
+            with self.assertRaises(OSError) as raised:
+                isoformer.GTExStreams.open("unused")
+        self.assertIs(raised.exception, failure)
+        for cache in self.caches[:2]:
+            cache.close.assert_called_once_with()
+        self.caches[2].close.assert_not_called()
+
+    def test_check_failure_preserves_original_and_reports_all_cleanup_failures(self):
+        failure = ValueError("wrong row set")
+        self.caches[0].close.side_effect = OSError("first cleanup failed")
+        self.caches[1].close.side_effect = OSError("second cleanup failed")
+        with patch("pandas.read_csv", return_value=self.rows), \
+                patch.object(isoformer, "summarize", side_effect=self.caches), \
+                patch.object(isoformer.GTExStreams, "check", side_effect=failure):
+            with self.assertRaises(ValueError) as raised:
+                isoformer.GTExStreams.open("unused")
+        self.assertIs(raised.exception, failure)
+        for cache in self.caches:
+            cache.close.assert_called_once_with()
+        if hasattr(failure, "add_note"):
+            notes = " ".join(failure.__notes__)
+            self.assertIn("first cleanup failed", notes)
+            self.assertIn("second cleanup failed", notes)
+
+    def test_keyboard_interrupt_during_open_also_releases_owned_caches(self):
+        failure = KeyboardInterrupt()
+        with patch("pandas.read_csv", return_value=self.rows), \
+                patch.object(isoformer, "summarize", side_effect=[self.caches[0], failure]):
+            with self.assertRaises(KeyboardInterrupt) as raised:
+                isoformer.GTExStreams.open("unused")
+        self.assertIs(raised.exception, failure)
+        self.caches[0].close.assert_called_once_with()
+
+    def test_successful_open_keeps_caches_until_explicit_close(self):
+        with patch("pandas.read_csv", return_value=self.rows), \
+                patch.object(isoformer, "summarize", side_effect=self.caches):
+            streams = isoformer.GTExStreams.open("unused")
+        for cache in self.caches:
+            cache.close.assert_not_called()
+        streams.close()
+        for cache in self.caches:
+            cache.close.assert_called_once_with()
+
+    def test_close_attempts_every_cache_and_preserves_first_error(self):
+        first = OSError("first failure")
+        self.caches[0].close.side_effect = first
+        self.caches[1].close.side_effect = RuntimeError("later failure")
+        streams = isoformer.GTExStreams("stub", self.rows,
+                                       dict(zip(isoformer.MODALITIES, self.caches)), ())
+        with self.assertRaises(OSError) as raised:
+            streams.close()
+        self.assertIs(raised.exception, first)
+        for cache in self.caches:
+            cache.close.assert_called_once_with()
+        if hasattr(first, "add_note"):
+            self.assertIn("later failure", " ".join(first.__notes__))
 
 
 if __name__ == "__main__":

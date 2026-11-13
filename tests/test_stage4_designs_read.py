@@ -61,7 +61,7 @@ class DesignReadingTests(unittest.TestCase):
         self.designs = self.folder / "designs" / "fixture"
         self.references.mkdir()
         self.designs.mkdir(parents=True)
-        notebook = json.loads((ROOT / "Code/stage4/tier4_designs.ipynb").read_text(
+        notebook = json.loads((ROOT / "Code/stage3/coupled_mamba_reference.ipynb").read_text(
             encoding="utf-8"))
         self.cells = {cell["id"]: "".join(cell["source"])
                       for cell in notebook["cells"] if cell["cell_type"] == "code"}

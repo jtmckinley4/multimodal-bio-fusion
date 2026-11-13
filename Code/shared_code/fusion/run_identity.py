@@ -665,9 +665,16 @@ def gtex_recovered_cache_records(streams, record_path, *, crop=None, verificatio
     return caches
 
 
-def identity_for_streams(streams, variant, config, *, loaders=None, model_kwargs=None,
-                         verification=None, crop=None, gtex_recovery=None):
-    """Adapter for already opened streams; metadata-only planners use the builders above."""
+def gtex_cache_records(streams, *, verification=None, crop=None, gtex_recovery=None):
+    """Verify pilot caches without fitting or rewriting their extraction metadata.
+
+    Modern records must validate on their own. Only complete legacy caches can use
+    the separate, qualified reconstruction; its format is not extraction evidence.
+    """
+    from .isoformer import STREAM_ENCODER
+
+    if not hasattr(streams, "tissues"):
+        raise ValueError("GTEx cache verification requires expression-panel streams.")
     if gtex_recovery is not None:
         caches, historical = {}, []
         for name, cache in streams.caches.items():
@@ -694,7 +701,17 @@ def identity_for_streams(streams, variant, config, *, loaders=None, model_kwargs
     else:
         caches = {name: cache_record(cache.cache_dir, verification=verification)
                   for name, cache in streams.caches.items()}
+    _, texts = _gtex_inputs(streams.rows, STREAM_ENCODER, crop)
+    _verify_cache_inputs(STREAM_ENCODER, caches, texts)
+    return caches
+
+
+def identity_for_streams(streams, variant, config, *, loaders=None, model_kwargs=None,
+                         verification=None, crop=None, gtex_recovery=None):
+    """Adapter for already opened streams; metadata-only planners use the builders above."""
     if hasattr(streams, "tissues"):
+        caches = gtex_cache_records(streams, verification=verification, crop=crop,
+                                    gtex_recovery=gtex_recovery)
         if loaders is None:
             raise ValueError("IsoFormer identity needs the actual prepared split loaders.")
         from .isoformer import STREAM_ENCODER
@@ -710,6 +727,10 @@ def identity_for_streams(streams, variant, config, *, loaders=None, model_kwargs
                                   split_indices={k: v.dataset.indices for k, v in loaders.items()},
                                   loader_settings=settings, model_kwargs=model_kwargs,
                                   crop=crop)
+    if gtex_recovery is not None:
+        raise ValueError("Historical cache recovery is restricted to the GTEx pilot.")
+    caches = {name: cache_record(cache.cache_dir, verification=verification)
+              for name, cache in streams.caches.items()}
     return blf_identity(rows=streams.rows, benchmark=streams.key, variant=variant,
                         config=config, encoders=streams.encoders, caches=caches,
                         task=streams.task, label_column=streams.label_column,

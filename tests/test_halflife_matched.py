@@ -26,7 +26,7 @@ def forbidden(*args, **kwargs):
 
 class MatchedNotebookTests(unittest.TestCase):
     def setUp(self):
-        path = ROOT / "Code/stage4/tier3_halflife_te.ipynb"
+        path = ROOT / "Code/stage4/halflife_translation_efficiency.ipynb"
         doc = json.loads(path.read_text(encoding="utf-8"))
         self.cells = {c["id"]: "".join(c["source"])
                       for c in doc["cells"] if c["cell_type"] == "code"}

@@ -7,9 +7,9 @@ Use this page to find the explanation, evidence or instructions you need. The [p
 | Reader question | Starting point |
 | --- | --- |
 | How do the stages connect? | [Research progression](../README.md#research-progression), including Stage 2's alignment definition. |
-| Where are the models built and checked? | [Stage 3](../Code/stage3/README.md): dataset checks, token caches and reference implementations. |
-| Where are the prediction comparisons? | [Stage 4](../Code/stage4/README.md): controls, encoder swaps, fusion and input-region comparisons. |
-| What fusion hypotheses are proposed for testing? | [Stage 5](../Code/stage5/README.md): controlled correction, gate, attention and region-correspondence experiments. Existing-comparison follow-ups remain in Stage 4. |
+| Where are reference models established? | [Stage 3](../Code/stage3/README.md): dataset checks, token caches, method implementations, predictive validation and repeats. |
+| Where are comparative and explanatory experiments? | [Stage 4](../Code/stage4/README.md): encoder swaps and input-region comparisons, alongside proposed tests of fusion behavior. |
+| What fusion hypotheses are proposed for testing? | [Stage 4 proposals](../Code/stage4/README.md#proposed-tests-of-fusion-explanations): controlled correction, gate, attention and region-correspondence experiments, with conditional molecular-partner studies. |
 | What produced a saved result? | [Run records](run-records.md), the producing notebook and [artifact policy](../README.md#results-caches-and-intermediate-files). |
 | Where are agent instructions? | [AGENTS.md](../AGENTS.md) routes to maintained workflows; [agent context](agent-context.md) points to research cautions and unresolved questions. |
 
@@ -26,6 +26,8 @@ Start with the [Stage 1 guide](../Code/stage1/README.md), then read [stability](
 
 Older planning entries name `Stage1_analysis.ipynb`, which the two linked experiment notebooks replaced.
 
+The [mRFP control](../Code/stage1/mrfp_representation_control.ipynb) extends the fixed-protein representation check with calculated controls and residual prediction. The [LucaOne comparison](../Code/stage1/lucaone_representation_comparison.ipynb) evaluates another frozen representation family with matched ridge probes. The separate [GTEx frozen fusion reference](../Code/stage3/gtex_frozen_fusion_reference.ipynb) belongs to Stage 3; it is not a LucaOne–IsoFormer model.
+
 ## Understand the methods
 
 | Question | Guide |
@@ -34,7 +36,7 @@ Older planning entries name `Stage1_analysis.ipynb`, which the two linked experi
 | How do sequences become predictions? | [From sequences to predictions](methods/sequences-to-predictions.md): preparation, tokens, pooling, cache reuse, probes and evaluation, including [calculated controls](methods/sequences-to-predictions.md#calculated-targets-and-controls). |
 | How are representations and attention examined? | [Stage 1 representation analysis](../Code/stage1/representation-analysis.md): geometry, composition control, retrieval and exploratory diagnostics. |
 
-Guides hold reusable explanations and examples; notebooks hold the actual experiment settings, outputs and local interpretation. Stage 1 pooled-vector procedures do not automatically describe Stage 4 token-level fusion.
+Guides hold reusable explanations and examples; notebooks hold the actual experiment settings, outputs and local interpretation. Stage 1 pooled-vector procedures do not automatically describe the token-level fusion used by Stage 3 references and Stage 4 experiments.
 
 ## Inspect or run the implementation
 
@@ -46,9 +48,11 @@ For code changes, consult the [shared engineering workflow](../.agents/skills/mu
 
 ## Follow the research plan
 
-Read the [Research Canvas](Research_Canvas.pptx) for project framing and [Mina's revised protocol](Biological_Fusion_Plan.docx) for proposed comparisons. [Stage 5](../Code/stage5/README.md#organize-the-proposed-notebooks-around-questions) connects those comparisons to existing work and planning task IDs.
+Read the [Research Canvas](Research_Canvas.pptx) for project framing and [Mina's revised protocol](Biological_Fusion_Plan.docx) for proposed comparisons. [Stage 4](../Code/stage4/README.md#organize-the-proposed-notebooks-around-questions) connects those comparisons to existing work and planning task IDs. Earlier records may call these proposals Stage 5; their current home is the combined comparative and explanatory investigation.
 
 In the [Gantt workbook](Research_Project_Plan_Gantt.xlsx), find a task's ID, recorded status and window on `Gantt`, then match that ID in `Details` for prerequisites and expected outputs or review conditions. Cite the task ID when connecting work to the plan. Recorded status is dated; check evidence before treating it as completion.
+
+The dated workbook retains its historical stage/file names, task IDs, statuses and dates. Use the current stage READMEs to locate their present homes, including the former Stage 5 proposals now in Stage 4; the reorganization does not revise experiment priorities or schedules.
 
 The [Gantt presentation](Research_Project_Plan_Gantt.pptx) is an earlier overview, not updated for the revised protocol. The [planning instructions](../AGENTS.md#research-planning) explain how agents follow the workbook and surface proposed changes.
 

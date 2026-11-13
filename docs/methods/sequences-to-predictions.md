@@ -8,7 +8,7 @@ Read in three phases:
 2. [Linear probing](#linear-probing): fit a simple predictor, separate training from evaluation, and interpret its score and limitations.
 3. [Calculated targets and controls](#calculated-targets-and-controls): distinguish a length baseline, composition and folding targets, and a synonymous-recoding pipeline check.
 
-The detailed procedures primarily describe Stage 1's pooled-embedding analyses. Stage 4's [mRFP control](../../Code/stage4/tier1_mrfp_control.ipynb) reuses those pooled representations, while its [BioLangFusion and encoder-swap experiments](../../Code/stage4/README.md) use a separate token-level extraction and fusion path. A pooled vector has no separate token positions; a token cache retains content-token vectors for the downstream fusion model. Their translation, special-token handling, cache format, and evaluation choices must not be treated as interchangeable. For a complementary question, [Comparing and interpreting representations](../../Code/stage1/representation-analysis.md) explains comparisons of representation spaces and further diagnostics.
+The detailed procedures primarily describe Stage 1's pooled-embedding analyses. Stage 1's [mRFP control](../../Code/stage1/mrfp_representation_control.ipynb) reuses those pooled representations, while the [BioLangFusion references](../../Code/stage3/README.md) and [encoder-swap experiments](../../Code/stage4/encoder_swaps.ipynb) use a separate token-level extraction and fusion path. A pooled vector has no separate token positions; a token cache retains content-token vectors for the downstream fusion model. Their translation, special-token handling, cache format, and evaluation choices must not be treated as interchangeable. For a complementary question, [Comparing and interpreting representations](../../Code/stage1/representation-analysis.md) explains comparisons of representation spaces and further diagnostics.
 
 ## From sequences to embeddings
 
@@ -56,7 +56,7 @@ For the biological codon-to-amino-acid mapping, use [NCBI's Standard Code, table
 
 The helper removes `len(seq) % 3` trailing characters before translation. The current callers have already removed surrounding whitespace and required a multiple-of-three length, so this trimming normally removes nothing. The protein input ends at the first in-frame stop, while the nucleotide inputs retain the supplied sequence after it. Invalid symbols can cause translation to raise an error; these filters do not guarantee that every malformed sequence becomes a counted rejection.
 
-This stop-at-first-stop behavior belongs to the Stage 1 pooled-input path. The Stage 4 BioLangFusion token path uses a different translation helper that retains translated positions and replaces stop symbols with `X`, then preserves content-token vectors for fusion. Its [token embedding implementation](../../Code/shared_code/fusion/token_embeddings.py) and experiment notebooks own that procedure; the pooled-input and cache descriptions here do not specify the token-grid experiment.
+This stop-at-first-stop behavior belongs to the Stage 1 pooled-input path. The BioLangFusion token path uses a different translation helper that retains translated positions and replaces stop symbols with `X`, then preserves content-token vectors for fusion. Its [token embedding implementation](../../Code/shared_code/fusion/token_embeddings.py) and experiment notebooks own that procedure; the pooled-input and cache descriptions here do not specify the token-grid experiment.
 
 #### Converting between RNA and DNA letters
 
@@ -379,7 +379,7 @@ The same fitting procedure can answer different questions depending on what supp
 | Nussinov pairing-fraction probe | Pooled embeddings for selected rows | Calculated pairing fraction of a sequence prefix, predicted with ridge regression | Is this simplified structural proxy linearly recoverable? |
 | Synonymous-recoding check | Each encoder's embedding matrix for the mRFP variants | Mean distance from that matrix's centroid; no fitted predictor or target label | Does the translation and embedding pipeline behave as expected when protein sequence is constant? |
 
-A calculated quantity can change roles between analyses. GC and GC3 are prediction **targets** in the Stage 1 probes below. In the [Stage 4 mRFP notebook](../../Code/stage4/tier1_mrfp_control.ipynb), selected composition and folding summaries are **input features** used to predict expression and assess what embeddings add beyond those controls. The Stage 1 recoding-spread calculation does not fit expression or evaluate predictive accuracy. Its shared dataset does not make it the same experiment as the Stage 4 expression analysis.
+A calculated quantity can change roles between analyses. GC and GC3 are prediction **targets** in the Stage 1 probes below. In the [dedicated mRFP notebook](../../Code/stage1/mrfp_representation_control.ipynb), selected composition and folding summaries are **input features** used to predict expression and assess what embeddings add beyond those controls. The Stage 1 recoding-spread calculation does not fit expression or evaluate predictive accuracy. Its shared dataset does not make it the same experiment as the separate expression analysis.
 
 ### Sequence-length baseline
 

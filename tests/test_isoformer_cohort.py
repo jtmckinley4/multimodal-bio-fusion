@@ -613,8 +613,8 @@ class NotebookAuditPathTests(unittest.TestCase):
 
     def setUp(self):
         AuditStorageTests.setUp(self)  # Reuse the completed synthetic-report fixture.
-        notebook = (Path(__file__).resolve().parents[1] / "Code" / "stage4"
-                    / "tier2_isoformer_gtex_audit.ipynb")
+        notebook = (Path(__file__).resolve().parents[1] / "Code" / "stage3"
+                    / "isoformer_gtex_audit.ipynb")
         self.cells = {
             cell["id"]: "".join(cell["source"])
             for cell in json.loads(notebook.read_text(encoding="utf-8"))["cells"]

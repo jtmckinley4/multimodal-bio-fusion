@@ -44,7 +44,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
         self.code = self.root / "Code"
         self.original_dir = self.code / "stage4/results/phaseA" / BENCHMARK
         self.swap_root = self.code / "stage4/results/phaseB"
-        notebook = json.loads((ROOT / "Code/stage4/tier2_encoder_swaps.ipynb").read_text(encoding="utf-8"))
+        notebook = json.loads((ROOT / "Code/stage4/encoder_swaps.ipynb").read_text(encoding="utf-8"))
         self.sources = {c["id"]: "".join(c["source"]) for c in notebook["cells"]}
         self.calls, self.opened, self.closed = [], [], []
         self.fail_at = None

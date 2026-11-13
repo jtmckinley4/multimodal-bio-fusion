@@ -1,6 +1,7 @@
 """Check the GTEx result reader using invented JSONs, without research data or ML."""
 
 import builtins
+from copy import deepcopy
 import importlib
 import json
 from pathlib import Path
@@ -26,9 +27,10 @@ MODALITIES = ("dna", "rna", "prot", "dna+prot", "dna+rna", "dna+rna+prot")
 
 class IsoFormerResultTests(unittest.TestCase):
     def setUp(self):
-        self.temporary = tempfile.TemporaryDirectory()
+        self.temporary = tempfile.TemporaryDirectory(prefix=".isoformer-read-", dir=REPO / "tests")
+        root = Path(self.temporary.name).resolve()
+        self.assertTrue(root.is_relative_to((REPO / "tests").resolve()))
         self.addCleanup(self.temporary.cleanup)
-        root = Path(self.temporary.name)
         self.reference, self.repeats = root / "reference", root / "repeats"
         self.reference.mkdir()
         self.repeats.mkdir()
@@ -179,6 +181,182 @@ class IsoFormerResultTests(unittest.TestCase):
                        {"budget": 300_000_001}, {"variants": ("IsoFormer",)}):
             with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
                 self.read(**kwargs)
+
+    def panel_fields(self):
+        return {"test_truth": [[1.0, 2.0], [3.0, 4.0]],
+                "test_prediction": [[1.1, 2.1], [2.9, 4.2]]}
+
+    def modern_identity(self, modality="dna", seed=0):
+        """A versioned fixture identity with explicit requested loader/model settings."""
+        return {
+            "schema": "fusion.run.v1", "benchmark": "gtex_pilot", "variant": modality,
+            "config": dict(CONFIG, seed=seed), "inputs": {"encoders": {"dna": "fixture"}},
+            "model": {"contract": "synthetic", "kwargs": {"n_heads": 8},
+                      "modalities": modality.split("+"), "n_outputs": 2},
+            "loader": {"kind": "isoformer", "n_heads": 8, "budget": 300_000_000,
+                       "val_fraction": 0.05, "batch_size": 16, "seed": seed,
+                       "recovery": {split: {} for split in ("train", "val", "test")}},
+        }
+
+    def read_panels(self, **kwargs):
+        options = dict(train_config=CONFIG, expected_seeds=(0,),
+                       require_predictions=True, expected_shape=(2, 2))
+        options.update(kwargs)
+        return isoformer_results.read_cohort(self.reference, None, **options)
+
+    def test_reference_only_read_does_not_invent_a_repeats_directory(self):
+        self.write("dna", legacy=True)
+        result = isoformer_results.read_cohort(
+            self.reference, train_config=CONFIG, expected_seeds=(0,))
+        self.assertEqual(len(result.records), 1)
+        self.assertFalse(any(i["status"] == "missing directory" for i in result.issues))
+        self.assertEqual(result.coverage[0]["status"], "complete")
+        self.assertNotIn("result", result.records[0])
+
+    def test_optional_prediction_validation_keeps_default_score_rows_unchanged(self):
+        self.write("dna", legacy=True)
+        score_only = self.read(expected_seeds=(0,))
+        self.assertEqual(len(score_only.records), 1)
+        self.assertEqual(set(score_only.records[0]),
+                         {"variant", "seed", "Spearman", "path", "identity"})
+        required = self.read_panels()
+        self.assertFalse(required.records)
+        self.assertEqual(required.coverage[0]["status"], "missing")
+
+    def test_validated_payload_is_available_without_recomputing_its_score(self):
+        paths = [self.write(name, legacy=True, score=-0.125, **self.panel_fields())
+                 for name in MODALITIES]
+        before = {path: path.read_bytes() for path in paths}
+        result = self.read_panels()
+        self.assertEqual([row["variant"] for row in result.records], list(MODALITIES))
+        self.assertTrue(all(row["Spearman"] == -0.125 for row in result.records))
+        self.assertTrue(all(row["result"]["test_truth"] == self.panel_fields()["test_truth"]
+                            for row in result.records))
+        self.assertTrue(all(row["status"] == "complete" for row in result.coverage))
+        self.assertEqual(before, {path: path.read_bytes() for path in paths})
+        self.assertTrue(any(i["status"] == "provenance limit" for i in result.issues))
+
+    def test_invalid_prediction_panels_are_excluded_and_leave_missing_coverage(self):
+        invalid = (
+            None, [], [1.0, 2.0], [[], []], [[1.0, 2.0], [3.0]],
+            [[1.0, 2.0]], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+            [[1.0, float("nan")], [3.0, 4.0]],
+            [[1.0, float("inf")], [3.0, 4.0]],
+            [[True, 2.0], [3.0, 4.0]], [["1", 2.0], [3.0, 4.0]],
+        )
+        for field in ("test_truth", "test_prediction"):
+            for values in invalid:
+                with self.subTest(field=field, values=values):
+                    fields = {**self.panel_fields(), field: values}
+                    path = self.write("dna", **fields)
+                    before = path.read_bytes()
+                    result = self.read_panels()
+                    self.assertFalse(result.records)
+                    self.assertEqual(result.coverage[0]["missing seeds"], (0,))
+                    self.assertTrue(any(i["status"] == "excluded" for i in result.issues))
+                    self.assertEqual(path.read_bytes(), before)
+
+    def test_expected_panel_shape_checks_rows_and_target_width(self):
+        self.write("dna", **self.panel_fields())
+        for shape in ((3, 2), (2, 3)):
+            with self.subTest(shape=shape):
+                result = self.read_panels(expected_shape=shape)
+                self.assertFalse(result.records)
+                self.assertTrue(any("expected" in i["reason"] for i in result.issues))
+        self.assertEqual(len(self.read_panels(expected_shape=None).records), 1)
+
+    def test_conflicting_target_row_or_column_order_blocks_entire_cohort(self):
+        for changed in ([[3.0, 4.0], [1.0, 2.0]], [[2.0, 1.0], [4.0, 3.0]]):
+            with self.subTest(targets=changed):
+                self.write("dna", **self.panel_fields())
+                self.write("rna", **{**self.panel_fields(), "test_truth": changed})
+                for variants in (("dna", "rna"), ("rna", "dna")):
+                    result = self.read_panels(variants=variants)
+                    self.assertFalse(result.records)
+                    self.assertTrue(all(row["status"] == "missing" for row in result.coverage))
+                    excluded = [i for i in result.issues if i["status"] == "excluded"]
+                    self.assertEqual(len(excluded), 2)
+                    self.assertTrue(all("entire prediction cohort" in i["reason"] for i in excluded))
+
+    def test_one_malformed_panel_does_not_discard_independent_valid_panels(self):
+        self.write("dna", **self.panel_fields())
+        self.write("rna", **{**self.panel_fields(), "test_prediction": None})
+        result = self.read_panels()
+        self.assertEqual([row["variant"] for row in result.records], ["dna"])
+        coverage = {row["variant"]: row for row in result.coverage}
+        self.assertEqual(coverage["dna"]["status"], "complete")
+        self.assertEqual(coverage["rna"]["status"], "missing")
+
+    def test_prediction_mode_preserves_duplicate_and_legacy_alias_boundaries(self):
+        self.write("dna", legacy=True, **self.panel_fields())
+        self.write("dna", folder=self.repeats, **self.panel_fields())
+        result = self.read(require_predictions=True, expected_shape=(2, 2), expected_seeds=(0,))
+        self.assertEqual(result.duplicate_keys, [("dna", 0)])
+        self.assertFalse(result.records)
+        self.assertEqual(result.coverage[0]["status"], "duplicate; blocked")
+        self.write("rna", 1, legacy=True, folder=self.repeats, **self.panel_fields())
+        result = self.read(require_predictions=True, expected_shape=(2, 2))
+        self.assertTrue(any("historical mapping" in i["reason"] for i in result.issues))
+
+    def test_present_malformed_identity_cannot_fall_back_to_legacy_label_mapping(self):
+        for identity in (None, {}, [], {"schema": "malformed"}):
+            with self.subTest(identity=identity):
+                self.write("dna", legacy=True, identity=identity, **self.panel_fields())
+                self.assertFalse(self.read_panels().records)
+
+    def test_versioned_identity_checks_request_settings_and_result_metadata(self):
+        self.write("dna", identity=self.modern_identity(), **self.panel_fields())
+        self.assertEqual(len(self.read_panels().records), 1)
+        changes = (
+            ("loader", "n_heads", 4), ("loader", "budget", 200_000_000),
+            ("loader", "val_fraction", 0.1), ("loader", "batch_size", 8),
+            ("loader", "seed", 1), ("loader", "kind", "blf"),
+            ("model", "modalities", ["rna"]), ("model", "n_outputs", 3),
+            ("model", "kwargs", {"n_heads": 4}), ("config", "batch_size", 8),
+        )
+        for section, key, value in changes:
+            with self.subTest(section=section, key=key):
+                identity = self.modern_identity()
+                identity[section][key] = value
+                self.write("dna", identity=identity, **self.panel_fields())
+                self.assertFalse(self.read_panels().records)
+        for key, value in (("variant", "rna"), ("benchmark", "other")):
+            identity = self.modern_identity()
+            identity[key] = value
+            self.write("dna", identity=identity, **self.panel_fields())
+            self.assertFalse(self.read_panels().records)
+
+    def test_dataset_order_fingerprint_does_not_reject_budget_sorted_evaluation_order(self):
+        from shared_code.fusion import run_identity
+
+        dataset_targets = self.panel_fields()["test_truth"]
+        # Invented cost-sorted batches emit the second dataset row before the first.
+        budgeted_batches = ((1,), (0,))
+        emitted_targets = [dataset_targets[index] for batch in budgeted_batches for index in batch]
+        identity = self.modern_identity()
+        identity["inputs"]["split_targets"] = {
+            "test": run_identity.array_record(dataset_targets, "float32")}
+        self.assertNotEqual(identity["inputs"]["split_targets"]["test"],
+                            run_identity.array_record(emitted_targets, "float32"))
+        fields = {**self.panel_fields(), "test_truth": emitted_targets,
+                  "test_prediction": list(reversed(self.panel_fields()["test_prediction"]))}
+        self.write("dna", identity=identity, **fields)
+        rna_identity = deepcopy(identity)
+        rna_identity["variant"] = "rna"
+        rna_identity["model"]["modalities"] = ["rna"]
+        self.write("rna", identity=rna_identity, **fields)
+        result = self.read_panels()
+        self.assertEqual([row["variant"] for row in result.records], ["dna", "rna"])
+        self.assertTrue(all(row["result"]["test_truth"] == emitted_targets for row in result.records))
+
+    def test_prediction_options_reject_ambiguous_or_invalid_requests(self):
+        for options in ({"require_predictions": 1}, {"expected_shape": (2, 2)},
+                        {"require_predictions": True, "expected_shape": (0, 2)},
+                        {"require_predictions": True, "expected_shape": (2, True)},
+                        {"require_predictions": True, "expected_shape": (2,)},
+                        {"require_predictions": True, "expected_shape": "2,2"}):
+            with self.subTest(options=options), self.assertRaises(ValueError):
+                self.read(**options)
 
     def test_reader_import_has_no_model_or_numeric_library_dependency(self):
         original_import = builtins.__import__

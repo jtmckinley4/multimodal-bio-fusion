@@ -53,7 +53,7 @@ class Forbidden:
 
 
 def code_cells(name):
-    book = json.loads((ROOT / "Code/stage4" / name).read_text(encoding="utf-8"))
+    book = json.loads((ROOT / "Code/stage3" / name).read_text(encoding="utf-8"))
     return [(cell["id"], "".join(cell["source"]))
             for cell in book["cells"] if cell["cell_type"] == "code"]
 
@@ -92,7 +92,7 @@ class PhaseAFungalCleanupTests(unittest.TestCase):
             ),
             "results_dir": lambda key: "synthetic-results/" + key,
         }
-        source = dict(code_cells("tier2_blf_phaseA.ipynb"))["phasea-fungal-fit-def"]
+        source = dict(code_cells("blf_reference_benchmarks.ipynb"))["phasea-fungal-fit-def"]
         exec(compile(source, "synthetic:fungal-definition", "exec"), self.namespace)
         self.open_streams.assert_not_called()
 
@@ -184,7 +184,7 @@ class PhaseASavedReadingTests(unittest.TestCase):
 
     def execute_read_cells(self, name, benchmark=None):
         # Imports, path search and device discovery are excluded; their bindings are controlled above.
-        first = "0965876d" if name == "tier2_blf_phaseA.ipynb" else "settings"
+        first = "0965876d" if name == "blf_reference_benchmarks.ipynb" else "settings"
         cells = code_cells(name)
         start = next(i for i, (cell_id, _) in enumerate(cells) if cell_id == first)
         before = self.snapshot()
@@ -267,7 +267,7 @@ class PhaseASavedReadingTests(unittest.TestCase):
         return output
 
     def test_main_empty_folders_report_missing_without_inputs_or_training(self):
-        state = self.execute_read_cells("tier2_blf_phaseA.ipynb")
+        state = self.execute_read_cells("blf_reference_benchmarks.ipynb")
         self.assertTrue(state["saved_phaseA_scores"].empty)
         self.assertIn("missing", state["phaseA_result_coverage"]["status"].tolist())
         self.assertIn("no bootstrap is recomputed", self.output.getvalue())
@@ -277,7 +277,7 @@ class PhaseASavedReadingTests(unittest.TestCase):
         self.main_record()
         bad = self.main_record(key="ecoli_proteins")
         bad.write_text("invalid JSON", encoding="utf-8")
-        state = self.execute_read_cells("tier2_blf_phaseA.ipynb")
+        state = self.execute_read_cells("blf_reference_benchmarks.ipynb")
         self.assertEqual(state["saved_phaseA_scores"]["test score"].tolist(), [0.4])
         self.assertTrue(state["saved_score_issues"])
         self.assertIn("saved targets or predictions absent",
@@ -287,7 +287,7 @@ class PhaseASavedReadingTests(unittest.TestCase):
         self.main_record(name="a.json")
         self.main_record(name="b.json")
         self.main_record(key="ecoli_proteins")
-        state = self.execute_read_cells("tier2_blf_phaseA.ipynb")
+        state = self.execute_read_cells("blf_reference_benchmarks.ipynb")
         self.assertEqual(state["saved_phaseA_scores"]["benchmark"].tolist(), ["ecoli_proteins"])
         self.assertIn("ambiguous", state["phaseA_result_coverage"]["status"].tolist())
 
@@ -301,13 +301,13 @@ class PhaseASavedReadingTests(unittest.TestCase):
             return original(folders, **kwargs)
 
         with patch.object(swap_results, "read_results", side_effect=inaccessible):
-            state = self.execute_read_cells("tier2_blf_phaseA.ipynb")
+            state = self.execute_read_cells("blf_reference_benchmarks.ipynb")
         self.assertEqual(state["saved_phaseA_scores"]["benchmark"].tolist(), ["ecoli_proteins"])
         self.assertIn("unavailable", state["phaseA_result_coverage"]["status"].tolist())
 
     def test_appendix_empty_and_partial_folders_need_no_rows_or_cache_headers(self):
         self.appendix_records("fungal_expression", complete=False)
-        state = self.execute_read_cells("tier2_blf_phaseA_appendix.ipynb")
+        state = self.execute_read_cells("blf_appendix_comparison.ipynb")
         self.assertFalse(state["RUN_TRAINING"])
         self.assertEqual(state["saved_scores"]["test score"].tolist(), [0.4])
         self.assertIn("not_found_locally", state["saved_coverage"]["status"].tolist())
@@ -319,7 +319,7 @@ class PhaseASavedReadingTests(unittest.TestCase):
         directory = self.appendix_records()
         path = self.runner.result_path(directory, "ecoli_proteins", "cross", ReadingConfig())
         path.write_text("invalid JSON", encoding="utf-8")
-        state = self.execute_read_cells("tier2_blf_phaseA_appendix.ipynb", "ecoli_proteins")
+        state = self.execute_read_cells("blf_appendix_comparison.ipynb", "ecoli_proteins")
         self.assertEqual(len(state["saved_scores"]), 26)
         self.assertIn("blocked_preserve", state["saved_coverage"]["status"].tolist())
         self.assertTrue(state["saved_export_issues"])
@@ -327,14 +327,14 @@ class PhaseASavedReadingTests(unittest.TestCase):
     def test_appendix_missing_reference_keeps_individual_scores_labeled_pending(self):
         directory = self.appendix_records()
         self.runner.result_path(directory, "ecoli_proteins", "concat", ReadingConfig()).unlink()
-        state = self.execute_read_cells("tier2_blf_phaseA_appendix.ipynb", "ecoli_proteins")
+        state = self.execute_read_cells("blf_appendix_comparison.ipynb", "ecoli_proteins")
         self.assertEqual(len(state["saved_scores"]), 26)
         self.assertEqual(set(state["saved_scores"]["status"]), {"reference_pending"})
         self.assertEqual(state["saved_export_tables"], {})
 
     def test_appendix_existing_export_is_read_without_bootstrap(self):
         self.appendix_export(self.appendix_records())
-        state = self.execute_read_cells("tier2_blf_phaseA_appendix.ipynb", "ecoli_proteins")
+        state = self.execute_read_cells("blf_appendix_comparison.ipynb", "ecoli_proteins")
         self.assertEqual(len(state["saved_scores"]), 27)
         self.assertEqual(len(state["saved_export_tables"]), 4)
         self.assertEqual(state["saved_export_issues"], [])
@@ -343,7 +343,7 @@ class PhaseASavedReadingTests(unittest.TestCase):
     def test_appendix_corrupt_interval_preserves_independent_export_tables(self):
         output = self.appendix_export(self.appendix_records())
         (output / "paired_intervals.csv").write_text("changed", encoding="utf-8")
-        state = self.execute_read_cells("tier2_blf_phaseA_appendix.ipynb", "ecoli_proteins")
+        state = self.execute_read_cells("blf_appendix_comparison.ipynb", "ecoli_proteins")
         self.assertEqual(len(state["saved_export_tables"]), 3)
         self.assertIn("checksum", state["saved_export_issues"][0]["reason"])
         self.assertIn("no reanalysis", self.output.getvalue())
@@ -353,7 +353,7 @@ class PhaseASavedReadingTests(unittest.TestCase):
         self.appendix_export(directory)
         path = self.runner.result_path(directory, "ecoli_proteins", "cross", ReadingConfig())
         path.write_text(path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
-        state = self.execute_read_cells("tier2_blf_phaseA_appendix.ipynb", "ecoli_proteins")
+        state = self.execute_read_cells("blf_appendix_comparison.ipynb", "ecoli_proteins")
         self.assertEqual(len(state["saved_scores"]), 27)
         self.assertEqual(state["saved_export_tables"], {})
         self.assertIn("candidate changed", state["saved_export_issues"][0]["reason"])
