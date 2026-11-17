@@ -41,10 +41,12 @@ def sequences_fingerprint(seqs):
 
 
 def _validate_embeddings(matrix, n_sequences):
-    """Check the stored/computed row contract without guessing a model's width."""
+    """Check finite stored/computed rows without guessing a model's width."""
     if (matrix.ndim != 2 or matrix.shape[0] != n_sequences
             or matrix.shape[1] == 0 or matrix.dtype.kind not in "fiu"):
         raise ValueError("embeddings must be a real numeric matrix with one row per input and positive width")
+    if not np.isfinite(matrix).all():
+        raise ValueError("embeddings must contain only finite values")
 
 
 def _read_cache(path, expected):

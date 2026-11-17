@@ -76,6 +76,8 @@ These textbooks connect the biological processes to the quantities used in the [
 
 **Reading scope and limits, November 10, 2026:** Read the definitions, equations, all eight proposed experiments and final decision rule. The repository copy preserves the supplied document unchanged. It proposes comparisons; it does not establish results, implementation fidelity, compute costs or a finalized experiment matrix. The unnamed “four remaining” candidate gains still need an explicit shortlist. Chase authorized the documentation and planning connections, not execution, in the Stage 5 setup request. The [Gantt/Details workbook](Research_Project_Plan_Gantt.xlsx) records task mappings; the guide distinguishes current evidence from future experiments.
 
+**Implementation comparison, November 17, 2026:** Rechecked Steps A.2–A.6 against the prepared notebooks and helpers. Position gates take combined modality features; attention-update gates take the anchor and all auxiliary updates through affine sigmoid maps. Earlier per-stream/nonlinear departures are corrected in the new study code. Mina asks for comparable-capacity controls but does not specify a bottleneck rank. Fold counts, split/control seeds, optimizer settings, context windows and mask-permutation details remain identified project choices. The notebooks now inspect these choices without automatically revising them; no research analysis or training was run in this pass.
+
 ### Research proposal and Gantt examples
 
 [Mélot-Chesnel's research proposal, section 4 and Gantt figure](https://journals.sagepub.com/doi/10.3233/FAIA260562), and [UQ's AGRC7617 proposal assignment](https://course-profiles.uq.edu.au/course-profiles/AGRC7617-62151-7660).
@@ -110,6 +112,8 @@ Eight papers came in by email on October 9 and 10 (three from Chase, five from M
 
 Section 5.3 gives **six** recommendations: comparable experimental conditions, matched base architectures, strong baselines, tuning for all methods, appropriate cross-validation/reporting, and diverse datasets. Our biological grouping, matched-head comparisons and uncertainty procedures are project adaptations, not a verbatim five-rule source checklist or evidence that every rule has already been implemented. This review corrects the earlier projection-only description and direct attribution of our rules; it changes no experiment.
 
+**Supporting-inspection review, November 17, 2026:** Sections 4.3 and 5.3 support examining baseline strength, experimental comparability and model complexity in the new controlled notebooks. The authors explicitly did not perform a parameter-matched analysis; our parameter/rank preview is a project diagnostic, not their implemented recipe. This paper does not supply a biologically matched nongated control.
+
 ### mRNABench
 
 [bioRxiv 2025.07.05.662870v1](https://www.biorxiv.org/content/10.1101/2025.07.05.662870v1), [retained PDF](../Papers/supporting/mRNABench_biorxiv_v1.pdf), and the [repository](https://github.com/morrislab/mRNABench).
@@ -119,6 +123,8 @@ Section 5.3 gives **six** recommendations: comparable experimental conditions, m
 **Reading scope and limits:** Abstract and task catalog read on October 10, 2026; the dataset gates (UTRs, coding-sequence coordinates, grouped splits) still have to be verified on the files before any run.
 
 **Target-provenance reading, 28 October 2026:** Inspected dataset constructors at [mRNABench revision 778d691ab91c51c03addeb9219229f2ec81d195c](https://github.com/morrislab/mRNABench/tree/778d691ab91c51c03addeb9219229f2ec81d195c/mrna_bench/datasets), [Saluki Methods](https://doi.org/10.1186/s13059-022-02811-x) and [preprocessing code](https://github.com/vagarwal87/saluki_paper/tree/3aa4e56a19bbbf87ac9f5f0a251098cf749ad6bc), the [Orthrus intermediate release](https://zenodo.org/records/14708163), [RiboNN Methods](https://doi.org/10.1038/s41587-025-02712-x) and its human supplementary target table, and the original [HP5](https://doi.org/10.1038/s41594-022-00819-2) and [PERSIST-seq](https://doi.org/10.1038/s41467-022-28776-w) measurement descriptions. These sources establish why consensus half-life, abundance-adjusted ribosome occupancy, and mean ribosome load require separate interpretations. Every local human half-life label matches its immediate NPZ source; every human TE label matches supplementary `mean_te` after float32 conversion. The exact earlier half-life scaling cohort, raw-read TE processing, and source-row transformations for the secondary MRL/PERSIST tables remain unresolved. The study-specific sources support target definitions and interpretation; their numerical results do not validate our models or establish reproduction of their experiments.
+
+**Homology-input reading, 17 November 2026:** The [same pinned mRNABench splitter](https://github.com/morrislab/mRNABench/blob/778d691ab91c51c03addeb9219229f2ec81d195c/mrna_bench/data_splitter/homology_split.py) selects `homology_maps_homologene.zip` from [Orthrus's Zenodo record 13910050](https://zenodo.org/records/13910050). The released human CSV was checksum-verified and retained locally for A.6. It is a partial name-to-group map, not a complete gene census: the upstream splitter treats unmapped rows individually. Our initial A.6 preparation stopped on eligible unmapped genes; the subsequent [approved policy](run-records.md#2026-11-17-a6-grouping-for-unmapped-genes) retains mapped families and groups unmapped rows by recorded gene identity. Map absence does not prove lack of homology, and the exact generation/identifier history of the released mapping has not been recovered. The [input preparation record](run-records.md#2026-11-17-controlled-fusion-input-preparation) and [execution guide](../execution/arcc/fusion_studies/README.md#stage-the-a6-inputs-at-their-recorded-versions) retain the actual artifact and policy boundary; no new split was produced.
 
 ### Krzakala et al.: MSAlign
 
@@ -215,6 +221,22 @@ Section 5.3 gives **six** recommendations: comparable experimental conditions, m
 **Why retain it:** It supplies an optimization-based explanation for one modality dominating joint training and a method that responds to the imbalance. It is relevant to the hypothesis that a predictor favors an easier representation, but its trainable modality branches differ from our frozen encoders. In our [training objective](../Code/shared_code/fusion/train.py), a positive entropy coefficient explicitly encourages sharper gates; the zero-coefficient comparison omits that pressure. Gate concentration alone cannot identify its cause.
 
 **Reading scope and limits, November 1, 2026:** Read the imbalance argument and gradient-modulation mechanism and inspected our gate computation and entropy-loss sign. No gradients or training trajectories were measured. The paper motivates a diagnostic question, not evidence that our encoders were under-trained or that rebalancing would help.
+
+### Wolpert: Stacked generalization
+
+[Stacked generalization](https://www.sciencedirect.com/science/article/pii/S0893608005800231), Neural Networks 5(2), 1992.
+
+**Why retain it:** Withheld first-stage predictions and learning from their errors provide methodological background for [anchor correction](../Code/stage4/anchor_correction.ipynb). This helps explain why fitting an auxiliary to in-sample anchor errors would answer a different question.
+
+**Reading scope and limits, November 17, 2026:** Inspected the publisher abstract and introductory description. The project's grouped folds, fixed seed-0 selection, additive correction, controls and stopping protocol are explicit adaptations. This is supporting context located during the review, not evidence that Mina derived her proposal from this paper or that our method reproduces it.
+
+### Jain and Wallace: Attention is not Explanation
+
+[Attention is not Explanation](https://aclanthology.org/N19-1357/), NAACL 2019.
+
+**Why retain it:** The study motivates checking contribution scales and distinguishing learned weights from explanatory evidence in the [gate](../Code/stage4/gate_diagnostics.ipynb) and [attention](../Code/stage4/anchor_cross_attention.ipynb) notebooks.
+
+**Reading scope and limits, November 17, 2026:** Inspected the ACL abstract and study's stated attention/alternative-weight comparisons. Its findings concern the investigated NLP models; they are not a universal theorem about every gate or evidence about biological mechanisms. Our norm diagnostics describe computation and still do not establish causal importance. No source attribution to Mina is implied.
 
 ## Benchmarks and encoders for multimodal comparison
 
@@ -481,7 +503,7 @@ Elnaggar et al.'s [ProtTrans paper](https://arxiv.org/abs/2007.06225), the [Rost
 
 ## Organizing and checking research software
 
-These sources explain practices relevant to separating experiment narratives from reusable computation and checking changes in small steps. The implemented structure is described in the [Stage 1 reading route](../README.md#stage-1-analysis), [shared package](../Code/shared_code/), and [notebook checks](../tests/README.md). The readings support evaluating those choices; they do not establish that every recommendation was adopted or that a source caused an earlier decision.
+These sources explain practices relevant to separating experiment narratives from reusable computation and checking changes in small steps. The implemented structure is described in the [Stage 1 reading route](../README.md#stage-1-representation-analysis), [shared package](../Code/shared_code/), and [notebook checks](../tests/README.md). The readings support evaluating those choices; they do not establish that every recommendation was adopted or that a source caused an earlier decision.
 
 For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for more detailed practices, and Sandve et al. for reproducibility. The nf-core and ROOT examples help assess future infrastructure as the project grows.
 
@@ -501,7 +523,7 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Why retain it:** It supports reusable functions, explicit dependencies, useful project overviews, and simple example checks. Its discussion of adoption costs helps assess how much structure this project needs: continuous integration and coverage tools can burden newcomers before their benefits justify the work.
 
-**Reading scope and limits:** The sections named above were read on October 5, 2026. They support keeping the [reading route](../README.md#stage-1-analysis) and [checks](../tests/README.md) proportionate. The paper does not prescribe this repository's exact folders or notebook boundaries, or require adding CI now.
+**Reading scope and limits:** The sections named above were read on October 5, 2026. They support keeping the [reading route](../README.md#stage-1-representation-analysis) and [checks](../tests/README.md) proportionate. The paper does not prescribe this repository's exact folders or notebook boundaries, or require adding CI now.
 
 **Coding-review follow-up:** The October 5 coding review revisited Software (especially 2g–2i), Collaboration, and What we left out for the [proposed proportionate coding workflow](shared-coding-proposal.md#shared-skill-and-how-both-agents-use-it).
 

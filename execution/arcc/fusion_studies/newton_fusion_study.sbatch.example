@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Supply reviewed account, partition, CPU/RAM/time and GPU options to sbatch.
+# Pass the explicit study/benchmark/seed/action and input paths as script arguments.
+#SBATCH --job-name=fusion-study
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --output=outputs/logs/study-%j.out
+#SBATCH --error=outputs/logs/study-%j.err
+
+set -euo pipefail
+: "${SLURM_JOB_ID:?Allocated Slurm job required}"
+: "${ARCC_PROJECT_ROOT:?Absolute path to the new source-only study workspace}"
+: "${ARCC_ANACONDA_MODULE:?Installed Newton module}"
+: "${ARCC_CONDA_ENV:?Prepared environment}"
+: "${ARCC_KERNEL:?Registered notebook kernel}"
+cd "$ARCC_PROJECT_ROOT"
+if (( ${CONDA_SHLVL:-0} > 0 )); then
+    ARCC_BOOTSTRAP_CONDA_BASE=$(conda info --base)
+    source "$ARCC_BOOTSTRAP_CONDA_BASE/etc/profile.d/conda.sh"
+fi
+module load "$ARCC_ANACONDA_MODULE"
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ARCC_CONDA_ENV"
+printf 'Using Python: %s on %s\n' "$(command -v python)" "$(hostname)"
+python -u run_fusion_study.py --verify-only
+python -m pip freeze > "outputs/logs/environment-${SLURM_JOB_ID}.txt"
+python -u run_fusion_study.py --kernel "$ARCC_KERNEL" \
+    --expected-gpu "${ARCC_EXPECTED_GPU:-}" "$@"

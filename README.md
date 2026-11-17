@@ -4,6 +4,8 @@ A research project in the [Complex Adaptive Systems Laboratory](https://complexi
 
 Read the [research progression](#research-progression) for the investigation, [Data](#data) for target meanings, or [Setup](#setup) to prepare an environment. Saved notebook outputs can be read without executing cells.
 
+Active notebooks also default to [reading available evidence](Code/stage4/RUNBOOK.md#read-saved-results-without-starting-work). The [ARCC guide](execution/arcc/README.md) covers separate execution snapshots, cluster operation and returned evidence; its [encoder-swap recipe](execution/arcc/encoder_swaps/README.md) supplies preparation commands. Repository edits do not update an existing Newton run.
+
 ## Project background
 
 An encoder turns a biological sequence into numerical features. Encoders differ in pretraining data, sequence coverage and model design, so even the same input can yield differently useful representations. Combining those representations is fusion. Another encoder may add predictive information, duplicate what a strong model already provides, or introduce information the chosen fusion method fails to use.
@@ -20,7 +22,7 @@ A stronger replacement can improve a fused model without making fusion beneficia
 
 Stage 1 characterizes representations; Stage 2 defines what alignment means; Stage 3 establishes reference methods and baselines; Stage 4 investigates when and why fusion helps. Reference validation can include predictive comparisons and repeated fits. Stage 4 brings comparative and explanatory experiments together, including proposals that previously appeared under Stage 5. This is a reading route, not a requirement to execute every stage in order.
 
-### Stage 1 analysis
+### Stage 1: representation analysis
 
 The [stability and GTEx notebooks](Code/stage1/README.md) compare twelve frozen encoders using pooled vectors and fitted ridge predictors. Stability supplies DNA/RNA views and a translation of the same coding sequence. GTEx supplies genomic, transcript and protein contexts with 30 tissue-expression targets. Because both inputs and targets change, differences between these tasks cannot isolate the value of extra context.
 
@@ -54,13 +56,13 @@ Fuller IsoFormer reproduction is [deferred](Code/stage4/RUNBOOK.md#isoformer-rep
 
 ### Stage 4: comparative and explanatory experiments
 
-The [Stage 4 investigation](Code/stage4/README.md) uses those references to test encoder substitutions, biological sequence context and the value of combining representations. The existing encoder-swap and full-transcript half-life/translation-efficiency notebooks sit beside proposed tests of auxiliary correction, gate behavior, anchor-preserving attention and molecular-partner inputs.
+The [Stage 4 investigation](Code/stage4/README.md) uses those references to test encoder substitutions, biological sequence context and the value of combining representations. The encoder-swap and pooled full-transcript half-life/translation-efficiency comparisons sit beside prepared tests of auxiliary correction, gate behavior, anchor-preserving attention and transcript regions. Molecular-partner extensions remain conditional.
 
-Stage 4 remains active. Completed evidence shows task-dependent outcomes and the importance of a strong single-encoder reference. Seed-0 swaps cover the available benchmark/replacement combinations, while repeat coverage varies. Existing-comparison repeats, missing matched comparisons and the separate stability evaluation without sequence overlap remain part of their investigations. Read each notebook's saved-result inventory and [run records](docs/run-records.md) before forming a multi-seed claim; repetitions do not remove overlap.
+Stage 4 remains active. The Newton encoder-swap cohort has **504 completed fits across four benchmarks and training seeds 0, 1 and 2**, with four completed three-seed reports. Its findings show task-dependent outcomes and the importance of a strong single-encoder reference. The separate grouped-stability evaluation and other unfinished comparisons remain distinct work: repetitions do not remove sequence overlap. The [Stage 4 findings](Code/stage4/README.md#newton-three-seed-findings) and [run records](docs/run-records.md) identify the evidence and its limits.
 
 The findings characterize these settings and motivate hypotheses. A prospective rule needs a stated expectation, simpler controls and an evaluation not already used to develop it. Fungal species/condition transfer remains a candidate setting, not a selected dataset or implemented experiment.
 
-The explanatory comparisons remain proposals, with no implemented notebooks or completed runs. Each new experiment includes its own matched baselines and repeats; a new split requires a distinct experiment identity. The [Gantt and Details sheets](docs/Research_Project_Plan_Gantt.xlsx) map reliability to tasks 24/28, correction to 45, gates to 46, attention to 25, regions to 42 and conditional partner tasks to 47/48. Recorded statuses and historical dates do not establish execution.
+Four notebooks implement Mina's auxiliary-correction, gate, anchor-attention and transcript-region comparisons. Synthetic checks and bounded CPU input/parameter inspections are complete; their research training and token extraction have not run. Each new experiment includes its own matched baselines and repeats; a new split requires a distinct experiment identity. The [Gantt and Details sheets](docs/Research_Project_Plan_Gantt.xlsx) map reliability to tasks 24/28, correction to 45, gates to 46, attention to 25, regions to 42 and conditional partner tasks to 47/48. Recorded statuses and historical dates do not establish execution.
 
 ## Repo structure
 
@@ -69,6 +71,7 @@ The explanatory comparisons remain proposals, with no implemented notebooks or c
 | [Code/](Code/) | Stage guides connect experiments; notebooks retain their inputs, choices, code, outputs and interpretation. |
 | [Code/shared_code/](Code/shared_code/) | Reused methods, including [fusion implementations](Code/shared_code/fusion/). Comments and docstrings explain local mechanics. |
 | [datasets/](datasets/) | Included input CSVs; additional downloads follow the cache policy below. |
+| [execution/arcc/](execution/arcc/README.md) | Common cluster/transfer guidance and the experiment-specific [encoder-swap recipe](execution/arcc/encoder_swaps/README.md). |
 | [docs/](docs/README.md) | Shared methods, planning, selected sources, meeting records and figure guidance. |
 | [Papers/](Papers/README.md) | Retained paper versions and source locations. |
 | [tests/](tests/README.md) | Controlled software checks, separate from scientific validation. |
@@ -161,6 +164,8 @@ Follow [tests/README.md](tests/README.md) from the repository root in the notebo
 
 Keep routine model caches and regenerable intermediates local under specific ignore paths; retain supplied datasets and notebooks in Git. Share selected results deliberately, with [run records](docs/run-records.md) connecting inputs, code, checkpoints, settings, environment and outputs. Avoid blanket scientific-format ignores. Preserve evidence before any deliberate recomputation that could overwrite it.
 
+Keep benchmark CSVs canonical under `datasets/`. The [returned Newton package](Code/stage4/results/newton_h100_seeds012/README.md) retains fresh results, reports, logs, executed notebooks and archived execution sources. Its reader resolves duplicate historical selection records and inputs to canonical repository files only when listed in the original snapshot and verified against its recorded byte hashes. Original manifests remain unchanged; the full separate execution workspace remains the local archive. The [deduplication record](docs/run-records.md#2026-11-17-newton-evidence-deduplication-and-git-byte-preservation) documents the mapping and Git checkout-byte contract.
+
 Notebook locations follow their research roles; existing result and cache directories retain their historical paths. For example, Stage 3's BLF benchmark reader still uses `Code/stage4/results/phaseA/`, while Stage 1's moved controls retain their existing Stage 4 result locations. A directory name is not an experiment identity, and moving a reader does not change its recorded evidence.
 
 When an output changes, update this inventory and its handling, adjusting [.gitignore](.gitignore) only for the relevant paths. Cache reuse must match the recorded input/extraction identity; an existing file alone is insufficient. The [cache guide](docs/methods/sequences-to-predictions.md#embedding-matrices-and-cache-reuse) explains verification and recovery.
@@ -174,6 +179,7 @@ When an output changes, update this inventory and its handling, adjusting [.giti
 | [docs/figures/stability/](docs/figures/stability/) and [docs/figures/gtex/](docs/figures/gtex/) | Deliberately shared figures, numeric data and manifests. The [figure guide](docs/figures/README.md) describes export from saved snapshots without encoder or analysis reruns. Export does not commit or push. |
 | `.data-cache/mrnabench/` | Local, ignored downloaded tables for the half-life/TE notebook. |
 | `Code/stage3/results/` and `Code/stage4/results/` | Small JSON/CSV and verification records are shared. Best-validation `*.weights.pt` files, recovery checkpoints, interrupted publications and `Code/*/embeddings/` remain local and ignored. Existing results without weights are reused without retraining merely to fill that gap. |
+| [Returned Newton swaps](Code/stage4/results/newton_h100_seeds012/README.md) | Separate shared fit/prediction and execution evidence; canonical benchmark CSVs remain under `datasets/`. Follow the [result-set contract](Code/stage4/RUNBOOK.md#select-a-returned-result-set) for reading and separately authorized analysis. |
 | [Windows E. coli records](Code/stage4/results/blf_phaseA/ecoli_proteins/) and [fungal seed-0 records](Code/stage3/results/fungal_expression/reproducible/) | Separate historical configurations, not extra repetitions of another cohort. Consult their [run records](docs/run-records.md) before combining evidence; historical runner/verifier scripts depended on a trainer refactor absent from this branch. |
 
 ## Contributors

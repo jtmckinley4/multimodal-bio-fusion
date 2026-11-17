@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# CPU reporting only. Supply account/CPU partition, CPU count, memory and time at submission.
+#SBATCH --job-name=swap-report
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --output=outputs/logs/report-%j.out
+#SBATCH --error=outputs/logs/report-%j.err
+
+set -euo pipefail
+: "${SLURM_JOB_ID:?Run this reporting wrapper in an allocated Newton Slurm job}"
+: "${ARCC_PROJECT_ROOT:?Absolute Newton path to the prepared workspace}"
+: "${ARCC_ANACONDA_MODULE:?Module confirmed on Newton}"
+: "${ARCC_CONDA_ENV:?Prepared environment name or absolute path}"
+: "${ARCC_KERNEL:?Registered kernel}"
+cd "$ARCC_PROJECT_ROOT"
+printf 'Preparing Conda environment on %s\n' "$(hostname)"
+# Slurm can inherit an active environment without Conda's shell function.
+# Initialize it before module loading can attempt to deactivate that environment.
+if (( ${CONDA_SHLVL:-0} > 0 )); then
+    ARCC_BOOTSTRAP_CONDA_BASE=$(conda info --base)
+    source "$ARCC_BOOTSTRAP_CONDA_BASE/etc/profile.d/conda.sh"
+fi
+module load "$ARCC_ANACONDA_MODULE"
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ARCC_CONDA_ENV"
+printf 'Using Python: %s\n' "$(command -v python)"
+
+python -u run_encoder_swaps.py --verify-only
+python -u run_encoder_swaps.py --mode report --benchmark "${ARCC_BENCHMARK:-all}" \
+    --kernel "$ARCC_KERNEL" --purpose newton --device cpu \
+    --output-root "${ARCC_OUTPUT_ROOT:-$ARCC_PROJECT_ROOT/outputs}" \
+    --cache-root "${ARCC_CACHE_ROOT:-$ARCC_PROJECT_ROOT/Code/stage3/embeddings}"

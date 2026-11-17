@@ -1,0 +1,420 @@
+Preparing Conda environment on evc29
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python
+Recording environment; then starting the cov_vac_degradation seed 2 notebook.
+Executing train: ('cov_vac_degradation',), seed 2; /lustre/fs1/home/ch806988/multi-modal_fusion/outputs/notebooks/train-cov_vac_degradation-seed2-20261115T053652Z-fcfb5225.ipynb
+Kernel Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python | torch: 2.10.0+cu126 | device: cuda
+GPU: NVIDIA H100 PCIe | CUDA: 12.6 | cuDNN: 91002
+Training seed 2; selection seed 0; 42 new/resumable fits in the displayed plan.
+8 swap-benchmark pairs over 1 benchmarks, device cuda
+Estimated replacement-cache payload needed by pending fits, including existing caches: ~1 GB
+All of it stays out of Git, under Code/stage3/embeddings/<benchmark>/<encoder>/.
+  cov_vac_degradation/ntv2_100m: complete, recorded_input
+  cov_vac_degradation/rnafm: complete, recorded_input
+  cov_vac_degradation/esm2_8m: complete, recorded_input
+  cov_vac_degradation/nt500m: complete, recorded_input
+  cov_vac_degradation/hyenadna: complete, recorded_input
+  cov_vac_degradation/rinalmo: complete, recorded_input
+  cov_vac_degradation/mrnafm: complete, recorded_input
+  cov_vac_degradation/calm: complete, recorded_input
+  cov_vac_degradation/esm2_35m: complete, recorded_input
+  cov_vac_degradation/esm2_150m: complete, recorded_input
+  cov_vac_degradation/protbert: complete, recorded_input
+Preflight passed: 11 caches; 0 missing shards (must be zero).
+Token streams open only for a pending training group.
+cov_vac_degradation / original references / unimodal:dna / seed 2
+  cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.2223  val 0.4526  best 0.4526 @ 0
+    epoch  10  train loss 0.6384  val 0.7544  best 0.7544 @ 10
+    epoch  20  train loss 0.3983  val 0.8021  best 0.8027 @ 19
+    epoch  30  train loss 0.2386  val 0.8127  best 0.8134 @ 28
+    epoch  40  train loss 0.1494  val 0.8150  best 0.8174 @ 36
+    epoch  50  train loss 0.1245  val 0.8151  best 0.8174 @ 36
+  cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.8110 (val 0.8174 at epoch 36, 0.3 min)
+cov_vac_degradation / original references / unimodal:rna / seed 2
+  cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1895  val 0.5693  best 0.5693 @ 0
+    epoch  10  train loss 0.8422  val 0.7559  best 0.7559 @ 10
+    epoch  20  train loss 0.7148  val 0.8120  best 0.8120 @ 20
+    epoch  30  train loss 0.6164  val 0.8365  best 0.8365 @ 30
+    epoch  40  train loss 0.5198  val 0.8475  best 0.8475 @ 40
+    epoch  50  train loss 0.4537  val 0.8553  best 0.8554 @ 49
+    epoch  60  train loss 0.3777  val 0.8577  best 0.8579 @ 58
+    epoch  70  train loss 0.3249  val 0.8604  best 0.8604 @ 70
+    epoch  80  train loss 0.2813  val 0.8584  best 0.8604 @ 70
+  cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.8422 (val 0.8604 at epoch 70, 0.8 min)
+cov_vac_degradation / original references / unimodal:prot / seed 2
+  cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1804  val 0.4640  best 0.4640 @ 0
+    epoch  10  train loss 0.9553  val 0.6277  best 0.6277 @ 10
+    epoch  20  train loss 0.8510  val 0.6923  best 0.6923 @ 20
+    epoch  30  train loss 0.7593  val 0.7296  best 0.7296 @ 30
+    epoch  40  train loss 0.6883  val 0.7567  best 0.7567 @ 40
+    epoch  50  train loss 0.6361  val 0.7732  best 0.7732 @ 50
+    epoch  60  train loss 0.5762  val 0.7849  best 0.7877 @ 59
+    epoch  70  train loss 0.5344  val 0.7964  best 0.7964 @ 70
+    epoch  80  train loss 0.4840  val 0.8032  best 0.8032 @ 80
+    epoch  90  train loss 0.4400  val 0.8075  best 0.8075 @ 90
+    epoch 100  train loss 0.4104  val 0.8084  best 0.8105 @ 94
+    epoch 110  train loss 0.3869  val 0.8082  best 0.8105 @ 94
+  cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.8184 (val 0.8105 at epoch 94, 0.6 min)
+cov_vac_degradation / original references / unimodal-grid:rna / seed 2
+  cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1819  val 0.5740  best 0.5740 @ 0
+    epoch  10  train loss 0.9278  val 0.7118  best 0.7118 @ 10
+    epoch  20  train loss 0.8161  val 0.7745  best 0.7745 @ 20
+    epoch  30  train loss 0.7385  val 0.8031  best 0.8031 @ 30
+    epoch  40  train loss 0.6640  val 0.8217  best 0.8217 @ 40
+    epoch  50  train loss 0.6206  val 0.8313  best 0.8318 @ 49
+    epoch  60  train loss 0.5606  val 0.8387  best 0.8387 @ 58
+    epoch  70  train loss 0.5147  val 0.8450  best 0.8450 @ 70
+    epoch  80  train loss 0.4666  val 0.8450  best 0.8462 @ 72
+    epoch  90  train loss 0.4662  val 0.8445  best 0.8462 @ 72
+  cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: test 0.8200 (val 0.8462 at epoch 72, 0.8 min)
+cov_vac_degradation / original references / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1910  val 0.6204  best 0.6204 @ 0
+    epoch  10  train loss 0.7888  val 0.7915  best 0.7915 @ 10
+    epoch  20  train loss 0.5998  val 0.8140  best 0.8164 @ 15
+    epoch  30  train loss 0.5459  val 0.8118  best 0.8164 @ 15
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.7770 (val 0.8164 at epoch 15, 0.5 min)
+cov_vac_degradation / original references / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.2061  val 0.5989  best 0.5989 @ 0
+    epoch  10  train loss 0.8180  val 0.7485  best 0.7485 @ 10
+    epoch  20  train loss 0.5997  val 0.7870  best 0.7925 @ 19
+    epoch  30  train loss 0.4729  val 0.7928  best 0.7928 @ 30
+    epoch  40  train loss 0.4595  val 0.7933  best 0.7935 @ 39
+    epoch  50  train loss 0.4539  val 0.7938  best 0.7940 @ 44
+    epoch  60  train loss 0.4501  val 0.7939  best 0.7940 @ 44
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7760 (val 0.7940 at epoch 44, 1.0 min)
+cov_vac_degradation / original references / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1961  val 0.6054  best 0.6054 @ 0
+    epoch  10  train loss 0.2484  val 0.8225  best 0.8477 @ 8
+    epoch  20  train loss 0.1005  val 0.8429  best 0.8477 @ 8
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8352 (val 0.8477 at epoch 8, 0.6 min)
+cov_vac_degradation / nt500m / unimodal:dna / seed 2
+  cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1502  val 0.6168  best 0.6168 @ 0
+    epoch  10  train loss 0.3588  val 0.7580  best 0.7646 @ 9
+    epoch  20  train loss 0.1256  val 0.7729  best 0.7771 @ 13
+    epoch  30  train loss 0.1091  val 0.7734  best 0.7771 @ 13
+  cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.7249 (val 0.7771 at epoch 13, 0.2 min)
+cov_vac_degradation / nt500m / unimodal-grid:dna / seed 2
+  cov_vac_degradation__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1367  val 0.6520  best 0.6520 @ 0
+    epoch  10  train loss 0.4360  val 0.7656  best 0.7769 @ 9
+    epoch  20  train loss 0.1955  val 0.7724  best 0.7872 @ 11
+    epoch  30  train loss 0.1823  val 0.7715  best 0.7872 @ 11
+  cov_vac_degradation__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: test 0.7319 (val 0.7872 at epoch 11, 0.2 min)
+cov_vac_degradation / nt500m / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1751  val 0.6648  best 0.6648 @ 0
+    epoch  10  train loss 0.6692  val 0.7571  best 0.7819 @ 8
+    epoch  20  train loss 0.4282  val 0.7589  best 0.7894 @ 11
+    epoch  30  train loss 0.3986  val 0.7531  best 0.7894 @ 11
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.7432 (val 0.7894 at epoch 11, 0.5 min)
+cov_vac_degradation / nt500m / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1970  val 0.6512  best 0.6512 @ 0
+    epoch  10  train loss 0.6006  val 0.7334  best 0.7515 @ 9
+    epoch  20  train loss 0.3217  val 0.7439  best 0.7624 @ 11
+    epoch  30  train loss 0.3102  val 0.7428  best 0.7624 @ 11
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7031 (val 0.7624 at epoch 11, 0.5 min)
+cov_vac_degradation / hyenadna / unimodal:dna / seed 2
+  cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.2193  val 0.3267  best 0.3267 @ 0
+    epoch  10  train loss 1.0228  val 0.5399  best 0.5399 @ 10
+    epoch  20  train loss 0.9434  val 0.6076  best 0.6096 @ 19
+    epoch  30  train loss 0.8885  val 0.6522  best 0.6522 @ 30
+    epoch  40  train loss 0.8039  val 0.6847  best 0.6847 @ 40
+    epoch  50  train loss 0.7764  val 0.7130  best 0.7130 @ 50
+    epoch  60  train loss 0.7398  val 0.7310  best 0.7311 @ 59
+    epoch  70  train loss 0.6763  val 0.7456  best 0.7456 @ 70
+    epoch  80  train loss 0.6528  val 0.7530  best 0.7530 @ 80
+    epoch  90  train loss 0.6150  val 0.7592  best 0.7602 @ 88
+    epoch 100  train loss 0.5751  val 0.7674  best 0.7683 @ 99
+    epoch 110  train loss 0.5346  val 0.7714  best 0.7721 @ 108
+    epoch 120  train loss 0.5310  val 0.7753  best 0.7756 @ 119
+    epoch 130  train loss 0.5107  val 0.7761  best 0.7780 @ 128
+    epoch 140  train loss 0.4725  val 0.7764  best 0.7785 @ 132
+    epoch 150  train loss 0.4632  val 0.7777  best 0.7785 @ 132
+  cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.7612 (val 0.7785 at epoch 132, 0.9 min)
+cov_vac_degradation / hyenadna / unimodal-grid:dna / seed 2
+  cov_vac_degradation__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.2121  val 0.3216  best 0.3216 @ 0
+    epoch  10  train loss 1.0726  val 0.4865  best 0.4865 @ 10
+    epoch  20  train loss 1.0113  val 0.5551  best 0.5616 @ 19
+    epoch  30  train loss 0.9604  val 0.6080  best 0.6080 @ 30
+    epoch  40  train loss 0.8945  val 0.6319  best 0.6330 @ 39
+    epoch  50  train loss 0.8729  val 0.6549  best 0.6549 @ 50
+    epoch  60  train loss 0.8360  val 0.6710  best 0.6733 @ 59
+    epoch  70  train loss 0.7866  val 0.6861  best 0.6861 @ 70
+    epoch  80  train loss 0.7726  val 0.6942  best 0.6942 @ 80
+    epoch  90  train loss 0.7521  val 0.6992  best 0.6993 @ 86
+    epoch 100  train loss 0.7048  val 0.7070  best 0.7070 @ 100
+    epoch 110  train loss 0.6781  val 0.7131  best 0.7131 @ 110
+    epoch 120  train loss 0.6875  val 0.7181  best 0.7181 @ 120
+    epoch 130  train loss 0.6716  val 0.7220  best 0.7220 @ 130
+    epoch 140  train loss 0.6322  val 0.7224  best 0.7234 @ 132
+    epoch 150  train loss 0.6166  val 0.7252  best 0.7257 @ 147
+    epoch 160  train loss 0.6230  val 0.7256  best 0.7258 @ 151
+    epoch 170  train loss 0.5994  val 0.7256  best 0.7258 @ 151
+  cov_vac_degradation__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: test 0.7513 (val 0.7258 at epoch 151, 1.1 min)
+cov_vac_degradation / hyenadna / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1882  val 0.5163  best 0.5163 @ 0
+    epoch  10  train loss 0.8821  val 0.7324  best 0.7324 @ 10
+    epoch  20  train loss 0.7362  val 0.7810  best 0.7810 @ 20
+    epoch  30  train loss 0.6559  val 0.7911  best 0.8010 @ 29
+    epoch  40  train loss 0.5541  val 0.8075  best 0.8108 @ 38
+    epoch  50  train loss 0.4994  val 0.7866  best 0.8119 @ 48
+    epoch  60  train loss 0.4318  val 0.8075  best 0.8178 @ 51
+    epoch  70  train loss 0.4140  val 0.8088  best 0.8178 @ 51
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.8355 (val 0.8178 at epoch 51, 1.0 min)
+cov_vac_degradation / hyenadna / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.2076  val 0.4374  best 0.4374 @ 0
+    epoch  10  train loss 0.9681  val 0.6688  best 0.6688 @ 10
+    epoch  20  train loss 0.8424  val 0.7330  best 0.7343 @ 19
+    epoch  30  train loss 0.7537  val 0.7601  best 0.7630 @ 29
+    epoch  40  train loss 0.6758  val 0.7793  best 0.7840 @ 38
+    epoch  50  train loss 0.6162  val 0.7647  best 0.7968 @ 48
+    epoch  60  train loss 0.5765  val 0.7924  best 0.7968 @ 48
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7969 (val 0.7968 at epoch 48, 1.1 min)
+cov_vac_degradation / rinalmo / unimodal:rna / seed 2
+  cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.2036  val 0.6654  best 0.6654 @ 0
+    epoch  10  train loss 0.5749  val 0.8031  best 0.8156 @ 8
+    epoch  20  train loss 0.3883  val 0.8163  best 0.8229 @ 17
+    epoch  30  train loss 0.3159  val 0.8237  best 0.8243 @ 28
+    epoch  40  train loss 0.2873  val 0.8232  best 0.8254 @ 35
+    epoch  50  train loss 0.2887  val 0.8252  best 0.8262 @ 41
+    epoch  60  train loss 0.2720  val 0.8251  best 0.8262 @ 41
+  cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.8148 (val 0.8262 at epoch 41, 0.5 min)
+cov_vac_degradation / rinalmo / unimodal-grid:rna / seed 2
+  cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1349  val 0.6483  best 0.6483 @ 0
+    epoch  10  train loss 0.6627  val 0.7751  best 0.7992 @ 8
+    epoch  20  train loss 0.4839  val 0.8143  best 0.8155 @ 18
+    epoch  30  train loss 0.3945  val 0.8013  best 0.8327 @ 29
+    epoch  40  train loss 0.2991  val 0.8213  best 0.8327 @ 29
+  cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: test 0.8277 (val 0.8327 at epoch 29, 0.4 min)
+cov_vac_degradation / rinalmo / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1262  val 0.6831  best 0.6831 @ 0
+    epoch  10  train loss 0.6630  val 0.7997  best 0.8099 @ 9
+    epoch  20  train loss 0.4669  val 0.8241  best 0.8266 @ 18
+    epoch  30  train loss 0.3511  val 0.8126  best 0.8424 @ 29
+    epoch  40  train loss 0.2516  val 0.8299  best 0.8424 @ 29
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.8351 (val 0.8424 at epoch 29, 0.6 min)
+cov_vac_degradation / rinalmo / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1640  val 0.6421  best 0.6421 @ 0
+    epoch  10  train loss 0.7238  val 0.7855  best 0.7989 @ 9
+    epoch  20  train loss 0.5440  val 0.8147  best 0.8224 @ 15
+    epoch  30  train loss 0.4915  val 0.8175  best 0.8224 @ 15
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7948 (val 0.8224 at epoch 15, 0.6 min)
+cov_vac_degradation / mrnafm / unimodal:rna / seed 2
+  cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1786  val 0.5454  best 0.5454 @ 0
+    epoch  10  train loss 0.8711  val 0.6935  best 0.6935 @ 10
+    epoch  20  train loss 0.7381  val 0.7718  best 0.7718 @ 20
+    epoch  30  train loss 0.6695  val 0.8026  best 0.8026 @ 30
+    epoch  40  train loss 0.5826  val 0.8165  best 0.8167 @ 39
+    epoch  50  train loss 0.5130  val 0.8257  best 0.8266 @ 49
+    epoch  60  train loss 0.4438  val 0.8280  best 0.8296 @ 56
+    epoch  70  train loss 0.3809  val 0.8318  best 0.8334 @ 69
+    epoch  80  train loss 0.3344  val 0.8317  best 0.8334 @ 69
+  cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.8180 (val 0.8334 at epoch 69, 0.7 min)
+cov_vac_degradation / mrnafm / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1904  val 0.6090  best 0.6090 @ 0
+    epoch  10  train loss 0.7572  val 0.7798  best 0.7798 @ 10
+    epoch  20  train loss 0.5599  val 0.7982  best 0.7982 @ 20
+    epoch  30  train loss 0.4310  val 0.7909  best 0.7982 @ 20
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.7562 (val 0.7982 at epoch 20, 0.5 min)
+cov_vac_degradation / mrnafm / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.2025  val 0.6127  best 0.6127 @ 0
+    epoch  10  train loss 0.8362  val 0.7520  best 0.7520 @ 10
+    epoch  20  train loss 0.6323  val 0.7824  best 0.7899 @ 19
+    epoch  30  train loss 0.5183  val 0.7883  best 0.7899 @ 19
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7487 (val 0.7899 at epoch 19, 0.6 min)
+cov_vac_degradation / calm / unimodal:rna / seed 2
+  cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1525  val 0.6087  best 0.6087 @ 0
+    epoch  10  train loss 0.7797  val 0.7846  best 0.7846 @ 10
+    epoch  20  train loss 0.6337  val 0.8295  best 0.8321 @ 19
+    epoch  30  train loss 0.5370  val 0.8533  best 0.8533 @ 30
+    epoch  40  train loss 0.4423  val 0.8577  best 0.8592 @ 36
+    epoch  50  train loss 0.3648  val 0.8593  best 0.8650 @ 48
+    epoch  60  train loss 0.3166  val 0.8622  best 0.8650 @ 48
+  cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.8504 (val 0.8650 at epoch 48, 0.4 min)
+cov_vac_degradation / calm / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1696  val 0.6771  best 0.6771 @ 0
+    epoch  10  train loss 0.7571  val 0.7906  best 0.7906 @ 10
+    epoch  20  train loss 0.5654  val 0.8317  best 0.8317 @ 20
+    epoch  30  train loss 0.4447  val 0.8301  best 0.8454 @ 29
+    epoch  40  train loss 0.3235  val 0.8354  best 0.8454 @ 29
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.8150 (val 0.8454 at epoch 29, 0.5 min)
+cov_vac_degradation / calm / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1978  val 0.6640  best 0.6640 @ 0
+    epoch  10  train loss 0.8312  val 0.7596  best 0.7596 @ 10
+    epoch  20  train loss 0.6657  val 0.8140  best 0.8217 @ 19
+    epoch  30  train loss 0.5038  val 0.8212  best 0.8246 @ 22
+    epoch  40  train loss 0.4878  val 0.8209  best 0.8246 @ 22
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7785 (val 0.8246 at epoch 22, 0.6 min)
+cov_vac_degradation / esm2_35m / unimodal:prot / seed 2
+  cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1935  val 0.5164  best 0.5164 @ 0
+    epoch  10  train loss 0.9031  val 0.6634  best 0.6634 @ 10
+    epoch  20  train loss 0.7761  val 0.7250  best 0.7250 @ 20
+    epoch  30  train loss 0.6781  val 0.7605  best 0.7605 @ 30
+    epoch  40  train loss 0.5914  val 0.7812  best 0.7812 @ 40
+    epoch  50  train loss 0.5375  val 0.7861  best 0.7938 @ 48
+    epoch  60  train loss 0.4776  val 0.7960  best 0.8013 @ 59
+    epoch  70  train loss 0.4284  val 0.8039  best 0.8039 @ 69
+    epoch  80  train loss 0.3871  val 0.8057  best 0.8057 @ 80
+    epoch  90  train loss 0.3371  val 0.8069  best 0.8082 @ 89
+    epoch 100  train loss 0.2986  val 0.8044  best 0.8088 @ 94
+    epoch 110  train loss 0.2909  val 0.8038  best 0.8088 @ 94
+  cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.8266 (val 0.8088 at epoch 94, 0.6 min)
+cov_vac_degradation / esm2_35m / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1831  val 0.6566  best 0.6566 @ 0
+    epoch  10  train loss 0.7752  val 0.7861  best 0.7861 @ 10
+    epoch  20  train loss 0.5995  val 0.8154  best 0.8165 @ 15
+    epoch  30  train loss 0.5413  val 0.8126  best 0.8165 @ 15
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.7841 (val 0.8165 at epoch 15, 0.5 min)
+cov_vac_degradation / esm2_35m / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.2018  val 0.6286  best 0.6286 @ 0
+    epoch  10  train loss 0.8241  val 0.7581  best 0.7581 @ 10
+    epoch  20  train loss 0.6084  val 0.8060  best 0.8104 @ 19
+    epoch  30  train loss 0.4803  val 0.8065  best 0.8104 @ 19
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7700 (val 0.8104 at epoch 19, 0.7 min)
+cov_vac_degradation / esm2_150m / unimodal:prot / seed 2
+  cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1759  val 0.5470  best 0.5470 @ 0
+    epoch  10  train loss 0.8714  val 0.6797  best 0.6797 @ 10
+    epoch  20  train loss 0.7278  val 0.7348  best 0.7348 @ 20
+    epoch  30  train loss 0.6285  val 0.7648  best 0.7648 @ 30
+    epoch  40  train loss 0.5312  val 0.7838  best 0.7838 @ 40
+    epoch  50  train loss 0.4721  val 0.7892  best 0.7957 @ 48
+    epoch  60  train loss 0.3911  val 0.7962  best 0.8010 @ 59
+    epoch  70  train loss 0.3441  val 0.8064  best 0.8064 @ 70
+    epoch  80  train loss 0.3058  val 0.8095  best 0.8095 @ 80
+    epoch  90  train loss 0.2657  val 0.8071  best 0.8095 @ 80
+  cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.8378 (val 0.8095 at epoch 80, 0.6 min)
+cov_vac_degradation / esm2_150m / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1799  val 0.6152  best 0.6152 @ 0
+    epoch  10  train loss 0.7903  val 0.7734  best 0.7734 @ 10
+    epoch  20  train loss 0.6000  val 0.8089  best 0.8089 @ 20
+    epoch  30  train loss 0.4870  val 0.8095  best 0.8265 @ 29
+    epoch  40  train loss 0.3683  val 0.8164  best 0.8265 @ 29
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.8056 (val 0.8265 at epoch 29, 0.7 min)
+cov_vac_degradation / esm2_150m / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.2004  val 0.6395  best 0.6395 @ 0
+    epoch  10  train loss 0.8260  val 0.7510  best 0.7510 @ 10
+    epoch  20  train loss 0.6116  val 0.7946  best 0.7961 @ 19
+    epoch  30  train loss 0.4596  val 0.7965  best 0.8068 @ 29
+    epoch  40  train loss 0.3395  val 0.8013  best 0.8068 @ 29
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7838 (val 0.8068 at epoch 29, 0.8 min)
+cov_vac_degradation / protbert / unimodal:prot / seed 2
+  cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1944  val 0.5290  best 0.5290 @ 0
+    epoch  10  train loss 0.9480  val 0.6551  best 0.6551 @ 10
+    epoch  20  train loss 0.8207  val 0.6960  best 0.6960 @ 20
+    epoch  30  train loss 0.7250  val 0.7232  best 0.7232 @ 30
+    epoch  40  train loss 0.6345  val 0.7422  best 0.7426 @ 39
+    epoch  50  train loss 0.5715  val 0.7548  best 0.7592 @ 48
+    epoch  60  train loss 0.5102  val 0.7655  best 0.7685 @ 59
+    epoch  70  train loss 0.4605  val 0.7830  best 0.7830 @ 70
+    epoch  80  train loss 0.4075  val 0.7872  best 0.7872 @ 80
+    epoch  90  train loss 0.3576  val 0.7895  best 0.7904 @ 89
+    epoch 100  train loss 0.3200  val 0.7936  best 0.7936 @ 100
+    epoch 110  train loss 0.2830  val 0.7950  best 0.7950 @ 110
+    epoch 120  train loss 0.2572  val 0.7908  best 0.7950 @ 110
+  cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.7799 (val 0.7950 at epoch 110, 0.9 min)
+cov_vac_degradation / protbert / concat / seed 2
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1952  val 0.6503  best 0.6503 @ 0
+    epoch  10  train loss 0.7839  val 0.7742  best 0.7751 @ 9
+    epoch  20  train loss 0.5892  val 0.7994  best 0.7994 @ 20
+    epoch  30  train loss 0.4877  val 0.8042  best 0.8145 @ 29
+    epoch  40  train loss 0.3714  val 0.8033  best 0.8145 @ 29
+  cov_vac_degradation__concat__lambda0.0__ch100__equation__seed2: test 0.7959 (val 0.8145 at epoch 29, 0.7 min)
+cov_vac_degradation / protbert / mil / seed 2
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.2064  val 0.6385  best 0.6385 @ 0
+    epoch  10  train loss 0.7906  val 0.7610  best 0.7628 @ 9
+    epoch  20  train loss 0.5709  val 0.7905  best 0.7969 @ 19
+    epoch  30  train loss 0.4594  val 0.7952  best 0.7969 @ 19
+  cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2: test 0.7719 (val 0.7969 at epoch 19, 0.7 min)
+cov_vac_degradation / nt500m / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1707  val 0.6567  best 0.6567 @ 0
+    epoch  10  train loss 0.1298  val 0.8016  best 0.8196 @ 8
+    epoch  20  train loss 0.0438  val 0.8263  best 0.8302 @ 18
+    epoch  30  train loss 0.0208  val 0.8304  best 0.8318 @ 25
+    epoch  40  train loss 0.0193  val 0.8314  best 0.8325 @ 35
+    epoch  50  train loss 0.0194  val 0.8315  best 0.8325 @ 35
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8087 (val 0.8325 at epoch 35, 1.2 min)
+cov_vac_degradation / hyenadna / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.2244  val 0.5486  best 0.5486 @ 0
+    epoch  10  train loss 0.5866  val 0.7790  best 0.8155 @ 8
+    epoch  20  train loss 0.3000  val 0.8179  best 0.8398 @ 16
+    epoch  30  train loss 0.2100  val 0.8290  best 0.8398 @ 16
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8522 (val 0.8398 at epoch 16, 0.7 min)
+cov_vac_degradation / rinalmo / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1357  val 0.6570  best 0.6570 @ 0
+    epoch  10  train loss 0.2492  val 0.8395  best 0.8624 @ 8
+    epoch  20  train loss 0.1039  val 0.8552  best 0.8624 @ 8
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8420 (val 0.8624 at epoch 8, 0.6 min)
+cov_vac_degradation / mrnafm / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.2164  val 0.6324  best 0.6324 @ 0
+    epoch  10  train loss 0.2532  val 0.8328  best 0.8484 @ 8
+    epoch  20  train loss 0.0816  val 0.8529  best 0.8573 @ 12
+    epoch  30  train loss 0.0666  val 0.8532  best 0.8573 @ 12
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8276 (val 0.8573 at epoch 12, 0.6 min)
+cov_vac_degradation / calm / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1650  val 0.6633  best 0.6633 @ 0
+    epoch  10  train loss 0.2349  val 0.8361  best 0.8522 @ 9
+    epoch  20  train loss 0.0925  val 0.8478  best 0.8522 @ 9
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8412 (val 0.8522 at epoch 9, 0.6 min)
+cov_vac_degradation / esm2_35m / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1474  val 0.6579  best 0.6579 @ 0
+    epoch  10  train loss 0.2257  val 0.8222  best 0.8394 @ 8
+    epoch  20  train loss 0.1025  val 0.8348  best 0.8394 @ 8
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8235 (val 0.8394 at epoch 8, 0.6 min)
+cov_vac_degradation / esm2_150m / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1946  val 0.6705  best 0.6705 @ 0
+    epoch  10  train loss 0.2489  val 0.8424  best 0.8608 @ 8
+    epoch  20  train loss 0.1043  val 0.8586  best 0.8627 @ 15
+    epoch  30  train loss 0.1019  val 0.8583  best 0.8627 @ 15
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8274 (val 0.8627 at epoch 15, 0.7 min)
+cov_vac_degradation / protbert / cross / seed 2
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1728  val 0.6608  best 0.6608 @ 0
+    epoch  10  train loss 0.2176  val 0.8320  best 0.8430 @ 8
+    epoch  20  train loss 0.0897  val 0.8430  best 0.8546 @ 18
+    epoch  30  train loss 0.0427  val 0.8548  best 0.8548 @ 23
+    epoch  40  train loss 0.0301  val 0.8558  best 0.8574 @ 32
+    epoch  50  train loss 0.0313  val 0.8563  best 0.8574 @ 32
+  cov_vac_degradation__cross__lambda0.0__ch100__equation__seed2: test 0.8412 (val 0.8574 at epoch 32, 1.1 min)
+Requested seed finished in 0.47 hours.
+
+cov_vac_degradation (Spearman)
+Paired intervals not recalculated. RUN_BOOTSTRAP is separate from completing fits; retained interval outputs remain historical.
+Saved-prediction report skipped. Enable RUN_SAVED_COMPARISONS in Setup with READ_SAVED_RESULTS = True to calculate or reuse it.

@@ -262,6 +262,73 @@ class EmbeddingCacheTests(unittest.TestCase):
                 # Structural corruption must still error when the requested identity differs.
                 self.assert_recovery_error(["different"])
 
+    def test_nonfinite_caches_require_recovery_without_loading_a_model(self):
+        for value in (np.nan, np.inf, -np.inf):
+            with self.subTest(value=value):
+                matrix = self.matrix.copy()
+                matrix[0, 1] = value
+                self.save_fixture(matrix)
+                self.assert_recovery_error()
+                self.assert_recovery_error(["different"])
+                before = self.path.read_bytes()
+                with self.assertRaisesRegex(ValueError, "finite"):
+                    embeddings.read_saved(
+                        self.encoder, self.seqs, self.cache_dir, prepared=True,
+                    )
+                self.load.assert_not_called()
+                self.embed.assert_not_called()
+                self.assertEqual(self.path.read_bytes(), before)
+
+    def test_finite_numeric_caches_keep_values_and_dtype(self):
+        for dtype in (np.float16, np.float32, np.float64, np.int32, np.uint32):
+            with self.subTest(dtype=dtype):
+                matrix = self.matrix.astype(dtype)
+                self.save_fixture(matrix)
+                before = self.path.read_bytes()
+                actual, reused = self.call()
+                self.assertTrue(reused)
+                self.assertEqual(actual.dtype, matrix.dtype)
+                np.testing.assert_array_equal(actual, matrix)
+                self.assertEqual(self.path.read_bytes(), before)
+        self.load.assert_not_called()
+        self.embed.assert_not_called()
+
+    def test_nonfinite_computed_vectors_are_not_written(self):
+        for value in (np.nan, np.inf, -np.inf):
+            for existing in (False, True):
+                with self.subTest(value=value, existing=existing):
+                    self.path.unlink(missing_ok=True)
+                    if existing:
+                        self.save_fixture()
+                    before = self.path.read_bytes() if existing else None
+                    self.load.reset_mock()
+                    self.free.reset_mock()
+                    with patch.object(embeddings, "embed", return_value=np.array([1., value])):
+                        with patch.object(embeddings, "_write_cache") as write:
+                            with self.assertRaisesRegex(ValueError, "finite"):
+                                self.call(["different"])
+                            write.assert_not_called()
+                    self.load.assert_called_once()
+                    self.free.assert_called_once()
+                    if existing:
+                        self.assertEqual(self.path.read_bytes(), before)
+                    self.assertEqual(list(self.cache_dir.iterdir()), [self.path] if existing else [])
+
+    def test_nonfinite_temporary_archive_cannot_replace_completed_cache(self):
+        for value in (np.nan, np.inf, -np.inf):
+            with self.subTest(value=value):
+                self.save_fixture()
+                before = self.path.read_bytes()
+                matrix = self.matrix.copy()
+                matrix[1, 0] = value
+                expected = {key: item for key, item in self.metadata().items() if key != "device"}
+                with patch.object(embeddings.os, "replace") as publish:
+                    with self.assertRaisesRegex(ValueError, "finite"):
+                        embeddings._write_cache(self.path, matrix, "producer-device", expected)
+                    publish.assert_not_called()
+                self.assertEqual(self.path.read_bytes(), before)
+                self.assertEqual(list(self.cache_dir.iterdir()), [self.path])
+
     def test_archives_close_on_hit_mismatch_and_validation_error(self):
         real_load = np.load
         for outcome in ("hit", "mismatch", "error"):

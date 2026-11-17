@@ -584,6 +584,8 @@ class Stage3BuildReadingTests(unittest.TestCase):
                     np.testing.assert_array_equal(call.args[2], prediction[pick])
 
     def test_analysis_display_reports_missing_evidence_without_scoring(self):
+        # Exercise the explicit analysis branch; default reading never bootstraps.
+        self.env["READ_SAVED_RESULTS"] = False
         self.env["claim_results"] = {name: {} for name in CLAIM_VARIANTS}
         self.env["spread"] = self.call("summarize_claim_results", self.env["claim_results"])
         self.execute("noise4")

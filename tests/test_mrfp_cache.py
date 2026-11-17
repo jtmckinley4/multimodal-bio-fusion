@@ -224,7 +224,8 @@ class MrfpSavedReadingTests(unittest.TestCase):
     def check_notebook_read_branches(self, *, incomplete):
         sources = self.notebook_sources()
         settings = {}
-        self.execute_selected(sources["3ccd3a1d"], settings, assignment_names=("READ_SAVED_RESULTS",))
+        self.execute_selected(sources["mrfp-experiment-settings"], settings,
+                              assignment_names=("READ_SAVED_RESULTS",))
         self.assertIs(settings["READ_SAVED_RESULTS"], True)
         forbidden = Mock(side_effect=AssertionError("read mode called a producer or writer"))
         structure_path = self.write("structure.csv", [

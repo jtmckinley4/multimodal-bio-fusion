@@ -83,7 +83,7 @@ The [Gantt and Details sheets](../../docs/Research_Project_Plan_Gantt.xlsx), tas
 
 ## Reading, execution and retained evidence
 
-Saved outputs can be read without executing cells. Reading flags differ between notebooks: the BLF build notebook and original GTEx pilot contain direct fit cells, and Mamba's default skips training but can still bootstrap eligible saved predictions. The GTEx repeat section has its own reading switch; it does not guard the earlier pilot. Consult the [runbook](../stage4/RUNBOOK.md#read-saved-results-without-starting-work) and each notebook's setup before execution; a file move does not change what Run All computes.
+Saved outputs can be read without executing cells. The notebooks also default to reading available records or metadata when run from the top, with missing evidence reported rather than computed. Keep separate pilot, repeat and analysis switches off for this route; Mamba's bootstrap now requires its own explicit switch. The [runbook](../stage4/RUNBOOK.md#read-saved-results-without-starting-work) explains each boundary. Changing a reading switch does not establish that a computation will run only missing work.
 
 The notebooks explain and assemble the references; [shared fusion code](../shared_code/fusion/) supplies reused extraction, grid, head and training operations. [Software tests](../../tests/README.md) check controlled cases, while notebooks and [run records](../../docs/run-records.md) retain research evidence. Gantt/Details tasks 16/17/41/44 retain the baseline and reference work; task 25 covers proposed attention comparisons.
 

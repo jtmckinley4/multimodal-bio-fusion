@@ -44,15 +44,19 @@ Follow [environment setup](../README.md#setup) and the selected notebook's own s
 
 Use [software checks](../tests/README.md) after edits; synthetic checks do not reproduce research results. [Run records](run-records.md) identify producing versions, inputs, evaluation settings and retained evidence. The [Stage 4 runbook](../Code/stage4/RUNBOOK.md) owns execution and recovery routes.
 
+For cluster work, the [common ARCC guide](../execution/arcc/README.md) covers workspace separation, environment/GPU preflight and transfer/evidence handling. The [encoder-swap recipe](../execution/arcc/encoder_swaps/README.md) owns its preparation and launch commands; the [returned-result route](../Code/stage4/RUNBOOK.md#select-a-returned-result-set) covers reading the distinct Newton cohort with canonical dataset files. The [November 16 record](run-records.md#2026-11-16-arcc-recipe-layout-and-returned-input-deduplication) owns verified batch history and the returned-input mapping.
+
 For code changes, consult the [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md). The [coding review and implementation plan](shared-coding-proposal.md) retains its rationale and verification history.
 
 ## Follow the research plan
 
-Read the [Research Canvas](Research_Canvas.pptx) for project framing and [Mina's revised protocol](Biological_Fusion_Plan.docx) for proposed comparisons. [Stage 4](../Code/stage4/README.md#organize-the-proposed-notebooks-around-questions) connects those comparisons to existing work and planning task IDs. Earlier records may call these proposals Stage 5; their current home is the combined comparative and explanatory investigation.
+Read the [Research Canvas](Research_Canvas.pptx) for project framing and [Mina's revised protocol](Biological_Fusion_Plan.docx) for proposed comparisons. [Stage 4](../Code/stage4/README.md#organize-the-preparation-notebooks-around-questions) connects those comparisons to existing work and planning task IDs. Earlier records may call these proposals Stage 5; their current home is the combined comparative and explanatory investigation.
 
 In the [Gantt workbook](Research_Project_Plan_Gantt.xlsx), find a task's ID, recorded status and window on `Gantt`, then match that ID in `Details` for prerequisites and expected outputs or review conditions. Cite the task ID when connecting work to the plan. Recorded status is dated; check evidence before treating it as completion.
 
 The dated workbook retains its historical stage/file names, task IDs, statuses and dates. Use the current stage READMEs to locate their present homes, including the former Stage 5 proposals now in Stage 4; the reorganization does not revise experiment priorities or schedules.
+
+The [research execution and experiment batch plan](research-execution-plan.md) connects Newton result integration, reading-first notebooks and Mina's experiments, with human decision points and completion checks. It distinguishes implemented B1–B4 safeguards, B5's completed 504-fit cohort and four reports, and the prepared but untrained Mina comparisons. CPU input inspections are separate from trained findings; batch descriptions do not authorize new research runs.
 
 The [Gantt presentation](Research_Project_Plan_Gantt.pptx) is an earlier overview, not updated for the revised protocol. The [planning instructions](../AGENTS.md#research-planning) explain how agents follow the workbook and surface proposed changes.
 

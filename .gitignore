@@ -44,3 +44,7 @@ Claude outputs/
 
 # Personal deferred reference work stays local, including its navigation notes.
 /Code/deferred/
+
+# Returned Newton inputs are verified against the canonical CSVs in /datasets/.
+# Keep accidental return-transfer duplicates out of the shared results package.
+/Code/stage4/results/newton_h100_seeds012/datasets/

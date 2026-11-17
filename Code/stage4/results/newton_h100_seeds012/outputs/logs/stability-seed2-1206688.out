@@ -1,0 +1,404 @@
+Preparing Conda environment on evc44
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python
+Recording environment; then starting the mrna_stability seed 2 notebook.
+Executing train: ('mrna_stability',), seed 2; /lustre/fs1/home/ch806988/multi-modal_fusion/outputs/notebooks/train-mrna_stability-seed2-20261115T061010Z-8bf9082d.ipynb
+Kernel Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python | torch: 2.10.0+cu126 | device: cuda
+GPU: NVIDIA H100 PCIe | CUDA: 12.6 | cuDNN: 91002
+Training seed 2; selection seed 0; 42 new/resumable fits in the displayed plan.
+8 swap-benchmark pairs over 1 benchmarks, device cuda
+Estimated replacement-cache payload needed by pending fits, including existing caches: ~79 GB
+All of it stays out of Git, under Code/stage3/embeddings/<benchmark>/<encoder>/.
+  mrna_stability/ntv2_100m: complete, recorded_input
+  mrna_stability/rnafm: complete, recorded_input
+  mrna_stability/esm2_8m: complete, recorded_input
+  mrna_stability/nt500m: complete, recorded_input
+  mrna_stability/hyenadna: complete, recorded_input
+  mrna_stability/rinalmo: complete, recorded_input
+  mrna_stability/mrnafm: complete, recorded_input
+  mrna_stability/calm: complete, recorded_input
+  mrna_stability/esm2_35m: complete, recorded_input
+  mrna_stability/esm2_150m: complete, recorded_input
+  mrna_stability/protbert: complete, recorded_input
+Preflight passed: 11 caches; 0 missing shards (must be zero).
+Token streams open only for a pending training group.
+mrna_stability / original references / unimodal:dna / seed 2
+  mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9378  val 0.3416  best 0.3416 @ 0
+    epoch  10  train loss 0.4413  val 0.5287  best 0.5287 @ 10
+    epoch  20  train loss 0.2917  val 0.5369  best 0.5387 @ 17
+    epoch  30  train loss 0.2356  val 0.5367  best 0.5387 @ 17
+  mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.5427 (val 0.5387 at epoch 17, 9.3 min)
+mrna_stability / original references / unimodal:rna / seed 2
+  mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9091  val 0.2910  best 0.2910 @ 0
+    epoch  10  train loss 0.7545  val 0.4127  best 0.4127 @ 10
+    epoch  20  train loss 0.6374  val 0.4835  best 0.4835 @ 20
+    epoch  30  train loss 0.5223  val 0.5258  best 0.5258 @ 30
+    epoch  40  train loss 0.4328  val 0.5459  best 0.5459 @ 40
+    epoch  50  train loss 0.3735  val 0.5560  best 0.5560 @ 50
+    epoch  60  train loss 0.3283  val 0.5560  best 0.5584 @ 59
+    epoch  70  train loss 0.2996  val 0.5582  best 0.5606 @ 64
+    epoch  80  train loss 0.2674  val 0.5614  best 0.5626 @ 78
+    epoch  90  train loss 0.2637  val 0.5618  best 0.5626 @ 78
+  mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.5512 (val 0.5626 at epoch 78, 42.7 min)
+mrna_stability / original references / unimodal:prot / seed 2
+  mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8974  val 0.2991  best 0.2991 @ 0
+    epoch  10  train loss 0.6812  val 0.4392  best 0.4392 @ 10
+    epoch  20  train loss 0.5646  val 0.4868  best 0.4868 @ 20
+    epoch  30  train loss 0.4783  val 0.5081  best 0.5081 @ 30
+    epoch  40  train loss 0.4242  val 0.5179  best 0.5209 @ 39
+    epoch  50  train loss 0.3822  val 0.5265  best 0.5293 @ 47
+    epoch  60  train loss 0.3542  val 0.5272  best 0.5320 @ 59
+    epoch  70  train loss 0.3280  val 0.5351  best 0.5360 @ 65
+    epoch  80  train loss 0.3081  val 0.5366  best 0.5372 @ 78
+    epoch  90  train loss 0.2980  val 0.5370  best 0.5380 @ 83
+    epoch 100  train loss 0.3002  val 0.5368  best 0.5380 @ 83
+  mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.5350 (val 0.5380 at epoch 83, 7.8 min)
+mrna_stability / original references / unimodal-grid:rna / seed 2
+  mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9053  val 0.2697  best 0.2697 @ 0
+    epoch  10  train loss 0.7973  val 0.3599  best 0.3599 @ 10
+    epoch  20  train loss 0.7315  val 0.4128  best 0.4128 @ 20
+    epoch  30  train loss 0.6513  val 0.4622  best 0.4622 @ 30
+    epoch  40  train loss 0.5689  val 0.4967  best 0.4967 @ 40
+    epoch  50  train loss 0.5066  val 0.5192  best 0.5192 @ 50
+    epoch  60  train loss 0.4453  val 0.5279  best 0.5321 @ 59
+    epoch  70  train loss 0.4014  val 0.5432  best 0.5432 @ 70
+    epoch  80  train loss 0.3745  val 0.5465  best 0.5465 @ 80
+    epoch  90  train loss 0.3453  val 0.5459  best 0.5485 @ 89
+    epoch 100  train loss 0.3230  val 0.5516  best 0.5516 @ 100
+    epoch 110  train loss 0.3030  val 0.5492  best 0.5525 @ 106
+    epoch 120  train loss 0.2743  val 0.5507  best 0.5525 @ 106
+  mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: test 0.5492 (val 0.5525 at epoch 106, 53.8 min)
+mrna_stability / original references / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8853  val 0.3344  best 0.3344 @ 0
+    epoch  10  train loss 0.5818  val 0.5122  best 0.5122 @ 10
+    epoch  20  train loss 0.3577  val 0.5545  best 0.5545 @ 20
+    epoch  30  train loss 0.2761  val 0.5559  best 0.5606 @ 25
+    epoch  40  train loss 0.2281  val 0.5576  best 0.5606 @ 25
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5609 (val 0.5606 at epoch 25, 31.4 min)
+mrna_stability / original references / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.9009  val 0.3069  best 0.3069 @ 0
+    epoch  10  train loss 0.6592  val 0.4593  best 0.4593 @ 10
+    epoch  20  train loss 0.4911  val 0.5196  best 0.5196 @ 20
+    epoch  30  train loss 0.3755  val 0.5402  best 0.5402 @ 30
+    epoch  40  train loss 0.2889  val 0.5498  best 0.5498 @ 33
+    epoch  50  train loss 0.2764  val 0.5518  best 0.5523 @ 47
+    epoch  60  train loss 0.2690  val 0.5520  best 0.5523 @ 47
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5559 (val 0.5523 at epoch 47, 48.5 min)
+mrna_stability / original references / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9095  val 0.3545  best 0.3545 @ 0
+    epoch  10  train loss 0.3430  val 0.5421  best 0.5479 @ 9
+    epoch  20  train loss 0.2171  val 0.5444  best 0.5489 @ 11
+    epoch  30  train loss 0.1991  val 0.5444  best 0.5489 @ 11
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5497 (val 0.5489 at epoch 11, 43.1 min)
+mrna_stability / nt500m / unimodal:dna / seed 2
+  mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9285  val 0.3745  best 0.3745 @ 0
+    epoch  10  train loss 0.3160  val 0.5183  best 0.5252 @ 9
+    epoch  20  train loss 0.2071  val 0.5236  best 0.5252 @ 9
+  mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.5336 (val 0.5252 at epoch 9, 7.2 min)
+mrna_stability / nt500m / unimodal-grid:dna / seed 2
+  mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9220  val 0.3404  best 0.3404 @ 0
+    epoch  10  train loss 0.3461  val 0.5308  best 0.5369 @ 9
+    epoch  20  train loss 0.2121  val 0.5328  best 0.5372 @ 11
+    epoch  30  train loss 0.1995  val 0.5336  best 0.5372 @ 11
+  mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: test 0.5444 (val 0.5372 at epoch 11, 5.6 min)
+mrna_stability / nt500m / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8872  val 0.3403  best 0.3403 @ 0
+    epoch  10  train loss 0.4489  val 0.5344  best 0.5344 @ 10
+    epoch  20  train loss 0.2807  val 0.5410  best 0.5465 @ 17
+    epoch  30  train loss 0.2085  val 0.5447  best 0.5465 @ 17
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5540 (val 0.5465 at epoch 17, 31.2 min)
+mrna_stability / nt500m / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.9026  val 0.3104  best 0.3104 @ 0
+    epoch  10  train loss 0.5271  val 0.5159  best 0.5159 @ 10
+    epoch  20  train loss 0.3069  val 0.5502  best 0.5503 @ 17
+    epoch  30  train loss 0.2530  val 0.5464  best 0.5537 @ 25
+    epoch  40  train loss 0.2016  val 0.5463  best 0.5537 @ 25
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5521 (val 0.5537 at epoch 25, 51.8 min)
+mrna_stability / hyenadna / unimodal:dna / seed 2
+  mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9546  val 0.2135  best 0.2135 @ 0
+    epoch  10  train loss 0.7808  val 0.3464  best 0.3464 @ 10
+    epoch  20  train loss 0.6689  val 0.4157  best 0.4202 @ 19
+    epoch  30  train loss 0.5666  val 0.4703  best 0.4703 @ 30
+    epoch  40  train loss 0.4919  val 0.4923  best 0.4923 @ 40
+    epoch  50  train loss 0.4429  val 0.5069  best 0.5069 @ 50
+    epoch  60  train loss 0.4116  val 0.5134  best 0.5137 @ 57
+    epoch  70  train loss 0.3621  val 0.5188  best 0.5188 @ 70
+    epoch  80  train loss 0.3485  val 0.5198  best 0.5198 @ 78
+    epoch  90  train loss 0.3461  val 0.5206  best 0.5206 @ 90
+    epoch 100  train loss 0.3477  val 0.5205  best 0.5208 @ 92
+    epoch 110  train loss 0.3439  val 0.5205  best 0.5208 @ 92
+  mrna_stability__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.5200 (val 0.5208 at epoch 92, 27.5 min)
+mrna_stability / hyenadna / unimodal-grid:dna / seed 2
+  mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9386  val 0.2123  best 0.2123 @ 0
+    epoch  10  train loss 0.8372  val 0.2972  best 0.2974 @ 9
+    epoch  20  train loss 0.7791  val 0.3499  best 0.3517 @ 19
+    epoch  30  train loss 0.7181  val 0.3971  best 0.3971 @ 30
+    epoch  40  train loss 0.6573  val 0.4279  best 0.4279 @ 40
+    epoch  50  train loss 0.6049  val 0.4534  best 0.4534 @ 50
+    epoch  60  train loss 0.5587  val 0.4707  best 0.4710 @ 59
+    epoch  70  train loss 0.5189  val 0.4837  best 0.4849 @ 69
+    epoch  80  train loss 0.4920  val 0.4946  best 0.4946 @ 80
+    epoch  90  train loss 0.4624  val 0.5011  best 0.5011 @ 90
+    epoch 100  train loss 0.4375  val 0.4917  best 0.5054 @ 99
+    epoch 110  train loss 0.4161  val 0.4913  best 0.5102 @ 109
+    epoch 120  train loss 0.3779  val 0.5107  best 0.5113 @ 119
+    epoch 130  train loss 0.3775  val 0.5127  best 0.5129 @ 125
+    epoch 140  train loss 0.3742  val 0.5125  best 0.5129 @ 125
+  mrna_stability__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: test 0.5250 (val 0.5129 at epoch 125, 31.6 min)
+mrna_stability / hyenadna / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8868  val 0.3320  best 0.3320 @ 0
+    epoch  10  train loss 0.6642  val 0.4715  best 0.4715 @ 10
+    epoch  20  train loss 0.4889  val 0.5265  best 0.5265 @ 20
+    epoch  30  train loss 0.3794  val 0.5520  best 0.5520 @ 30
+    epoch  40  train loss 0.3143  val 0.5543  best 0.5549 @ 36
+    epoch  50  train loss 0.2699  val 0.5553  best 0.5568 @ 47
+    epoch  60  train loss 0.2585  val 0.5562  best 0.5568 @ 47
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5556 (val 0.5568 at epoch 47, 88.0 min)
+mrna_stability / hyenadna / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.9006  val 0.3050  best 0.3050 @ 0
+    epoch  10  train loss 0.6767  val 0.4541  best 0.4541 @ 10
+    epoch  20  train loss 0.5410  val 0.5027  best 0.5027 @ 20
+    epoch  30  train loss 0.4478  val 0.5263  best 0.5263 @ 30
+    epoch  40  train loss 0.3882  val 0.5373  best 0.5373 @ 40
+    epoch  50  train loss 0.3451  val 0.5390  best 0.5430 @ 48
+    epoch  60  train loss 0.3201  val 0.5441  best 0.5478 @ 55
+    epoch  70  train loss 0.2773  val 0.5523  best 0.5523 @ 70
+    epoch  80  train loss 0.2714  val 0.5514  best 0.5523 @ 70
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5439 (val 0.5523 at epoch 70, 120.7 min)
+mrna_stability / rinalmo / unimodal:rna / seed 2
+  mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9682  val 0.3838  best 0.3838 @ 0
+    epoch  10  train loss 0.5097  val 0.5309  best 0.5309 @ 10
+    epoch  20  train loss 0.3719  val 0.5525  best 0.5533 @ 17
+    epoch  30  train loss 0.2703  val 0.5570  best 0.5570 @ 30
+    epoch  40  train loss 0.2584  val 0.5563  best 0.5583 @ 37
+    epoch  50  train loss 0.2488  val 0.5573  best 0.5583 @ 37
+  mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.5525 (val 0.5583 at epoch 37, 74.2 min)
+mrna_stability / rinalmo / unimodal-grid:rna / seed 2
+  mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8968  val 0.3690  best 0.3690 @ 0
+    epoch  10  train loss 0.5458  val 0.5209  best 0.5209 @ 10
+    epoch  20  train loss 0.4020  val 0.5502  best 0.5513 @ 17
+    epoch  30  train loss 0.3313  val 0.5528  best 0.5540 @ 25
+    epoch  40  train loss 0.2686  val 0.5564  best 0.5580 @ 33
+    epoch  50  train loss 0.2696  val 0.5564  best 0.5580 @ 33
+  mrna_stability__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: test 0.5636 (val 0.5580 at epoch 33, 366.9 min)
+mrna_stability / rinalmo / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8623  val 0.3676  best 0.3676 @ 0
+    epoch  10  train loss 0.4932  val 0.5487  best 0.5487 @ 10
+    epoch  20  train loss 0.3211  val 0.5637  best 0.5668 @ 17
+    epoch  30  train loss 0.2387  val 0.5656  best 0.5668 @ 17
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5576 (val 0.5668 at epoch 17, 176.7 min)
+mrna_stability / rinalmo / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.8787  val 0.3403  best 0.3403 @ 0
+    epoch  10  train loss 0.6114  val 0.4978  best 0.4978 @ 10
+    epoch  20  train loss 0.4224  val 0.5480  best 0.5492 @ 19
+    epoch  30  train loss 0.3213  val 0.5573  best 0.5581 @ 29
+    epoch  40  train loss 0.2524  val 0.5524  best 0.5620 @ 33
+    epoch  50  train loss 0.2372  val 0.5538  best 0.5620 @ 33
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5633 (val 0.5620 at epoch 33, 64.1 min)
+mrna_stability / mrnafm / unimodal:rna / seed 2
+  mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8536  val 0.4248  best 0.4248 @ 0
+    epoch  10  train loss 0.4478  val 0.5687  best 0.5687 @ 10
+    epoch  20  train loss 0.3024  val 0.5727  best 0.5727 @ 20
+    epoch  30  train loss 0.2865  val 0.5722  best 0.5728 @ 26
+    epoch  40  train loss 0.2811  val 0.5721  best 0.5728 @ 26
+  mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.5658 (val 0.5728 at epoch 26, 32.8 min)
+mrna_stability / mrnafm / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8493  val 0.4055  best 0.4055 @ 0
+    epoch  10  train loss 0.4600  val 0.5649  best 0.5649 @ 10
+    epoch  20  train loss 0.3061  val 0.5683  best 0.5752 @ 17
+    epoch  30  train loss 0.2320  val 0.5701  best 0.5752 @ 17
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5683 (val 0.5752 at epoch 17, 31.3 min)
+mrna_stability / mrnafm / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.8789  val 0.3744  best 0.3744 @ 0
+    epoch  10  train loss 0.5543  val 0.5373  best 0.5373 @ 10
+    epoch  20  train loss 0.3822  val 0.5685  best 0.5695 @ 19
+    epoch  30  train loss 0.2732  val 0.5747  best 0.5747 @ 30
+    epoch  40  train loss 0.2596  val 0.5727  best 0.5747 @ 30
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5670 (val 0.5747 at epoch 30, 38.4 min)
+mrna_stability / calm / unimodal:rna / seed 2
+  mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8601  val 0.3723  best 0.3723 @ 0
+    epoch  10  train loss 0.5074  val 0.5389  best 0.5389 @ 10
+    epoch  20  train loss 0.3386  val 0.5615  best 0.5615 @ 20
+    epoch  30  train loss 0.2504  val 0.5614  best 0.5628 @ 22
+    epoch  40  train loss 0.2433  val 0.5612  best 0.5628 @ 22
+  mrna_stability__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.5599 (val 0.5628 at epoch 22, 18.5 min)
+mrna_stability / calm / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8600  val 0.3609  best 0.3609 @ 0
+    epoch  10  train loss 0.5062  val 0.5340  best 0.5340 @ 10
+    epoch  20  train loss 0.3077  val 0.5570  best 0.5576 @ 17
+    epoch  30  train loss 0.2201  val 0.5537  best 0.5587 @ 22
+    epoch  40  train loss 0.2092  val 0.5531  best 0.5587 @ 22
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5648 (val 0.5587 at epoch 22, 19.0 min)
+mrna_stability / calm / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.8867  val 0.3343  best 0.3343 @ 0
+    epoch  10  train loss 0.6183  val 0.4934  best 0.4934 @ 10
+    epoch  20  train loss 0.4155  val 0.5536  best 0.5536 @ 20
+    epoch  30  train loss 0.3041  val 0.5600  best 0.5600 @ 30
+    epoch  40  train loss 0.2367  val 0.5589  best 0.5629 @ 32
+    epoch  50  train loss 0.2272  val 0.5591  best 0.5629 @ 32
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5573 (val 0.5629 at epoch 32, 14.5 min)
+mrna_stability / esm2_35m / unimodal:prot / seed 2
+  mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8896  val 0.3246  best 0.3246 @ 0
+    epoch  10  train loss 0.6147  val 0.4725  best 0.4725 @ 10
+    epoch  20  train loss 0.4802  val 0.5091  best 0.5091 @ 20
+    epoch  30  train loss 0.4023  val 0.5298  best 0.5298 @ 30
+    epoch  40  train loss 0.3503  val 0.5339  best 0.5377 @ 37
+    epoch  50  train loss 0.3202  val 0.5388  best 0.5450 @ 47
+    epoch  60  train loss 0.3006  val 0.5386  best 0.5471 @ 55
+    epoch  70  train loss 0.2667  val 0.5467  best 0.5471 @ 55
+  mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.5317 (val 0.5471 at epoch 55, 17.5 min)
+mrna_stability / esm2_35m / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8813  val 0.3356  best 0.3356 @ 0
+    epoch  10  train loss 0.5633  val 0.5204  best 0.5204 @ 10
+    epoch  20  train loss 0.3450  val 0.5556  best 0.5579 @ 17
+    epoch  30  train loss 0.2699  val 0.5587  best 0.5621 @ 25
+    epoch  40  train loss 0.2190  val 0.5578  best 0.5621 @ 25
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5528 (val 0.5621 at epoch 25, 26.2 min)
+mrna_stability / esm2_35m / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.9007  val 0.3149  best 0.3149 @ 0
+    epoch  10  train loss 0.6271  val 0.4818  best 0.4818 @ 10
+    epoch  20  train loss 0.4478  val 0.5353  best 0.5353 @ 20
+    epoch  30  train loss 0.3386  val 0.5551  best 0.5551 @ 30
+    epoch  40  train loss 0.2839  val 0.5562  best 0.5606 @ 37
+    epoch  50  train loss 0.2395  val 0.5616  best 0.5621 @ 47
+    epoch  60  train loss 0.2339  val 0.5616  best 0.5621 @ 47
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5542 (val 0.5621 at epoch 47, 39.0 min)
+mrna_stability / esm2_150m / unimodal:prot / seed 2
+  mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8792  val 0.3498  best 0.3498 @ 0
+    epoch  10  train loss 0.5655  val 0.4972  best 0.4972 @ 10
+    epoch  20  train loss 0.4237  val 0.5249  best 0.5249 @ 20
+    epoch  30  train loss 0.3525  val 0.5386  best 0.5386 @ 30
+    epoch  40  train loss 0.2906  val 0.5420  best 0.5423 @ 39
+    epoch  50  train loss 0.2822  val 0.5430  best 0.5430 @ 50
+    epoch  60  train loss 0.2760  val 0.5431  best 0.5431 @ 53
+    epoch  70  train loss 0.2742  val 0.5431  best 0.5432 @ 67
+    epoch  80  train loss 0.2741  val 0.5431  best 0.5432 @ 67
+  mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.5352 (val 0.5432 at epoch 67, 23.7 min)
+mrna_stability / esm2_150m / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8797  val 0.3478  best 0.3478 @ 0
+    epoch  10  train loss 0.5464  val 0.5258  best 0.5258 @ 10
+    epoch  20  train loss 0.3371  val 0.5583  best 0.5602 @ 17
+    epoch  30  train loss 0.2642  val 0.5592  best 0.5616 @ 25
+    epoch  40  train loss 0.2165  val 0.5582  best 0.5616 @ 25
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5561 (val 0.5616 at epoch 25, 37.1 min)
+mrna_stability / esm2_150m / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.8973  val 0.3298  best 0.3298 @ 0
+    epoch  10  train loss 0.6150  val 0.4906  best 0.4906 @ 10
+    epoch  20  train loss 0.4395  val 0.5293  best 0.5293 @ 20
+    epoch  30  train loss 0.3349  val 0.5516  best 0.5516 @ 30
+    epoch  40  train loss 0.2817  val 0.5493  best 0.5546 @ 36
+    epoch  50  train loss 0.2396  val 0.5538  best 0.5546 @ 36
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5456 (val 0.5546 at epoch 36, 67.1 min)
+mrna_stability / protbert / unimodal:prot / seed 2
+  mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8641  val 0.3629  best 0.3629 @ 0
+    epoch  10  train loss 0.5687  val 0.5239  best 0.5239 @ 10
+    epoch  20  train loss 0.4174  val 0.5554  best 0.5554 @ 20
+    epoch  30  train loss 0.3457  val 0.5614  best 0.5614 @ 27
+    epoch  40  train loss 0.3024  val 0.5626  best 0.5626 @ 40
+    epoch  50  train loss 0.2963  val 0.5626  best 0.5627 @ 44
+    epoch  60  train loss 0.2953  val 0.5626  best 0.5627 @ 44
+  mrna_stability__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.5418 (val 0.5627 at epoch 44, 26.9 min)
+mrna_stability / protbert / concat / seed 2
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8746  val 0.3554  best 0.3554 @ 0
+    epoch  10  train loss 0.5626  val 0.5232  best 0.5232 @ 10
+    epoch  20  train loss 0.3473  val 0.5661  best 0.5661 @ 20
+    epoch  30  train loss 0.2710  val 0.5658  best 0.5697 @ 27
+    epoch  40  train loss 0.2148  val 0.5636  best 0.5697 @ 27
+  mrna_stability__concat__lambda0.0__ch100__equation__seed2: test 0.5597 (val 0.5697 at epoch 27, 94.0 min)
+mrna_stability / protbert / mil / seed 2
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 0.8939  val 0.3370  best 0.3370 @ 0
+    epoch  10  train loss 0.6258  val 0.4828  best 0.4828 @ 10
+    epoch  20  train loss 0.4118  val 0.5418  best 0.5418 @ 20
+    epoch  30  train loss 0.3023  val 0.5536  best 0.5568 @ 29
+    epoch  40  train loss 0.2403  val 0.5532  best 0.5568 @ 29
+  mrna_stability__mil__lambda0.01__ch100__equation__seed2: test 0.5576 (val 0.5568 at epoch 29, 49.3 min)
+mrna_stability / nt500m / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9068  val 0.3582  best 0.3582 @ 0
+    epoch  10  train loss 0.3301  val 0.5392  best 0.5426 @ 8
+    epoch  20  train loss 0.2095  val 0.5426  best 0.5446 @ 15
+    epoch  30  train loss 0.1953  val 0.5424  best 0.5446 @ 15
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5470 (val 0.5446 at epoch 15, 49.8 min)
+mrna_stability / hyenadna / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9069  val 0.3390  best 0.3390 @ 0
+    epoch  10  train loss 0.4574  val 0.5394  best 0.5394 @ 10
+    epoch  20  train loss 0.3295  val 0.5544  best 0.5578 @ 15
+    epoch  30  train loss 0.2271  val 0.5558  best 0.5578 @ 15
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5477 (val 0.5578 at epoch 15, 54.8 min)
+mrna_stability / rinalmo / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8861  val 0.3767  best 0.3767 @ 0
+    epoch  10  train loss 0.3378  val 0.5464  best 0.5554 @ 9
+    epoch  20  train loss 0.2157  val 0.5517  best 0.5554 @ 9
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5475 (val 0.5554 at epoch 9, 60.5 min)
+mrna_stability / mrnafm / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8755  val 0.4331  best 0.4331 @ 0
+    epoch  10  train loss 0.3124  val 0.5551  best 0.5592 @ 5
+    epoch  20  train loss 0.2064  val 0.5575  best 0.5592 @ 5
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5629 (val 0.5592 at epoch 5, 46.8 min)
+mrna_stability / calm / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8799  val 0.4173  best 0.4173 @ 0
+    epoch  10  train loss 0.3155  val 0.5483  best 0.5591 @ 5
+    epoch  20  train loss 0.2070  val 0.5524  best 0.5591 @ 5
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5495 (val 0.5591 at epoch 5, 41.7 min)
+mrna_stability / esm2_35m / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9059  val 0.3580  best 0.3580 @ 0
+    epoch  10  train loss 0.3335  val 0.5387  best 0.5454 @ 8
+    epoch  20  train loss 0.2140  val 0.5463  best 0.5484 @ 11
+    epoch  30  train loss 0.1970  val 0.5463  best 0.5484 @ 11
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5475 (val 0.5484 at epoch 11, 102.4 min)
+mrna_stability / esm2_150m / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.9044  val 0.3753  best 0.3753 @ 0
+    epoch  10  train loss 0.3289  val 0.5505  best 0.5585 @ 8
+    epoch  20  train loss 0.2145  val 0.5540  best 0.5585 @ 8
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5518 (val 0.5585 at epoch 8, 104.4 min)
+mrna_stability / protbert / cross / seed 2
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 0.8892  val 0.4061  best 0.4061 @ 0
+    epoch  10  train loss 0.3184  val 0.5528  best 0.5572 @ 6
+    epoch  20  train loss 0.2039  val 0.5561  best 0.5591 @ 13
+    epoch  30  train loss 0.2018  val 0.5565  best 0.5591 @ 13
+  mrna_stability__cross__lambda0.0__ch100__equation__seed2: test 0.5487 (val 0.5591 at epoch 13, 89.3 min)
+Requested seed finished in 39.58 hours.
+
+mrna_stability (Spearman)
+Paired intervals not recalculated. RUN_BOOTSTRAP is separate from completing fits; retained interval outputs remain historical.
+Saved-prediction report skipped. Enable RUN_SAVED_COMPARISONS in Setup with READ_SAVED_RESULTS = True to calculate or reuse it.

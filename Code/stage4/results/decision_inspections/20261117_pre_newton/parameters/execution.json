@@ -1,0 +1,204 @@
+{
+  "run_id": "2026-11-17T07:07:59.928315+00:00_gate_attention_parameter_previews",
+  "start_utc": "2026-11-17T07:07:59.928315+00:00",
+  "purpose": "Inspect A.3-A.5 model parameter budgets before Newton execution; Gantt/Details tasks 46 and 25.",
+  "authorization": "User authorized inexpensive inspections and parameter previews, preserving existing results; no training or jobs.",
+  "source_commit": "e9d0fbba8a76e2c0561991c69b80253304b0da29",
+  "git_status": " M .gitignore\n M Code/shared_code/analysis.py\n M Code/shared_code/embeddings.py\n M Code/shared_code/fusion/blf.py\n M Code/shared_code/fusion/swap_plan.py\n M Code/shared_code/fusion/swap_reporting.py\n M Code/shared_code/fusion/swap_results.py\n M Code/stage1/README.md\n M Code/stage1/Stage1_gtex.ipynb\n M Code/stage1/Stage1_stability.ipynb\n M Code/stage1/lucaone_representation_comparison.ipynb\n M Code/stage1/mrfp_representation_control.ipynb\n M Code/stage1/representation-analysis.md\n M Code/stage3/README.md\n M Code/stage3/blf_appendix_comparison.ipynb\n M Code/stage3/blf_build_check.ipynb\n M Code/stage3/blf_datasets.ipynb\n M Code/stage3/blf_reference_benchmarks.ipynb\n M Code/stage3/blf_token_embeddings.ipynb\n M Code/stage3/coupled_mamba_reference.ipynb\n M Code/stage3/gtex_frozen_fusion_reference.ipynb\n M Code/stage3/isoformer_gtex_audit.ipynb\n M Code/stage4/README.md\n M Code/stage4/RUNBOOK.md\n M Code/stage4/encoder_swaps.ipynb\n M Code/stage4/halflife_translation_efficiency.ipynb\n M README.md\n M docs/README.md\n M docs/agent-context.md\n M docs/methods/sequences-to-predictions.md\n M docs/run-records.md\n M docs/sources.md\n M tests/README.md\n M tests/test_embedding_cache.py\n M tests/test_mrfp_cache.py\n M tests/test_notebook_reorganization.py\n M tests/test_reorganized_method_notebooks.py\n M tests/test_stage3_build_read.py\n M tests/test_stage3_isoformer_entrypoints.py\n M tests/test_stage4_designs_read.py\n M tests/test_stage4_swaps_read.py\n M tests/test_stage4_swaps_resume.py\n M tests/test_swap_reporting.py\n?? Code/shared_code/fusion/anchor_correction.py\n?? Code/shared_code/fusion/controlled_experiment.py\n?? Code/shared_code/fusion/controlled_models.py\n?? Code/shared_code/fusion/correction_experiment.py\n?? Code/shared_code/fusion/grouped_stability.py\n?? Code/shared_code/fusion/intervention_ops.py\n?? Code/shared_code/fusion/region_experiment.py\n?? Code/shared_code/fusion/region_inputs.py\n?? Code/shared_code/fusion/region_training.py\n?? Code/shared_code/fusion/result_sets.py\n?? Code/shared_code/fusion/study_inputs.py\n?? Code/shared_code/fusion/study_references.py\n?? Code/shared_code/fusion/study_selection.py\n?? Code/stage4/anchor_correction.ipynb\n?? Code/stage4/anchor_cross_attention.ipynb\n?? Code/stage4/gate_diagnostics.ipynb\n?? Code/stage4/grouped_stability.ipynb\n?? Code/stage4/region_aware_fusion.ipynb\n?? Code/stage4/results/decision_inspections/\n?? Code/stage4/results/newton_h100_seeds012/\n?? docs/Biological_Fusion_Optional_Additions.docx\n?? docs/research-execution-plan.md\n?? execution/\n?? tests/test_anchor_correction.py\n?? tests/test_anchor_correction_notebook.py\n?? tests/test_arcc_batch_startup.py\n?? tests/test_arcc_execution.py\n?? tests/test_arcc_fusion_studies.py\n?? tests/test_arcc_grouped_stability.py\n?? tests/test_arcc_live_output.py\n?? tests/test_arcc_package.py\n?? tests/test_arcc_swap_selection.py\n?? tests/test_blf_reading_modes.py\n?? tests/test_controlled_experiment.py\n?? tests/test_controlled_models.py\n?? tests/test_controlled_notebooks.py\n?? tests/test_correction_experiment.py\n?? tests/test_grouped_stability.py\n?? tests/test_gtex_mamba_reading_modes.py\n?? tests/test_intervention_ops.py\n?? tests/test_neighbor_alignment.py\n?? tests/test_notebook_artifact_paths.py\n?? tests/test_notebook_resource_cleanup.py\n?? tests/test_region_decisions.py\n?? tests/test_region_experiment.py\n?? tests/test_region_inputs.py\n?? tests/test_region_notebook.py\n?? tests/test_region_training.py\n?? tests/test_result_sets.py\n?? tests/test_saved_swap_report.py\n?? tests/test_stage1_loading_check.py\n?? tests/test_stage1_reading_mode.py\n?? tests/test_study_inputs_selection.py\n?? tests/test_study_references.py\n",
+  "source_notebooks": {
+    "Code/stage4/gate_diagnostics.ipynb": "c3f550fe71bfb7448e4bb96e8c6f21f878cebc3651638b96503f8f91ad271b62",
+    "Code/stage4/anchor_cross_attention.ipynb": "0b299dbea6425a53f8f9891ba9c0f0c614535c35cbe4d83825b96dd938c00c02"
+  },
+  "selected_code_cells": [
+    "imports",
+    "paths",
+    "settings",
+    "execution-guards",
+    "panel",
+    "configuration-helpers",
+    "parameter-preview"
+  ],
+  "overrides": {
+    "RUN_PARAMETER_PREVIEW": true
+  },
+  "bootstrap": "Expose checkout Code on sys.path before the unchanged imports cell; select CPU/default float32 and one torch thread. Capture display tables without changing calculations.",
+  "not_executed": [
+    "datasets",
+    "embedding caches",
+    "model checkpoint loading",
+    "forward inference",
+    "training",
+    "saved-prediction analysis",
+    "bootstrap",
+    "network",
+    "job submission"
+  ],
+  "command": [
+    "C:\\Users\\dimar\\anaconda3\\python.exe",
+    "-B",
+    "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\decision_inspections\\20261117_pre_newton\\parameters\\run_parameter_previews.py"
+  ],
+  "environment_overrides": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "MPLBACKEND": "Agg"
+  },
+  "initialization_seed": "unset; only parameter counts inspected; no forward pass or fitting",
+  "runner_sha256": "5ebd0eb5a7d112b8f67f5905823633556ff1aa16756064702c0ff2e0d063aec3",
+  "executions": [
+    {
+      "notebook": "gate_diagnostics",
+      "start_utc": "2026-11-17T07:08:07.108211+00:00",
+      "end_utc": "2026-11-17T07:08:11.300166+00:00",
+      "cells_executed": [
+        "inspection override/bootstrap",
+        "imports",
+        "paths",
+        "settings",
+        "inspection override/bootstrap",
+        "execution-guards",
+        "panel",
+        "configuration-helpers",
+        "parameter-preview"
+      ],
+      "tables": 3,
+      "model_preview_rows": 7,
+      "settings": {
+        "PROJECTION_WIDTH": 600,
+        "SCORER_WIDTH": 100,
+        "PROJECTION_ACTIVATION": "tanh",
+        "PROJECTION_NORM": "none",
+        "CONTROL_BOTTLENECK": 150,
+        "N_HEADS": 4,
+        "ATTENTION_DROPOUT": 0.1,
+        "UPDATE_NORM": "none"
+      },
+      "train_config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 0
+      }
+    },
+    {
+      "notebook": "anchor_cross_attention",
+      "start_utc": "2026-11-17T07:08:11.304740+00:00",
+      "end_utc": "2026-11-17T07:08:12.195981+00:00",
+      "cells_executed": [
+        "inspection override/bootstrap",
+        "imports",
+        "paths",
+        "settings",
+        "inspection override/bootstrap",
+        "execution-guards",
+        "panel",
+        "configuration-helpers",
+        "parameter-preview"
+      ],
+      "tables": 2,
+      "model_preview_rows": 5,
+      "settings": {
+        "PROJECTION_WIDTH": 600,
+        "SCORER_WIDTH": 100,
+        "PROJECTION_ACTIVATION": "tanh",
+        "PROJECTION_NORM": "none",
+        "CONTROL_BOTTLENECK": 150,
+        "N_HEADS": 4,
+        "ATTENTION_DROPOUT": 0.1,
+        "UPDATE_NORM": "none"
+      },
+      "train_config": {
+        "lr": 3e-05,
+        "weight_decay": 1e-05,
+        "batch_size": 32,
+        "max_epochs": 500,
+        "early_stopping_patience": 20,
+        "plateau_patience": 5,
+        "entropy_lambda": 0.0,
+        "channels": 100,
+        "tconv": "equation",
+        "seed": 0
+      }
+    }
+  ],
+  "producer": {
+    "host": "cDesktopLab",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD",
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "python_executable": "C:\\Users\\dimar\\anaconda3\\python.exe",
+    "device": "cpu",
+    "torch_threads": 1,
+    "default_dtype": "torch.float32",
+    "packages": {
+      "torch": "2.10.0+cu126",
+      "numpy": "2.3.5",
+      "pandas": "2.3.3",
+      "nbformat": "5.10.4"
+    }
+  },
+  "source_sha256": {
+    "Code/shared_code/__init__.py": "180e70140c57d20d87ae07300f68efa6c918abd94bf447bdc78a8f26ae18d1f5",
+    "Code/shared_code/datasets.py": "9dc3d7471e3aecd75e8232d69b0c833cf83c6911f8f6bd240754b3929c44811c",
+    "Code/shared_code/encoders.py": "c7a6d705b3be824e8a6281acc4fd026345027cafc8ae060fe4307e230df37da5",
+    "Code/shared_code/fusion/__init__.py": "0695fb3839e3bb6b053b3a7eee618004992393d7cb9df9e6daf88c0618679d3a",
+    "Code/shared_code/fusion/anchor_correction.py": "618dee784b7ebd795c174569930fe93f827b1497d183cca92b27c4be1f9df97a",
+    "Code/shared_code/fusion/blf.py": "8b6f1857719392025b72a3850d5f269f3cc082bbfbc04eda23a8d9adb24dd9e2",
+    "Code/shared_code/fusion/codon_grid.py": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+    "Code/shared_code/fusion/controlled_experiment.py": "59ccf9495b476134c5292b7c316a24ac38282730aa03c9c03e5e78adcc5d05b6",
+    "Code/shared_code/fusion/controlled_models.py": "ef8b52fb80b81fe466fffe30db6679a3553cb1895a198dd3808e61e762f7f14f",
+    "Code/shared_code/fusion/correction_experiment.py": "f71a9117fdb02dd6998240ea938b4f71b11b0575041a5614ae29772c10f25829",
+    "Code/shared_code/fusion/coupled_mamba.py": "3a616c1e3d012d5ea2e06d55847e4bf06e0565bc81b8d5352673c2b1162ef320",
+    "Code/shared_code/fusion/grouped_stability.py": "038e3ba8cc0e37c03b6744becc01b21546f0d37cbd8c0651ace25330be8b34cf",
+    "Code/shared_code/fusion/heads.py": "0f9dd428c60c74f755fb89fe550790310ed60d0dcb7393d48b647b898366aee4",
+    "Code/shared_code/fusion/intervention_ops.py": "c6d15ad32a691badf503834f4a17c6a3764fca27cf2acd2f820d0c63c6355fde",
+    "Code/shared_code/fusion/run_identity.py": "f1b616ce96167d3818b628f445c42e525ea4cfebd1639b1881225cc0a962069b",
+    "Code/shared_code/fusion/study_inputs.py": "9f0a9a272addd8d740ae0c79d235b346734f9085f511e870891d18b1c4ff79ad",
+    "Code/shared_code/fusion/study_references.py": "0951ca92d8f91e43bd8018e730e92be0dfdc362b5b09c58beb77598365ef1573",
+    "Code/shared_code/fusion/study_selection.py": "b75913e6e1cb1f9ec2369687dd1ebb328e25a4f42ddeefc3366f16b545eeeb82",
+    "Code/shared_code/fusion/swap_results.py": "8939f084c751ae5318be6a9b24b12959c417d74674a2b27678e698bc1acd7fbb",
+    "Code/shared_code/fusion/textcnn.py": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+    "Code/shared_code/fusion/token_embeddings.py": "5219c467aa5194b76f24faba5bfe40cf2ba7ff1664b9858072a1e94e9aa39868",
+    "Code/shared_code/fusion/train.py": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3",
+    "Code/shared_code/sequences.py": "595e2a7674676901bae659bdecc654dff9e979b59200ee52ee345405dd8ba725",
+    "Code/stage4/anchor_cross_attention.ipynb": "0b299dbea6425a53f8f9891ba9c0f0c614535c35cbe4d83825b96dd938c00c02",
+    "Code/stage4/gate_diagnostics.ipynb": "c3f550fe71bfb7448e4bb96e8c6f21f878cebc3651638b96503f8f91ad271b62"
+  },
+  "status": "completed",
+  "end_utc": "2026-11-17T07:08:13.460490+00:00",
+  "artifacts": {
+    "anchor_cross_attention_preview.ipynb": {
+      "sha256": "d8c080cfa898ed006bb12469059d14331e0f9b798b69234313ad31ec3d090240",
+      "bytes": 28980
+    },
+    "gate_diagnostics_preview.ipynb": {
+      "sha256": "ccdd5b670ee06aa43537817de0c01e90308299b058135eab77adf69eb3194b96",
+      "bytes": 27163
+    },
+    "intent.json": {
+      "sha256": "b94aa5fca4490a6904d4a1d3f6c68f6f36605fa16f50247bf2026a2375097c26",
+      "bytes": 5841
+    },
+    "run_parameter_previews.py": {
+      "sha256": "5ebd0eb5a7d112b8f67f5905823633556ff1aa16756064702c0ff2e0d063aec3",
+      "bytes": 10213
+    },
+    "source_snapshot.zip": {
+      "sha256": "87a836db16260c579dec36578cde8fabf6121f70d306c95de3390ef676c199ab",
+      "bytes": 152403
+    },
+    "tables.json": {
+      "sha256": "8c2c6aa08263798266a9e3088f06b083054282e1b4e05ae75f796758c8fd66ee",
+      "bytes": 12967
+    }
+  }
+}

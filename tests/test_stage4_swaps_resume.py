@@ -104,10 +104,12 @@ class SwapResumeNotebookTests(unittest.TestCase):
     def namespace(self, seed=0):
         env = dict(
             READ_SAVED_RESULTS=False, SEED=seed, SELECTION_SEED=0, RUN_BOOTSTRAP=False,
+            CACHE_REUSE_ONLY=False, CHECKPOINT_VALIDATOR=forbidden, FIT_PRODUCER=None,
             BATCH_SIZE=32, MAX_EPOCHS=500, CHANNELS=100, TCONV="equation", DEVICE="cpu",
             BENCHMARKS=(BENCHMARK,), ORIGINAL=ORIGINAL, CODE_DIR=self.code,
             CACHE_ROOT=self.code / "stage3/embeddings", RESULTS_ROOT=self.swap_root,
             ORIGINAL_RESULTS={BENCHMARK: [self.original_dir]}, BENCHMARK_ROWS={},
+            RESULT_PATHS=SimpleNamespace(fixed_historical_selection=False, selection_snapshot=None),
             swaps_for=lambda key: SWAPS, swap_plan=swap_plan,
             required_encoders=lambda key: [*ORIGINAL.values(), *(e for _, e in SWAPS)],
             CHUNK_SIZE=256, DTYPE=np.float16,
@@ -126,6 +128,39 @@ class SwapResumeNotebookTests(unittest.TestCase):
             exec(compile(self.sources[cell_id], "fixture orchestration definitions", "exec"), env)
         env["open_fit_streams"] = self.fake_open
         return env
+
+    def test_reuse_only_execution_never_enters_extraction_or_metadata_repair(self):
+        env = self.namespace()
+        env["CACHE_REUSE_ONLY"] = True
+        # No arrays, encoders, dataset rows or writer are supplied to this branch.
+        with redirect_stdout(io.StringIO()):
+            exec(compile(self.sources["c397d229"], "fixture reuse-only", "exec"), env)
+        self.assertEqual(env["written"], [])
+        self.assertEqual(self.calls, [])
+
+    def test_reuse_only_preflight_refuses_partial_or_repairable_caches(self):
+        for ready, missing, restore in ((False, [], False), (True, [0], False), (True, [], True), (True, [], False)):
+            with self.subTest(ready=ready, missing=missing, restore=restore):
+                env = self.namespace()
+                encoder = "synthetic"
+                plan = SimpleNamespace(ready=ready, missing_shards=missing, restore_metadata=restore,
+                                       reusable_shards=[0], status="invented", provenance="fixture",
+                                       issues=[], summary="invented cache")
+                env.update(CACHE_REUSE_ONLY=True, PENDING_CACHE_KEYS={(BENCHMARK, encoder)},
+                           required_encoders=lambda key: [encoder],
+                           ENCODERS={encoder: SimpleNamespace(label=encoder)})
+                env["datasets"].blf_benchmark_rows = lambda key: pd.DataFrame({"sequence": ["ACG"]})
+                env["tokens"].inputs_for_rows = lambda enc, rows: rows
+                env["tokens"].inspect_cache = lambda *args, **kwargs: plan
+                env["tokens"].CacheRecoveryRequired = RuntimeError
+                with redirect_stdout(io.StringIO()):
+                    code = compile(self.sources["swaps-cache-preflight"], "fixture complete-cache gate", "exec")
+                    if not ready or missing or restore:
+                        with self.assertRaisesRegex(RuntimeError, "invented cache"):
+                            exec(code, env)
+                    else:
+                        exec(code, env)
+                self.assertEqual(self.calls, [])
 
     def execute_plan(self, env):
         # Metadata inspection only, with invented folders and no real data paths.

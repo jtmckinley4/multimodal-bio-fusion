@@ -1,0 +1,31 @@
+{
+  "verified_utc": "2026-11-17T02:10:15.911362-05:00",
+  "status": "passed",
+  "checks": [
+    "all recorded artifact hashes match",
+    "25 consumed source hashes match snapshot and unchanged checkout",
+    "both saved notebook copies validate; their selected source code cells are verbatim",
+    "all selected cells have execution counts and no error outputs",
+    "44 model construction cases; common registered grid difference524800"
+  ],
+  "clarification": "execution.json model_preview_rows mistakenly counts the first displayed panel inventory (7/5), not the second model-parameter table. Correct model construction counts below; raw tables and notebook outputs are unaffected. Original record preserved.",
+  "corrected_counts": {
+    "gate_diagnostics": {
+      "model_constructions": 14,
+      "registered_grid_parameters": 524800,
+      "model_table_index": 1
+    },
+    "anchor_cross_attention": {
+      "model_constructions": 30,
+      "registered_grid_parameters": 524800,
+      "model_table_index": 1
+    }
+  },
+  "wall_seconds_including_setup": 13.532175,
+  "limits": [
+    "No forward/backward pass, optimization, dataset/cache access or model weights were used.",
+    "Counts include all registered requires-grad parameters; anchor-only RNA/protein never use the524800-parameter DNA grid module.",
+    "Parameter count and affine rank do not establish equal representational capacity, runtime, memory demand or predictive performance."
+  ],
+  "errors_in_preview_outputs": []
+}

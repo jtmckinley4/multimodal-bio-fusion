@@ -337,6 +337,7 @@ class PilotEntrypointTests(unittest.TestCase):
         self.metric.assert_not_called()
 
     def test_ordering_claims_require_all_three_single_modalities(self):
+        self.env["RUN_SAVED_ANALYSIS"] = True
         for scores, expected_count in (({}, 0), ({"dna": 0.4, "dna+rna+prot": 0.8}, 0),
                                        ({"dna": 0.4, "rna": 0.6, "prot": 0.5,
                                          "dna+rna+prot": 0.8}, 2)):

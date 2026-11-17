@@ -1,0 +1,54 @@
+{
+  "operation": "A6 authorized CPU-only input inspection",
+  "dataset": "rnahl-human",
+  "status": "interrupted_before_verified_cell_progress",
+  "started_utc": "2026-11-17T07:06:18.303246+00:00",
+  "source_sha256": {
+    "Code\\stage4\\region_aware_fusion.ipynb": "1e1de817804876f917f4c2f755fea6137bb9efe47682c556db113e7367a54dd6",
+    "Code\\stage4\\results\\decision_inspections\\20261117_pre_newton\\regions\\run_input_inspections.py": "8ebc45ddd67af58435767f73c7bea342dd1027e7e0323ab4326f2c9bfe5b0338",
+    "Code\\shared_code\\fusion\\region_experiment.py": "63fea9cc2e28493469ea30efa861d30305338165a8379008f17627ca34e1a5bf",
+    "Code\\shared_code\\fusion\\region_inputs.py": "8d63ca4129ac546179a0450f968c885367214ddcfda477c22cdbae5b1caf3771",
+    "Code\\shared_code\\fusion\\region_training.py": "e67d80577b8d1782ed4c278b033f2e9f6b2f179f7e926fc4be5ec725a63daa00",
+    "Code\\shared_code\\fusion\\run_identity.py": "f1b616ce96167d3818b628f445c42e525ea4cfebd1639b1881225cc0a962069b",
+    "Code\\shared_code\\mrnabench.py": "c4714a9a0bd25c0eadc76caf193c488a1623b5811bb61f7b78812832aaeb772e",
+    "Code\\shared_code\\encoders.py": "c7a6d705b3be824e8a6281acc4fd026345027cafc8ae060fe4307e230df37da5"
+  },
+  "source_notebook_unchanged": null,
+  "notebook": "Code\\stage4\\results\\decision_inspections\\20261117_pre_newton\\regions\\rnahl-human\\executed-input-audit.ipynb",
+  "settings": {
+    "READ_SAVED_RESULTS": true,
+    "RUN_INPUT_AUDIT": true,
+    "RUN_PREPARATION": false,
+    "RUN_EXTRACTION": false,
+    "RUN_TRAINING": false,
+    "RUN_DIAGNOSTICS": false,
+    "RUN_ANALYSIS": false,
+    "device": "cpu"
+  },
+  "environment": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "executable": "C:\\Users\\dimar\\anaconda3\\python.exe",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "hostname": "cDesktopLab",
+    "packages": {
+      "numpy": "2.3.5",
+      "pandas": "2.3.3",
+      "torch": "2.10.0+cu126",
+      "pyarrow": "25.0.1",
+      "nbformat": "5.10.4",
+      "nbclient": "0.10.2",
+      "ipykernel": "6.31.0"
+    },
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "prior_audit_sha256": null,
+  "prior_preparation_sha256": null,
+  "ended_utc": "2026-11-17T07:10:52.114499+00:00",
+  "error": "Sandboxed nbclient attempt produced no visible cell progress or audit file; terminated via exec session interrupt. Notebook-finally did not complete. No scientific outcome established.",
+  "audit_sha256": null,
+  "preparation_sha256": null
+}

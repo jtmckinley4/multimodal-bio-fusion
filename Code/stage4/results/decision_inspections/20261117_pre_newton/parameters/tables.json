@@ -1,0 +1,497 @@
+{
+  "gate_diagnostics": [
+    [
+      {
+        "key": "mil_entropy",
+        "variant": "sequence_softmax",
+        "entropy": 0.01,
+        "reference": "mil"
+      },
+      {
+        "key": "mil_no_entropy",
+        "variant": "sequence_softmax",
+        "entropy": 0.0,
+        "reference": "new compatible fit"
+      },
+      {
+        "key": "sequence_sigmoid",
+        "variant": "sequence_sigmoid",
+        "entropy": 0.0,
+        "reference": "new compatible fit"
+      },
+      {
+        "key": "meanmax_softmax",
+        "variant": "sequence_meanmax_softmax",
+        "entropy": 0.0,
+        "reference": "new compatible fit"
+      },
+      {
+        "key": "meanmax_sigmoid",
+        "variant": "sequence_meanmax_sigmoid",
+        "entropy": 0.0,
+        "reference": "new compatible fit"
+      },
+      {
+        "key": "position_sigmoid",
+        "variant": "position_sigmoid",
+        "entropy": 0.0,
+        "reference": "new compatible fit"
+      },
+      {
+        "key": "position_control",
+        "variant": "position_control",
+        "entropy": 0.0,
+        "reference": "new compatible fit"
+      }
+    ],
+    [
+      {
+        "bundle": "original",
+        "model": "mil_entropy",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2491102,
+        "fusion": 1245701,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "mil_no_entropy",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2491102,
+        "fusion": 1245701,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "sequence_sigmoid",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2491101,
+        "fusion": 1245700,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "meanmax_softmax",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2851102,
+        "fusion": 1605701,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "meanmax_sigmoid",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2851101,
+        "fusion": 1605700,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "position_sigmoid",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2135804,
+        "fusion": 890403,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "position_control",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2491151,
+        "fusion": 1245750,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "mil_entropy",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2875102,
+        "fusion": 1629701,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "mil_no_entropy",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2875102,
+        "fusion": 1629701,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "sequence_sigmoid",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2875101,
+        "fusion": 1629700,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "meanmax_softmax",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 3235102,
+        "fusion": 1989701,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "meanmax_sigmoid",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 3235101,
+        "fusion": 1989700,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "position_sigmoid",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2519804,
+        "fusion": 1274403,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "position_control",
+        "possible anchor": null,
+        "output classes": 1,
+        "total": 2875151,
+        "fusion": 1629750,
+        "prediction": 720601
+      }
+    ],
+    [
+      {
+        "option": "current prepared control",
+        "mixer parameters": 360750,
+        "difference from joint gate": 355347,
+        "maximum affine rank": 150
+      },
+      {
+        "option": "nearest-count factorization (exploratory)",
+        "mixer parameters": 5402,
+        "difference from joint gate": -1,
+        "maximum affine rank": 2
+      },
+      {
+        "option": "direct affine mixer (exploratory)",
+        "mixer parameters": 1080600,
+        "difference from joint gate": 1075197,
+        "maximum affine rank": 600
+      }
+    ]
+  ],
+  "anchor_cross_attention": [
+    [
+      {
+        "key": "anchor_only",
+        "variant": "anchor_only",
+        "entropy": 0.0
+      },
+      {
+        "key": "attention_ordinary",
+        "variant": "attention_ordinary",
+        "entropy": 0.0
+      },
+      {
+        "key": "attention_skip",
+        "variant": "attention_skip",
+        "entropy": 0.0
+      },
+      {
+        "key": "attention_sequence_sigmoid",
+        "variant": "attention_sequence_sigmoid",
+        "entropy": 0.0
+      },
+      {
+        "key": "attention_position_sigmoid",
+        "variant": "attention_position_sigmoid",
+        "entropy": 0.0
+      }
+    ],
+    [
+      {
+        "bundle": "original",
+        "model": "anchor_only",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 1553201,
+        "fusion": 307800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "anchor_only",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 1630001,
+        "fusion": 384600,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "anchor_only",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 1438001,
+        "fusion": 192600,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_ordinary",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 5015201,
+        "fusion": 3769800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_ordinary",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 5015201,
+        "fusion": 3769800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_ordinary",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 5015201,
+        "fusion": 3769800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_skip",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 5015201,
+        "fusion": 3769800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_skip",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 5015201,
+        "fusion": 3769800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_skip",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 5015201,
+        "fusion": 3769800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_sequence_sigmoid",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 5018803,
+        "fusion": 3773402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_sequence_sigmoid",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 5018803,
+        "fusion": 3773402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_sequence_sigmoid",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 5018803,
+        "fusion": 3773402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_position_sigmoid",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 5018803,
+        "fusion": 3773402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_position_sigmoid",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 5018803,
+        "fusion": 3773402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "original",
+        "model": "attention_position_sigmoid",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 5018803,
+        "fusion": 3773402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "anchor_only",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 1553201,
+        "fusion": 307800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "anchor_only",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 2014001,
+        "fusion": 768600,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "anchor_only",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 1438001,
+        "fusion": 192600,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_ordinary",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 5399201,
+        "fusion": 4153800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_ordinary",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 5399201,
+        "fusion": 4153800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_ordinary",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 5399201,
+        "fusion": 4153800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_skip",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 5399201,
+        "fusion": 4153800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_skip",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 5399201,
+        "fusion": 4153800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_skip",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 5399201,
+        "fusion": 4153800,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_sequence_sigmoid",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 5402803,
+        "fusion": 4157402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_sequence_sigmoid",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 5402803,
+        "fusion": 4157402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_sequence_sigmoid",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 5402803,
+        "fusion": 4157402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_position_sigmoid",
+        "possible anchor": "dna",
+        "output classes": 1,
+        "total": 5402803,
+        "fusion": 4157402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_position_sigmoid",
+        "possible anchor": "rna",
+        "output classes": 1,
+        "total": 5402803,
+        "fusion": 4157402,
+        "prediction": 720601
+      },
+      {
+        "bundle": "mrnafm",
+        "model": "attention_position_sigmoid",
+        "possible anchor": "prot",
+        "output classes": 1,
+        "total": 5402803,
+        "fusion": 4157402,
+        "prediction": 720601
+      }
+    ]
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "run_id": "2026-11-17T07:07:59.928315+00:00_gate_attention_parameter_previews",
+  "start_utc": "2026-11-17T07:07:59.928315+00:00",
+  "purpose": "Inspect A.3-A.5 model parameter budgets before Newton execution; Gantt/Details tasks 46 and 25.",
+  "authorization": "User authorized inexpensive inspections and parameter previews, preserving existing results; no training or jobs.",
+  "source_commit": "e9d0fbba8a76e2c0561991c69b80253304b0da29",
+  "git_status": " M .gitignore\n M Code/shared_code/analysis.py\n M Code/shared_code/embeddings.py\n M Code/shared_code/fusion/blf.py\n M Code/shared_code/fusion/swap_plan.py\n M Code/shared_code/fusion/swap_reporting.py\n M Code/shared_code/fusion/swap_results.py\n M Code/stage1/README.md\n M Code/stage1/Stage1_gtex.ipynb\n M Code/stage1/Stage1_stability.ipynb\n M Code/stage1/lucaone_representation_comparison.ipynb\n M Code/stage1/mrfp_representation_control.ipynb\n M Code/stage1/representation-analysis.md\n M Code/stage3/README.md\n M Code/stage3/blf_appendix_comparison.ipynb\n M Code/stage3/blf_build_check.ipynb\n M Code/stage3/blf_datasets.ipynb\n M Code/stage3/blf_reference_benchmarks.ipynb\n M Code/stage3/blf_token_embeddings.ipynb\n M Code/stage3/coupled_mamba_reference.ipynb\n M Code/stage3/gtex_frozen_fusion_reference.ipynb\n M Code/stage3/isoformer_gtex_audit.ipynb\n M Code/stage4/README.md\n M Code/stage4/RUNBOOK.md\n M Code/stage4/encoder_swaps.ipynb\n M Code/stage4/halflife_translation_efficiency.ipynb\n M README.md\n M docs/README.md\n M docs/agent-context.md\n M docs/methods/sequences-to-predictions.md\n M docs/run-records.md\n M docs/sources.md\n M tests/README.md\n M tests/test_embedding_cache.py\n M tests/test_mrfp_cache.py\n M tests/test_notebook_reorganization.py\n M tests/test_reorganized_method_notebooks.py\n M tests/test_stage3_build_read.py\n M tests/test_stage3_isoformer_entrypoints.py\n M tests/test_stage4_designs_read.py\n M tests/test_stage4_swaps_read.py\n M tests/test_stage4_swaps_resume.py\n M tests/test_swap_reporting.py\n?? Code/shared_code/fusion/anchor_correction.py\n?? Code/shared_code/fusion/controlled_experiment.py\n?? Code/shared_code/fusion/controlled_models.py\n?? Code/shared_code/fusion/correction_experiment.py\n?? Code/shared_code/fusion/grouped_stability.py\n?? Code/shared_code/fusion/intervention_ops.py\n?? Code/shared_code/fusion/region_experiment.py\n?? Code/shared_code/fusion/region_inputs.py\n?? Code/shared_code/fusion/region_training.py\n?? Code/shared_code/fusion/result_sets.py\n?? Code/shared_code/fusion/study_inputs.py\n?? Code/shared_code/fusion/study_references.py\n?? Code/shared_code/fusion/study_selection.py\n?? Code/stage4/anchor_correction.ipynb\n?? Code/stage4/anchor_cross_attention.ipynb\n?? Code/stage4/gate_diagnostics.ipynb\n?? Code/stage4/grouped_stability.ipynb\n?? Code/stage4/region_aware_fusion.ipynb\n?? Code/stage4/results/decision_inspections/\n?? Code/stage4/results/newton_h100_seeds012/\n?? docs/Biological_Fusion_Optional_Additions.docx\n?? docs/research-execution-plan.md\n?? execution/\n?? tests/test_anchor_correction.py\n?? tests/test_anchor_correction_notebook.py\n?? tests/test_arcc_batch_startup.py\n?? tests/test_arcc_execution.py\n?? tests/test_arcc_fusion_studies.py\n?? tests/test_arcc_grouped_stability.py\n?? tests/test_arcc_live_output.py\n?? tests/test_arcc_package.py\n?? tests/test_arcc_swap_selection.py\n?? tests/test_blf_reading_modes.py\n?? tests/test_controlled_experiment.py\n?? tests/test_controlled_models.py\n?? tests/test_controlled_notebooks.py\n?? tests/test_correction_experiment.py\n?? tests/test_grouped_stability.py\n?? tests/test_gtex_mamba_reading_modes.py\n?? tests/test_intervention_ops.py\n?? tests/test_neighbor_alignment.py\n?? tests/test_notebook_artifact_paths.py\n?? tests/test_notebook_resource_cleanup.py\n?? tests/test_region_decisions.py\n?? tests/test_region_experiment.py\n?? tests/test_region_inputs.py\n?? tests/test_region_notebook.py\n?? tests/test_region_training.py\n?? tests/test_result_sets.py\n?? tests/test_saved_swap_report.py\n?? tests/test_stage1_loading_check.py\n?? tests/test_stage1_reading_mode.py\n?? tests/test_study_inputs_selection.py\n?? tests/test_study_references.py\n",
+  "source_notebooks": {
+    "Code/stage4/gate_diagnostics.ipynb": "c3f550fe71bfb7448e4bb96e8c6f21f878cebc3651638b96503f8f91ad271b62",
+    "Code/stage4/anchor_cross_attention.ipynb": "0b299dbea6425a53f8f9891ba9c0f0c614535c35cbe4d83825b96dd938c00c02"
+  },
+  "selected_code_cells": [
+    "imports",
+    "paths",
+    "settings",
+    "execution-guards",
+    "panel",
+    "configuration-helpers",
+    "parameter-preview"
+  ],
+  "overrides": {
+    "RUN_PARAMETER_PREVIEW": true
+  },
+  "bootstrap": "Expose checkout Code on sys.path before the unchanged imports cell; select CPU/default float32 and one torch thread. Capture display tables without changing calculations.",
+  "not_executed": [
+    "datasets",
+    "embedding caches",
+    "model checkpoint loading",
+    "forward inference",
+    "training",
+    "saved-prediction analysis",
+    "bootstrap",
+    "network",
+    "job submission"
+  ],
+  "command": [
+    "C:\\Users\\dimar\\anaconda3\\python.exe",
+    "-B",
+    "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion\\Code\\stage4\\results\\decision_inspections\\20261117_pre_newton\\parameters\\run_parameter_previews.py"
+  ],
+  "environment_overrides": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "MPLBACKEND": "Agg"
+  },
+  "initialization_seed": "unset; only parameter counts inspected; no forward pass or fitting",
+  "runner_sha256": "5ebd0eb5a7d112b8f67f5905823633556ff1aa16756064702c0ff2e0d063aec3",
+  "executions": []
+}

@@ -72,10 +72,11 @@ class NotebookReorganizationTests(unittest.TestCase):
                 "LUCAONE_COMPARISON_PATH": "RESULTS_DIR / 'complementarity_v1' / f'{BENCHMARK}.json'",
             }),
             ("stage3/blf_token_embeddings.ipynb", "token-settings", {
-                "CACHE_ROOT": "Path('embeddings')",
+                "CACHE_ROOT": "CODE_DIR / 'stage3' / 'embeddings'",
             }),
             ("stage3/blf_build_check.ipynb", "blf-build-settings", {
-                "CACHE_ROOT": "Path('embeddings')", "RESULTS_DIR": "Path('results') / BENCHMARK",
+                "CACHE_ROOT": "CODE_DIR / 'stage3' / 'embeddings'",
+                "RESULTS_DIR": "CODE_DIR / 'stage3' / 'results' / BENCHMARK",
             }),
             ("stage3/blf_reference_benchmarks.ipynb", "0965876d", {
                 "CACHE_ROOT": "CODE_DIR / 'stage3' / 'embeddings'",
@@ -83,13 +84,13 @@ class NotebookReorganizationTests(unittest.TestCase):
             }),
             ("stage3/blf_appendix_comparison.ipynb", "settings", {
                 "STAGE3_DIR": "CODE_DIR / 'stage3'", "CACHE_ROOT": "STAGE3_DIR / 'embeddings'",
-                "RESULT_DIRECTORY": "STAGE3_DIR / 'results' / BENCHMARK / 'reproducible' "
+                "RESULTS_DIR": "STAGE3_DIR / 'results' / BENCHMARK / 'reproducible' "
                                     "if BENCHMARK == 'fungal_expression' else "
                                     "CODE_DIR / 'stage4' / 'results' / 'blf_phaseA' / BENCHMARK",
-                "SAVED_ANALYSIS_DIRECTORY": "RESULT_DIRECTORY / 'records' / 'analysis-20261020' "
+                "SAVED_ANALYSIS_DIRECTORY": "RESULTS_DIR / 'records' / 'analysis-20261020' "
                                             "if BENCHMARK == 'ecoli_proteins' else None",
             }),
-            ("stage3/coupled_mamba_reference.ipynb", "36da38f2", {
+            ("stage3/coupled_mamba_reference.ipynb", "mamba-execution-paths", {
                 "CACHE_ROOT": "CODE_DIR / 'stage3' / 'embeddings'",
                 "RESULTS_ROOT": "CODE_DIR / 'stage4' / 'results' / 'tier4_designs'",
                 "PHASE_A": "CODE_DIR / 'stage4' / 'results' / 'phaseA'",
@@ -97,13 +98,14 @@ class NotebookReorganizationTests(unittest.TestCase):
             }),
             ("stage3/isoformer_gtex_audit.ipynb", "settings", {
                 "CSV_PATH": "REPO_ROOT / '.data-cache' / 'GTEx_final.csv'",
-                "RESULT_DIR": "CODE_DIR / 'stage4' / 'results' / 'isoformer_cohort_audit'",
-                "RESULT_PATH": "RESULT_DIR / 'gtex_audit_v2.json'",
-                "PREVIOUS_RECORD": "RESULT_DIR / 'cohort_audit.json'",
-                "HISTORICAL_RECORD": "RESULT_DIR / 'full_csv_2026-11-09.json'",
+                "RESULTS_DIR": "CODE_DIR / 'stage4' / 'results' / 'isoformer_cohort_audit'",
+                "RESULT_PATH": "RESULTS_DIR / 'gtex_audit_v2.json'",
+                "PREVIOUS_RECORD": "RESULTS_DIR / 'cohort_audit.json'",
+                "HISTORICAL_RECORD": "RESULTS_DIR / 'full_csv_2026-11-09.json'",
             }),
-            ("stage3/gtex_frozen_fusion_reference.ipynb", "s4-pilot-settings", {
-                "CACHE_ROOT": "Path('embeddings')", "RESULTS_DIR": "Path('results') / BENCHMARK",
+            ("stage3/gtex_frozen_fusion_reference.ipynb", "gtex-execution-paths", {
+                "CACHE_ROOT": "CODE_DIR / 'stage3' / 'embeddings'",
+                "RESULTS_DIR": "CODE_DIR / 'stage3' / 'results' / BENCHMARK",
                 "GTEX_CACHE_RECOVERY": "CODE_DIR / 'stage3' / 'gtex_cache_recovery.json'",
             }),
             ("stage3/gtex_frozen_fusion_reference.ipynb", "gtex-repeat-setup", {
@@ -114,8 +116,9 @@ class NotebookReorganizationTests(unittest.TestCase):
             }),
             ("stage4/encoder_swaps.ipynb", "swaps-locations", {
                 "CACHE_ROOT": "CODE_DIR / 'stage3' / 'embeddings'",
-                "RESULTS_ROOT": "CODE_DIR / 'stage4' / 'results' / 'phaseB'",
-                "COMPARISON_DIR": "RESULTS_ROOT / 'analyses' / 'paired-report-v1'",
+                # test_result_sets verifies that historical paths still resolve unchanged.
+                "RESULTS_ROOT": "RESULT_PATHS.swaps",
+                "COMPARISON_DIR": "RESULT_PATHS.analysis_dir",
             }),
             ("stage4/halflife_translation_efficiency.ipynb", "6880b3af", {
                 "RESULTS_DIR": "CODE_DIR / 'stage4' / 'results' / 'halflife_te'",

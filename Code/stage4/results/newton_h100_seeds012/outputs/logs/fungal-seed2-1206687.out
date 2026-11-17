@@ -1,0 +1,368 @@
+Preparing Conda environment on evc29
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python
+Recording environment; then starting the fungal_expression seed 2 notebook.
+Executing train: ('fungal_expression',), seed 2; /lustre/fs1/home/ch806988/multi-modal_fusion/outputs/notebooks/train-fungal_expression-seed2-20261115T060702Z-b0eaeaec.ipynb
+Kernel Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python | torch: 2.10.0+cu126 | device: cuda
+GPU: NVIDIA H100 PCIe | CUDA: 12.6 | cuDNN: 91002
+Training seed 2; selection seed 0; 42 new/resumable fits in the displayed plan.
+8 swap-benchmark pairs over 1 benchmarks, device cuda
+Estimated replacement-cache payload needed by pending fits, including existing caches: ~10 GB
+All of it stays out of Git, under Code/stage3/embeddings/<benchmark>/<encoder>/.
+  fungal_expression/ntv2_100m: complete, recorded_input
+  fungal_expression/rnafm: complete, recorded_input
+  fungal_expression/esm2_8m: complete, recorded_input
+  fungal_expression/nt500m: complete, recorded_input
+  fungal_expression/hyenadna: complete, recorded_input
+  fungal_expression/rinalmo: complete, recorded_input
+  fungal_expression/mrnafm: complete, recorded_input
+  fungal_expression/calm: complete, recorded_input
+  fungal_expression/esm2_35m: complete, recorded_input
+  fungal_expression/esm2_150m: complete, recorded_input
+  fungal_expression/protbert: complete, recorded_input
+Preflight passed: 11 caches; 0 missing shards (must be zero).
+Token streams open only for a pending training group.
+fungal_expression / original references / unimodal:dna / seed 2
+  fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.4956  val 0.5219  best 0.5219 @ 0
+    epoch  10  train loss 3.3365  val 0.6584  best 0.6584 @ 10
+    epoch  20  train loss 2.4282  val 0.6796  best 0.6796 @ 20
+    epoch  30  train loss 1.6720  val 0.6930  best 0.6930 @ 30
+    epoch  40  train loss 1.0676  val 0.7032  best 0.7032 @ 40
+    epoch  50  train loss 0.6357  val 0.7089  best 0.7089 @ 50
+    epoch  60  train loss 0.3374  val 0.7100  best 0.7100 @ 60
+    epoch  70  train loss 0.2080  val 0.7105  best 0.7106 @ 62
+    epoch  80  train loss 0.1901  val 0.7108  best 0.7108 @ 77
+    epoch  90  train loss 0.1818  val 0.7111  best 0.7112 @ 87
+    epoch 100  train loss 0.1871  val 0.7115  best 0.7115 @ 98
+    epoch 110  train loss 0.1769  val 0.7115  best 0.7115 @ 98
+  fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.8148 (val 0.7115 at epoch 98, 2.2 min)
+fungal_expression / original references / unimodal:rna / seed 2
+  fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.5013  val 0.6040  best 0.6040 @ 0
+    epoch  10  train loss 4.1420  val 0.6327  best 0.6338 @ 5
+    epoch  20  train loss 4.0327  val 0.6327  best 0.6338 @ 5
+  fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.7176 (val 0.6338 at epoch 5, 2.6 min)
+fungal_expression / original references / unimodal:prot / seed 2
+  fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.9084  val 0.3521  best 0.3521 @ 0
+    epoch  10  train loss 3.9106  val 0.5549  best 0.5549 @ 10
+    epoch  20  train loss 3.3201  val 0.6094  best 0.6103 @ 19
+    epoch  30  train loss 2.8669  val 0.6331  best 0.6331 @ 30
+    epoch  40  train loss 2.5067  val 0.6435  best 0.6453 @ 39
+    epoch  50  train loss 2.1640  val 0.6507  best 0.6555 @ 48
+    epoch  60  train loss 1.9478  val 0.6565  best 0.6578 @ 59
+    epoch  70  train loss 1.6605  val 0.6575  best 0.6602 @ 68
+    epoch  80  train loss 1.4409  val 0.6604  best 0.6637 @ 71
+    epoch  90  train loss 1.4274  val 0.6600  best 0.6637 @ 71
+  fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.7038 (val 0.6637 at epoch 71, 1.5 min)
+fungal_expression / original references / unimodal-grid:rna / seed 2
+  fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.5695  val 0.5619  best 0.5619 @ 0
+    epoch  10  train loss 4.3002  val 0.6275  best 0.6275 @ 10
+    epoch  20  train loss 4.0484  val 0.6349  best 0.6349 @ 20
+    epoch  30  train loss 3.9162  val 0.6380  best 0.6402 @ 29
+    epoch  40  train loss 3.8099  val 0.6447  best 0.6447 @ 40
+    epoch  50  train loss 3.6752  val 0.6516  best 0.6517 @ 48
+    epoch  60  train loss 3.5615  val 0.6584  best 0.6584 @ 60
+    epoch  70  train loss 3.4623  val 0.6630  best 0.6630 @ 70
+    epoch  80  train loss 3.3134  val 0.6673  best 0.6690 @ 79
+    epoch  90  train loss 3.1803  val 0.6710  best 0.6719 @ 89
+    epoch 100  train loss 3.0705  val 0.6771  best 0.6771 @ 100
+    epoch 110  train loss 2.8749  val 0.6776  best 0.6794 @ 108
+    epoch 120  train loss 2.7325  val 0.6811  best 0.6811 @ 120
+    epoch 130  train loss 2.5835  val 0.6807  best 0.6832 @ 129
+    epoch 140  train loss 2.4752  val 0.6810  best 0.6832 @ 129
+  fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: test 0.8003 (val 0.6832 at epoch 129, 8.6 min)
+fungal_expression / original references / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.4852  val 0.3863  best 0.3863 @ 0
+    epoch  10  train loss 3.3011  val 0.7011  best 0.7011 @ 10
+    epoch  20  train loss 2.4748  val 0.6927  best 0.7047 @ 12
+    epoch  30  train loss 2.4072  val 0.6925  best 0.7047 @ 12
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.7935 (val 0.7047 at epoch 12, 2.8 min)
+fungal_expression / original references / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.6736  val 0.3696  best 0.3696 @ 0
+    epoch  10  train loss 3.4598  val 0.7063  best 0.7063 @ 10
+    epoch  20  train loss 2.7936  val 0.7090  best 0.7146 @ 13
+    epoch  30  train loss 2.7330  val 0.7072  best 0.7146 @ 13
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.7941 (val 0.7146 at epoch 13, 2.7 min)
+fungal_expression / original references / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.0002  val 0.5845  best 0.5845 @ 0
+    epoch  10  train loss 1.2990  val 0.7235  best 0.7278 @ 7
+    epoch  20  train loss 0.4232  val 0.7325  best 0.7416 @ 12
+    epoch  30  train loss 0.3806  val 0.7313  best 0.7416 @ 12
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.8216 (val 0.7416 at epoch 12, 4.1 min)
+fungal_expression / nt500m / unimodal:dna / seed 2
+  fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.9842  val 0.5580  best 0.5580 @ 0
+    epoch  10  train loss 2.2626  val 0.6247  best 0.6247 @ 10
+    epoch  20  train loss 0.9554  val 0.6266  best 0.6297 @ 17
+    epoch  30  train loss 0.3110  val 0.6331  best 0.6373 @ 29
+    epoch  40  train loss 0.1444  val 0.6359  best 0.6373 @ 29
+  fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.7647 (val 0.6373 at epoch 29, 1.9 min)
+fungal_expression / nt500m / unimodal-grid:dna / seed 2
+  fungal_expression__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.0578  val 0.5359  best 0.5359 @ 0
+    epoch  10  train loss 2.8953  val 0.6365  best 0.6365 @ 10
+    epoch  20  train loss 1.9265  val 0.6352  best 0.6365 @ 10
+  fungal_expression__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: test 0.7612 (val 0.6365 at epoch 10, 0.8 min)
+fungal_expression / nt500m / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.4034  val 0.4773  best 0.4773 @ 0
+    epoch  10  train loss 3.1574  val 0.6800  best 0.6800 @ 10
+    epoch  20  train loss 1.9652  val 0.6379  best 0.6800 @ 10
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.8010 (val 0.6800 at epoch 10, 2.9 min)
+fungal_expression / nt500m / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.5234  val 0.4673  best 0.4673 @ 0
+    epoch  10  train loss 3.1224  val 0.6668  best 0.6668 @ 10
+    epoch  20  train loss 2.1439  val 0.6570  best 0.6708 @ 13
+    epoch  30  train loss 1.9909  val 0.6598  best 0.6708 @ 13
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.7855 (val 0.6708 at epoch 13, 3.2 min)
+fungal_expression / hyenadna / unimodal:dna / seed 2
+  fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.7293  val 0.4035  best 0.4035 @ 0
+    epoch  10  train loss 4.5128  val 0.5172  best 0.5172 @ 10
+    epoch  20  train loss 4.1184  val 0.5393  best 0.5393 @ 20
+    epoch  30  train loss 3.8934  val 0.5525  best 0.5525 @ 30
+    epoch  40  train loss 3.7004  val 0.5644  best 0.5644 @ 40
+    epoch  50  train loss 3.4155  val 0.5742  best 0.5742 @ 50
+    epoch  60  train loss 3.2409  val 0.5819  best 0.5819 @ 60
+    epoch  70  train loss 3.0231  val 0.5904  best 0.5904 @ 70
+    epoch  80  train loss 2.8046  val 0.5972  best 0.5972 @ 80
+    epoch  90  train loss 2.5343  val 0.6011  best 0.6011 @ 90
+    epoch 100  train loss 2.3592  val 0.6053  best 0.6053 @ 100
+    epoch 110  train loss 2.1129  val 0.6093  best 0.6093 @ 110
+    epoch 120  train loss 1.9189  val 0.6108  best 0.6133 @ 118
+    epoch 130  train loss 1.7893  val 0.6127  best 0.6133 @ 118
+  fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.7152 (val 0.6133 at epoch 118, 4.2 min)
+fungal_expression / hyenadna / unimodal-grid:dna / seed 2
+  fungal_expression__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.6677  val 0.3866  best 0.3866 @ 0
+    epoch  10  train loss 4.5861  val 0.4975  best 0.4975 @ 10
+    epoch  20  train loss 4.3028  val 0.5183  best 0.5184 @ 19
+    epoch  30  train loss 4.1426  val 0.5328  best 0.5328 @ 30
+    epoch  40  train loss 4.0469  val 0.5434  best 0.5434 @ 40
+    epoch  50  train loss 3.8727  val 0.5504  best 0.5504 @ 50
+    epoch  60  train loss 3.7797  val 0.5556  best 0.5563 @ 59
+    epoch  70  train loss 3.6745  val 0.5607  best 0.5607 @ 70
+    epoch  80  train loss 3.5697  val 0.5668  best 0.5668 @ 80
+    epoch  90  train loss 3.3924  val 0.5703  best 0.5703 @ 90
+    epoch 100  train loss 3.3392  val 0.5716  best 0.5740 @ 99
+    epoch 110  train loss 3.2028  val 0.5729  best 0.5740 @ 99
+  fungal_expression__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: test 0.6919 (val 0.5740 at epoch 99, 3.1 min)
+fungal_expression / hyenadna / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.4998  val 0.3868  best 0.3868 @ 0
+    epoch  10  train loss 3.6131  val 0.6940  best 0.6940 @ 10
+    epoch  20  train loss 3.0356  val 0.7128  best 0.7152 @ 19
+    epoch  30  train loss 2.5413  val 0.7056  best 0.7153 @ 23
+    epoch  40  train loss 2.5215  val 0.7053  best 0.7153 @ 23
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.7913 (val 0.7153 at epoch 23, 3.9 min)
+fungal_expression / hyenadna / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.5870  val 0.3127  best 0.3127 @ 0
+    epoch  10  train loss 3.5648  val 0.6800  best 0.6800 @ 10
+    epoch  20  train loss 3.0802  val 0.6877  best 0.6916 @ 19
+    epoch  30  train loss 2.6949  val 0.6863  best 0.6935 @ 26
+    epoch  40  train loss 2.6780  val 0.6899  best 0.6935 @ 26
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.7763 (val 0.6935 at epoch 26, 4.3 min)
+fungal_expression / rinalmo / unimodal:rna / seed 2
+  fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.6608  val 0.6563  best 0.6563 @ 0
+    epoch  10  train loss 2.9598  val 0.7111  best 0.7111 @ 10
+    epoch  20  train loss 2.2925  val 0.7258  best 0.7258 @ 20
+    epoch  30  train loss 1.7465  val 0.7272  best 0.7342 @ 28
+    epoch  40  train loss 1.4694  val 0.7352  best 0.7352 @ 40
+    epoch  50  train loss 1.3946  val 0.7344  best 0.7352 @ 40
+  fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.8377 (val 0.7352 at epoch 40, 4.1 min)
+fungal_expression / rinalmo / unimodal-grid:rna / seed 2
+  fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.6014  val 0.6450  best 0.6450 @ 0
+    epoch  10  train loss 3.1049  val 0.6926  best 0.6926 @ 10
+    epoch  20  train loss 2.5216  val 0.7016  best 0.7052 @ 17
+    epoch  30  train loss 2.0354  val 0.7044  best 0.7110 @ 28
+    epoch  40  train loss 1.7255  val 0.7098  best 0.7110 @ 28
+  fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: test 0.8367 (val 0.7110 at epoch 28, 2.9 min)
+fungal_expression / rinalmo / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.8026  val 0.6555  best 0.6555 @ 0
+    epoch  10  train loss 2.9952  val 0.7044  best 0.7044 @ 10
+    epoch  20  train loss 2.2721  val 0.7069  best 0.7158 @ 17
+    epoch  30  train loss 1.5821  val 0.7072  best 0.7182 @ 23
+    epoch  40  train loss 1.5491  val 0.7047  best 0.7182 @ 23
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.8486 (val 0.7182 at epoch 23, 3.6 min)
+fungal_expression / rinalmo / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.2330  val 0.6287  best 0.6287 @ 0
+    epoch  10  train loss 3.2649  val 0.6778  best 0.6808 @ 6
+    epoch  20  train loss 2.7220  val 0.6920  best 0.7004 @ 17
+    epoch  30  train loss 2.2543  val 0.6949  best 0.7081 @ 23
+    epoch  40  train loss 2.2197  val 0.6937  best 0.7081 @ 23
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.8415 (val 0.7081 at epoch 23, 3.6 min)
+fungal_expression / mrnafm / unimodal:rna / seed 2
+  fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.7052  val 0.7288  best 0.7288 @ 0
+    epoch  10  train loss 3.1948  val 0.7736  best 0.7736 @ 9
+    epoch  20  train loss 2.8057  val 0.7739  best 0.7745 @ 11
+    epoch  30  train loss 2.8032  val 0.7737  best 0.7745 @ 11
+  fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.8506 (val 0.7745 at epoch 11, 2.2 min)
+fungal_expression / mrnafm / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.9456  val 0.7354  best 0.7354 @ 0
+    epoch  10  train loss 2.9212  val 0.7636  best 0.7636 @ 10
+    epoch  20  train loss 2.4738  val 0.7570  best 0.7636 @ 10
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.8507 (val 0.7636 at epoch 10, 1.8 min)
+fungal_expression / mrnafm / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.4060  val 0.7343  best 0.7343 @ 0
+    epoch  10  train loss 3.1607  val 0.7513  best 0.7627 @ 2
+    epoch  20  train loss 3.1164  val 0.7523  best 0.7627 @ 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.8274 (val 0.7627 at epoch 2, 1.4 min)
+fungal_expression / calm / unimodal:rna / seed 2
+  fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.9604  val 0.7582  best 0.7582 @ 0
+    epoch  10  train loss 2.6138  val 0.7894  best 0.7903 @ 6
+    epoch  20  train loss 2.3863  val 0.7895  best 0.7903 @ 6
+  fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.8507 (val 0.7903 at epoch 6, 2.2 min)
+fungal_expression / calm / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.2101  val 0.7741  best 0.7741 @ 0
+    epoch  10  train loss 2.5212  val 0.7799  best 0.7834 @ 3
+    epoch  20  train loss 2.4741  val 0.7793  best 0.7834 @ 3
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.8452 (val 0.7834 at epoch 3, 1.1 min)
+fungal_expression / calm / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.6436  val 0.7503  best 0.7503 @ 0
+    epoch  10  train loss 2.7314  val 0.7867  best 0.7915 @ 4
+    epoch  20  train loss 2.6190  val 0.7851  best 0.7915 @ 4
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.8526 (val 0.7915 at epoch 4, 1.3 min)
+fungal_expression / esm2_35m / unimodal:prot / seed 2
+  fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.5825  val 0.3619  best 0.3619 @ 0
+    epoch  10  train loss 3.4463  val 0.6240  best 0.6240 @ 10
+    epoch  20  train loss 2.7101  val 0.6541  best 0.6541 @ 20
+    epoch  30  train loss 2.1905  val 0.6627  best 0.6629 @ 29
+    epoch  40  train loss 1.7898  val 0.6704  best 0.6704 @ 40
+    epoch  50  train loss 1.4060  val 0.6726  best 0.6765 @ 48
+    epoch  60  train loss 1.1218  val 0.6752  best 0.6782 @ 59
+    epoch  70  train loss 0.9221  val 0.6755  best 0.6803 @ 68
+    epoch  80  train loss 0.7998  val 0.6761  best 0.6803 @ 68
+  fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.6932 (val 0.6803 at epoch 68, 2.7 min)
+fungal_expression / esm2_35m / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.5240  val 0.3978  best 0.3978 @ 0
+    epoch  10  train loss 3.0480  val 0.7149  best 0.7149 @ 10
+    epoch  20  train loss 2.2990  val 0.7091  best 0.7174 @ 12
+    epoch  30  train loss 2.2462  val 0.7083  best 0.7174 @ 12
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.7885 (val 0.7174 at epoch 12, 3.0 min)
+fungal_expression / esm2_35m / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.6287  val 0.3801  best 0.3801 @ 0
+    epoch  10  train loss 3.1342  val 0.7070  best 0.7070 @ 10
+    epoch  20  train loss 2.6246  val 0.6978  best 0.7070 @ 10
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.7792 (val 0.7070 at epoch 10, 2.6 min)
+fungal_expression / esm2_150m / unimodal:prot / seed 2
+  fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.7184  val 0.5179  best 0.5179 @ 0
+    epoch  10  train loss 3.1024  val 0.6749  best 0.6749 @ 10
+    epoch  20  train loss 2.3617  val 0.6847  best 0.6851 @ 18
+    epoch  30  train loss 1.8103  val 0.6880  best 0.6880 @ 30
+    epoch  40  train loss 1.4233  val 0.6915  best 0.6921 @ 37
+    epoch  50  train loss 1.2139  val 0.6915  best 0.6921 @ 37
+  fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.7309 (val 0.6921 at epoch 37, 2.4 min)
+fungal_expression / esm2_150m / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.5332  val 0.6201  best 0.6201 @ 0
+    epoch  10  train loss 2.8168  val 0.7146  best 0.7170 @ 9
+    epoch  20  train loss 2.1941  val 0.7184  best 0.7197 @ 18
+    epoch  30  train loss 1.6040  val 0.7132  best 0.7205 @ 23
+    epoch  40  train loss 1.5603  val 0.7106  best 0.7205 @ 23
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.7950 (val 0.7205 at epoch 23, 3.8 min)
+fungal_expression / esm2_150m / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.6878  val 0.5796  best 0.5796 @ 0
+    epoch  10  train loss 2.9289  val 0.6979  best 0.7047 @ 4
+    epoch  20  train loss 2.7888  val 0.6992  best 0.7047 @ 4
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.7491 (val 0.7047 at epoch 4, 2.2 min)
+fungal_expression / protbert / unimodal:prot / seed 2
+  fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 6.1205  val 0.6834  best 0.6834 @ 0
+    epoch  10  train loss 3.2855  val 0.6938  best 0.6966 @ 1
+    epoch  20  train loss 3.2446  val 0.6947  best 0.6966 @ 1
+  fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.7338 (val 0.6966 at epoch 1, 2.5 min)
+fungal_expression / protbert / concat / seed 2
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.4869  val 0.7125  best 0.7125 @ 0
+    epoch  10  train loss 2.9121  val 0.7390  best 0.7416 @ 8
+    epoch  20  train loss 2.5058  val 0.7355  best 0.7416 @ 8
+  fungal_expression__concat__lambda0.0__ch100__equation__seed2: test 0.7996 (val 0.7416 at epoch 8, 2.9 min)
+fungal_expression / protbert / mil / seed 2
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 5.6391  val 0.6771  best 0.6771 @ 0
+    epoch  10  train loss 2.9954  val 0.7298  best 0.7348 @ 3
+    epoch  20  train loss 2.9517  val 0.7292  best 0.7348 @ 3
+  fungal_expression__mil__lambda0.01__ch100__equation__seed2: test 0.7971 (val 0.7348 at epoch 3, 2.4 min)
+fungal_expression / nt500m / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.8432  val 0.6022  best 0.6022 @ 0
+    epoch  10  train loss 0.7451  val 0.6981  best 0.7204 @ 7
+    epoch  20  train loss 0.1659  val 0.7079  best 0.7204 @ 12
+    epoch  30  train loss 0.1406  val 0.7086  best 0.7204 @ 12
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.8236 (val 0.7204 at epoch 12, 5.8 min)
+fungal_expression / hyenadna / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.0357  val 0.4891  best 0.4891 @ 0
+    epoch  10  train loss 1.9356  val 0.7107  best 0.7198 @ 6
+    epoch  20  train loss 1.0104  val 0.7253  best 0.7292 @ 17
+    epoch  30  train loss 0.5990  val 0.7174  best 0.7292 @ 17
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.7900 (val 0.7292 at epoch 17, 5.4 min)
+fungal_expression / rinalmo / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.3576  val 0.6544  best 0.6544 @ 0
+    epoch  10  train loss 1.2163  val 0.7137  best 0.7290 @ 6
+    epoch  20  train loss 0.3761  val 0.7295  best 0.7377 @ 12
+    epoch  30  train loss 0.3331  val 0.7275  best 0.7377 @ 12
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.8450 (val 0.7377 at epoch 12, 4.5 min)
+fungal_expression / mrnafm / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.2874  val 0.7214  best 0.7214 @ 0
+    epoch  10  train loss 1.0807  val 0.7477  best 0.7624 @ 7
+    epoch  20  train loss 0.3202  val 0.7505  best 0.7685 @ 12
+    epoch  30  train loss 0.2736  val 0.7522  best 0.7685 @ 12
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.8486 (val 0.7685 at epoch 12, 3.7 min)
+fungal_expression / calm / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 3.9110  val 0.7621  best 0.7621 @ 0
+    epoch  10  train loss 0.9153  val 0.7811  best 0.7863 @ 1
+    epoch  20  train loss 0.8379  val 0.7797  best 0.7863 @ 1
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.8513 (val 0.7863 at epoch 1, 2.1 min)
+fungal_expression / esm2_35m / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.9084  val 0.6140  best 0.6140 @ 0
+    epoch  10  train loss 1.1361  val 0.7299  best 0.7299 @ 10
+    epoch  20  train loss 0.4550  val 0.7261  best 0.7299 @ 10
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.8101 (val 0.7299 at epoch 10, 4.1 min)
+fungal_expression / esm2_150m / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 5.0701  val 0.6987  best 0.6987 @ 0
+    epoch  10  train loss 0.9594  val 0.7333  best 0.7333 @ 10
+    epoch  20  train loss 0.3048  val 0.7404  best 0.7405 @ 17
+    epoch  30  train loss 0.1609  val 0.7387  best 0.7406 @ 24
+    epoch  40  train loss 0.1512  val 0.7379  best 0.7406 @ 24
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.8246 (val 0.7406 at epoch 24, 6.1 min)
+fungal_expression / protbert / cross / seed 2
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 4.5115  val 0.7174  best 0.7174 @ 0
+    epoch  10  train loss 0.9221  val 0.7628  best 0.7628 @ 10
+    epoch  20  train loss 0.2972  val 0.7623  best 0.7628 @ 10
+    epoch  30  train loss 0.2898  val 0.7626  best 0.7628 @ 21
+    epoch  40  train loss 0.2723  val 0.7627  best 0.7628 @ 21
+  fungal_expression__cross__lambda0.0__ch100__equation__seed2: test 0.8062 (val 0.7628 at epoch 21, 6.3 min)
+Requested seed finished in 2.27 hours.
+
+fungal_expression (Spearman)
+Paired intervals not recalculated. RUN_BOOTSTRAP is separate from completing fits; retained interval outputs remain historical.
+Saved-prediction report skipped. Enable RUN_SAVED_COMPARISONS in Setup with READ_SAVED_RESULTS = True to calculate or reuse it.

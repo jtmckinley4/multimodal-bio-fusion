@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Submit from this workspace. Supply account, partition, GPU class, CPU, RAM and time
+# with sbatch options established from ARCC and the first measured batch.
+#SBATCH --job-name=encoder-swaps
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --output=outputs/logs/swaps-%A_%a.out
+#SBATCH --error=outputs/logs/swaps-%A_%a.err
+
+set -euo pipefail
+: "${ARCC_PROJECT_ROOT:?Absolute Newton path to ARCC Execution}"
+: "${ARCC_ANACONDA_MODULE:?Module confirmed on Newton}"
+: "${ARCC_CONDA_ENV:?Prepared environment name or absolute path}"
+: "${ARCC_KERNEL:?Kernel registered in that environment}"
+: "${ARCC_EXPECTED_GPU:?GPU-name substring from preflight}"
+cd "$ARCC_PROJECT_ROOT"
+printf 'Preparing Conda environment on %s\n' "$(hostname)"
+# Slurm can inherit an active environment without Conda's shell function.
+# Initialize it before module loading can attempt to deactivate that environment.
+if (( ${CONDA_SHLVL:-0} > 0 )); then
+    ARCC_BOOTSTRAP_CONDA_BASE=$(conda info --base)
+    source "$ARCC_BOOTSTRAP_CONDA_BASE/etc/profile.d/conda.sh"
+fi
+module load "$ARCC_ANACONDA_MODULE"
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ARCC_CONDA_ENV"
+printf 'Using Python: %s\n' "$(command -v python)"
+
+if [[ -n "${SLURM_ARRAY_TASK_ID:-}" ]]; then
+    task="$SLURM_ARRAY_TASK_ID"
+    [[ "$task" =~ ^([0-9]|1[01])$ ]] || { echo "Array task must be 0-11" >&2; exit 2; }
+    row=$(awk -F '\t' -v id="$task" 'NR > 1 && $1 == id {print $2 "\t" $3}' batches.tsv)
+    IFS=$'\t' read -r benchmark seed <<< "$row"
+    [[ -n "$benchmark" && -n "$seed" ]] || { echo "Missing batch row" >&2; exit 2; }
+else
+    : "${ARCC_BENCHMARK:?Set one benchmark}"
+    : "${ARCC_SEED:?Set seed 0, 1 or 2}"
+    benchmark="$ARCC_BENCHMARK"
+    seed="$ARCC_SEED"
+fi
+printf 'Recording environment; then starting the %s seed %s notebook.\n' "$benchmark" "$seed"
+python -m pip freeze > "outputs/logs/environment-${SLURM_JOB_ID}-${SLURM_ARRAY_TASK_ID:-single}.txt"
+python -u run_encoder_swaps.py --mode train --benchmark "$benchmark" --seed "$seed" \
+    --kernel "$ARCC_KERNEL" --expected-gpu "$ARCC_EXPECTED_GPU" \
+    --cache-root "${ARCC_CACHE_ROOT:-$ARCC_PROJECT_ROOT/Code/stage3/embeddings}"
+

@@ -1,0 +1,119 @@
+{
+  "verified_utc": "2026-11-17T07:37:46.781852+00:00",
+  "scope": "File preservation and saved notebook schema; no research recomputation",
+  "baseline_sha256": "33b8638aca84a5f6a1bcf69c8ebcf844beeb1dfaea1c0ac134643dd3d0980705",
+  "verification_source_sha256": "97627a0165948925225b5d5d2c9bd90301c08f9726673e3929cb0dcbd2e95766",
+  "protected_content_hashes": 1289,
+  "changed_files": [],
+  "cache_size_and_mtime_checks": 1570,
+  "changed_caches": [],
+  "cache_limit": "Existing cache payloads were not rehashed; size and modification time were compared.",
+  "notebooks": [
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/correction/local_kernel_retry/cov_vac_degradation-controls.ipynb",
+      "sha256": "f9b7144c867e20916ee470cb1d25a56cb8cbfaf8c0142735a1036e50937e1178",
+      "executed_cells": 28,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/correction/local_kernel_retry/cov_vac_degradation-folds.ipynb",
+      "sha256": "5431c480a8c8d8e6208aaadb0399ce68002ba7cbbfb90e15b9e89edbddfb1733",
+      "executed_cells": 28,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/correction/local_kernel_retry/fungal_expression-controls.ipynb",
+      "sha256": "8c6e98b4d85bf454eee2ed3df4c4dd5dd5cfd83ce6cab19e1b3a0f657d0f8b5b",
+      "executed_cells": 28,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/correction/local_kernel_retry/fungal_expression-folds.ipynb",
+      "sha256": "e9169136b4fb0857b90532422d55c2db131247fee263bc1cbf3f98be1c01ebca",
+      "executed_cells": 28,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/correction/local_kernel_retry/mrna_stability-folds.ipynb",
+      "sha256": "248066868fb1e8e5778835f970d92d8c731a9a600e14501f5b70ebdba8b0b724",
+      "executed_cells": 12,
+      "recorded_errors": [
+        {
+          "cell": "fold-review-display",
+          "error": "FileNotFoundError",
+          "message": "[Errno 2] No such file or directory: 'D:\\\\academic\\\\UCF\\\\2026_fall\\\\Capstone Project CAP6942\\\\Research\\\\genomics-multimodal-fusion\\\\Code\\\\stage4\\\\results\\\\grouped_stability_v1\\\\split.json'"
+        }
+      ]
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/correction/stability_candidate/mrna_stability-controls.ipynb",
+      "sha256": "dbca538fca3788b599ed27a106bc87f3e57f45cb00019a5ab7806a9fc377cf20",
+      "executed_cells": 28,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/correction/stability_candidate/mrna_stability-folds.ipynb",
+      "sha256": "d42cc8f128262c35d5adf1f97287370e5bc01fb64a50a3e5dc2e96dae512cfa9",
+      "executed_cells": 28,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/parameters/anchor_cross_attention_preview.ipynb",
+      "sha256": "d8c080cfa898ed006bb12469059d14331e0f9b798b69234313ad31ec3d090240",
+      "executed_cells": 9,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/parameters/gate_diagnostics_preview.ipynb",
+      "sha256": "ccdd5b670ee06aa43537817de0c01e90308299b058135eab77adf69eb3194b96",
+      "executed_cells": 9,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/regions/rnahl-human-retry1/executed-input-audit.ipynb",
+      "sha256": "b095b2e1fc60a0a976eece40f2a4b82b96274fdffe7d4f767e8524bcaa8716d6",
+      "executed_cells": 13,
+      "recorded_errors": []
+    },
+    {
+      "path": "Code/stage4/results/decision_inspections/20261117_pre_newton/regions/translation-efficiency-human/executed-input-audit.ipynb",
+      "sha256": "c25343976c05932e1b355195401ed4ecdc296cedca5f2d8572b46dab018ebe4c",
+      "executed_cells": 13,
+      "recorded_errors": []
+    }
+  ],
+  "reports": [
+    {
+      "path": "Code/stage4/results/anchor_correction/cov_vac_degradation/analyses/decision-support-controls-c078ea33b71691ff.json",
+      "sha256": "1712959b943df380f2b0842caed7cd765fdf6bc23f4268965eca7a14431145ed"
+    },
+    {
+      "path": "Code/stage4/results/anchor_correction/cov_vac_degradation/analyses/decision-support-folds-dec1224df8f458e3.json",
+      "sha256": "ccb9033448e89e318e3465e90457611075c33db56d59a30d18e9b3a7d04e2bfa"
+    },
+    {
+      "path": "Code/stage4/results/anchor_correction/fungal_expression/analyses/decision-support-controls-793e6199de20b58d.json",
+      "sha256": "76f8e348f0e6d973906104be927aef4752446509a1e1bd9c2da41f353001f978"
+    },
+    {
+      "path": "Code/stage4/results/anchor_correction/fungal_expression/analyses/decision-support-folds-2446530b0b409a5f.json",
+      "sha256": "717519871ab24f24cbe9be774a0a516dfaa669afbdb6c5a92cd7b48c56cfeb10"
+    },
+    {
+      "path": "Code/stage4/results/anchor_correction/mrna_stability/analyses/decision-support-controls-40495cadc1850b33.json",
+      "sha256": "fe3f863b85ab64f81a7302fa9f48b8264db8e575eae34fd8fd7ebfa05334de5f"
+    },
+    {
+      "path": "Code/stage4/results/anchor_correction/mrna_stability/analyses/decision-support-folds-a98018b61aaa682c.json",
+      "sha256": "fd2a55433a57fd3ca795dd21321046e962dd88397a09651cde5a0a35e1c6f1db"
+    },
+    {
+      "path": "Code/stage4/results/region_aware_v1/rnahl-human/input-audit-v1.json",
+      "sha256": "99799a500235eaf2060ea5ab196181deb0aff4a161224045733d030ff2d3267f"
+    },
+    {
+      "path": "Code/stage4/results/region_aware_v1/translation-efficiency-human/input-audit-v1.json",
+      "sha256": "fbbf60b334ebe2cd50308d81cdb501acd821b3da72c3eec0e1f62ce31164068e"
+    }
+  ]
+}

@@ -1,0 +1,315 @@
+Preparing Conda environment on evc50
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python
+Recording environment; then starting the ecoli_proteins seed 2 notebook.
+Executing train: ('ecoli_proteins',), seed 2; /lustre/fs1/home/ch806988/multi-modal_fusion/outputs/notebooks/train-ecoli_proteins-seed2-20261115T055144Z-8dd1a5cd.ipynb
+Kernel Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python | torch: 2.10.0+cu126 | device: cuda
+GPU: NVIDIA H100 PCIe | CUDA: 12.6 | cuDNN: 91002
+Training seed 2; selection seed 0; 42 new/resumable fits in the displayed plan.
+8 swap-benchmark pairs over 1 benchmarks, device cuda
+Estimated replacement-cache payload needed by pending fits, including existing caches: ~13 GB
+All of it stays out of Git, under Code/stage3/embeddings/<benchmark>/<encoder>/.
+  ecoli_proteins/ntv2_100m: complete, recorded_input
+  ecoli_proteins/rnafm: complete, recorded_input
+  ecoli_proteins/esm2_8m: complete, recorded_input
+  ecoli_proteins/nt500m: complete, recorded_input
+  ecoli_proteins/hyenadna: complete, recorded_input
+  ecoli_proteins/rinalmo: complete, recorded_input
+  ecoli_proteins/mrnafm: complete, recorded_input
+  ecoli_proteins/calm: complete, recorded_input
+  ecoli_proteins/esm2_35m: complete, recorded_input
+  ecoli_proteins/esm2_150m: complete, recorded_input
+  ecoli_proteins/protbert: complete, recorded_input
+Preflight passed: 11 caches; 0 missing shards (must be zero).
+Token streams open only for a pending training group.
+ecoli_proteins / original references / unimodal:dna / seed 2
+  ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1201  val 0.3929  best 0.3929 @ 0
+    epoch  10  train loss 0.9378  val 0.4712  best 0.4959 @ 8
+    epoch  20  train loss 0.8498  val 0.4849  best 0.4986 @ 18
+    epoch  30  train loss 0.8397  val 0.4931  best 0.4986 @ 18
+  ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.4747 (val 0.4986 at epoch 18, 0.6 min)
+ecoli_proteins / original references / unimodal:rna / seed 2
+  ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1037  val 0.3970  best 0.3970 @ 0
+    epoch  10  train loss 1.0648  val 0.4753  best 0.4890 @ 1
+    epoch  20  train loss 1.0638  val 0.4890  best 0.5041 @ 17
+    epoch  30  train loss 1.0597  val 0.4890  best 0.5041 @ 17
+  ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.4846 (val 0.5041 at epoch 17, 3.2 min)
+ecoli_proteins / original references / unimodal:prot / seed 2
+  ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1094  val 0.3832  best 0.3832 @ 0
+    epoch  10  train loss 0.9972  val 0.4959  best 0.4959 @ 10
+    epoch  20  train loss 0.9431  val 0.4973  best 0.5041 @ 18
+    epoch  30  train loss 0.9386  val 0.5014  best 0.5041 @ 18
+  ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.5126 (val 0.5041 at epoch 18, 0.5 min)
+ecoli_proteins / original references / unimodal-grid:rna / seed 2
+  ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.0990  val 0.4052  best 0.4052 @ 0
+    epoch  10  train loss 1.0752  val 0.4918  best 0.4945 @ 6
+    epoch  20  train loss 1.0658  val 0.5110  best 0.5234 @ 17
+    epoch  30  train loss 1.0662  val 0.5137  best 0.5234 @ 17
+  ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: test 0.4860 (val 0.5234 at epoch 17, 1.8 min)
+ecoli_proteins / original references / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1026  val 0.4080  best 0.4080 @ 0
+    epoch  10  train loss 1.0119  val 0.5591  best 0.5591 @ 10
+    epoch  20  train loss 1.0004  val 0.5687  best 0.5769 @ 18
+    epoch  30  train loss 0.9907  val 0.5728  best 0.5824 @ 26
+    epoch  40  train loss 0.9880  val 0.5742  best 0.5824 @ 26
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.5716 (val 0.5824 at epoch 26, 3.3 min)
+ecoli_proteins / original references / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1121  val 0.3462  best 0.3462 @ 0
+    epoch  10  train loss 0.9908  val 0.5398  best 0.5632 @ 8
+    epoch  20  train loss 0.9332  val 0.5398  best 0.5632 @ 8
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5449 (val 0.5632 at epoch 8, 2.0 min)
+ecoli_proteins / original references / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1474  val 0.3736  best 0.3736 @ 0
+    epoch  10  train loss 0.5589  val 0.5453  best 0.5549 @ 3
+    epoch  20  train loss 0.4904  val 0.5440  best 0.5563 @ 15
+    epoch  30  train loss 0.4734  val 0.5467  best 0.5563 @ 15
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5646 (val 0.5563 at epoch 15, 5.2 min)
+ecoli_proteins / nt500m / unimodal:dna / seed 2
+  ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1321  val 0.4080  best 0.4080 @ 0
+    epoch  10  train loss 0.7120  val 0.4794  best 0.4931 @ 3
+    epoch  20  train loss 0.6839  val 0.4863  best 0.4931 @ 3
+  ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.4888 (val 0.4931 at epoch 3, 0.9 min)
+ecoli_proteins / nt500m / unimodal-grid:dna / seed 2
+  ecoli_proteins__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1173  val 0.3530  best 0.3530 @ 0
+    epoch  10  train loss 0.8760  val 0.4973  best 0.4973 @ 10
+    epoch  20  train loss 0.8490  val 0.4876  best 0.4973 @ 10
+  ecoli_proteins__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: test 0.4747 (val 0.4973 at epoch 10, 0.7 min)
+ecoli_proteins / nt500m / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1018  val 0.3571  best 0.3571 @ 0
+    epoch  10  train loss 0.9837  val 0.5618  best 0.5618 @ 10
+    epoch  20  train loss 0.9657  val 0.5659  best 0.5673 @ 17
+    epoch  30  train loss 0.9588  val 0.5659  best 0.5673 @ 17
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.5772 (val 0.5673 at epoch 17, 3.0 min)
+ecoli_proteins / nt500m / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1126  val 0.4107  best 0.4107 @ 0
+    epoch  10  train loss 0.9834  val 0.5495  best 0.5495 @ 10
+    epoch  20  train loss 0.9677  val 0.5536  best 0.5536 @ 17
+    epoch  30  train loss 0.9545  val 0.5563  best 0.5577 @ 22
+    epoch  40  train loss 0.9533  val 0.5495  best 0.5577 @ 22
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5562 (val 0.5577 at epoch 22, 3.4 min)
+ecoli_proteins / hyenadna / unimodal:dna / seed 2
+  ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1167  val 0.3915  best 0.3915 @ 0
+    epoch  10  train loss 1.0704  val 0.4451  best 0.4588 @ 8
+    epoch  20  train loss 1.0430  val 0.4602  best 0.4684 @ 18
+    epoch  30  train loss 1.0405  val 0.4574  best 0.4684 @ 18
+  ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed2: test 0.4888 (val 0.4684 at epoch 18, 0.8 min)
+ecoli_proteins / hyenadna / unimodal-grid:dna / seed 2
+  ecoli_proteins__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1089  val 0.3956  best 0.3956 @ 0
+    epoch  10  train loss 1.0823  val 0.4519  best 0.4574 @ 1
+    epoch  20  train loss 1.0793  val 0.4629  best 0.4629 @ 17
+    epoch  30  train loss 1.0783  val 0.4519  best 0.4629 @ 17
+  ecoli_proteins__unimodal-grid-dna__lambda0.0__ch100__equation__seed2: test 0.4705 (val 0.4629 at epoch 17, 0.8 min)
+ecoli_proteins / hyenadna / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1025  val 0.3956  best 0.3956 @ 0
+    epoch  10  train loss 1.0199  val 0.5728  best 0.5838 @ 8
+    epoch  20  train loss 0.9449  val 0.5701  best 0.6003 @ 16
+    epoch  30  train loss 0.9077  val 0.5893  best 0.6003 @ 16
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.5815 (val 0.6003 at epoch 16, 2.8 min)
+ecoli_proteins / hyenadna / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1130  val 0.3365  best 0.3365 @ 0
+    epoch  10  train loss 0.9954  val 0.5398  best 0.5481 @ 8
+    epoch  20  train loss 0.9383  val 0.5302  best 0.5481 @ 8
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5407 (val 0.5481 at epoch 8, 2.3 min)
+ecoli_proteins / rinalmo / unimodal:rna / seed 2
+  ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1564  val 0.4382  best 0.4382 @ 0
+    epoch  10  train loss 0.9431  val 0.5343  best 0.5824 @ 8
+    epoch  20  train loss 0.8207  val 0.5865  best 0.5865 @ 20
+    epoch  30  train loss 0.7998  val 0.5852  best 0.5962 @ 21
+    epoch  40  train loss 0.7998  val 0.5852  best 0.5962 @ 21
+  ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.5562 (val 0.5962 at epoch 21, 2.6 min)
+ecoli_proteins / rinalmo / unimodal-grid:rna / seed 2
+  ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1157  val 0.4437  best 0.4437 @ 0
+    epoch  10  train loss 0.9690  val 0.5810  best 0.5810 @ 10
+    epoch  20  train loss 0.9602  val 0.5810  best 0.5865 @ 18
+    epoch  30  train loss 0.9628  val 0.5810  best 0.5865 @ 18
+  ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed2: test 0.5688 (val 0.5865 at epoch 18, 1.8 min)
+ecoli_proteins / rinalmo / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1013  val 0.4245  best 0.4245 @ 0
+    epoch  10  train loss 0.9552  val 0.5920  best 0.6071 @ 8
+    epoch  20  train loss 0.8706  val 0.5920  best 0.6071 @ 8
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.5913 (val 0.6071 at epoch 8, 2.1 min)
+ecoli_proteins / rinalmo / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1119  val 0.4190  best 0.4190 @ 0
+    epoch  10  train loss 1.0100  val 0.6044  best 0.6044 @ 10
+    epoch  20  train loss 0.9136  val 0.5975  best 0.6058 @ 13
+    epoch  30  train loss 0.9071  val 0.5948  best 0.6058 @ 13
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5857 (val 0.6058 at epoch 13, 2.5 min)
+ecoli_proteins / mrnafm / unimodal:rna / seed 2
+  ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1125  val 0.3544  best 0.3544 @ 0
+    epoch  10  train loss 1.0365  val 0.5769  best 0.5769 @ 10
+    epoch  20  train loss 1.0282  val 0.5591  best 0.5769 @ 10
+  ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.5562 (val 0.5769 at epoch 10, 1.1 min)
+ecoli_proteins / mrnafm / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1042  val 0.3640  best 0.3640 @ 0
+    epoch  10  train loss 0.9916  val 0.5907  best 0.6099 @ 8
+    epoch  20  train loss 0.9100  val 0.6209  best 0.6319 @ 17
+    epoch  30  train loss 0.9030  val 0.6140  best 0.6319 @ 17
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.6180 (val 0.6319 at epoch 17, 2.0 min)
+ecoli_proteins / mrnafm / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1123  val 0.3407  best 0.3407 @ 0
+    epoch  10  train loss 1.0085  val 0.5440  best 0.5495 @ 8
+    epoch  20  train loss 0.9488  val 0.5591  best 0.5659 @ 17
+    epoch  30  train loss 0.9426  val 0.5604  best 0.5659 @ 17
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5562 (val 0.5659 at epoch 17, 2.0 min)
+ecoli_proteins / calm / unimodal:rna / seed 2
+  ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.0991  val 0.4698  best 0.4698 @ 0
+    epoch  10  train loss 0.9631  val 0.5893  best 0.5962 @ 7
+    epoch  20  train loss 0.9103  val 0.5838  best 0.5962 @ 7
+  ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed2: test 0.5576 (val 0.5962 at epoch 7, 0.6 min)
+ecoli_proteins / calm / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.0968  val 0.4245  best 0.4245 @ 0
+    epoch  10  train loss 0.9520  val 0.5948  best 0.6085 @ 8
+    epoch  20  train loss 0.8739  val 0.5879  best 0.6085 @ 8
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.5927 (val 0.6085 at epoch 8, 1.2 min)
+ecoli_proteins / calm / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1104  val 0.3846  best 0.3846 @ 0
+    epoch  10  train loss 1.0059  val 0.5920  best 0.6003 @ 6
+    epoch  20  train loss 0.9653  val 0.5893  best 0.6003 @ 6
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5702 (val 0.6003 at epoch 6, 1.2 min)
+ecoli_proteins / esm2_35m / unimodal:prot / seed 2
+  ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1032  val 0.3874  best 0.3874 @ 0
+    epoch  10  train loss 0.9654  val 0.5275  best 0.5275 @ 10
+    epoch  20  train loss 0.8707  val 0.5302  best 0.5440 @ 18
+    epoch  30  train loss 0.8197  val 0.5234  best 0.5440 @ 18
+  ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.5253 (val 0.5440 at epoch 18, 0.6 min)
+ecoli_proteins / esm2_35m / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1015  val 0.4176  best 0.4176 @ 0
+    epoch  10  train loss 1.0043  val 0.5783  best 0.5797 @ 8
+    epoch  20  train loss 0.9916  val 0.5783  best 0.5824 @ 14
+    epoch  30  train loss 0.9884  val 0.5769  best 0.5824 @ 14
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.5590 (val 0.5824 at epoch 14, 2.5 min)
+ecoli_proteins / esm2_35m / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1122  val 0.3393  best 0.3393 @ 0
+    epoch  10  train loss 0.9942  val 0.5357  best 0.5398 @ 8
+    epoch  20  train loss 0.9256  val 0.5412  best 0.5495 @ 15
+    epoch  30  train loss 0.9230  val 0.5440  best 0.5495 @ 15
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5534 (val 0.5495 at epoch 15, 2.6 min)
+ecoli_proteins / esm2_150m / unimodal:prot / seed 2
+  ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1038  val 0.3915  best 0.3915 @ 0
+    epoch  10  train loss 0.9499  val 0.5549  best 0.5549 @ 10
+    epoch  20  train loss 0.8392  val 0.5453  best 0.5618 @ 17
+    epoch  30  train loss 0.7795  val 0.5330  best 0.5618 @ 17
+  ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.5506 (val 0.5618 at epoch 17, 0.7 min)
+ecoli_proteins / esm2_150m / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1010  val 0.3970  best 0.3970 @ 0
+    epoch  10  train loss 1.0013  val 0.5962  best 0.5962 @ 10
+    epoch  20  train loss 0.9908  val 0.6003  best 0.6003 @ 20
+    epoch  30  train loss 0.9890  val 0.5948  best 0.6044 @ 22
+    epoch  40  train loss 0.9895  val 0.5962  best 0.6044 @ 22
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.5562 (val 0.6044 at epoch 22, 3.2 min)
+ecoli_proteins / esm2_150m / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1105  val 0.3310  best 0.3310 @ 0
+    epoch  10  train loss 0.9955  val 0.5824  best 0.5824 @ 10
+    epoch  20  train loss 0.8899  val 0.5632  best 0.6003 @ 18
+    epoch  30  train loss 0.8264  val 0.5769  best 0.6003 @ 18
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5730 (val 0.6003 at epoch 18, 3.0 min)
+ecoli_proteins / protbert / unimodal:prot / seed 2
+  ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.0995  val 0.3997  best 0.3997 @ 0
+    epoch  10  train loss 0.9944  val 0.5137  best 0.5137 @ 10
+    epoch  20  train loss 0.8888  val 0.5151  best 0.5398 @ 17
+    epoch  30  train loss 0.7783  val 0.5495  best 0.5495 @ 30
+    epoch  40  train loss 0.6894  val 0.5398  best 0.5495 @ 30
+  ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2: test 0.5421 (val 0.5495 at epoch 30, 1.5 min)
+ecoli_proteins / protbert / concat / seed 2
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1011  val 0.4107  best 0.4107 @ 0
+    epoch  10  train loss 1.0206  val 0.5591  best 0.5591 @ 10
+    epoch  20  train loss 0.9183  val 0.5701  best 0.5989 @ 17
+    epoch  30  train loss 0.8476  val 0.5920  best 0.6030 @ 26
+    epoch  40  train loss 0.8412  val 0.5920  best 0.6030 @ 26
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed2: test 0.5506 (val 0.6030 at epoch 26, 4.6 min)
+ecoli_proteins / protbert / mil / seed 2
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: training
+    epoch   0  train loss 1.1109  val 0.3310  best 0.3310 @ 0
+    epoch  10  train loss 1.0397  val 0.5261  best 0.5261 @ 10
+    epoch  20  train loss 0.9320  val 0.5948  best 0.5948 @ 18
+    epoch  30  train loss 0.8002  val 0.5962  best 0.6003 @ 22
+    epoch  40  train loss 0.7910  val 0.5948  best 0.6003 @ 22
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed2: test 0.5758 (val 0.6003 at epoch 22, 3.7 min)
+ecoli_proteins / nt500m / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1517  val 0.4821  best 0.4821 @ 0
+    epoch  10  train loss 0.4740  val 0.5330  best 0.5522 @ 1
+    epoch  20  train loss 0.4397  val 0.5426  best 0.5522 @ 1
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5618 (val 0.5522 at epoch 1, 6.4 min)
+ecoli_proteins / hyenadna / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1237  val 0.4574  best 0.4574 @ 0
+    epoch  10  train loss 0.7716  val 0.5137  best 0.5728 @ 5
+    epoch  20  train loss 0.6342  val 0.5563  best 0.5728 @ 5
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5688 (val 0.5728 at epoch 5, 4.8 min)
+ecoli_proteins / rinalmo / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1539  val 0.4973  best 0.4973 @ 0
+    epoch  10  train loss 0.5853  val 0.5508  best 0.5810 @ 6
+    epoch  20  train loss 0.4026  val 0.5673  best 0.5810 @ 6
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5646 (val 0.5810 at epoch 6, 5.5 min)
+ecoli_proteins / mrnafm / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1442  val 0.4396  best 0.4396 @ 0
+    epoch  10  train loss 0.5410  val 0.4519  best 0.5714 @ 6
+    epoch  20  train loss 0.3639  val 0.5467  best 0.5714 @ 6
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5506 (val 0.5714 at epoch 6, 5.8 min)
+ecoli_proteins / calm / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1509  val 0.4327  best 0.4327 @ 0
+    epoch  10  train loss 0.5068  val 0.5165  best 0.5495 @ 6
+    epoch  20  train loss 0.3545  val 0.5192  best 0.5495 @ 6
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5492 (val 0.5495 at epoch 6, 4.7 min)
+ecoli_proteins / esm2_35m / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1446  val 0.3599  best 0.3599 @ 0
+    epoch  10  train loss 0.5416  val 0.4931  best 0.5481 @ 6
+    epoch  20  train loss 0.3783  val 0.5330  best 0.5481 @ 6
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5309 (val 0.5481 at epoch 6, 5.3 min)
+ecoli_proteins / esm2_150m / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1428  val 0.3654  best 0.3654 @ 0
+    epoch  10  train loss 0.5340  val 0.4437  best 0.5522 @ 8
+    epoch  20  train loss 0.2280  val 0.5659  best 0.5673 @ 16
+    epoch  30  train loss 0.1552  val 0.5618  best 0.5673 @ 16
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5463 (val 0.5673 at epoch 16, 8.5 min)
+ecoli_proteins / protbert / cross / seed 2
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: training
+    epoch   0  train loss 1.1469  val 0.3805  best 0.3805 @ 0
+    epoch  10  train loss 0.5072  val 0.5316  best 0.5604 @ 5
+    epoch  20  train loss 0.3571  val 0.5728  best 0.5852 @ 19
+    epoch  30  train loss 0.3245  val 0.5755  best 0.5865 @ 21
+    epoch  40  train loss 0.3227  val 0.5755  best 0.5865 @ 21
+  ecoli_proteins__cross__lambda0.0__ch100__equation__seed2: test 0.5267 (val 0.5865 at epoch 21, 8.5 min)
+Requested seed finished in 2.02 hours.
+
+ecoli_proteins (accuracy x 100)
+Paired intervals not recalculated. RUN_BOOTSTRAP is separate from completing fits; retained interval outputs remain historical.
+Saved-prediction report skipped. Enable RUN_SAVED_COMPARISONS in Setup with READ_SAVED_RESULTS = True to calculate or reuse it.

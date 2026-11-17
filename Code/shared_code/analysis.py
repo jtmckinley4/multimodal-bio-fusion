@@ -241,11 +241,31 @@ def linear_cka(X, Y):
 
 
 def mutual_knn_alignment(X, Y, k=10):
-    """Average neighbor-set overlap after discarding each first returned index."""
+    """Average overlap of k nonself neighbors for matching example rows.
+
+    X and Y must be two-dimensional with the same number of rows; their feature
+    widths may differ. The caller owns row correspondence. Exclude each query's
+    actual row index, which need not be the first neighbor when vectors coincide.
+    Other distance ties retain sklearn's returned order, including cutoff ties.
+    This measures neighbor-set overlap, not reciprocal neighbor relationships.
+    """
+    X, Y = _embedding_matrices({"X": X, "Y": Y}, ("X", "Y"))
     n = X.shape[0]
-    neighbors_x = NearestNeighbors(n_neighbors=k + 1).fit(X).kneighbors(X, return_distance=False)
-    neighbors_y = NearestNeighbors(n_neighbors=k + 1).fit(Y).kneighbors(Y, return_distance=False)
-    overlaps = [len(set(neighbors_x[i, 1:]) & set(neighbors_y[i, 1:])) / k for i in range(n)]
+    if (isinstance(k, (bool, np.bool_))
+            or not isinstance(k, (int, np.integer)) or not 1 <= k < n):
+        raise ValueError("k must be an integer from 1 through the number of rows minus 1.")
+    neighbors_x = NearestNeighbors(n_neighbors=k + 1).fit(X).kneighbors(
+        X, return_distance=False
+    )
+    neighbors_y = NearestNeighbors(n_neighbors=k + 1).fit(Y).kneighbors(
+        Y, return_distance=False
+    )
+    overlaps = []
+    for i, (rows_x, rows_y) in enumerate(zip(neighbors_x, neighbors_y)):
+        # With more than k+1 duplicate vectors, self may not be returned at all.
+        nonself_x = set(rows_x[rows_x != i][:k])
+        nonself_y = set(rows_y[rows_y != i][:k])
+        overlaps.append(len(nonself_x & nonself_y) / k)
     return np.mean(overlaps)
 
 

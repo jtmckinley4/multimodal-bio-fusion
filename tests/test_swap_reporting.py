@@ -245,15 +245,21 @@ class SwapReportingTests(unittest.TestCase):
         cells = {c.get("id"): "".join(c["source"]) for c in notebook["cells"]}
         source = cells["swaps-settings"]
         guard = source[source.index("RUN_SAVED_COMPARISONS ="):source.index("# Cache chunking")]
-        state = {"READ_SAVED_RESULTS": True, "RESULTS_ROOT": self.root}
+        state = {"READ_SAVED_RESULTS": True, "RESULTS_ROOT": self.root,
+                 "BENCHMARKS": ["fixture"], "result_recipe": lambda seed: {**RECIPE, "seed": seed},
+                 "RESULT_PATHS": SimpleNamespace(fixed_historical_selection=False,
+                                                 selection_snapshot=None,
+                                                 saved_report_dirs=(self.root / "reports",))}
         exec(guard, state)
         self.assertFalse(state["RUN_SAVED_COMPARISONS"])
         # Defining the helper must not require datasets or start report production.
         exec(cells["swaps-paired-report-def"], state)
         state["build_or_reuse_report"] = Mock(
             side_effect=AssertionError("Disabled reporting invoked its producer"))
-        with redirect_stdout(io.StringIO()):
+        with redirect_stdout(io.StringIO()), patch.object(
+                swap_reporting, "read_existing_report", return_value=(None, None)) as read_saved:
             exec(cells["swaps-paired-report-run"], state)
+        read_saved.assert_called_once()
         self.assertEqual(state["SAVED_COMPARISON_REPORTS"], {})
         state["build_or_reuse_report"].assert_not_called()
         with self.assertRaisesRegex(ValueError, "training and extraction"):
@@ -282,6 +288,7 @@ class SwapReportingTests(unittest.TestCase):
             tokens=SimpleNamespace(grid_resolution=lambda e: "codon", extract=forbidden),
             train=SimpleNamespace(run=forbidden, fit=forbidden),
             RESULTS_ROOT=self.root, COMPARISON_SEEDS=(0, 1, 2),
+            RESULT_PATHS=SimpleNamespace(fixed_historical_selection=False, selection_snapshot=None),
             COMPARISON_DIR=self.root / "reports", COMPARISON_DRAWS=10,
             COMPARISON_BOOTSTRAP_SEED=0, CODE_DIR=self.root,
         )
@@ -332,6 +339,7 @@ class SwapReportingTests(unittest.TestCase):
                     tokens=SimpleNamespace(grid_resolution=lambda encoder: (
                         "codon" if encoder == "codon-fixture" else "nucleotide")),
                     RESULTS_ROOT=self.root / "fits", COMPARISON_SEEDS=(2, 1),
+                    RESULT_PATHS=SimpleNamespace(fixed_historical_selection=False, selection_snapshot=None),
                     COMPARISON_DIR=self.root / "reports", COMPARISON_DRAWS=17,
                     COMPARISON_BOOTSTRAP_SEED=11, CODE_DIR=self.root / "Code",
                 )
@@ -351,6 +359,7 @@ class SwapReportingTests(unittest.TestCase):
                     original_folders=[self.original], original_encoders=ORIGINAL,
                     swaps=[("rna", "codon-fixture", False), ("dna", "base-fixture", True)],
                     swap_root=self.root / "fits" / "fixture", seeds=(2, 1),
+                    selection_original_folders=None, selection_swap_root=None, selection_snapshot=None,
                 )
                 reporting.report.assert_called_once()
                 args, kwargs = reporting.report.call_args

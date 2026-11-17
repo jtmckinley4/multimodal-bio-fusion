@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Submit from the prepared workspace. Supply account, partition, GPU class, CPU,
+# RAM and time through approved sbatch options for the selected workload.
+#SBATCH --job-name=encoder-swaps
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --output=outputs/logs/swaps-%A_%a.out
+#SBATCH --error=outputs/logs/swaps-%A_%a.err
+
+set -euo pipefail
+: "${SLURM_JOB_ID:?Training requires an allocated Newton Slurm job}"
+: "${ARCC_PROJECT_ROOT:?Absolute Newton path to the prepared workspace}"
+: "${ARCC_ANACONDA_MODULE:?Module confirmed on Newton}"
+: "${ARCC_CONDA_ENV:?Prepared environment name or absolute path}"
+: "${ARCC_KERNEL:?Kernel registered in that environment}"
+: "${ARCC_EXPECTED_GPU:?Approved GPU-name substring confirmed by preflight}"
+cd "$ARCC_PROJECT_ROOT"
+printf 'Preparing Conda environment on %s\n' "$(hostname)"
+# Slurm can inherit an active environment without Conda's shell function.
+# Initialize it before module loading can attempt to deactivate that environment.
+if (( ${CONDA_SHLVL:-0} > 0 )); then
+    ARCC_BOOTSTRAP_CONDA_BASE=$(conda info --base)
+    source "$ARCC_BOOTSTRAP_CONDA_BASE/etc/profile.d/conda.sh"
+fi
+module load "$ARCC_ANACONDA_MODULE"
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ARCC_CONDA_ENV"
+printf 'Using Python: %s\n' "$(command -v python)"
+
+python -u run_encoder_swaps.py --verify-only
+ARCC_OUTPUT_ROOT="${ARCC_OUTPUT_ROOT:-$ARCC_PROJECT_ROOT/outputs}"
+[[ -d "$ARCC_OUTPUT_ROOT/logs" ]] || {
+    echo "Prepare the selected output root's logs directory before submission." >&2; exit 2;
+}
+if [[ -n "${SLURM_ARRAY_TASK_ID:-}" ]]; then
+    task="$SLURM_ARRAY_TASK_ID"
+    [[ "$task" =~ ^[0-9]+$ ]] || { echo "Array task must be a nonnegative integer" >&2; exit 2; }
+    # Each requested index must name exactly one row in the explicitly selected batch file.
+    row=$(awk -F '\t' -v id="$task" '
+        NR > 1 && $1 == id {count++; row=$2 "\t" $3}
+        END {if (count != 1) exit 2; print row}
+    ' "${ARCC_BATCHES:-$ARCC_PROJECT_ROOT/batches.tsv}") || {
+        echo "Missing or duplicate batch row for array task $task" >&2; exit 2;
+    }
+    IFS=$'\t' read -r benchmark seed <<< "$row"
+    [[ -n "$benchmark" && -n "$seed" ]] || { echo "Incomplete batch row" >&2; exit 2; }
+else
+    : "${ARCC_BENCHMARK:?Set one benchmark}"
+    : "${ARCC_SEED:?Set one approved seed}"
+    benchmark="$ARCC_BENCHMARK"
+    seed="$ARCC_SEED"
+fi
+printf 'Recording environment; then starting the %s seed %s notebook.\n' "$benchmark" "$seed"
+python -m pip freeze > "$ARCC_OUTPUT_ROOT/logs/environment-${SLURM_JOB_ID}-${SLURM_ARRAY_TASK_ID:-single}.txt"
+python -u run_encoder_swaps.py --mode train --benchmark "$benchmark" --seed "$seed" \
+    --kernel "$ARCC_KERNEL" --expected-gpu "$ARCC_EXPECTED_GPU" \
+    --purpose newton --device cuda --output-root "$ARCC_OUTPUT_ROOT" \
+    --cache-root "${ARCC_CACHE_ROOT:-$ARCC_PROJECT_ROOT/Code/stage3/embeddings}"

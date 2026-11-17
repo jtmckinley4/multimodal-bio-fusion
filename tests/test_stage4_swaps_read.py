@@ -1,7 +1,9 @@
 """Exercise encoder-swap reading cells against fixtures, with producers blocked."""
 
-from contextlib import redirect_stdout
+import ast
+from contextlib import ExitStack, redirect_stdout
 import datetime
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -17,7 +19,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "Code"))
-from shared_code.fusion import swap_plan, swap_results
+from shared_code.fusion import result_sets, swap_plan, swap_reporting, swap_results
 
 
 RECIPE = dict(lr=3e-5, weight_decay=1e-5, batch_size=32, max_epochs=500,
@@ -50,7 +52,39 @@ class SwapNotebookReadTests(unittest.TestCase):
         path.write_text(json.dumps(data), encoding="utf-8")
         return path
 
-    def execute_reading(self):
+    def saved_report(self, directory, source, *, selection=None):
+        benchmark = "cov_vac_degradation"
+        identity = {
+            "schema": swap_reporting.SCHEMA, "benchmark": benchmark,
+            "seeds": [0, 1, 2], "selection_seed": 0, "config": RECIPE,
+            "draws": 2000, "bootstrap_seed": 0,
+            "sources": {str(source): hashlib.sha256(source.read_bytes()).hexdigest()},
+            "source_sha256": {"synthetic_producer.py": "a" * 64},
+        }
+        if selection is not None:
+            identity.update(
+                selection_policy="fixed-historical-seed0-validation",
+                selection_sources={str(selection): hashlib.sha256(
+                    selection.read_bytes()).hexdigest()},
+            )
+        contrast = dict(encoder="nt500m", kind="replacement", comparison="synthetic",
+                        first="nt500m/concat", second="original/concat")
+        analysis = {
+            "per_seed": [{**contrast, "seed": seed, "difference": 0.2}
+                         for seed in (0, 1, 2)],
+            "seed_summary": [{**contrast, "available_seeds": [0, 1, 2],
+                              "missing_seeds": [], "status": "complete", "difference": 0.2}],
+            "issues": [], "units": "synthetic score difference",
+        }
+        saved = {"identity": identity, "analysis": analysis,
+                 "analysis_sha256": swap_reporting._digest(analysis),
+                 "producer": {"host": "synthetic-fixture"}}
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / f"{benchmark}__{swap_reporting._digest(identity)[:20]}.json"
+        path.write_text(json.dumps(saved), encoding="utf-8")
+        return saved
+
+    def execute_reading(self, result_set=None):
         labels = (*ORIGINAL.values(), "nt500m", "hyenadna", "rinalmo", "mrnafm",
                   "calm", "esm2_35m", "esm2_150m", "protbert")
         shown = []
@@ -79,15 +113,29 @@ class SwapNotebookReadTests(unittest.TestCase):
         # Imports/device discovery are not research; inject their interfaces so this
         # test needs neither pretrained models nor a particular PyTorch installation.
         omitted = {"swaps-imports", "swaps-paths", "1a72c669"}
-        with redirect_stdout(output), patch.object(pd.DataFrame, "to_csv", forbidden), \
-                patch.object(Path, "mkdir", forbidden), patch.object(Path, "write_text", forbidden):
+        with ExitStack() as blocked, redirect_stdout(output):
+            if hasattr(self, "snapshot_sha256"):
+                blocked.enter_context(patch.object(result_sets, "NEWTON_SNAPSHOT_SHA256", self.snapshot_sha256))
+            blocked.enter_context(patch.object(pd.DataFrame, "to_csv", forbidden))
+            for name in ("mkdir", "write_text", "write_bytes"):
+                blocked.enter_context(patch.object(Path, name, forbidden))
+            for name in ("report", "calculate", "benchmark_context", "collect", "_score"):
+                blocked.enter_context(patch.object(swap_reporting, name, forbidden))
             for cell in self.cells:
                 if cell["cell_type"] == "code" and cell["id"] not in omitted:
-                    exec(compile("".join(cell["source"]), cell["id"], "exec"), namespace)
-                    if cell["id"] == "swaps-settings":
-                        # Test the reading branch even when the user last saved
-                        # the notebook's settings for an authorized compute run.
-                        namespace["READ_SAVED_RESULTS"] = True
+                    source = "".join(cell["source"])
+                    if cell["id"] == "swaps-locations" and result_set is not None:
+                        # Override this assignment regardless of the saved default;
+                        # None exercises the actual notebook settings unchanged.
+                        source = ast.parse(source)
+                        assignments = [node for node in source.body
+                                       if isinstance(node, ast.Assign) and any(
+                                           isinstance(target, ast.Name) and target.id == "RESULT_SET"
+                                           for target in node.targets)]
+                        self.assertEqual(len(assignments), 1)
+                        assignments[0].value = ast.Constant(result_set)
+                        ast.fix_missing_locations(source)
+                    exec(compile(source, cell["id"], "exec"), namespace)
         self.assertTrue(namespace["READ_SAVED_RESULTS"])
         self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
         self.assertNotIn("STREAMS", namespace)
@@ -95,11 +143,58 @@ class SwapNotebookReadTests(unittest.TestCase):
         return namespace, shown, output.getvalue()
 
     def test_empty_checkout_reports_gaps_and_finishes_without_producers(self):
-        namespace, shown, output = self.execute_reading()
+        namespace, shown, output = self.execute_reading("historical")
         self.assertIn("Training skipped", output)
         self.assertIn("Stage 1 alignment unavailable", output)
         self.assertIn("Paired intervals not recalculated", output)
         self.assertTrue(namespace["result_coverage"]["missing"].str.len().gt(0).all())
+
+    def test_saved_default_does_not_replace_absent_newton_with_desktop_scores_or_reports(self):
+        source = self.result("stage4/results/phaseA/cov_vac_degradation/desktop.json", "concat")
+        self.saved_report(self.code / "stage4/results/phaseB/analyses/paired-report-v1", source)
+        namespace, _, output = self.execute_reading()
+        self.assertEqual(namespace["SAVED_COMPARISON_REPORTS"], {})
+        self.assertFalse(namespace["original_report"]("cov_vac_degradation", 0).records)
+        self.assertIn("no matching saved report", output)
+        self.assertIn("newton_h100_seeds012", output)
+        self.assertIn("Paired intervals not recalculated", output)
+        self.assertTrue(namespace["result_coverage"]["missing"].str.len().gt(0).all())
+
+    def test_saved_default_reads_newton_scores_and_reports_without_csv_copies_or_caches(self):
+        root = "stage4/results/newton_h100_seeds012"
+        source = self.result(f"{root}/outputs/phaseA/cov_vac_degradation/concat.json",
+                             "concat", test_score=0.65)
+        relative = "stage4/results/phaseA/cov_vac_degradation/concat.json"
+        selection = self.result(relative, "concat", test_score=0.2)
+        snapshot = self.code / root / "provenance/source-snapshot.json"
+        snapshot.parent.mkdir(parents=True)
+        digest = hashlib.sha256(selection.read_bytes()).hexdigest()
+        snapshot.write_text(json.dumps({"schema_version": 1, "files": [{
+            "source": "Code/" + relative,
+            "destination": "historical_results/Code/" + relative,
+            "source_sha256": digest, "initial_copy_sha256": digest,
+        }]}), encoding="utf-8")
+        self.snapshot_sha256 = hashlib.sha256(snapshot.read_bytes()).hexdigest()
+        self.result("stage4/results/phaseA/cov_vac_degradation/desktop.json",
+                    "concat", test_score=0.99)
+        saved = self.saved_report(
+            self.code / root / "outputs/phaseB/analyses/paired-report-v1", source,
+            selection=selection)
+
+        namespace, _, output = self.execute_reading()
+
+        self.assertEqual(namespace["RESULT_SET"], "newton_h100_seeds012")
+        self.assertTrue(namespace["RESULT_PATHS"].fixed_historical_selection)
+        self.assertEqual((namespace["SEED"], namespace["SELECTION_SEED"]), (0, 0))
+        self.assertEqual(namespace["COMPARISON_SEEDS"], (0, 1, 2))
+        self.assertFalse(namespace["RUN_SAVED_COMPARISONS"])
+        self.assertFalse(namespace["RUN_BOOTSTRAP"])
+        table = namespace["benchmark_score_table"]("cov_vac_degradation")
+        self.assertEqual(table.loc[("none", "BioLangFusion's own"), "concat"], 0.65)
+        self.assertEqual(namespace["SAVED_COMPARISON_REPORTS"], {"cov_vac_degradation": saved})
+        self.assertIn("cov_vac_degradation: read", output)
+        self.assertFalse(any(self.root.rglob("*.csv")))
+        self.assertFalse(namespace["CACHE_ROOT"].exists())
 
     def test_existing_scores_read_without_caches_and_without_recalculation(self):
         for variant in ("unimodal:dna", "unimodal:rna", "unimodal:prot", "concat", "mil", "cross"):
@@ -108,7 +203,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         for variant in ("unimodal:dna", "unimodal-grid:dna", "concat", "mil", "cross"):
             self.result(f"stage4/results/phaseB/cov_vac_degradation/nt500m/{variant.replace(':', '-')}.json",
                         variant, test_score=0.7)
-        namespace, shown, output = self.execute_reading()
+        namespace, shown, output = self.execute_reading("historical")
         table = namespace["benchmark_score_table"]("cov_vac_degradation")
         self.assertAlmostEqual(table.loc[("dna", "nt500m"), "concat"], 0.7)
         self.assertIn("metadata unavailable", str(namespace["checks"]))
@@ -118,7 +213,7 @@ class SwapNotebookReadTests(unittest.TestCase):
             self.result(f"stage4/results/phaseA/cov_vac_degradation/{name}.json", "mil")
         path = self.result("stage4/results/phaseB/cov_vac_degradation/nt500m/broken.json", "concat")
         path.write_text("not JSON", encoding="utf-8")
-        namespace, shown, output = self.execute_reading()
+        namespace, shown, output = self.execute_reading("historical")
         self.assertIn("seed-0 MIL selection unavailable", str(namespace["status"]))
         self.assertIn("Ambiguous saved results", str(namespace["FIT_PLANS"]["cov_vac_degradation"].issues))
         self.assertFalse(namespace["result_issues"].empty)
@@ -129,7 +224,7 @@ class SwapNotebookReadTests(unittest.TestCase):
                         variant)
         self.result("stage4/results/phaseB/cov_vac_degradation/nt500m/concat.json", "concat",
                     test_score=0.7)
-        namespace, _, _ = self.execute_reading()
+        namespace, _, _ = self.execute_reading("historical")
         table = namespace["benchmark_score_table"]("cov_vac_degradation")
         self.assertEqual(table.loc[("none", "BioLangFusion's own"), "concat"], 0.5)
         self.assertEqual(table.loc[("dna", "nt500m"), "concat"], 0.7)
@@ -139,7 +234,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         for name in ("first", "duplicate"):
             self.result(f"stage4/results/phaseA/cov_vac_degradation/{name}.json", "mil")
         self.result("stage4/results/phaseA/cov_vac_degradation/concat.json", "concat")
-        namespace, _, _ = self.execute_reading()
+        namespace, _, _ = self.execute_reading("historical")
         table = namespace["benchmark_score_table"]("cov_vac_degradation")
         self.assertEqual(table.loc[("none", "BioLangFusion's own"), "concat"], 0.5)
         self.assertTrue(np.isnan(table.loc[("none", "BioLangFusion's own"), "mil"]))
@@ -158,7 +253,7 @@ class SwapNotebookReadTests(unittest.TestCase):
 
         # The existing reading harness blocks recovery, producers and writers and
         # checks every fixture byte, even when cache metadata is unusable.
-        namespace, _, _ = self.execute_reading()
+        namespace, _, _ = self.execute_reading("historical")
         rows = {
             row["encoder"]: row for row in namespace["checks"]
             if row["benchmark"] == benchmark
@@ -184,7 +279,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.result(f"stage4/results/phaseB/{benchmark}/nt500m/concat.json", "concat")
         broken = self.result(f"stage4/results/phaseB/{benchmark}/nt500m/broken.json", "cross")
         broken.write_text("not JSON", encoding="utf-8")
-        namespace, _, _ = self.execute_reading()
+        namespace, _, _ = self.execute_reading("historical")
         namespace["swaps_for"] = lambda key: [("dna", "nt500m")]
         before = {path: path.read_bytes() for path in self.root.rglob("*") if path.is_file()}
         with patch.object(Path, "mkdir", forbidden), patch.object(Path, "write_text", forbidden):
@@ -209,7 +304,7 @@ class SwapNotebookReadTests(unittest.TestCase):
                                   if path.is_file()})
 
     def test_bootstrap_plan_uses_selection_seed_and_requires_both_fusion_heads(self):
-        namespace, _, _ = self.execute_reading()
+        namespace, _, _ = self.execute_reading("historical")
         original = {"concat": SimpleNamespace(), "mil": SimpleNamespace()}
         current = {
             "unimodal:dna": SimpleNamespace(val_score=0.95),
@@ -251,7 +346,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.assertEqual(incomplete, comparisons[:1])
 
     def test_alignment_uses_explicit_capture_labels_and_preserves_raw_values(self):
-        namespace, _, _ = self.execute_reading()
+        namespace, _, _ = self.execute_reading("historical")
         index = ["mrnafm", "esm2_8m", "nt500m", "ntv2_100m", "rnafm"]
         columns = ["ntv2_100m", "rnafm", "esm2_8m", "nt500m", "mrnafm"]
         values = [

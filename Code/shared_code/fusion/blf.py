@@ -52,12 +52,24 @@ class BenchmarkStreams:
         encoder_of_modality = {**ENCODER_OF_MODALITY, **(encoder_of_modality or {})}
         spec = datasets_module.DATASETS[key]
         rows = datasets_module.blf_benchmark_rows(key)
-        caches = {m: summarize(f"{cache_root}/{key}/{encoder}")
-                  for m, encoder in encoder_of_modality.items()}
+        caches = {}
         streams = cls(key, rows, caches, spec.task, spec.label_column, spec.split_column,
                       encoders=encoder_of_modality)
-        streams.check()
-        return streams
+        try:
+            for modality, encoder in encoder_of_modality.items():
+                caches[modality] = summarize(f"{cache_root}/{key}/{encoder}")
+            streams.check()
+            return streams
+        except BaseException as error:
+            # This call owns partially opened caches until it returns successfully.
+            try:
+                streams.close()
+            except BaseException as cleanup_error:
+                if hasattr(error, "add_note"):
+                    error.add_note(f"BLF cache cleanup also failed: {cleanup_error}")
+                    for note in getattr(cleanup_error, "__notes__", ()):
+                        error.add_note(note)
+            raise
 
     def check(self):
         """Every cache must hold one row per sequence, with the token count its length implies.
@@ -101,8 +113,18 @@ class BenchmarkStreams:
         return np.flatnonzero(self.rows[self.split_column].to_numpy() == split)
 
     def close(self):
-        for cache in self.caches.values():
-            cache.close()
+        """Attempt every close and report the first failure, with later failures noted."""
+        first_error = None
+        for modality, cache in self.caches.items():
+            try:
+                cache.close()
+            except BaseException as error:
+                if first_error is None:
+                    first_error = error
+                elif hasattr(first_error, "add_note"):
+                    first_error.add_note(f"Closing the {modality} cache also failed: {error}")
+        if first_error is not None:
+            raise first_error
 
 
 class GridDataset(Dataset):

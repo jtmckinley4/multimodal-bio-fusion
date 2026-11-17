@@ -54,6 +54,7 @@ class ReorganizedMethodNotebookTests(unittest.TestCase):
             "pd": SimpleNamespace(read_csv=read_csv),
             "datasets": SimpleNamespace(DEFAULT_DATA_DIR=data_dir),
             "isoformer": SimpleNamespace(GTEX_PILOT="invented-pilot.csv"),
+            "RUN_PILOT": True,
         }
         execute(cells(GTEX)["gtex-pilot-inputs"], namespace)
         read_csv.assert_called_once_with(data_dir / "invented-pilot.csv")
@@ -72,6 +73,7 @@ class ReorganizedMethodNotebookTests(unittest.TestCase):
             # Baseline prefers MPS when both backends exist; repeats retain CUDA first.
             "DEVICE": "mps",
         }
+        execute(book["gtex-execution-paths"], namespace)
         execute(book["s4-pilot-settings"], namespace)
         names = ("DEVICE", "BENCHMARK", "CACHE_ROOT", "RESULTS_DIR", "MAX_BATCH",
                  "CELL_BUDGET", "N_HEADS", "VAL_FRACTION", "MAX_EPOCHS", "SEEDS",

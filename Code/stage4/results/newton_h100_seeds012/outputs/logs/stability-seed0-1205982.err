@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/lustre/fs1/home/ch806988/multi-modal_fusion/run_encoder_swaps.py", line 212, in <module>
+    main()
+  File "/lustre/fs1/home/ch806988/multi-modal_fusion/run_encoder_swaps.py", line 156, in main
+    "execution_source_sha256": {str(p.relative_to(WORKSPACE)): sha256(p) for p in source_files},
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre/fs1/home/ch806988/multi-modal_fusion/run_encoder_swaps.py", line 156, in <dictcomp>
+    "execution_source_sha256": {str(p.relative_to(WORKSPACE)): sha256(p) for p in source_files},
+                                                               ^^^^^^^^^
+  File "/lustre/fs1/home/ch806988/multi-modal_fusion/run_encoder_swaps.py", line 21, in sha256
+    with Path(path).open("rb") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ch806988/.conda/envs/biofusion-arcc/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/lustre/fs1/home/ch806988/multi-modal_fusion/Code/stage4/encoder_swaps.ipynb'

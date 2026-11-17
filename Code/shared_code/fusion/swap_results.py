@@ -6,6 +6,7 @@ that distinction. No model, cache, training, or numerical library is imported.
 """
 
 from dataclasses import dataclass, field
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -105,6 +106,85 @@ def validation_choices(records, *, singles, positive_lambdas):
     return best, penalty
 
 
+def separate_selection_roots(*, original_folders, swap_root,
+                             selection_original_folders, selection_swap_root):
+    """Require both historical selection routes outside fresh comparison results."""
+    if selection_original_folders is None and selection_swap_root is None:
+        return None
+    if selection_original_folders is None or selection_swap_root is None:
+        raise ValueError("Supply both historical original and replacement selection roots")
+    historical = tuple(Path(path).resolve() for path in selection_original_folders)
+    if not historical:
+        raise ValueError("Historical original selection folders cannot be empty")
+    historical_swaps = Path(selection_swap_root).resolve()
+    result_roots = (*[Path(path).resolve() for path in original_folders],
+                    Path(swap_root).resolve())
+    for selection_root in (*historical, historical_swaps):
+        for result_root in result_roots:
+            if (selection_root.is_relative_to(result_root)
+                    or result_root.is_relative_to(selection_root)):
+                raise ValueError("Historical selection and fresh result roots must be separate: "
+                                 f"{selection_root} overlaps {result_root}")
+    return historical, historical_swaps
+
+
+def read_validation_selection(*, benchmark, config, original_folders,
+                              original_encoders, swaps, swap_root,
+                              positive_lambdas=(0.01, 0.5, 1.0), selection_snapshot=None):
+    """Read seed-0 choices and hashes; these records never become fresh fitted results.
+
+    Validation-score ties retain the established reader order. Unknown historical
+    provenance remains unknown; absent evidence never falls back to a new cohort.
+    A Newton selection_snapshot restricts canonical paths to the original files
+    and hashes; later results in the same directories cannot enter selection.
+    """
+    recipe = {**config, "seed": 0}
+    sources, issues = {}, []
+    # Freeze selection membership even when canonical folders acquire newer results.
+    allowed_files = None if selection_snapshot is None else selection_snapshot.file_hashes()
+
+    def retained(report):
+        entries = report.require_unique()
+        issues.extend(report.issues)
+        for entry in entries:
+            path = entry["path"]
+            sources[str(path)] = hashlib.sha256(path.read_bytes()).hexdigest()
+        return entries
+
+    original_singles = ("unimodal:dna", "unimodal:rna", "unimodal:prot",
+                        "unimodal-grid:rna")
+    originals = retained(read_results(
+        original_folders, benchmark=benchmark, config=recipe,
+        encoders=original_encoders, native_fallback=True,
+        variants=(*original_singles, "mil"), mil_lambdas=positive_lambdas,
+        allowed_files=allowed_files))
+    original_best, penalty = validation_choices(
+        originals, singles=original_singles, positive_lambdas=positive_lambdas)
+    if penalty is None:
+        raise ValueError("Complete historical seed-0 positive MIL grid required")
+    if original_best is None:
+        raise ValueError("Complete historical seed-0 original single-encoder grid required")
+    choices = {"original": original_best}
+    for modality, encoder, grid in swaps:
+        required = (f"unimodal:{modality}",
+                    *((f"unimodal-grid:{modality}",) if grid else ()))
+        replacements = retained(read_results(
+            [Path(swap_root) / encoder], benchmark=benchmark, config=recipe,
+            encoders={**original_encoders, modality: encoder}, variants=required,
+            allowed_files=allowed_files))
+        if {entry["data"]["variant"] for entry in replacements} != set(required):
+            raise ValueError(f"Complete historical seed-0 single-encoder grid required for {encoder}")
+        combined = [entry for entry in originals
+                    if entry["data"]["variant"].startswith("unimodal")
+                    and not entry["data"]["variant"].endswith(f":{modality}")]
+        combined.extend(replacements)
+        singles = [entry["data"]["variant"] for entry in combined]
+        best, _ = validation_choices(combined, singles=singles, positive_lambdas=())
+        choices[encoder] = best
+    return {"mil_lambda": penalty, "best_singles": choices,
+            "sources": sources, "issues": issues}
+
+
 def paired_records(records, *, variants, seeds, mil_lambda, truth, task, n_classes=None):
     """Select paired arrays from already recipe-filtered entries, without scoring.
 
@@ -196,7 +276,7 @@ class Selection:
 
 
 def read_results(folders, *, benchmark, config, encoders, native_fallback=False,
-                 mil_lambda=None, mil_lambdas=None, variants=VARIANTS):
+                 mil_lambda=None, mil_lambdas=None, variants=VARIANTS, allowed_files=None):
     """Select one seed and full TrainConfig from direct result-folder children.
 
     With mil_lambda=None the original MIL validation grid remains eligible;
@@ -204,14 +284,29 @@ def read_results(folders, *, benchmark, config, encoders, native_fallback=False,
     fallback is only for original baselines that bypass convolution: prefer the
     declared tconv, otherwise accept a unique appendix/equation record. A duplicate
     (variant, penalty) is withheld, even if its scores happen to agree.
+    allowed_files is an optional verified {absolute Path: SHA-256} allowlist;
+    when supplied, no directory glob contributes candidates.
     """
     report = Selection()
     grouped = {}
-    paths = sorted({p.resolve() for folder in folders for p in Path(folder).glob("*.json")})
+    folders = {Path(folder).resolve() for folder in folders}
+    if allowed_files is None:
+        paths = sorted({p.resolve() for folder in folders for p in folder.glob("*.json")})
+    else:
+        # Do not discover candidates outside the original selection manifest.
+        paths = sorted(path for path in allowed_files if path.parent in folders)
     for path in paths:
         variant = None
+        payload = None
+        if allowed_files is not None:
+            try:
+                payload = path.read_bytes()
+            except OSError as error:
+                raise ValueError(f"Recorded selection file is unavailable: {path}") from error
+            if hashlib.sha256(payload).hexdigest() != allowed_files[path]:
+                raise ValueError(f"Recorded selection file changed while reading: {path}")
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
+            data = json.loads(payload if payload is not None else path.read_text(encoding="utf-8"))
             if not isinstance(data, dict):
                 raise ValueError("result is not an object")
             variant = data.get("variant")

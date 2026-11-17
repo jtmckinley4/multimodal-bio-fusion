@@ -1,0 +1,16 @@
+# Review against the existing Newton environment; do not upgrade it automatically.
+# Install the selected CUDA PyTorch build separately.
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+biopython
+transformers==5.15.1
+multimolecule
+einops
+ipykernel
+nbconvert
+nbformat
+nbclient
+pyarrow

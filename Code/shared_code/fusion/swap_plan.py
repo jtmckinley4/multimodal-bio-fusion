@@ -58,6 +58,8 @@ class ExecutionPlan:
     selection_lambda: float | None
     runs: list[RunSpec] = field(default_factory=list)
     issues: list[str] = field(default_factory=list)
+    selected_singles: dict = field(default_factory=dict)
+    selection_sources: dict = field(default_factory=dict)
 
     @property
     def ready(self):
@@ -137,7 +139,7 @@ def _validate_request(benchmark, config, selection_seed, original_encoders, swap
 
 def _plan_fit(*, benchmark, role, encoder_key, modality, variant, config, encoders,
               folders, destination_directory, native_fallback, checkpoint_validator,
-              identity_factory=None):
+              identity_factory=None, require_versioned_identity=False):
     destination = result_path(destination_directory, benchmark, variant, config).resolve()
     run = RunSpec(benchmark, role, encoder_key, modality, variant, dict(config), dict(encoders),
                   destination, "blocked", "Inspection did not complete")
@@ -163,6 +165,12 @@ def _plan_fit(*, benchmark, role, encoder_key, modality, variant, config, encode
             identity = {} if identity is None else identity
             if not isinstance(identity, dict):
                 raise ValueError("Saved identity must be an object or an unidentified historical record")
+            if require_versioned_identity:
+                from .run_identity import validate_identity
+                if "schema" not in identity:
+                    raise ValueError("Fresh comparison result lacks a full versioned identity")
+                validate_identity(identity, config=entry["data"]["config"],
+                                  variant=variant, benchmark=benchmark)
             if "schema" in identity and identity_factory is not None:
                 requested = identity_factory(benchmark, variant, dict(config), dict(encoders))
                 if identity != requested:
@@ -186,7 +194,10 @@ def _plan_fit(*, benchmark, role, encoder_key, modality, variant, config, encode
                 return run
         checkpoint = destination.with_suffix(".checkpoint")
         if checkpoint.exists():
-            if checkpoint_validator is None:
+            if require_versioned_identity and identity_factory is None:
+                run.status = "checkpoint_requires_review"
+                run.reason = "Fresh-cohort checkpoint reuse requires the full requested identity."
+            elif checkpoint_validator is None:
                 run.status = "checkpoint_requires_review"
                 run.reason = "Checkpoint not deserialized in metadata mode; compatibility preflight required."
             else:
@@ -245,7 +256,8 @@ def _check_selection_singles(plan, *, config, original_encoders, original_folder
 def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
                    original_destination, swaps, swap_root, selection_seed=0,
                    positive_lambdas=(0.01, 0.5, 1.0), checkpoint_validator=None,
-                   identity_factory=None):
+                   identity_factory=None, selection_original_folders=None,
+                   selection_swap_root=None, selection_snapshot=None):
     """Plan all references and selected swaps for one manually chosen training seed.
 
     ``swaps`` contains (modality, encoder_key, needs_grid) triples. ``swap_root``
@@ -260,6 +272,12 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
     to bind recovery and new-schema completed results to current input metadata.
     New fits acquire their full identity after missing caches have been extracted;
     legacy completed scores remain readable without opening arrays or inventing provenance.
+
+    Explicit selection roots freeze historical seed-0 validation choices while
+    ``original_folders`` and ``swap_root`` read only the fresh comparison cohort.
+    Historical selection records never satisfy a planned fit or checkpoint.
+    selection_snapshot additionally fixes candidate membership and bytes after
+    the completed Newton batch's duplicate selection copies are removed.
     """
     config, original_encoders = dict(config), dict(original_encoders)
     swaps, penalties = tuple(swaps), tuple(positive_lambdas)
@@ -271,20 +289,35 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
     ))
     plan = ExecutionPlan(benchmark, config["seed"], selection_seed, None)
     try:
-        selection = swap_results.read_results(
-            original_folders, benchmark=benchmark, config={**config, "seed": selection_seed},
-            encoders=original_encoders, variants=("mil",), mil_lambdas=penalties,
-        )
-        records = selection.require_unique()
-        available = {entry["data"]["config"]["entropy_lambda"] for entry in records}
-        if available != set(penalties):
-            raise ValueError("Complete seed-0 positive MIL grid required; missing penalties "
-                             + str(sorted(set(penalties) - available)))
-        plan.selection_lambda = selection.positive_lambda()
+        selection_roots = swap_results.separate_selection_roots(
+            original_folders=original_folders, swap_root=swap_root,
+            selection_original_folders=selection_original_folders,
+            selection_swap_root=selection_swap_root)
+        if selection_snapshot is not None and selection_roots is None:
+            raise ValueError("A frozen selection snapshot requires separate selection roots.")
+        if selection_roots is not None:
+            historical = swap_results.read_validation_selection(
+                benchmark=benchmark, config=config, original_folders=selection_roots[0],
+                original_encoders=original_encoders, swaps=swaps, swap_root=selection_roots[1],
+                positive_lambdas=penalties, selection_snapshot=selection_snapshot)
+            plan.selection_lambda = historical["mil_lambda"]
+            plan.selected_singles = historical["best_singles"]
+            plan.selection_sources = historical["sources"]
+        else:
+            selection = swap_results.read_results(
+                original_folders, benchmark=benchmark, config={**config, "seed": selection_seed},
+                encoders=original_encoders, variants=("mil",), mil_lambdas=penalties,
+            )
+            records = selection.require_unique()
+            available = {entry["data"]["config"]["entropy_lambda"] for entry in records}
+            if available != set(penalties):
+                raise ValueError("Complete seed-0 positive MIL grid required; missing penalties "
+                                 + str(sorted(set(penalties) - available)))
+            plan.selection_lambda = selection.positive_lambda()
     except (OSError, ValueError, TypeError, KeyError) as error:
         plan.issues.append("Seed-0 MIL selection unavailable: " + str(error))
         return plan
-    if config["seed"] != selection_seed:
+    if selection_roots is None and config["seed"] != selection_seed:
         _check_selection_singles(
             plan, config=config, original_encoders=original_encoders,
             original_folders=original_folders, swaps=swaps, swap_root=swap_root,
@@ -297,6 +330,7 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
             config=recipe, encoders=original_encoders, folders=original_folders,
             destination_directory=original_destination, native_fallback=True,
             checkpoint_validator=checkpoint_validator, identity_factory=identity_factory,
+            require_versioned_identity=selection_roots is not None,
         ))
     for modality, encoder_key, grid in swaps:
         mapping = {**original_encoders, modality: encoder_key}
@@ -309,5 +343,6 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
                 config=recipe, encoders=mapping, folders=(directory,),
                 destination_directory=directory, native_fallback=False,
                 checkpoint_validator=checkpoint_validator, identity_factory=identity_factory,
+                require_versioned_identity=selection_roots is not None,
             ))
     return plan

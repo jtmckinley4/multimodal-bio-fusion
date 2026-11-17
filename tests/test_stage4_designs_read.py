@@ -81,7 +81,10 @@ class DesignReadingTests(unittest.TestCase):
             ),
             "time": SimpleNamespace(time=lambda: 0),
         }
+        self.execute("mamba-execution-paths")
         self.execute("36da38f2")
+        # These focused contrast fixtures explicitly exercise the analysis branch.
+        self.env["RUN_BOOTSTRAP"] = True
         self.env.update(BENCHMARKS=("fixture",), REFERENCE_DIRS={"fixture": (self.references,)},
                         RESULTS_ROOT=self.designs.parent)
         for cell_id in ("design-reference-evidence", "9cf640cc", "design-single-selection",
