@@ -1,0 +1,2455 @@
+{
+ "intervals": {
+  "cov_vac_degradation": {
+   "nt500m": {
+    "concat": {
+     "original": {
+      "d": -0.048,
+      "lo": -0.081,
+      "hi": -0.014,
+      "p": 0.002,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.08,
+      "lo": -0.113,
+      "hi": -0.045,
+      "p": 0.0,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.073,
+      "lo": -0.116,
+      "hi": -0.031,
+      "p": 0.001,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.123,
+      "lo": -0.168,
+      "hi": -0.077,
+      "p": 0.0,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.021,
+      "lo": -0.051,
+      "hi": 0.01,
+      "p": 0.092,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.022,
+      "lo": -0.059,
+      "hi": 0.014,
+      "p": 0.112,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "hyenadna": {
+    "concat": {
+     "original": {
+      "d": 0.03,
+      "lo": 0.004,
+      "hi": 0.057,
+      "p": 0.987,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.001,
+      "lo": -0.021,
+      "hi": 0.019,
+      "p": 0.438,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.014,
+      "lo": -0.022,
+      "hi": 0.054,
+      "p": 0.762,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.036,
+      "lo": -0.062,
+      "hi": -0.009,
+      "p": 0.004,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.04,
+      "lo": 0.016,
+      "hi": 0.065,
+      "p": 1.0,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 0.039,
+      "lo": 0.012,
+      "hi": 0.066,
+      "p": 0.998,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "rinalmo": {
+    "concat": {
+     "original": {
+      "d": 0.004,
+      "lo": -0.028,
+      "hi": 0.034,
+      "p": 0.584,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.017,
+      "lo": -0.039,
+      "hi": 0.005,
+      "p": 0.062,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.036,
+      "lo": 0.001,
+      "hi": 0.07,
+      "p": 0.976,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.004,
+      "lo": -0.02,
+      "hi": 0.014,
+      "p": 0.308,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.021,
+      "lo": -0.002,
+      "hi": 0.045,
+      "p": 0.966,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.031,
+      "lo": 0.008,
+      "hi": 0.054,
+      "p": 0.997,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "mrnafm": {
+    "concat": {
+     "original": {
+      "d": -0.043,
+      "lo": -0.076,
+      "hi": -0.013,
+      "p": 0.003,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.054,
+      "lo": -0.088,
+      "hi": -0.019,
+      "p": 0.0,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.021,
+      "lo": -0.041,
+      "hi": -0.003,
+      "p": 0.01,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.05,
+      "lo": -0.085,
+      "hi": -0.018,
+      "p": 0.0,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.011,
+      "lo": -0.034,
+      "hi": 0.015,
+      "p": 0.212,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.009,
+      "lo": -0.024,
+      "hi": 0.045,
+      "p": 0.72,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "calm": {
+    "concat": {
+     "original": {
+      "d": 0.016,
+      "lo": -0.006,
+      "hi": 0.039,
+      "p": 0.916,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.027,
+      "lo": -0.052,
+      "hi": -0.003,
+      "p": 0.016,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.019,
+      "lo": -0.003,
+      "hi": 0.042,
+      "p": 0.956,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.042,
+      "lo": -0.073,
+      "hi": -0.014,
+      "p": 0.002,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.005,
+      "lo": -0.028,
+      "hi": 0.018,
+      "p": 0.367,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.017,
+      "lo": -0.041,
+      "hi": 0.007,
+      "p": 0.097,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "esm2_35m": {
+    "concat": {
+     "original": {
+      "d": 0.007,
+      "lo": -0.007,
+      "hi": 0.021,
+      "p": 0.825,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.025,
+      "lo": -0.052,
+      "hi": 0.002,
+      "p": 0.036,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.01,
+      "lo": -0.004,
+      "hi": 0.026,
+      "p": 0.909,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.04,
+      "lo": -0.075,
+      "hi": -0.006,
+      "p": 0.012,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.018,
+      "lo": -0.002,
+      "hi": 0.042,
+      "p": 0.959,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.018,
+      "lo": -0.011,
+      "hi": 0.046,
+      "p": 0.891,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "esm2_150m": {
+    "concat": {
+     "original": {
+      "d": 0.001,
+      "lo": -0.013,
+      "hi": 0.014,
+      "p": 0.528,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.031,
+      "lo": -0.059,
+      "hi": -0.004,
+      "p": 0.014,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.0,
+      "lo": -0.016,
+      "hi": 0.016,
+      "p": 0.506,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.05,
+      "lo": -0.086,
+      "hi": -0.015,
+      "p": 0.003,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.02,
+      "lo": 0.0,
+      "hi": 0.042,
+      "p": 0.977,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 0.02,
+      "lo": -0.008,
+      "hi": 0.049,
+      "p": 0.922,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "protbert": {
+    "concat": {
+     "original": {
+      "d": -0.013,
+      "lo": -0.032,
+      "hi": 0.005,
+      "p": 0.083,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.045,
+      "lo": -0.076,
+      "hi": -0.013,
+      "p": 0.002,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.007,
+      "lo": -0.008,
+      "hi": 0.024,
+      "p": 0.835,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.043,
+      "lo": -0.079,
+      "hi": -0.008,
+      "p": 0.009,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.011,
+      "lo": -0.013,
+      "hi": 0.037,
+      "p": 0.816,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.01,
+      "lo": -0.022,
+      "hi": 0.041,
+      "p": 0.737,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   }
+  },
+  "fungal_expression": {
+   "nt500m": {
+    "concat": {
+     "original": {
+      "d": 0.002,
+      "lo": -0.024,
+      "hi": 0.028,
+      "p": 0.518,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.0,
+      "lo": -0.032,
+      "hi": 0.034,
+      "p": 0.516,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.011,
+      "lo": -0.038,
+      "hi": 0.015,
+      "p": 0.192,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.003,
+      "lo": -0.038,
+      "hi": 0.031,
+      "p": 0.434,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.014,
+      "lo": -0.036,
+      "hi": 0.008,
+      "p": 0.111,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.016,
+      "lo": -0.019,
+      "hi": 0.051,
+      "p": 0.824,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     }
+    }
+   },
+   "hyenadna": {
+    "concat": {
+     "original": {
+      "d": -0.006,
+      "lo": -0.031,
+      "hi": 0.019,
+      "p": 0.279,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.007,
+      "lo": -0.046,
+      "hi": 0.03,
+      "p": 0.357,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.022,
+      "lo": -0.042,
+      "hi": -0.004,
+      "p": 0.01,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.014,
+      "lo": -0.061,
+      "hi": 0.03,
+      "p": 0.265,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.02,
+      "lo": -0.041,
+      "hi": -0.002,
+      "p": 0.014,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 0.01,
+      "lo": -0.031,
+      "hi": 0.048,
+      "p": 0.68,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     }
+    }
+   },
+   "rinalmo": {
+    "concat": {
+     "original": {
+      "d": 0.054,
+      "lo": 0.027,
+      "hi": 0.082,
+      "p": 1.0,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 0.002,
+      "lo": -0.02,
+      "hi": 0.023,
+      "p": 0.574,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.029,
+      "lo": 0.003,
+      "hi": 0.056,
+      "p": 0.984,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.013,
+      "lo": -0.033,
+      "hi": 0.006,
+      "p": 0.088,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.023,
+      "lo": 0.005,
+      "hi": 0.042,
+      "p": 0.995,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 0.003,
+      "lo": -0.022,
+      "hi": 0.026,
+      "p": 0.58,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "mrnafm": {
+    "concat": {
+     "original": {
+      "d": 0.061,
+      "lo": 0.034,
+      "hi": 0.087,
+      "p": 1.0,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 0.001,
+      "lo": -0.014,
+      "hi": 0.016,
+      "p": 0.56,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.037,
+      "lo": 0.012,
+      "hi": 0.065,
+      "p": 0.997,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.013,
+      "lo": -0.029,
+      "hi": 0.002,
+      "p": 0.044,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.017,
+      "lo": -0.002,
+      "hi": 0.037,
+      "p": 0.954,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.012,
+      "lo": -0.032,
+      "hi": 0.007,
+      "p": 0.12,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "calm": {
+    "concat": {
+     "original": {
+      "d": 0.056,
+      "lo": 0.025,
+      "hi": 0.087,
+      "p": 1.0,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.003,
+      "lo": -0.012,
+      "hi": 0.007,
+      "p": 0.272,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.046,
+      "lo": 0.016,
+      "hi": 0.079,
+      "p": 0.999,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.003,
+      "lo": -0.009,
+      "hi": 0.003,
+      "p": 0.188,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.034,
+      "lo": 0.009,
+      "hi": 0.058,
+      "p": 0.996,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 0.006,
+      "lo": -0.01,
+      "hi": 0.021,
+      "p": 0.784,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "esm2_35m": {
+    "concat": {
+     "original": {
+      "d": 0.002,
+      "lo": -0.022,
+      "hi": 0.026,
+      "p": 0.556,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.018,
+      "lo": -0.055,
+      "hi": 0.019,
+      "p": 0.16,
+      "resolved": false,
+      "ref": "unimodal:dna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.022,
+      "lo": -0.048,
+      "hi": 0.004,
+      "p": 0.042,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.033,
+      "lo": -0.075,
+      "hi": 0.007,
+      "p": 0.06,
+      "resolved": false,
+      "ref": "unimodal:dna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.005,
+      "lo": -0.025,
+      "hi": 0.015,
+      "p": 0.292,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.006,
+      "lo": -0.03,
+      "hi": 0.04,
+      "p": 0.621,
+      "resolved": false,
+      "ref": "unimodal:dna"
+     }
+    }
+   },
+   "esm2_150m": {
+    "concat": {
+     "original": {
+      "d": -0.008,
+      "lo": -0.035,
+      "hi": 0.018,
+      "p": 0.263,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.028,
+      "lo": -0.065,
+      "hi": 0.009,
+      "p": 0.066,
+      "resolved": false,
+      "ref": "unimodal:dna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.018,
+      "lo": -0.048,
+      "hi": 0.014,
+      "p": 0.118,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.028,
+      "lo": -0.076,
+      "hi": 0.015,
+      "p": 0.102,
+      "resolved": false,
+      "ref": "unimodal:dna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.013,
+      "lo": -0.037,
+      "hi": 0.011,
+      "p": 0.142,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.002,
+      "lo": -0.042,
+      "hi": 0.038,
+      "p": 0.458,
+      "resolved": false,
+      "ref": "unimodal:dna"
+     }
+    }
+   },
+   "protbert": {
+    "concat": {
+     "original": {
+      "d": 0.012,
+      "lo": -0.023,
+      "hi": 0.045,
+      "p": 0.764,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.044,
+      "lo": 0.014,
+      "hi": 0.074,
+      "p": 0.998,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.002,
+      "lo": -0.038,
+      "hi": 0.032,
+      "p": 0.473,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.039,
+      "lo": 0.003,
+      "hi": 0.075,
+      "p": 0.985,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.008,
+      "lo": -0.037,
+      "hi": 0.019,
+      "p": 0.306,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.054,
+      "lo": 0.033,
+      "hi": 0.076,
+      "p": 1.0,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    }
+   }
+  },
+  "ecoli_proteins": {
+   "nt500m": {
+    "concat": {
+     "original": {
+      "d": -2.809,
+      "lo": -5.618,
+      "hi": 0.0,
+      "p": 0.024,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 7.725,
+      "lo": 4.073,
+      "hi": 11.376,
+      "p": 1.0,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.14,
+      "lo": -3.09,
+      "hi": 2.949,
+      "p": 0.452,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 4.073,
+      "lo": 0.281,
+      "hi": 7.865,
+      "p": 0.982,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 1.545,
+      "lo": -2.107,
+      "hi": 5.056,
+      "p": 0.793,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 5.197,
+      "lo": 1.685,
+      "hi": 8.567,
+      "p": 0.998,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    }
+   },
+   "hyenadna": {
+    "concat": {
+     "original": {
+      "d": -2.669,
+      "lo": -5.056,
+      "hi": -0.281,
+      "p": 0.01,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 7.865,
+      "lo": 4.073,
+      "hi": 11.657,
+      "p": 1.0,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -1.264,
+      "lo": -3.23,
+      "hi": 0.562,
+      "p": 0.083,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 2.949,
+      "lo": 0.421,
+      "hi": 5.618,
+      "p": 0.985,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -1.826,
+      "lo": -5.2,
+      "hi": 1.685,
+      "p": 0.15,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 1.826,
+      "lo": -1.826,
+      "hi": 5.197,
+      "p": 0.83,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     }
+    }
+   },
+   "rinalmo": {
+    "concat": {
+     "original": {
+      "d": -0.702,
+      "lo": -4.073,
+      "hi": 2.809,
+      "p": 0.346,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 3.933,
+      "lo": 0.843,
+      "hi": 7.163,
+      "p": 0.993,
+      "resolved": true,
+      "ref": "unimodal-grid:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 8.146,
+      "lo": 4.635,
+      "hi": 11.938,
+      "p": 1.0,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 6.461,
+      "lo": 3.371,
+      "hi": 9.551,
+      "p": 1.0,
+      "resolved": true,
+      "ref": "unimodal-grid:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.562,
+      "lo": -2.669,
+      "hi": 3.792,
+      "p": 0.628,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -1.685,
+      "lo": -5.618,
+      "hi": 2.247,
+      "p": 0.198,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     }
+    }
+   },
+   "mrnafm": {
+    "concat": {
+     "original": {
+      "d": -1.685,
+      "lo": -4.775,
+      "hi": 1.545,
+      "p": 0.15,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.281,
+      "lo": -2.949,
+      "hi": 3.511,
+      "p": 0.537,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -1.264,
+      "lo": -3.515,
+      "hi": 1.264,
+      "p": 0.138,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -5.618,
+      "lo": -9.691,
+      "hi": -1.545,
+      "p": 0.002,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.983,
+      "lo": -2.528,
+      "hi": 4.638,
+      "p": 0.686,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -3.933,
+      "lo": -7.865,
+      "hi": 0.0,
+      "p": 0.023,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "calm": {
+    "concat": {
+     "original": {
+      "d": -2.949,
+      "lo": -6.461,
+      "hi": 0.562,
+      "p": 0.043,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.14,
+      "lo": -2.669,
+      "hi": 2.809,
+      "p": 0.526,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 2.388,
+      "lo": -0.702,
+      "hi": 5.618,
+      "p": 0.926,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.843,
+      "lo": -3.652,
+      "hi": 1.966,
+      "p": 0.272,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.14,
+      "lo": -3.933,
+      "hi": 4.213,
+      "p": 0.515,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -3.652,
+      "lo": -6.882,
+      "hi": -0.421,
+      "p": 0.012,
+      "resolved": true,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "esm2_35m": {
+    "concat": {
+     "original": {
+      "d": -2.949,
+      "lo": -5.899,
+      "hi": 0.281,
+      "p": 0.032,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 5.618,
+      "lo": 2.244,
+      "hi": 8.848,
+      "p": 1.0,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -1.124,
+      "lo": -4.635,
+      "hi": 2.247,
+      "p": 0.246,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 1.124,
+      "lo": -1.545,
+      "hi": 3.652,
+      "p": 0.775,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.562,
+      "lo": -4.073,
+      "hi": 2.949,
+      "p": 0.357,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 1.124,
+      "lo": -2.251,
+      "hi": 4.635,
+      "p": 0.722,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     }
+    }
+   },
+   "esm2_150m": {
+    "concat": {
+     "original": {
+      "d": -2.949,
+      "lo": -6.32,
+      "hi": 0.425,
+      "p": 0.044,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 3.792,
+      "lo": 0.562,
+      "hi": 7.163,
+      "p": 0.99,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 1.124,
+      "lo": -2.247,
+      "hi": 4.494,
+      "p": 0.72,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 1.545,
+      "lo": -0.987,
+      "hi": 4.213,
+      "p": 0.855,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.843,
+      "lo": -2.809,
+      "hi": 4.635,
+      "p": 0.662,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.702,
+      "lo": -2.809,
+      "hi": 4.213,
+      "p": 0.628,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     }
+    }
+   },
+   "protbert": {
+    "concat": {
+     "original": {
+      "d": -6.461,
+      "lo": -9.972,
+      "hi": -2.809,
+      "p": 0.0,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 1.685,
+      "lo": -1.97,
+      "hi": 5.337,
+      "p": 0.808,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 2.107,
+      "lo": -1.826,
+      "hi": 6.183,
+      "p": 0.838,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 3.933,
+      "lo": 0.421,
+      "hi": 7.584,
+      "p": 0.981,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.843,
+      "lo": -3.23,
+      "hi": 4.916,
+      "p": 0.642,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 2.107,
+      "lo": -1.264,
+      "hi": 5.337,
+      "p": 0.879,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     }
+    }
+   }
+  },
+  "mrna_stability": {
+   "mrnafm": {
+    "concat": {
+     "original": {
+      "d": 0.01,
+      "lo": -0.001,
+      "hi": 0.02,
+      "p": 0.965,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.003,
+      "lo": -0.003,
+      "hi": 0.01,
+      "p": 0.858,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.014,
+      "lo": 0.003,
+      "hi": 0.025,
+      "p": 0.992,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": -0.0,
+      "lo": -0.006,
+      "hi": 0.006,
+      "p": 0.472,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.009,
+      "lo": -0.003,
+      "hi": 0.022,
+      "p": 0.93,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.003,
+      "lo": -0.013,
+      "hi": 0.007,
+      "p": 0.271,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "calm": {
+    "concat": {
+     "original": {
+      "d": 0.003,
+      "lo": -0.007,
+      "hi": 0.012,
+      "p": 0.728,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.002,
+      "lo": -0.005,
+      "hi": 0.01,
+      "p": 0.742,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": 0.01,
+      "lo": 0.0,
+      "hi": 0.019,
+      "p": 0.98,
+      "resolved": true,
+      "ref": null
+     },
+     "best": {
+      "d": 0.002,
+      "lo": -0.006,
+      "hi": 0.009,
+      "p": 0.685,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": -0.004,
+      "lo": -0.016,
+      "hi": 0.008,
+      "p": 0.232,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.01,
+      "lo": -0.021,
+      "hi": 0.0,
+      "p": 0.028,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "esm2_150m": {
+    "concat": {
+     "original": {
+      "d": 0.001,
+      "lo": -0.009,
+      "hi": 0.011,
+      "p": 0.588,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.008,
+      "lo": -0.004,
+      "hi": 0.02,
+      "p": 0.902,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "mil": {
+     "original": {
+      "d": -0.002,
+      "lo": -0.012,
+      "hi": 0.008,
+      "p": 0.35,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": -0.003,
+      "lo": -0.018,
+      "hi": 0.012,
+      "p": 0.348,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    },
+    "cross": {
+     "original": {
+      "d": 0.006,
+      "lo": -0.006,
+      "hi": 0.018,
+      "p": 0.82,
+      "resolved": false,
+      "ref": null
+     },
+     "best": {
+      "d": 0.007,
+      "lo": -0.006,
+      "hi": 0.02,
+      "p": 0.852,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     }
+    }
+   },
+   "esm2_35m": {
+    "concat": {
+     "best": {
+      "d": 0.003,
+      "lo": -0.01,
+      "hi": 0.015,
+      "p": 0.677,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": -0.004,
+      "lo": -0.013,
+      "hi": 0.005,
+      "p": 0.212,
+      "resolved": false,
+      "ref": null
+     }
+    },
+    "mil": {
+     "best": {
+      "d": -0.0,
+      "lo": -0.014,
+      "hi": 0.013,
+      "p": 0.49,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": 0.001,
+      "lo": -0.008,
+      "hi": 0.01,
+      "p": 0.546,
+      "resolved": false,
+      "ref": null
+     }
+    },
+    "cross": {
+     "best": {
+      "d": -0.011,
+      "lo": -0.025,
+      "hi": 0.003,
+      "p": 0.059,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": -0.012,
+      "lo": -0.025,
+      "hi": 0.0,
+      "p": 0.026,
+      "resolved": false,
+      "ref": null
+     }
+    }
+   },
+   "hyenadna": {
+    "concat": {
+     "best": {
+      "d": 0.005,
+      "lo": -0.007,
+      "hi": 0.018,
+      "p": 0.805,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": -0.001,
+      "lo": -0.011,
+      "hi": 0.008,
+      "p": 0.43,
+      "resolved": false,
+      "ref": null
+     }
+    },
+    "mil": {
+     "best": {
+      "d": -0.012,
+      "lo": -0.027,
+      "hi": 0.002,
+      "p": 0.054,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": -0.011,
+      "lo": -0.021,
+      "hi": -0.001,
+      "p": 0.009,
+      "resolved": true,
+      "ref": null
+     }
+    },
+    "cross": {
+     "best": {
+      "d": -0.004,
+      "lo": -0.018,
+      "hi": 0.011,
+      "p": 0.3,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": -0.005,
+      "lo": -0.018,
+      "hi": 0.008,
+      "p": 0.228,
+      "resolved": false,
+      "ref": null
+     }
+    }
+   },
+   "nt500m": {
+    "concat": {
+     "best": {
+      "d": -0.0,
+      "lo": -0.013,
+      "hi": 0.012,
+      "p": 0.496,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": -0.007,
+      "lo": -0.017,
+      "hi": 0.003,
+      "p": 0.099,
+      "resolved": false,
+      "ref": null
+     }
+    },
+    "mil": {
+     "best": {
+      "d": 0.002,
+      "lo": -0.012,
+      "hi": 0.015,
+      "p": 0.601,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": 0.003,
+      "lo": -0.008,
+      "hi": 0.013,
+      "p": 0.697,
+      "resolved": false,
+      "ref": null
+     }
+    },
+    "cross": {
+     "best": {
+      "d": -0.006,
+      "lo": -0.02,
+      "hi": 0.007,
+      "p": 0.196,
+      "resolved": false,
+      "ref": "unimodal:rna"
+     },
+     "original": {
+      "d": -0.007,
+      "lo": -0.019,
+      "hi": 0.004,
+      "p": 0.107,
+      "resolved": false,
+      "ref": null
+     }
+    }
+   },
+   "protbert": {
+    "concat": {
+     "best": {
+      "d": 0.015,
+      "lo": 0.002,
+      "hi": 0.028,
+      "p": 0.989,
+      "resolved": true,
+      "ref": "unimodal:prot"
+     },
+     "original": {
+      "d": -0.001,
+      "lo": -0.012,
+      "hi": 0.011,
+      "p": 0.466,
+      "resolved": false,
+      "ref": null
+     }
+    },
+    "mil": {
+     "best": {
+      "d": 0.008,
+      "lo": -0.005,
+      "hi": 0.02,
+      "p": 0.902,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     },
+     "original": {
+      "d": -0.0,
+      "lo": -0.013,
+      "hi": 0.012,
+      "p": 0.486,
+      "resolved": false,
+      "ref": null
+     }
+    },
+    "cross": {
+     "best": {
+      "d": 0.009,
+      "lo": -0.004,
+      "hi": 0.021,
+      "p": 0.91,
+      "resolved": false,
+      "ref": "unimodal:prot"
+     },
+     "original": {
+      "d": -0.001,
+      "lo": -0.015,
+      "hi": 0.011,
+      "p": 0.411,
+      "resolved": false,
+      "ref": null
+     }
+    }
+   },
+   "rinalmo": {
+    "concat": {
+     "best": {
+      "d": 0.0,
+      "lo": -0.009,
+      "hi": 0.01,
+      "p": 0.521,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     },
+     "original": {
+      "d": -0.002,
+      "lo": -0.011,
+      "hi": 0.008,
+      "p": 0.346,
+      "resolved": false,
+      "ref": null
+     }
+    },
+    "mil": {
+     "best": {
+      "d": 0.008,
+      "lo": -0.002,
+      "hi": 0.018,
+      "p": 0.942,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     },
+     "original": {
+      "d": 0.014,
+      "lo": 0.002,
+      "hi": 0.025,
+      "p": 0.992,
+      "resolved": true,
+      "ref": null
+     }
+    },
+    "cross": {
+     "best": {
+      "d": 0.003,
+      "lo": -0.009,
+      "hi": 0.014,
+      "p": 0.659,
+      "resolved": false,
+      "ref": "unimodal-grid:rna"
+     },
+     "original": {
+      "d": 0.006,
+      "lo": -0.006,
+      "hi": 0.018,
+      "p": 0.829,
+      "resolved": false,
+      "ref": null
+     }
+    }
+   }
+  }
+ },
+ "table": {
+  "cov_vac_degradation": {
+   "original": {
+    "alone": null,
+    "best_single": "unimodal:rna",
+    "best_score": 0.833,
+    "concat": 0.801,
+    "concat_d": -0.032,
+    "mil": 0.783,
+    "mil_d": -0.05,
+    "cross": 0.832,
+    "cross_d": -0.001
+   },
+   "nt500m": {
+    "alone": 0.727,
+    "best_single": "unimodal:rna",
+    "best_score": 0.833,
+    "concat": 0.753,
+    "concat_d": -0.08,
+    "mil": 0.71,
+    "mil_d": -0.123,
+    "cross": 0.811,
+    "cross_d": -0.022
+   },
+   "hyenadna": {
+    "alone": 0.755,
+    "best_single": "unimodal:rna",
+    "best_score": 0.833,
+    "concat": 0.832,
+    "concat_d": -0.001,
+    "mil": 0.797,
+    "mil_d": -0.036,
+    "cross": 0.872,
+    "cross_d": 0.039
+   },
+   "rinalmo": {
+    "alone": 0.823,
+    "best_single": "unimodal:rna",
+    "best_score": 0.823,
+    "concat": 0.806,
+    "concat_d": -0.017,
+    "mil": 0.819,
+    "mil_d": -0.004,
+    "cross": 0.854,
+    "cross_d": 0.031
+   },
+   "mrnafm": {
+    "alone": 0.812,
+    "best_single": "unimodal:rna",
+    "best_score": 0.812,
+    "concat": 0.759,
+    "concat_d": -0.054,
+    "mil": 0.762,
+    "mil_d": -0.05,
+    "cross": 0.822,
+    "cross_d": 0.009
+   },
+   "calm": {
+    "alone": 0.844,
+    "best_single": "unimodal:rna",
+    "best_score": 0.844,
+    "concat": 0.817,
+    "concat_d": -0.027,
+    "mil": 0.802,
+    "mil_d": -0.042,
+    "cross": 0.828,
+    "cross_d": -0.017
+   },
+   "esm2_35m": {
+    "alone": 0.814,
+    "best_single": "unimodal:rna",
+    "best_score": 0.833,
+    "concat": 0.808,
+    "concat_d": -0.025,
+    "mil": 0.793,
+    "mil_d": -0.04,
+    "cross": 0.851,
+    "cross_d": 0.018
+   },
+   "esm2_150m": {
+    "alone": 0.827,
+    "best_single": "unimodal:rna",
+    "best_score": 0.833,
+    "concat": 0.802,
+    "concat_d": -0.031,
+    "mil": 0.783,
+    "mil_d": -0.05,
+    "cross": 0.853,
+    "cross_d": 0.02
+   },
+   "protbert": {
+    "alone": 0.776,
+    "best_single": "unimodal:rna",
+    "best_score": 0.833,
+    "concat": 0.788,
+    "concat_d": -0.045,
+    "mil": 0.791,
+    "mil_d": -0.043,
+    "cross": 0.843,
+    "cross_d": 0.01
+   }
+  },
+  "fungal_expression": {
+   "original": {
+    "alone": null,
+    "best_single": "unimodal:dna",
+    "best_score": 0.813,
+    "concat": 0.793,
+    "concat_d": -0.02,
+    "mil": 0.802,
+    "mil_d": -0.011,
+    "cross": 0.824,
+    "cross_d": 0.011
+   },
+   "nt500m": {
+    "alone": 0.74,
+    "best_single": "unimodal-grid:rna",
+    "best_score": 0.794,
+    "concat": 0.794,
+    "concat_d": 0.0,
+    "mil": 0.791,
+    "mil_d": -0.003,
+    "cross": 0.81,
+    "cross_d": 0.016
+   },
+   "hyenadna": {
+    "alone": 0.737,
+    "best_single": "unimodal-grid:rna",
+    "best_score": 0.794,
+    "concat": 0.786,
+    "concat_d": -0.007,
+    "mil": 0.78,
+    "mil_d": -0.014,
+    "cross": 0.804,
+    "cross_d": 0.01
+   },
+   "rinalmo": {
+    "alone": 0.844,
+    "best_single": "unimodal:rna",
+    "best_score": 0.844,
+    "concat": 0.846,
+    "concat_d": 0.002,
+    "mil": 0.831,
+    "mil_d": -0.013,
+    "cross": 0.847,
+    "cross_d": 0.003
+   },
+   "mrnafm": {
+    "alone": 0.852,
+    "best_single": "unimodal:rna",
+    "best_score": 0.852,
+    "concat": 0.853,
+    "concat_d": 0.001,
+    "mil": 0.839,
+    "mil_d": -0.013,
+    "cross": 0.84,
+    "cross_d": -0.012
+   },
+   "calm": {
+    "alone": 0.851,
+    "best_single": "unimodal:rna",
+    "best_score": 0.851,
+    "concat": 0.848,
+    "concat_d": -0.003,
+    "mil": 0.848,
+    "mil_d": -0.003,
+    "cross": 0.857,
+    "cross_d": 0.006
+   },
+   "esm2_35m": {
+    "alone": 0.696,
+    "best_single": "unimodal:dna",
+    "best_score": 0.813,
+    "concat": 0.795,
+    "concat_d": -0.018,
+    "mil": 0.78,
+    "mil_d": -0.033,
+    "cross": 0.819,
+    "cross_d": 0.006
+   },
+   "esm2_150m": {
+    "alone": 0.729,
+    "best_single": "unimodal:dna",
+    "best_score": 0.813,
+    "concat": 0.784,
+    "concat_d": -0.028,
+    "mil": 0.784,
+    "mil_d": -0.028,
+    "cross": 0.811,
+    "cross_d": -0.002
+   },
+   "protbert": {
+    "alone": 0.761,
+    "best_single": "unimodal:prot",
+    "best_score": 0.761,
+    "concat": 0.805,
+    "concat_d": 0.044,
+    "mil": 0.8,
+    "mil_d": 0.039,
+    "cross": 0.816,
+    "cross_d": 0.054
+   }
+  },
+  "ecoli_proteins": {
+   "original": {
+    "alone": null,
+    "best_single": "unimodal:prot",
+    "best_score": 50.14,
+    "concat": 60.674,
+    "concat_d": 10.534,
+    "mil": 54.354,
+    "mil_d": 4.213,
+    "cross": 53.792,
+    "cross_d": 3.652
+   },
+   "nt500m": {
+    "alone": 47.472,
+    "best_single": "unimodal:prot",
+    "best_score": 50.14,
+    "concat": 57.865,
+    "concat_d": 7.725,
+    "mil": 54.213,
+    "mil_d": 4.073,
+    "cross": 55.337,
+    "cross_d": 5.197
+   },
+   "hyenadna": {
+    "alone": 50.421,
+    "best_single": "unimodal:prot",
+    "best_score": 50.14,
+    "concat": 58.006,
+    "concat_d": 7.865,
+    "mil": 53.09,
+    "mil_d": 2.949,
+    "cross": 51.966,
+    "cross_d": 1.826
+   },
+   "rinalmo": {
+    "alone": 57.303,
+    "best_single": "unimodal-grid:rna",
+    "best_score": 56.039,
+    "concat": 59.972,
+    "concat_d": 3.933,
+    "mil": 62.5,
+    "mil_d": 6.461,
+    "cross": 54.354,
+    "cross_d": -1.685
+   },
+   "mrnafm": {
+    "alone": 58.708,
+    "best_single": "unimodal:rna",
+    "best_score": 58.708,
+    "concat": 58.989,
+    "concat_d": 0.281,
+    "mil": 53.09,
+    "mil_d": -5.618,
+    "cross": 54.775,
+    "cross_d": -3.933
+   },
+   "calm": {
+    "alone": 57.584,
+    "best_single": "unimodal:rna",
+    "best_score": 57.584,
+    "concat": 57.725,
+    "concat_d": 0.14,
+    "mil": 56.742,
+    "mil_d": -0.843,
+    "cross": 53.933,
+    "cross_d": -3.652
+   },
+   "esm2_35m": {
+    "alone": 52.107,
+    "best_single": "unimodal:prot",
+    "best_score": 52.107,
+    "concat": 57.725,
+    "concat_d": 5.618,
+    "mil": 53.23,
+    "mil_d": 1.124,
+    "cross": 53.23,
+    "cross_d": 1.124
+   },
+   "esm2_150m": {
+    "alone": 53.933,
+    "best_single": "unimodal:prot",
+    "best_score": 53.933,
+    "concat": 57.725,
+    "concat_d": 3.792,
+    "mil": 55.478,
+    "mil_d": 1.545,
+    "cross": 54.635,
+    "cross_d": 0.702
+   },
+   "protbert": {
+    "alone": 52.528,
+    "best_single": "unimodal:prot",
+    "best_score": 52.528,
+    "concat": 54.213,
+    "concat_d": 1.685,
+    "mil": 56.461,
+    "mil_d": 3.933,
+    "cross": 54.635,
+    "cross_d": 2.107
+   }
+  },
+  "mrna_stability": {
+   "original": {
+    "alone": null,
+    "best_single": "unimodal:rna",
+    "best_score": 0.552,
+    "concat": 0.558,
+    "concat_d": 0.007,
+    "mil": 0.551,
+    "mil_d": -0.001,
+    "cross": 0.553,
+    "cross_d": 0.001
+   },
+   "mrnafm": {
+    "alone": 0.565,
+    "best_single": "unimodal:rna",
+    "best_score": 0.565,
+    "concat": 0.568,
+    "concat_d": 0.003,
+    "mil": 0.565,
+    "mil_d": -0.0,
+    "cross": 0.562,
+    "cross_d": -0.003
+   },
+   "calm": {
+    "alone": 0.559,
+    "best_single": "unimodal:rna",
+    "best_score": 0.559,
+    "concat": 0.561,
+    "concat_d": 0.002,
+    "mil": 0.561,
+    "mil_d": 0.002,
+    "cross": 0.548,
+    "cross_d": -0.01
+   },
+   "esm2_150m": {
+    "alone": 0.536,
+    "best_single": "unimodal:rna",
+    "best_score": 0.552,
+    "concat": 0.559,
+    "concat_d": 0.008,
+    "mil": 0.549,
+    "mil_d": -0.003,
+    "cross": 0.559,
+    "cross_d": 0.007
+   },
+   "esm2_35m": {
+    "alone": 0.5352,
+    "concat": 0.554,
+    "concat_d": 0.003,
+    "best_single": "unimodal:rna",
+    "best_score": 0.552,
+    "mil": 0.551,
+    "mil_d": -0.0,
+    "cross": 0.541,
+    "cross_d": -0.011
+   },
+   "hyenadna": {
+    "alone": 0.5229,
+    "concat": 0.557,
+    "concat_d": 0.005,
+    "best_single": "unimodal:rna",
+    "best_score": 0.552,
+    "mil": 0.539,
+    "mil_d": -0.012,
+    "cross": 0.548,
+    "cross_d": -0.004
+   },
+   "nt500m": {
+    "alone": 0.5368,
+    "concat": 0.552,
+    "concat_d": -0.0,
+    "best_single": "unimodal:rna",
+    "best_score": 0.552,
+    "mil": 0.553,
+    "mil_d": 0.002,
+    "cross": 0.545,
+    "cross_d": -0.006
+   },
+   "protbert": {
+    "alone": 0.5427,
+    "concat": 0.558,
+    "concat_d": 0.015,
+    "best_single": "unimodal:prot",
+    "best_score": 0.543,
+    "mil": 0.55,
+    "mil_d": 0.008,
+    "cross": 0.551,
+    "cross_d": 0.009
+   },
+   "rinalmo": {
+    "alone": 0.56,
+    "concat": 0.556,
+    "concat_d": 0.0,
+    "best_single": "unimodal-grid:rna",
+    "best_score": 0.556,
+    "mil": 0.564,
+    "mil_d": 0.008,
+    "cross": 0.558,
+    "cross_d": 0.003
+   }
+  }
+ },
+ "alpha": {
+  "cov_vac_degradation": {
+   "esm2_35m": {
+    "dna": 0.7935122847557068,
+    "rna": 0.04077018424868584,
+    "prot": 0.1657172441482544
+   },
+   "rinalmo": {
+    "dna": 0.054007530212402344,
+    "rna": 0.9378321766853333,
+    "prot": 0.008160078898072243
+   },
+   "hyenadna": {
+    "dna": 0.016320835798978806,
+    "rna": 0.5247310400009155,
+    "prot": 0.45894813537597656
+   },
+   "esm2_150m": {
+    "dna": 0.8026490211486816,
+    "rna": 0.030923783779144287,
+    "prot": 0.1664273887872696
+   },
+   "mrnafm": {
+    "dna": 0.7462607026100159,
+    "rna": 0.19268077611923218,
+    "prot": 0.06105869263410568
+   },
+   "protbert": {
+    "dna": 0.953290581703186,
+    "rna": 0.04298727959394455,
+    "prot": 0.003722310299053788
+   },
+   "calm": {
+    "dna": 0.5473952293395996,
+    "rna": 0.4233707785606384,
+    "prot": 0.029233837500214577
+   },
+   "nt500m": {
+    "dna": 0.9854052066802979,
+    "rna": 0.0035425894893705845,
+    "prot": 0.0110524483025074
+   }
+  },
+  "mrna_stability": {
+   "esm2_150m": {
+    "dna": 0.2288171648979187,
+    "rna": 0.003133556339889765,
+    "prot": 0.768048882484436
+   },
+   "mrnafm": {
+    "dna": 0.016641447320580482,
+    "rna": 0.7883615493774414,
+    "prot": 0.19499698281288147
+   },
+   "calm": {
+    "dna": 0.07738310843706131,
+    "rna": 0.6378535628318787,
+    "prot": 0.2847631275653839
+   }
+  },
+  "fungal_expression": {
+   "esm2_35m": {
+    "dna": 0.12251020967960358,
+    "rna": 0.2290407121181488,
+    "prot": 0.6484493017196655
+   },
+   "rinalmo": {
+    "dna": 0.04286028444766998,
+    "rna": 0.5909824967384338,
+    "prot": 0.3661571443080902
+   },
+   "hyenadna": {
+    "dna": 0.25630462169647217,
+    "rna": 0.0020282708574086428,
+    "prot": 0.7416673302650452
+   },
+   "esm2_150m": {
+    "dna": 0.09746931493282318,
+    "rna": 0.10843703895807266,
+    "prot": 0.7940937876701355
+   },
+   "mrnafm": {
+    "dna": 0.11920399218797684,
+    "rna": 0.48200371861457825,
+    "prot": 0.3987925946712494
+   },
+   "protbert": {
+    "dna": 0.3186829090118408,
+    "rna": 0.2515926659107208,
+    "prot": 0.4297243654727936
+   },
+   "calm": {
+    "dna": 0.28227412700653076,
+    "rna": 0.6031631231307983,
+    "prot": 0.1145630031824112
+   },
+   "nt500m": {
+    "dna": 0.517051637172699,
+    "rna": 0.005462236236780882,
+    "prot": 0.4774859547615051
+   }
+  },
+  "ecoli_proteins": {
+   "esm2_35m": {
+    "dna": 0.03285643830895424,
+    "rna": 0.0005201057065278292,
+    "prot": 0.9666240811347961
+   },
+   "rinalmo": {
+    "dna": 0.07343142479658127,
+    "rna": 0.4223583936691284,
+    "prot": 0.5042105913162231
+   },
+   "hyenadna": {
+    "dna": 0.005513057578355074,
+    "rna": 0.0012773505877703428,
+    "prot": 0.9932094812393188
+   },
+   "esm2_150m": {
+    "dna": 0.19194631278514862,
+    "rna": 0.001203625462949276,
+    "prot": 0.806850790977478
+   },
+   "mrnafm": {
+    "dna": 0.14149968326091766,
+    "rna": 0.0007430173573084176,
+    "prot": 0.8577578067779541
+   },
+   "protbert": {
+    "dna": 0.4964054822921753,
+    "rna": 0.0010155978379771113,
+    "prot": 0.5025794506072998
+   },
+   "calm": {
+    "dna": 0.14336280524730682,
+    "rna": 0.40606632828712463,
+    "prot": 0.45057132840156555
+   },
+   "nt500m": {
+    "dna": 0.36327555775642395,
+    "rna": 0.007109451107680798,
+    "prot": 0.6296150088310242
+   }
+  }
+ },
+ "singles": {
+  "cov_vac_degradation": {
+   "esm2_35m": {
+    "unimodal-prot": 0.8140569628560177
+   },
+   "rinalmo": {
+    "unimodal-grid-rna": 0.823806461290383,
+    "unimodal-rna": 0.8228738304614402
+   },
+   "hyenadna": {
+    "unimodal-dna": 0.7547780923630772,
+    "unimodal-grid-dna": 0.7732529578309864
+   },
+   "esm2_150m": {
+    "unimodal-prot": 0.8274087338045861
+   },
+   "mrnafm": {
+    "unimodal-rna": 0.8124232651454071
+   },
+   "protbert": {
+    "unimodal-prot": 0.7758710366939793
+   },
+   "calm": {
+    "unimodal-rna": 0.8444220276376727
+   },
+   "nt500m": {
+    "unimodal-dna": 0.7269266682916766,
+    "unimodal-grid-dna": 0.731817823861399
+   }
+  },
+  "mrna_stability": {
+   "esm2_150m": {
+    "unimodal-prot": 0.5364633314578704
+   },
+   "mrnafm": {
+    "unimodal-rna": 0.5650251166121821
+   },
+   "calm": {
+    "unimodal-rna": 0.5588389896735694
+   }
+  },
+  "fungal_expression": {
+   "esm2_35m": {
+    "unimodal-prot": 0.6960788360747071
+   },
+   "rinalmo": {
+    "unimodal-grid-rna": 0.8340061772265341,
+    "unimodal-rna": 0.8440459531921763
+   },
+   "hyenadna": {
+    "unimodal-dna": 0.7370596047080776,
+    "unimodal-grid-dna": 0.675458419749176
+   },
+   "esm2_150m": {
+    "unimodal-prot": 0.7285744245511578
+   },
+   "mrnafm": {
+    "unimodal-rna": 0.852205959621835
+   },
+   "protbert": {
+    "unimodal-prot": 0.7612415460734537
+   },
+   "calm": {
+    "unimodal-rna": 0.8510312640259813
+   },
+   "nt500m": {
+    "unimodal-dna": 0.7397494961264646,
+    "unimodal-grid-dna": 0.7661598468201909
+   }
+  },
+  "ecoli_proteins": {
+   "esm2_35m": {
+    "unimodal-prot": 0.5210674157303371
+   },
+   "rinalmo": {
+    "unimodal-grid-rna": 0.5603932584269663,
+    "unimodal-rna": 0.5730337078651685
+   },
+   "hyenadna": {
+    "unimodal-dna": 0.5042134831460674,
+    "unimodal-grid-dna": 0.46207865168539325
+   },
+   "esm2_150m": {
+    "unimodal-prot": 0.5393258426966292
+   },
+   "mrnafm": {
+    "unimodal-rna": 0.5870786516853933
+   },
+   "protbert": {
+    "unimodal-prot": 0.5252808988764045
+   },
+   "calm": {
+    "unimodal-rna": 0.5758426966292135
+   },
+   "nt500m": {
+    "unimodal-dna": 0.4747191011235955,
+    "unimodal-grid-dna": 0.4957865168539326
+   }
+  }
+ }
+}

@@ -4,9 +4,10 @@
 (b) Each fusion head minus the best single encoder validation chose, for every swap and
     benchmark, with the cell shaded when the 95% paired-bootstrap interval excludes zero.
 
-Inputs are Chase's tier2_encoder_swaps.ipynb outputs (score table and paired intervals, seed 0,
-2,000 draws, identical sequences resampled together), extracted to phaseB_readout.json, plus the
-original encoders' seed-0 single scores from Phase A and Stage 3.
+Inputs are the saved paired reports of tier2_encoder_swaps.ipynb
+(results/phaseB/analyses/paired-report-v1/, seed 0, 2,000 draws, identical sequences resampled
+together), collected into phaseB_readout.json by build_phaseB_readout.py, plus the original
+encoders' seed-0 single scores from Phase A and Stage 3.
 
     python make_phaseB_full_figure.py <phaseB_readout.json> <output_dir>
 """
@@ -55,14 +56,19 @@ ORIGINAL = {
     "mrna_stability": {"dna": 0.5391, "rna": 0.5517, "prot": 0.5311},
 }
 HEADS = [("concat", "concat"), ("mil", "gated"), ("cross", "cross")]
-# Swaps where validation chose a single encoder that scores clearly below another eligible single
-# encoder on test. Fungal with ProtBERT: validation chose ProtBERT alone (0.761) while NT v2 100M
-# alone scores 0.813, so these differences are measured against a weak reference.
-WEAK_REFERENCE = {("fungal_expression", "protbert")}
+# Swaps where validation chose a single encoder that scores below another eligible single encoder
+# on test, so the differences are measured against a weak reference. Fungal with ProtBERT:
+# validation chose ProtBERT alone (0.761 on test) while NT v2 100M alone scores 0.813. Stability
+# with ProtBERT: validation chose ProtBERT alone (validation 0.560 against RNA-FM's 0.555; test
+# 0.543 against RNA-FM's 0.552).
+WEAK_REFERENCE = {("fungal_expression", "protbert"), ("mrna_stability", "protbert")}
 
 
 def fmt(b, v):
-    return f"{v:+.1f}" if b == "ecoli_proteins" else f"{v:+.3f}"
+    digits = 1 if b == "ecoli_proteins" else 3
+    if round(v, digits) == 0:
+        return f"{0:.{digits}f}"  # never print a signed zero
+    return f"{v:+.{digits}f}"
 
 
 def panel_alone(axes, big=1.0):
