@@ -695,7 +695,7 @@ def fig_architectures():
                     arrow(ax, xa, ya, xb, yb, c="#c9c7bf", lw=0.6, style="-|>")
     for x in steps:
         ax.text(x, 24, f"codon {steps.index(x) + 1}", ha="center", va="center", fontsize=6.4, color=MUTED)
-    ax.text(50, 14, "h$^m_t$ = S$_m$ (sum over modalities of h$_{t-1}$) + B$_m$ x$^m_t$",
+    ax.text(50, 14, "h$^m_t$ = S$_m$ (mean over modalities of h$_{t-1}$) + B$_m$ x$^m_t$",
             ha="center", va="center", fontsize=7.2, color=INK2)
     ax.text(50, 6, "linear in sequence length; no alignment loss;\nneeds the shared codon grid",
             ha="center", va="center", fontsize=6.6, color=MUTED, style="italic", linespacing=1.4)
