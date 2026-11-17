@@ -67,7 +67,7 @@ def streams(spec=None):
 
 
 def cache_records(stream):
-    required = [stream.spec.rna_encoder] + ([] if stream.spec.method == "rna_only" else ["esm2_8m"])
+    required = study.required_encoders(stream.spec)
     return {key: {"input_sha256": stream.caches.plans[key].identity["input_sha256"],
                   "width": stream.caches.caches[key].width} for key in required}
 
@@ -100,11 +100,11 @@ def save_report_panel(root, stream, config, template):
 
 
 class RegionProtocolTests(unittest.TestCase):
-    def test_core_panel_has_192_planned_fits_optional_is_explicit(self):
-        self.assertEqual(len(study.fit_panel()), 32)
-        self.assertEqual(32 * 2 * 3, 192)
-        self.assertEqual(len(study.fit_panel(include_optional=True)), 44)
-        self.assertEqual(len({spec.key for spec in study.fit_panel()}), 32)
+    def test_core_panel_has_294_planned_fits_optional_is_explicit(self):
+        self.assertEqual(len(study.fit_panel()), 49)
+        self.assertEqual(49 * 2 * 3, 294)
+        self.assertEqual(len(study.fit_panel(include_optional=True)), 61)
+        self.assertEqual(len({spec.key for spec in study.fit_panel()}), 49)
 
     def test_group_split_donors_cover_same_cohort_without_cross_partition_leakage(self):
         cohort = fixture()
@@ -217,6 +217,150 @@ class RegionModelTests(unittest.TestCase):
     def setUp(self):
         torch.set_num_threads(1)
 
+    def test_sequence_and_position_local_gates_share_scorers_and_readout(self):
+        stream = streams()
+        batch = next(iter(study.make_loaders(stream, train.TrainConfig(batch_size=3))["test"]))
+        position = study.RegionModel(stream.widths, "position_gate", SETTINGS, 100).eval()
+        sequence = study.RegionModel(stream.widths, "sequence_gate", SETTINGS, 100).eval()
+        sequence.load_state_dict(position.state_dict(), strict=True)
+        projected = {name: sequence.project[name](batch.streams[name]).masked_fill(
+            ~batch.masks[name].unsqueeze(-1), 0) for name in ("rna", "prot")}
+        joint = torch.cat(list(projected.values()), dim=-1)
+        pooled = (joint * batch.masks["rna"].unsqueeze(-1)).sum(1) / batch.masks["rna"].sum(1)[:, None]
+        _, _, aux = sequence.features(batch)
+        for index, name in enumerate(("rna", "prot")):
+            expected = torch.sigmoid(sequence.gate[name](pooled)).expand(-1, joint.shape[1])
+            allowed = batch.masks["rna"] if name == "rna" else batch.region & batch.masks["prot"]
+            torch.testing.assert_close(aux["gates"][..., index], expected.masked_fill(~allowed, 0))
+        for name in batch.streams:
+            batch.streams[name][~batch.masks[name]] = 1e6
+        _, _, changed = sequence.features(batch)
+        torch.testing.assert_close(changed["gates"], aux["gates"])
+
+    def test_full_width_affine_control_retains_signal_and_active_adjustment(self):
+        stream = streams()
+        batch = next(iter(study.make_loaders(stream, train.TrainConfig(batch_size=2))["test"]))
+        model = study.RegionModel(stream.widths, "position_control_residual", SETTINGS, 100).eval()
+        width = SETTINGS["projection_width"]
+        self.assertEqual(sum(p.numel() for p in model.adjust_down.parameters()) +
+                         sum(p.numel() for p in model.adjust_up.parameters()), 4 * width + 1)
+        self.assertIsNone(model.adjust_up.bias)
+        projected = {m: model.project[m](batch.streams[m]).masked_fill(~batch.masks[m].unsqueeze(-1), 0)
+                     for m in ("rna", "prot")}
+        projected["prot"] = projected["prot"].masked_fill(~batch.region.unsqueeze(-1), 0)
+        expected = model.mix(torch.cat((.5 * projected["rna"], .5 * projected["prot"],
+                                       batch.region.unsqueeze(-1).float()), -1))
+        expected = expected.masked_fill(~batch.masks["rna"].unsqueeze(-1), 0)
+        actual, _, _ = model.features(batch)
+        torch.testing.assert_close(actual, expected)
+        # At zero-up initialization only up has an immediate gradient; after a
+        # nonzero update both trainable factors influence the output.
+        actual.square().sum().backward()
+        self.assertGreater(model.adjust_up.weight.grad.abs().sum(), 0)
+        with torch.no_grad():
+            model.adjust_up.weight.fill_(.1)
+        model.zero_grad()
+        model.features(batch)[0].square().sum().backward()
+        for parameter in (*model.adjust_down.parameters(), *model.adjust_up.parameters()):
+            self.assertGreater(parameter.grad.abs().sum(), 0)
+        self.assertEqual(4 * 600 + 1, 2401)
+        self.assertEqual(2 * (2 * 600 + 1), 2402)
+
+    def test_all_cds_attention_controls_share_masks_and_skip(self):
+        stream = streams()
+        batch = next(iter(study.make_loaders(stream, train.TrainConfig(batch_size=2))["test"]))
+        models = {name: study.RegionModel(stream.widths, name, SETTINGS, 100).eval()
+                  for name in ("attention_cds", "attention_cds_sequence", "attention_cds_ungated")}
+        position = models["attention_cds"]
+        models["attention_cds_sequence"].load_state_dict(position.state_dict())
+        ungated = {key: value for key, value in position.state_dict().items() if not key.startswith("attention.gate.")}
+        models["attention_cds_ungated"].load_state_dict(ungated)
+        allowed = batch.region & batch.masks["prot"]
+        for method, model in models.items():
+            features, real, aux = model.features(batch)
+            self.assertFalse(aux["update_weights"][..., 0][~allowed].any())
+            if method == "attention_cds_ungated":
+                torch.testing.assert_close(aux["update_weights"][..., 0], allowed.float())
+            projected = model.attention.project["rna"](batch.streams["rna"]).masked_fill(~real.unsqueeze(-1), 0)
+            torch.testing.assert_close(features[~allowed], projected[~allowed])
+        batch.region.zero_()
+        for model in models.values():
+            features, real, _ = model.features(batch)
+            projected = model.attention.project["rna"](batch.streams["rna"]).masked_fill(~real.unsqueeze(-1), 0)
+            torch.testing.assert_close(features, projected)
+
+    def test_native_protein_single_is_deduplicated_and_never_reads_rna(self):
+        spec, = [spec for spec in study.fit_panel() if spec.method == "protein_only"]
+        stream = streams(spec)
+        stream.caches.caches = {"esm2_8m": stream.caches.caches["esm2_8m"]}
+        stream.caches.plans = {"esm2_8m": stream.caches.plans["esm2_8m"]}
+        config = train.TrainConfig(batch_size=2)
+        with patch.object(inputs, "RegionDataset", side_effect=AssertionError("RNA dataset requested")):
+            loaders = study.make_loaders(stream, config)
+            study.validate_loaders(stream, config, loaders)
+            batch = next(iter(loaders["test"]))
+        self.assertEqual(set(batch.streams), {"prot"})
+        self.assertEqual(batch.positions, ())
+        self.assertEqual(batch.lengths.tolist(), [2, 2])
+        model = study.build_model(stream, "protein_only", config, settings=SETTINGS)
+        prediction, _ = model(batch)
+        prediction.square().sum().backward()
+        self.assertTrue(all(parameter.grad is not None for parameter in model.parameters()))
+        study.make_identity(stream, config, SETTINGS, loaders, cache_records(stream))
+        with self.assertRaisesRegex(ValueError, "no RNA-region"):
+            study.collect_diagnostics(stream, config, SETTINGS, "unused", "cpu", producer={"test": True})
+
+    def test_single_selection_uses_only_seed_zero_validation_and_requires_all_candidates(self):
+        panel = study.fit_panel()
+        candidates = [spec for spec in panel if spec.method in ("rna_only", "protein_only")]
+        fits = {spec.key: [SimpleNamespace(config={"seed": seed}, val_score=index if seed == 0 else -index,
+                                         test_score=100-index) for seed in (0, 1, 2)]
+                for index, spec in enumerate(candidates)}
+        selected = study.validation_selected_single(fits, panel)
+        self.assertEqual(selected["selected"], candidates[-1].key)
+        self.assertEqual(selected["held_fixed_for_training_seeds"], [0, 1, 2])
+        self.assertEqual(selected["attention_anchor"], "rna")
+        fits.pop(candidates[0].key)
+        with self.assertRaisesRegex(ValueError, "requires seeds"):
+            study.validation_selected_single(fits, panel)
+        with self.assertRaisesRegex(ValueError, "all four RNA"):
+            study.validation_selected_single(fits, panel[:-1])
+
+    def test_sequence_attention_diagnostics_broadcast_over_real_positions(self):
+        stream = streams(study.FitSpec("rnafm", "native", "attention_cds_sequence", "true"))
+        config = train.TrainConfig(batch_size=2)
+        loader = study.make_loaders(stream, config)["test"]
+        model = study.build_model(stream, stream.spec.method, config, settings=SETTINGS).eval()
+        model.collect_norms = True
+        rows, prediction, truth = study._diagnostic_rows(model, loader, stream.cohort, "cpu")
+        self.assertEqual(len(rows), len(stream.preparation["positions"]["test"]))
+        self.assertEqual(len(prediction), len(truth))
+        for row in rows:
+            gates = [region["gates"] for region in row["regions"].values() if region["positions"]]
+            for region in row["regions"].values():
+                if region["positions"]:
+                    self.assertIsInstance(region["anchor_norm"], float)
+                    self.assertIsInstance(region["fused_norm"], float)
+            for gate in gates[1:]:
+                np.testing.assert_allclose(gate, gates[0], rtol=1e-6)
+            self.assertEqual(row["regions"]["utr5"]["update_weights"], [0.])
+
+    def test_old_narrow_report_cannot_satisfy_repaired_panel(self):
+        stream = streams()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / stream.key
+            study.publish_preparation(root / "preparation.json", stream.preparation)
+            old = root / "reports" / "three_seed_core.json"
+            old.parent.mkdir()
+            old.write_text('{"schema":"region-three-seed-report.v1","context":{}}')
+            before = old.read_bytes()
+            with patch.object(train, "seed_averaged_bootstrap", side_effect=AssertionError("statistics")):
+                with self.assertRaises(FileNotFoundError):
+                    study.saved_comparisons(temporary, dataset_key=stream.key, draws=5,
+                                             bootstrap_seed=0, producer=None)
+            self.assertEqual(old.read_bytes(), before)
+            self.assertFalse((old.parent / "three_seed_controls_v2.json").exists())
+
     def test_every_core_and_optional_arm_has_finite_forward_and_gradients(self):
         config = train.TrainConfig(seed=0, batch_size=2, channels=100, tconv="equation")
         for method, mask in study.CORE + study.OPTIONAL:
@@ -328,7 +472,9 @@ class RegionModelTests(unittest.TestCase):
         for method in methods:
             for width, normalization in ((8, "none"), (12, "layer")):
                 with self.subTest(method=method, width=width, normalization=normalization):
-                    stream = replace(base, spec=study.FitSpec("rnafm", "native", method, "true"))
+                    spec = (study.fit_panel()[-1] if method == "protein_only" else
+                            study.FitSpec("rnafm", "native", method, "true"))
+                    stream = replace(base, spec=spec)
                     settings = {**SETTINGS, "projection_width": width, "update_norm": normalization}
                     loaders = study.make_loaders(stream, config)
                     model = study.build_model(stream, method, config, settings=settings)
@@ -359,7 +505,7 @@ class RegionModelTests(unittest.TestCase):
             with patch.object(inputs, "load_local_frame", side_effect=AssertionError("data read")), \
                  patch.object(inputs, "open_token_caches", side_effect=AssertionError("cache read")):
                 rows = study.saved_inventory(temporary, dataset_key="rnahl-human")
-            self.assertEqual(len(rows), 96)
+            self.assertEqual(len(rows), 147)
             self.assertEqual({r["status"] for r in rows}, {"missing"})
             self.assertEqual(list(Path(temporary).iterdir()), [])
 
@@ -681,8 +827,8 @@ class RegionModelTests(unittest.TestCase):
                 self.assertEqual(report, again)
                 self.assertEqual(before, {path: path.read_bytes() for path in root.rglob("*.json")})
                 compute.assert_called_once()
-            self.assertEqual(len(report["summary"]), 32)
-            self.assertEqual(len(report["contrasts"]), 44)
+            self.assertEqual(len(report["summary"]), 49)
+            self.assertEqual(len(report["contrasts"]), 112)
             np.testing.assert_allclose([row["mean"] for row in report["summary"]], 1., rtol=1e-7, atol=1e-8)
             np.testing.assert_allclose([row["seed_sd"] for row in report["summary"]], 0., rtol=1e-7, atol=1e-8)
             source = root / "fits" / study.fit_panel()[0].key / "seed0.json"

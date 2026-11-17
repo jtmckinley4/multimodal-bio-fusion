@@ -20,7 +20,7 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "Code"))
-from shared_code.fusion import controlled_experiment as experiment, train
+from shared_code.fusion import controlled_experiment as experiment, controlled_models, train
 
 
 NAMES = ("gate_diagnostics.ipynb", "anchor_cross_attention.ipynb")
@@ -39,7 +39,7 @@ class ControlledNotebookTests(unittest.TestCase):
         forbidden = Mock(side_effect=AssertionError("No research action in a reading fixture"))
         namespace = dict(CODE_DIR=root / "Code", Path=Path, train=train, replace=replace,
                          asdict=asdict, np=np, pd=pd, torch=torch, json=json, hashlib=hashlib,
-                         print=Mock(), display=Mock(), experiment=experiment,
+                         print=Mock(), display=Mock(), experiment=experiment, controlled_models=controlled_models,
                          study_references=SimpleNamespace(read_reference=Mock(return_value=None),
                              collect_reference_diagnostics=forbidden),
                          study_inputs=SimpleNamespace(open_streams=forbidden),
@@ -132,7 +132,7 @@ class ControlledNotebookTests(unittest.TestCase):
                 namespace["experiment"] = SimpleNamespace(run_fit=run_fit,
                     SEQUENCE_VARIANTS=experiment.SEQUENCE_VARIANTS, ATTENTION_VARIANTS=experiment.ATTENTION_VARIANTS)
                 namespace["run_context"]("cov_vac_degradation", "mrnafm")
-                self.assertEqual(run_fit.call_count, 6 if name.startswith("gate") else 5)
+                self.assertEqual(run_fit.call_count, 7 if name.startswith("gate") else 6)
                 self.assertEqual(closed, [True])
                 for call in run_fit.call_args_list:
                     variant, config, configured = call.args[1:4]
@@ -143,7 +143,7 @@ class ControlledNotebookTests(unittest.TestCase):
                         self.assertEqual(configured["control_bottleneck"], 2)
                         self.assertEqual(configured["control_scale"], .5)
                         self.assertEqual(configured["control_initialization"], "zero_output_random_input")
-                    if variant == "anchor_only" or variant.startswith("attention_"):
+                    if variant in ("anchor_only", "anchor_concat_control") or variant.startswith("attention_"):
                         self.assertEqual(configured["anchor"], "rna")
                 namespace["require_reference"].side_effect = FileNotFoundError("Missing baseline")
                 run_fit.reset_mock()
@@ -171,6 +171,51 @@ class ControlledNotebookTests(unittest.TestCase):
                 self.assertEqual([seed for _, seed in calls], [0, 0, 0, 0])
                 self.assertEqual(selected.call_args.kwargs["evidence_root"], namespace["REFERENCE_ROOT"])
 
+    def test_required_control_panel_counts_and_missing_new_fit_block_statistics(self):
+        for name, expected_fits, missing_key in (
+                (NAMES[0], 84, "joint_sequence_sigmoid"),
+                (NAMES[1], 72, "anchor_concat_control")):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as folder:
+                cells, namespace, _ = self.fixture(name, Path(folder))
+                for identity in ("panel", "configuration-helpers", "mechanism-contrast-helper", "interval-helper"):
+                    exec(cells[identity], namespace)
+                entries = namespace["PANEL"]
+                self.assertEqual(sum(not e.get("reference") for e in entries)
+                                 * len(namespace["BENCHMARKS"]) * len(namespace["BUNDLES"])
+                                 * len(namespace["TRAINING_SEEDS"]), expected_fits)
+                analyze = Mock(side_effect=AssertionError("Do not analyze an incomplete panel"))
+                namespace.update(
+                    ACTIVE_BENCHMARKS=namespace["BENCHMARKS"],
+                    study_inputs=SimpleNamespace(benchmark_rows=lambda *a, **k: (None, "Split", [], {}, {})),
+                    datasets=SimpleNamespace(DATASETS={b: SimpleNamespace(path="invented.csv", task="regression")
+                                                       for b in namespace["BENCHMARKS"]}),
+                    source_record=lambda *a: ("dataset/invented.csv", "a" * 64),
+                    selected_anchor=lambda *a: {"key": "unimodal:rna"},
+                    require_reference=lambda *a: object(),
+                    fit_source=lambda b, bundle, entry, seed: (None if entry["key"] == missing_key else object(), None),
+                    experiment=SimpleNamespace(paired_intervals=analyze))
+                with self.assertRaisesRegex(FileNotFoundError, "entire declared panel"):
+                    namespace["comparison_intervals"]()
+                analyze.assert_not_called()
+
+    def test_capacity_control_reader_uses_validation_anchor_and_declared_width(self):
+        with tempfile.TemporaryDirectory() as folder:
+            cells, namespace, _ = self.fixture(NAMES[1], Path(folder))
+            for identity in ("panel", "configuration-helpers", "saved-fit-readers"):
+                exec(cells[identity], namespace)
+            entry = next(e for e in namespace["PANEL"] if e["key"] == "anchor_concat_control")
+            path = namespace["fit_path"]("cov_vac_degradation", "original", entry["key"], 2)
+            path.parent.mkdir(parents=True)
+            path.write_text("synthetic marker")
+            namespace["selected_anchor"] = Mock(return_value={"modality": "prot"})
+            with patch.object(experiment, "read_panel_fit", return_value=object()) as reader:
+                namespace["saved_new_fit"]("cov_vac_degradation", "original", entry, 2)
+                self.assertEqual(reader.call_args.kwargs["settings"]["anchor"], "prot")
+                self.assertEqual(reader.call_args.kwargs["settings"]["control_hidden_width"], 1203)
+                namespace["selected_anchor"].return_value = None
+                with self.assertRaisesRegex(FileNotFoundError, "validation anchor"):
+                    namespace["saved_new_fit"]("cov_vac_degradation", "original", entry, 2)
+
     def test_diagnostics_skip_nongated_controls_without_starting_fits(self):
         for name in NAMES:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as folder:
@@ -188,7 +233,7 @@ class ControlledNotebookTests(unittest.TestCase):
                         ATTENTION_VARIANTS=experiment.ATTENTION_VARIANTS),
                     study_references=SimpleNamespace(collect_reference_diagnostics=reference_inference))
                 namespace["collect_context_diagnostics"]("cov_vac_degradation", "original", 2)
-                self.assertEqual(new_inference.call_count, 5 if name.startswith("gate") else 4)
+                self.assertEqual(new_inference.call_count, 6 if name.startswith("gate") else 4)
                 self.assertEqual(reference_inference.call_count, 1 if name.startswith("gate") else 0)
                 self.assertTrue(all(call.args[2].seed == 2 for call in new_inference.call_args_list))
 
@@ -291,11 +336,15 @@ class ControlledNotebookTests(unittest.TestCase):
     def test_direct_mechanism_contrasts_and_versioned_destinations(self):
         expected = {
             NAMES[0]: {("sequence_sigmoid", "mil_no_entropy"), ("meanmax_softmax", "mil_no_entropy"),
-                       ("meanmax_sigmoid", "sequence_sigmoid"), ("position_sigmoid", "sequence_sigmoid")},
+                       ("meanmax_sigmoid", "sequence_sigmoid"), ("position_sigmoid", "sequence_sigmoid"),
+                       ("joint_sequence_sigmoid", "sequence_sigmoid"), ("position_sigmoid", "joint_sequence_sigmoid")},
             NAMES[1]: {("attention_skip", "attention_ordinary"),
                        ("attention_sequence_sigmoid", "attention_skip"),
                        ("attention_position_sigmoid", "attention_sequence_sigmoid"),
-                       ("attention_position_sigmoid", "attention_skip")},
+                       ("attention_position_sigmoid", "attention_skip"),
+                       ("attention_skip", "anchor_concat_control"),
+                       ("attention_sequence_sigmoid", "anchor_concat_control"),
+                       ("attention_position_sigmoid", "anchor_concat_control")},
         }
         for name in NAMES:
             _, cells = notebook(name)
@@ -306,7 +355,7 @@ class ControlledNotebookTests(unittest.TestCase):
             self.assertIn('"diagnostics-v2"', cells["configuration-helpers"])
             self.assertIn("three-seed-comparison-v2.json", cells["analysis"])
             if name == NAMES[0]:
-                self.assertIn('REPORT_PATH = RESULTS_ROOT / "reports" / "three-seed-comparison-v3.json"', cells["analysis"])
+                self.assertIn('REPORT_PATH = RESULTS_ROOT / "reports" / "three-seed-comparison-v4.json"', cells["analysis"])
                 self.assertIn("position_sigmoid minus position_residual_control", cells["interval-helper"])
             self.assertIn("gate-distributions-v2.json", cells["gate-analysis"])
 
@@ -362,7 +411,7 @@ class ControlledNotebookTests(unittest.TestCase):
                 namespace["RUN_ANALYSIS"] = False
                 exec(cells["analysis"], namespace)
                 self.assertEqual(namespace["report"]["schema"],
-                    "controlled-fusion-three-seed-v3" if name.startswith("gate") else "controlled-fusion-three-seed-v2")
+                    "controlled-fusion-three-seed-v4" if name.startswith("gate") else "controlled-fusion-three-seed-v3")
                 # A changed source must still fail through the real reader, for every schema.
                 evidence.write_text("changed fixture evidence")
                 with self.assertRaisesRegex(ValueError, "source is missing, changed"):
@@ -435,13 +484,13 @@ class ControlledNotebookTests(unittest.TestCase):
             self.assertEqual(alternatives[1]["fixed-path width"], 0)
             self.assertEqual(alternatives[1]["difference from joint gate"], 355347)
 
-    def test_residual_control_replaces_one_arm_without_expanding_the_panel(self):
+    def test_residual_control_retained_with_one_joint_sequence_comparator(self):
         with tempfile.TemporaryDirectory() as folder:
             cells, namespace, _ = self.fixture(NAMES[0], Path(folder))
             exec(cells["panel"], namespace)
             entries = namespace["PANEL"]
-            self.assertEqual(len(entries), 7)
-            self.assertEqual(sum(not entry.get("reference") for entry in entries), 6)
+            self.assertEqual(len(entries), 8)
+            self.assertEqual(sum(not entry.get("reference") for entry in entries), 7)
             keys = {entry["key"] for entry in entries}
             self.assertIn("position_residual_control", keys)
             self.assertNotIn("position_control", keys)

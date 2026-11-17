@@ -4,7 +4,7 @@ A research project in the [Complex Adaptive Systems Laboratory](https://complexi
 
 Read the [research progression](#research-progression) for the investigation, [Data](#data) for target meanings, or [Setup](#setup) to prepare an environment. Saved notebook outputs can be read without executing cells.
 
-Active notebooks also default to [reading available evidence](Code/stage4/RUNBOOK.md#read-saved-results-without-starting-work). The [ARCC guide](execution/arcc/README.md) covers separate execution snapshots, cluster operation and returned evidence; its [encoder-swap recipe](execution/arcc/encoder_swaps/README.md) supplies preparation commands. Repository edits do not update an existing Newton run.
+Active notebooks also default to [reading available evidence](Code/stage4/RUNBOOK.md#read-saved-results-without-starting-work). The [ARCC guide](execution/arcc/README.md) covers separate execution snapshots, cluster operation and returned evidence, with recipes for [encoder swaps](execution/arcc/encoder_swaps/README.md), [grouped stability](execution/arcc/grouped_stability/README.md) and [controlled fusion studies](execution/arcc/fusion_studies/README.md). Repository edits do not update an existing Newton run.
 
 ## Project background
 
@@ -50,7 +50,7 @@ The available BLF comparison uses four benchmarks; Ab1 was absent from the inspe
 
 #### Architecture priorities
 
-The [September 23 meeting](docs/notes/Slides/Mina_Meeting_Slides_2026-09-23.pptx), slide 6, prioritized Coupled Mamba, with IsoFormer-style attention and fallback designs. Mina's [revised protocol](docs/Biological_Fusion_Plan.docx) now places controlled anchor/gate comparisons first. Further Mamba work is conditional on a measured long-sequence memory or runtime bottleneck; the earlier order is historical.
+The [September 23 meeting](docs/notes/Slides/Mina_Meeting_Slides_2026-09-23.pptx), slide 6, prioritized Coupled Mamba, with IsoFormer-style attention and fallback designs. The advisor's [revised protocol](docs/Biological_Fusion_Plan.docx) now places controlled anchor/gate comparisons first. Further Mamba work is conditional on a measured long-sequence memory or runtime bottleneck; the earlier order is historical.
 
 Fuller IsoFormer reproduction is [deferred](Code/stage4/RUNBOOK.md#isoformer-reproduction-specification), distinct from the retained frozen GTEx pilot. Its preparation is preserved for possible reuse; controlled fusion comparisons do not require completion of the paper's entire training pipeline. The [runbook](Code/stage4/RUNBOOK.md#current-investigation-scope) retains the current scope and earlier decisions.
 
@@ -62,7 +62,7 @@ Stage 4 remains active. The Newton encoder-swap cohort has **504 completed fits 
 
 The findings characterize these settings and motivate hypotheses. A prospective rule needs a stated expectation, simpler controls and an evaluation not already used to develop it. Fungal species/condition transfer remains a candidate setting, not a selected dataset or implemented experiment.
 
-Four notebooks implement Mina's auxiliary-correction, gate, anchor-attention and transcript-region comparisons. Synthetic checks and bounded CPU input/parameter inspections are complete; their research training and token extraction have not run. Each new experiment includes its own matched baselines and repeats; a new split requires a distinct experiment identity. The [Gantt and Details sheets](docs/Research_Project_Plan_Gantt.xlsx) map reliability to tasks 24/28, correction to 45, gates to 46, attention to 25, regions to 42 and conditional partner tasks to 47/48. Recorded statuses and historical dates do not establish execution.
+Four notebooks implement the advisor's auxiliary-correction, gate, anchor-attention and transcript-region comparisons. Synthetic checks and bounded CPU input/parameter inspections are complete; their research training and token extraction have not run. Each new experiment includes its own matched baselines and repeats; a new split requires a distinct experiment identity. The [Gantt and Details sheets](docs/Research_Project_Plan_Gantt.xlsx) map reliability to tasks 24/28, correction to 45, gates to 46, attention to 25, regions to 42 and conditional partner tasks to 47/48. Recorded statuses and historical dates do not establish execution.
 
 ## Repo structure
 
@@ -71,7 +71,7 @@ Four notebooks implement Mina's auxiliary-correction, gate, anchor-attention and
 | [Code/](Code/) | Stage guides connect experiments; notebooks retain their inputs, choices, code, outputs and interpretation. |
 | [Code/shared_code/](Code/shared_code/) | Reused methods, including [fusion implementations](Code/shared_code/fusion/). Comments and docstrings explain local mechanics. |
 | [datasets/](datasets/) | Included input CSVs; additional downloads follow the cache policy below. |
-| [execution/arcc/](execution/arcc/README.md) | Common cluster/transfer guidance and the experiment-specific [encoder-swap recipe](execution/arcc/encoder_swaps/README.md). |
+| [execution/arcc/](execution/arcc/README.md) | Cluster/transfer guidance and separate recipes for encoder swaps, grouped stability and controlled fusion studies. |
 | [docs/](docs/README.md) | Shared methods, planning, selected sources, meeting records and figure guidance. |
 | [Papers/](Papers/README.md) | Retained paper versions and source locations. |
 | [tests/](tests/README.md) | Controlled software checks, separate from scientific validation. |
@@ -127,10 +127,12 @@ The primary half-life target is a consensus stability component, not time in hou
 Use the project's Python environment. Install PyTorch through its [official selector](https://pytorch.org/get-started/locally/) for the operating system/backend, then install these notebook dependencies:
 
 ```sh
-python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biopython "transformers==5.15.1" multimolecule einops ipykernel ViennaRNA
+python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biopython "transformers==5.15.1" multimolecule einops ipykernel ViennaRNA pyarrow
 ```
 
 `ViennaRNA` is imported as `RNA` for folding calculations in the [mRFP notebook](Code/stage1/mrfp_representation_control.ipynb). Its calculation mode also uses pooled embeddings from [Stage 1's control analysis](Code/stage1/Stage1_stability.ipynb); reading saved results requires neither ViennaRNA nor those embeddings.
+
+`pyarrow` reads the parquet inputs used in the full-transcript experiments. For an existing Newton environment, follow the selected execution recipe's version checks before changing installed packages.
 
 In VS Code, use the Python/Jupyter extensions and [select that environment as the notebook kernel](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management). Stage 1 expects `Code/stage1/` as the kernel working directory for imports and relative embedding paths; dataset loaders resolve the repository's `datasets/` independently. Other notebooks retain their own settings and prerequisites.
 

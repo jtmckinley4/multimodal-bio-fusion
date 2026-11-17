@@ -12,12 +12,14 @@ import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import nbformat
 
 ROOT = Path(__file__).resolve().parents[1]
 RECIPE = ROOT / "execution/arcc/fusion_studies"
+if not RECIPE.is_dir():
+    RECIPE = ROOT  # The prepared execution package exposes flat runtime entrypoints.
 
 
 def module(name):
@@ -121,6 +123,84 @@ class ExecutionTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "no CPU fallback"):
                 runner.observe_kernel(torch, self.configuration(Path("/test")))
 
+    def test_preflight_uses_only_its_own_cells_and_records_kernel_failures(self):
+        for failure in (None, ImportError("Synthetic missing parquet dependency")):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                (root / "source-snapshot.json").write_text("{}")
+                processor = Mock()
+                processor.preprocess.side_effect = failure
+                argv = ["--preflight", "--kernel", "synthetic", "--expected-gpu", "H100",
+                        "--output-root", str(root / "outputs")]
+                with patch.object(runner, "WORKSPACE", root), \
+                     patch.object(runner, "verify_package", return_value=({}, {})), \
+                     patch.object(runner.support, "acquire_locks"), \
+                     patch.dict(runner.os.environ, {"SLURM_JOB_ID": "synthetic"}), \
+                     patch.object(nbformat, "read", side_effect=AssertionError("Research notebook opened")), \
+                     patch.object(runner, "prepare_notebook", side_effect=AssertionError("Research settings injected")), \
+                     patch.object(runner.support, "LiveOutputPreprocessor", return_value=processor) as executor, \
+                     redirect_stdout(io.StringIO()):
+                    if failure is None:
+                        runner.main(argv)
+                    else:
+                        with self.assertRaises(ImportError) as caught:
+                            runner.main(argv)
+                        self.assertIs(caught.exception, failure)
+                executor.assert_called_once()
+                self.assertEqual(executor.call_args.kwargs["kernel_name"], "synthetic")
+                executed = processor.preprocess.call_args.args[0]
+                self.assertEqual([cell.id for cell in executed.cells],
+                                 ["preflight-environment", "preflight-imports-and-arithmetic"])
+                records = list((root / "outputs/logs").glob("preflight-*.json"))
+                self.assertEqual(len(records), 1)
+                record = json.loads(records[0].read_text())
+                self.assertEqual(record["configuration"]["action"], "preflight")
+                self.assertIsNone(record["configuration"]["seed"])
+                self.assertEqual(record["status"], "completed" if failure is None else "failed_or_interrupted")
+                self.assertEqual(len(list((root / "outputs/notebooks").glob("*.ipynb"))), 1)
+                self.assertFalse((root / "outputs/regions").exists())
+
+    def test_preflight_refuses_training_options_or_missing_gpu_before_kernel(self):
+        with patch.object(runner, "verify_package", return_value=({}, {})), \
+             patch.object(runner.support, "LiveOutputPreprocessor") as executor:
+            for options in (["--study", "gates"], ["--seed", "0"],
+                            ["--action", "extract"], ["--cache-root", "unused"],
+                            ["--expected-gpu", ""]):
+                with self.subTest(options=options), self.assertRaises(SystemExit), \
+                     patch("sys.stderr", new_callable=io.StringIO):
+                    runner.main(["--preflight", "--kernel", "synthetic", "--expected-gpu", "H100", *options])
+            executor.assert_not_called()
+
+    def test_preflight_imports_include_parquet_and_do_not_construct_models(self):
+        notebook = runner.preflight_notebook(self.configuration(Path("/synthetic")))
+        tensor, answer = MagicMock(), MagicMock()
+        tensor.__matmul__.return_value = answer
+        answer.sum.return_value.item.return_value = 32768
+        fake_torch = SimpleNamespace(ones=Mock(return_value=tensor),
+                                     cuda=SimpleNamespace(synchronize=Mock()))
+        importer = SimpleNamespace(import_module=Mock())
+        fake_metadata = SimpleNamespace(version=lambda name: "fixture-version")
+        helpers = {name: object() for name in ("correction_experiment", "controlled_experiment",
+                                               "region_experiment", "region_training")}
+        with patch.dict(sys.modules, {"shared_code.fusion": SimpleNamespace(**helpers)}), \
+             redirect_stdout(io.StringIO()):
+            exec(notebook.cells[1].source, {"importlib": importer, "metadata": fake_metadata,
+                                          "json": json, "torch": fake_torch})
+        self.assertIn("pyarrow", [call.args[0] for call in importer.import_module.call_args_list])
+        fake_torch.ones.assert_called_once_with((32, 32), device="cuda")
+        fake_torch.cuda.synchronize.assert_called_once()
+
+    def test_preflight_missing_import_fails_before_gpu_arithmetic(self):
+        notebook = runner.preflight_notebook(self.configuration(Path("/synthetic")))
+        fake_torch = Mock()
+        def import_fixture(name):
+            if name == "pyarrow":
+                raise ImportError("Synthetic missing pyarrow")
+        with self.assertRaisesRegex(ImportError, "pyarrow"):
+            exec(notebook.cells[1].source, {"importlib": SimpleNamespace(import_module=import_fixture),
+                                          "metadata": Mock(), "json": json, "torch": fake_torch})
+        fake_torch.ones.assert_not_called()
+
     def test_source_inventory_excludes_payloads_and_refuses_existing_destination(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder) / "repo"
@@ -132,7 +212,8 @@ class ExecutionTests(unittest.TestCase):
             for name in ("Code/shared_code/fusion/train.py", "Code/stage3/embeddings/shard.npz",
                          "datasets/large.csv", "Code/stage4/results/old.json",
                          "execution/arcc/encoder_swaps/run_encoder_swaps.py",
-                         "execution/arcc/fusion_studies/run_fusion_study.py"):
+                         "execution/arcc/fusion_studies/run_fusion_study.py",
+                         *(f"tests/{name}" for name in prepare.TESTS)):
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text("fixture")
@@ -184,7 +265,9 @@ class ExecutionTests(unittest.TestCase):
                     observer = Mock(return_value=producer)
                     namespace = {"Path": Path, "replace": replace, "train": SimpleNamespace(TrainConfig=FakeConfig),
                                  "torch": fake_torch, "sys": sys, "PROJECT_DIR": Path("/repo"),
-                                 "REPO_DIR": Path("/repo"), "CODE_DIR": Path("/repo/Code")}
+                                 "REPO_DIR": Path("/repo"), "CODE_DIR": Path("/repo/Code"),
+                                 "controlled_models": SimpleNamespace(attention_control_budget=
+                                     lambda width, count: {"hidden_width": 1203})}
                     # Only declarative settings and the injected boundary are evaluated,
                     # against fake modules. No scientific or input cell is executed.
                     with patch.dict(sys.modules, {"run_fusion_study": SimpleNamespace(observe_kernel=observer)}), \

@@ -26,7 +26,7 @@ module load "$ARCC_ANACONDA_MODULE"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "$ARCC_CONDA_ENV"
 printf 'Using Python: %s\n' "$(command -v python)"
-python -u run_grouped_stability.py --verify-only
+python -u run_grouped_stability.py --verify-only --kernel "$ARCC_KERNEL"
 
 ARCC_OUTPUT_ROOT="${ARCC_OUTPUT_ROOT:-$ARCC_PROJECT_ROOT/outputs}"
 [[ -d "$ARCC_OUTPUT_ROOT/logs" ]] || {

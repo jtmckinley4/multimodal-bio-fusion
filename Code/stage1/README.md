@@ -65,7 +65,7 @@ The [recorded analysis](../../docs/run-records.md#2026-10-19-stage4-mrfp-control
 
 #### Separate inputs and the matched ridge comparison
 
-[The LucaOne notebook](lucaone_representation_comparison.ipynb) compare representations on stability. The local interface encodes nucleotide and translated protein inputs separately, pools their token outputs, then fits ridge predictors to individual vectors or their concatenation. The same predictor family is applied to pooled BLF representations. This compares representation sets, rather than trained token-level fusion operators. The notebook explains the context-limit reason for separate encoding.
+[The LucaOne notebook](lucaone_representation_comparison.ipynb) compares representations on stability. The local interface encodes nucleotide and translated protein inputs separately, pools their token outputs, then fits ridge predictors to individual vectors or their concatenation. The same predictor family is applied to pooled BLF representations. This compares representation sets, rather than trained token-level fusion operators. The notebook explains the context-limit reason for separate encoding.
 
 #### Stability findings and the GTEx limit
 
@@ -85,7 +85,7 @@ These findings nominate encoders and controls. They do not establish that enforc
 
 [Stage 2](../../README.md#stage-2-defining-alignment) distinguishes biological correspondence, representation agreement and predictive complementarity. [Stage 3](../stage3/README.md) establishes reference methods and baselines, and [Stage 4](../stage4/README.md) investigates encoder substitutions, fusion methods and biological context. Reusing a dataset does not make their scores interchangeable: filtering, pooling, heads and evaluation can change.
 
-A prospective rule for selecting pairs or a new alignment objective remains a hypothesis requiring controlled evaluation on evidence not already used to develop it. The [Stage 4 proposals](../stage4/README.md#proposed-tests-of-fusion-explanations) pursue such explanations alongside the existing comparative experiments; they remain separate from completed Stage 1 analyses. The [Gantt and Details sheets](../../docs/Research_Project_Plan_Gantt.xlsx) retain tasks 8/9 for input mapping and published-split probes, and 7/15/16/19 for definitions, protocols, baselines and interpretation.
+A prospective rule for selecting pairs or a new alignment objective remains a hypothesis requiring controlled evaluation on evidence not already used to develop it. The [Stage 4 controlled experiments](../stage4/README.md#proposed-tests-of-fusion-explanations) pursue such explanations alongside the existing comparative experiments; they remain separate from completed Stage 1 analyses. The [Gantt and Details sheets](../../docs/Research_Project_Plan_Gantt.xlsx) retain tasks 8/9 for input mapping and published-split probes, and 7/15/16/19 for definitions, protocols, baselines and interpretation.
 
 ## Notebooks and supporting files
 

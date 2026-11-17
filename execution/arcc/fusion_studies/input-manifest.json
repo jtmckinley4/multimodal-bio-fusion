@@ -1,0 +1,566 @@
+{
+  "schema": "fusion-studies.inputs.v1",
+  "created_utc": "2026-11-17T21:36:23.819416+00:00",
+  "scope": "Byte inventory for the existing Newton reference-head superset and the agreed A.6 inputs; no research execution.",
+  "reference_note": "42 result descriptors plus their 42 expected best-weight files. Weight digests are copied from original model_artifact descriptors; their bytes have not been verified locally or remotely.",
+  "region_note": "Two source parquets and human map. This is not cohort or split preparation.",
+  "encoder_note": "Three existing pinned local snapshots; recorded main refs are included where the registry resolves main. No models loaded.",
+  "references": [
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.json",
+      "bytes": 42990,
+      "sha256": "879c3410b71146b62e21c7c6cbcbe5aef44c66870abc68dbc2a779ac0fdfdecd"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.weights.pt",
+      "bytes": 9987337,
+      "sha256": "30e970b2a628ccd14ebb450689259efbd0ef989f0969d25b09f0dbc7884af6ec",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed1.json",
+      "bytes": 42891,
+      "sha256": "b6b712b7c94fef4b990032fcb42943ad115519d1e7a5670c267e8e0515319b5a"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed1.weights.pt",
+      "bytes": 9987337,
+      "sha256": "b207aaaa5f1688700428e8dbe4c40f4292a07401426f6033ff4ae37184d5bde6",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2.json",
+      "bytes": 45571,
+      "sha256": "0873391f41ad72f3da14718497fde52f84d46d5237939d29448641a6e2d5ed36"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2.weights.pt",
+      "bytes": 9987337,
+      "sha256": "05fad9b83289525dac0e4c14121930d60aa1f734f682e10f9c167b6c62b58e22",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 45062,
+      "sha256": "fddef624157b3071d607ec6e8dfe59a2d439c2ebb87032c9ebbc79ba4a919888"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 2476301,
+      "sha256": "a1bb132610fa1bf911e385f8ed3407b6a665535790b7ff041932c9164df0f8d8",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 45555,
+      "sha256": "c7b065437155ae8831ac43eeca945e21185498fb3b6b6d8c1e1a7f82919bdf2f"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 2476301,
+      "sha256": "86477343a5eeae69082e86a04d1204076b5e1634c0904aa71f265e430d7aa05d",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 44059,
+      "sha256": "3c94e1f3db5d393a3bc834388f03991b9c9e92618d8ea3add0bacbe686697f00"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 2476301,
+      "sha256": "a782ab3ecc746e04cba65c3db35666e4bf6cfac9d36b53a8567ee1f7957f6487",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-dna__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 51388,
+      "sha256": "b9e7d5f4f92ba6bd9ea64bc851b37f413f658f92e5bf14d8514cd409147ba82d"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 5190405,
+      "sha256": "be5f12633655db68aa5c2a39c052f1a5fe76114d659fe6101d374926ae8001be",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 49197,
+      "sha256": "65b45813f52e7a8db706fe347e434a1450f805d211c5781785f11965d4d3a284"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 5190405,
+      "sha256": "5454bb013506aa26123e8cb5cf8db52b0c63639f3aaf26d93c98855c7425e466",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 48653,
+      "sha256": "8f8e362c7d01b57182a8de6b9a086f172b9a2fc3c3dac9168ba1c5761554dc55"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 5190405,
+      "sha256": "ab2ba35319aeca35197908542fa427058746c56df133833afd269c010dee0a48",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-grid-rna__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 55230,
+      "sha256": "2b67357c5becf603bf8cfc2eed4e876c381de5548055671d82336d4e415f21cd"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 1554701,
+      "sha256": "01fb9d66bd304011e39234a1dc1514af91e9c268fc33fa2e40775acd941cde8b",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 58905,
+      "sha256": "2d1e2e74861d0593fb1c3bf0886e45da8629493269e09185c0279b3ef0cb46d1"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 1554701,
+      "sha256": "7dc63a8f1688a2e9483f1ab788849006227c2dfa3fb6b67d6c75f778590786bf",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 51552,
+      "sha256": "1c4148355fdba2a5432eba1e5f18bd430c48d327f7d5f7a6f4890a607f3a7dbe"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 1554701,
+      "sha256": "344c4a09127b7640d0174404d2e73ed5c34d8f35b727f2f9df8286a549bf9743",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-prot__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 48890,
+      "sha256": "bc650058a908d9bf4e7ea3df16e2818044bdeb9bb86b54704295bdffc080ec90"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 3090701,
+      "sha256": "941f67e178818c1c342d531de80aa794c6f51cd0dc0f99addc4c2f7fbeeb6a56",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 47920,
+      "sha256": "fff431b3553b274f2c22006704c8c03be1787d44c6b697b59e6bd9954fed4d2e"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 3090701,
+      "sha256": "c1da3da0fa8981699bc830750aaf77103c74ccaba13d806d388e413199ee7000",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 48334,
+      "sha256": "4733e2103cf3d7c88c2662c5b1aca2631e0f098ee915066078bf45818e1b4b3a"
+    },
+    {
+      "path": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 3090701,
+      "sha256": "f652d16f23b411e416eea0c90a67ccaf647f7bff14d203e2d41f8b0835b07767",
+      "expected_from": "outputs/phaseA/cov_vac_degradation/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+      "bytes": 35884,
+      "sha256": "d235f14488f92a5e01a5c75e88ab5b4b4311d17fc9932d9d1d50114abce1c361"
+    },
+    {
+      "path": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.weights.pt",
+      "bytes": 9992393,
+      "sha256": "b5980e431f0b801c1cf2aa7608747f934f74d094072f7b369b9d86cafcc22968",
+      "expected_from": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+      "bytes": 34464,
+      "sha256": "7bf94ab30629641e8aa16294af87e8fefd345010594cd82e9566790a8435100b"
+    },
+    {
+      "path": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.weights.pt",
+      "bytes": 9992393,
+      "sha256": "c2c5e858a6e0ac318668dd495dbd8d5b1bad90616e13b8a9c8f5d3bf3840456d",
+      "expected_from": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+      "bytes": 34468,
+      "sha256": "bb88fbe9e46de968c3a190c30e7f2c1680bd958ea0e4798d771cb5852d6ac393"
+    },
+    {
+      "path": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.weights.pt",
+      "bytes": 9992393,
+      "sha256": "d2aa5b93545ca6bc2d7554d6dc7d80d03d0b913262ffac86a3829c4e4109c1b1",
+      "expected_from": "outputs/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 50917,
+      "sha256": "0e998127388eead7063238e676d60b492d9b6a9bdcaceab9ac7a808bd42644a7"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 2477197,
+      "sha256": "b3f5357da08859bf8d48ab85700b0185a09dd1de1d9694ae0cba6eae3f936927",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 59739,
+      "sha256": "fef6d3711cc4c956dae056b07a9f6bf27c35e219a47f068b07ea7af0db060d2f"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 2477197,
+      "sha256": "b17ed09ed4524eaefe79d1b550e109de6801959a4625ef16d87c6a66a3727b82",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 55000,
+      "sha256": "0f82cb0ffb713bf27ca78faa7bef112bd6ceeae6e0232388cd9ce38eb23ed35d"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 2477197,
+      "sha256": "4ce19e3918953303097252da0207f2ec6e62edcdaf0b4e1e8136ee1952192076",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-dna__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 49849,
+      "sha256": "dba5971629164096d29de3b71bad4f8c84987cae5e0cde52d5217d8e2ef0d557"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 5191301,
+      "sha256": "40c1909665adaf39723f2a96b02d8a3eb91d857c138f71018fd7ff5590ad64ba",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 57560,
+      "sha256": "4760349183b2dbba66dad0b4b43501ffb4fa91573e14ab92576e5576c490e938"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 5191301,
+      "sha256": "ba74e5e60956b001d10d53a070e2537a2af6f27be8da53e0de3d1411979b81a7",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 58620,
+      "sha256": "e10fb37e0f56fc4b1ce42af581aeaba9869072824a0a1318737e16add2784f7b"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 5191301,
+      "sha256": "dc3a02639ea0c85089a40b63b0a60625a8a235dda4455edcdfe26e06bcf9a639",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-grid-rna__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 49177,
+      "sha256": "8aa24025e18669a6045409ffe23a9183543e1a52bbe6f8c07ff2724a1f777b2e"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 1555597,
+      "sha256": "4513e6f2e1a7d43fd8d467a955d77fa4a2580588c6d1464009f64787ef7b7488",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 50484,
+      "sha256": "3d7b777de1fbdf58b02168075bec0f49d60b3098fac3e149fb67eccc7b7eac7a"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 1555597,
+      "sha256": "2693432c62a4a197725462b49830786aa1860f544b952862c0d2d2f6b6ba0a0d",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 51143,
+      "sha256": "66a5a5d48f4af0a676adbef204abffbd01950c2d2e5ed44f8dab3bf4e45ab5df"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 1555597,
+      "sha256": "d5792a68951498fd64758d5825e4a7d41beefd750c187115d4cf6e98c384e119",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-prot__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 42795,
+      "sha256": "d640b384e14260c266122e099f4ec439d25119ce965832742f9326aed734f11a"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 3091597,
+      "sha256": "62ef253565cab86533362573b1261ffbace5fa49aac53b02617c7ffc1d1697a4",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 42446,
+      "sha256": "9cabcb9e37d57d01d8cfa6847817e403e307dea757c0e7449446badee48e07ae"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 3091597,
+      "sha256": "5a2e45d23c15439568fa39a3d2f1efe6c4c02baeb4667cc0a2215c2c25d121aa",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 42663,
+      "sha256": "b435046e3392e2b4322966a1149b8794c1029885596975b19b7576aa3556d1cd"
+    },
+    {
+      "path": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 3091597,
+      "sha256": "68780543853d68e4ba4b468dcf0c5d58c620bc10b7012381248c5c9e65b158d1",
+      "expected_from": "outputs/phaseA/fungal_expression/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.json",
+      "bytes": 42994,
+      "sha256": "1e9ae7b6b6dacb96d71115e1bca39a32af78236a63e99f1124fade7e6a0cdd6b"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.weights.pt",
+      "bytes": 11523337,
+      "sha256": "1719b91bfbfce5bd11dba87ec9d5fe4bf23eb4785d287d7ac993fc0b7da06776",
+      "expected_from": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed1.json",
+      "bytes": 43294,
+      "sha256": "95d0ae77b00acba9ce6d3548092b584ae3c4549366863ada40a42de11d0f1fa0"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed1.weights.pt",
+      "bytes": 11523337,
+      "sha256": "44f78fe68106307807436841b906e0672af83a6ca9c6ef5616e62d6a8744ec84",
+      "expected_from": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2.json",
+      "bytes": 42009,
+      "sha256": "3cb6455a001556ee0f54c86ada057ed85c304e00b7bef821321fdd107b9e7d11"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2.weights.pt",
+      "bytes": 11523337,
+      "sha256": "de1f285005f9a40e7cfd14a478950d57ad1fe48e6cc10bae8426cd228721335e",
+      "expected_from": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__mil__lambda0.01__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 45944,
+      "sha256": "75b82e5ad14dfe1e3e56dcf92c1264e29e1c473b589f45fd40f415312638b755"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 6162701,
+      "sha256": "523a044ea86161ee8223a2bb3c9a111b8fc784eb48c03f837037b064abb45aa4",
+      "expected_from": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 47748,
+      "sha256": "392ae382d3223b5c2a68949b0310b9c4014d9e6ede7f2f624aecbf40ce98ce83"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 6162701,
+      "sha256": "fb4564a14888548166424965ed7f2d09ec29a7557e90621fb522cfa9a28dc606",
+      "expected_from": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 48268,
+      "sha256": "c9fb5660d62489d243e3d366d8dd6fedb8761230ad326a51fc06d1f47b88ce83"
+    },
+    {
+      "path": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 6162701,
+      "sha256": "4d8b18252393f2e0ac94bac3c6db273ad0edb2f36d642e16c19737e827c98381",
+      "expected_from": "outputs/phaseB/cov_vac_degradation/mrnafm/cov_vac_degradation__unimodal-rna__lambda0.0__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+      "bytes": 34736,
+      "sha256": "1848a5913b7dcbfc34975195c7d6793426b6cff926fd399bd271181d55a9cbdc"
+    },
+    {
+      "path": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.weights.pt",
+      "bytes": 11528393,
+      "sha256": "b9952b4ba318aea55217f4d2f346ca639af6cbb78f6feca5261fb114058a27ae",
+      "expected_from": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+      "bytes": 33698,
+      "sha256": "b539f97e87fc0d50ac2b274e026b608b860ac619b1c853d229706f220d056ac7"
+    },
+    {
+      "path": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.weights.pt",
+      "bytes": 11528393,
+      "sha256": "fbdac3a677cb02a8fb55c6f9e0c8c6c2b89defbe813ba2bb7987dc77d67f65d4",
+      "expected_from": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+      "bytes": 35739,
+      "sha256": "b22e9216826e54555a04d8e66928d3c1475dcb6f21f57b6bb90af36c9fbd2099"
+    },
+    {
+      "path": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.weights.pt",
+      "bytes": 11528393,
+      "sha256": "68aa7e20930ea98c87c6fe331993f23a7cef4e809afa281837f0b6b8a33ee0b4",
+      "expected_from": "outputs/phaseB/ecoli_proteins/mrnafm/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json"
+    },
+    {
+      "path": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "bytes": 43648,
+      "sha256": "bb617802e5c7828f29de77195680ede7b84533cb3a4c5f6e353b5230eaa9ad68"
+    },
+    {
+      "path": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed0.weights.pt",
+      "bytes": 6163597,
+      "sha256": "6c53d683ba5d2e2c59a126227407f8a968e4b5f19b28a709b2d7eca5a2eb5d28",
+      "expected_from": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed0.json"
+    },
+    {
+      "path": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed1.json",
+      "bytes": 43640,
+      "sha256": "99c405f8cba66867df2d800cdf484f4e92f54ccde38e8fa99119257b09f8e94f"
+    },
+    {
+      "path": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed1.weights.pt",
+      "bytes": 6163597,
+      "sha256": "15ae25031bc342654a462b2570359e0778753125ce8d4450abb26b374f723911",
+      "expected_from": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed1.json"
+    },
+    {
+      "path": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2.json",
+      "bytes": 43389,
+      "sha256": "5008f996f687cab147df0267911b7d3876454427943b17bdc31802c42b6540b6"
+    },
+    {
+      "path": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2.weights.pt",
+      "bytes": 6163597,
+      "sha256": "94185b3e3a4f9008d3378365a73ab9d1d37ffcabeac4d8e47f54bf57b18c85b1",
+      "expected_from": "outputs/phaseB/fungal_expression/mrnafm/fungal_expression__unimodal-rna__lambda0.0__ch100__equation__seed2.json"
+    }
+  ],
+  "region_data": [
+    {
+      "path": "rnahl-human.parquet",
+      "bytes": 23599081,
+      "sha256": "0801a85464e57574cbd179e7ef1a84a7c09798bd8a673507f49713ba8856a0ed"
+    },
+    {
+      "path": "translation-efficiency-human.parquet",
+      "bytes": 19566129,
+      "sha256": "8e4a91e2a44db4d2c0a4a8dfe66fc135b551413c68e0e6a3812efaacdcb26f03"
+    },
+    {
+      "path": "homology_maps/human_homology_map.csv",
+      "bytes": 485941,
+      "sha256": "b3318df10d702fe7898a6ed1296c6b0ca81c36a8392f77c24b8a04ae16b9772a"
+    }
+  ],
+  "encoder_files": [
+    {
+      "path": "models--multimolecule--rnafm/snapshots/7d6e73ad3b48e042b378f9a788a56ccb4d573a27/config.json",
+      "bytes": 1108,
+      "sha256": "c6e64a54fe40e5400aa66f4bd4a58ebdbbf2dc52c105ac674abe719473579099"
+    },
+    {
+      "path": "models--multimolecule--rnafm/snapshots/7d6e73ad3b48e042b378f9a788a56ccb4d573a27/tokenizer_config.json",
+      "bytes": 1443,
+      "sha256": "677a777318ed736128ea76b7ca07cfdb075e7b606ea752343763807d26743906"
+    },
+    {
+      "path": "models--multimolecule--rnafm/snapshots/7d6e73ad3b48e042b378f9a788a56ccb4d573a27/vocab.txt",
+      "bytes": 81,
+      "sha256": "f55f023afd2901f57ba508105ef48a699afc609b927812dc8f687df42a1ee5f1"
+    },
+    {
+      "path": "models--multimolecule--rnafm/snapshots/7d6e73ad3b48e042b378f9a788a56ccb4d573a27/model.safetensors",
+      "bytes": 398117588,
+      "sha256": "ec69333eb894dbefb580e690b0cbe1cbae9845fefd2bc78da914cd14226a2828"
+    },
+    {
+      "path": "models--multimolecule--rnafm/refs/main",
+      "bytes": 40,
+      "sha256": "dce67d40d9cb6bd3467d5e3b46895aaf585cb18613ecace09114612c4f76d7a6"
+    },
+    {
+      "path": "models--multimolecule--rinalmo-mega/snapshots/5e3a682eb856148fe81f12a25301962c9ffaf0ed/config.json",
+      "bytes": 1096,
+      "sha256": "c502a93c509483e15a861fda726ab0bb80654d783830ec522e7b9296155292de"
+    },
+    {
+      "path": "models--multimolecule--rinalmo-mega/snapshots/5e3a682eb856148fe81f12a25301962c9ffaf0ed/tokenizer_config.json",
+      "bytes": 1470,
+      "sha256": "a24dcb1791884b7227e37b14369a865c9885d2ec3d26819bc1be7bae846f12e8"
+    },
+    {
+      "path": "models--multimolecule--rinalmo-mega/snapshots/5e3a682eb856148fe81f12a25301962c9ffaf0ed/vocab.txt",
+      "bytes": 81,
+      "sha256": "f55f023afd2901f57ba508105ef48a699afc609b927812dc8f687df42a1ee5f1"
+    },
+    {
+      "path": "models--multimolecule--rinalmo-mega/snapshots/5e3a682eb856148fe81f12a25301962c9ffaf0ed/model.safetensors",
+      "bytes": 592312640,
+      "sha256": "a0e74d5cb944c9cfed51800e30f1af19239f9f92a036558ec132181c927c962f"
+    },
+    {
+      "path": "models--facebook--esm2_t6_8M_UR50D/snapshots/c731040fcd8d73dceaa04b0a8e6329b345b0f5df/config.json",
+      "bytes": 775,
+      "sha256": "facb9355e8252149f6f99dff5fd1e32e890c3c655362b261d0c81cd6b5839c85"
+    },
+    {
+      "path": "models--facebook--esm2_t6_8M_UR50D/snapshots/c731040fcd8d73dceaa04b0a8e6329b345b0f5df/tokenizer_config.json",
+      "bytes": 95,
+      "sha256": "7e9161ecdb548ec45a41cbc6b24aa4476fdd418461f491c4207baa99419a29ad"
+    },
+    {
+      "path": "models--facebook--esm2_t6_8M_UR50D/snapshots/c731040fcd8d73dceaa04b0a8e6329b345b0f5df/vocab.txt",
+      "bytes": 93,
+      "sha256": "0b82cc0a7c7cf9e567b1e5892d793285b9fbae822c964ca48696f7db44598e03"
+    },
+    {
+      "path": "models--facebook--esm2_t6_8M_UR50D/snapshots/c731040fcd8d73dceaa04b0a8e6329b345b0f5df/model.safetensors",
+      "bytes": 31384292,
+      "sha256": "24c5fa474c48f3b754b86efe752d5f189d2bcd88190fa2270fc92b2ef3034189"
+    },
+    {
+      "path": "models--facebook--esm2_t6_8M_UR50D/snapshots/c731040fcd8d73dceaa04b0a8e6329b345b0f5df/special_tokens_map.json",
+      "bytes": 125,
+      "sha256": "3aedcd4211c0d43aec4e607ff60a63255f3174ead795e997350f09a5f8cd9ee1"
+    },
+    {
+      "path": "models--facebook--esm2_t6_8M_UR50D/refs/main",
+      "bytes": 40,
+      "sha256": "9300fe5ee9de33fd6b94e21f2fd35cbd79237c8084d0bf2b14ccd858afaa5389"
+    }
+  ]
+}

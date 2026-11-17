@@ -6,9 +6,13 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import subprocess
 
 NOTEBOOKS = ("anchor_correction", "gate_diagnostics", "anchor_cross_attention", "region_aware_fusion")
 SCHEMA = "fusion-studies.package.v1"
+TESTS = ("test_arcc_fusion_studies.py", "test_arcc_fusion_inputs.py",
+         "test_arcc_fusion_package.py", "test_controlled_models.py",
+         "test_controlled_experiment.py", "test_region_training.py")
 
 
 def digest(path):
@@ -23,9 +27,14 @@ def inventory(root):
         pairs[relative] = relative
     recipe = root / "execution/arcc/fusion_studies"
     for path in recipe.iterdir():
-        if path.is_file() and path.suffix in {".py", ".md", ".txt", ".example"}:
+        if path.is_file() and path.suffix in {".py", ".md", ".txt", ".example", ".json", ".tsv"}:
             pairs[path.relative_to(root).as_posix()] = path.name
     pairs["execution/arcc/encoder_swaps/run_encoder_swaps.py"] = "arcc_execution_support.py"
+    for name in TESTS:
+        pairs[f"tests/{name}"] = f"tests/{name}"
+    destinations = [name.casefold() for name in pairs.values()]
+    if len(destinations) != len(set(destinations)):
+        raise ValueError("Package destinations collide.")
     files = []
     for source, destination in sorted(pairs.items()):
         path = root / source
@@ -33,7 +42,14 @@ def inventory(root):
             raise ValueError(f"Missing or linked source: {source}")
         files.append({"source": source, "destination": destination,
                       "sha256": digest(path), "bytes": path.stat().st_size})
+    commit = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
+                            capture_output=True, text=True)
+    status = subprocess.run(["git", "-C", str(root), "status", "--porcelain"],
+                            capture_output=True, text=True)
     return {"schema": SCHEMA, "files": files, "source_root": str(root),
+            "source_commit": commit.stdout.strip() if commit.returncode == 0 else None,
+            "source_dirty": bool(status.stdout.strip()) if status.returncode == 0 else None,
+            "total_bytes": sum(item["bytes"] for item in files),
             "copied_data": False, "copied_caches": False, "research_executed": False}
 
 

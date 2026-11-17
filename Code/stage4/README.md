@@ -20,7 +20,7 @@ A stronger replacement can improve a fused model without establishing complement
 | [Grouped stability](grouped_stability.ipynb) | Do the original and mRNA-FM comparisons survive testing on unseen exact nucleotide sequences? Approved 36-fit protocol with a separate execution path; no grouped results yet. |
 | [Half-life and translation efficiency](halflife_translation_efficiency.ipynb) | Does extra RNA context help, and does protein add value once that context is available? Existing pooled comparisons and separately enabled matched follow-ups. |
 | [Auxiliary correction, gates and attention](#proposed-tests-of-fusion-explanations) | Which controlled change could explain or improve another representation's contribution? Separate preparation notebooks and synthetic checks; no research runs yet. |
-| [Transcript-region correspondence](region_aware_fusion.ipynb) | Does mapping protein features only to annotated coding regions help beyond simpler controls? Prepared A.6 pipeline with a new matched cohort and token caches; no research runs yet. |
+| [Transcript-region correspondence](region_aware_fusion.ipynb) | Does mapping protein features only to annotated coding regions help beyond simpler controls? Implemented A.6 pipeline for a matched cohort and new token caches; preparation, extraction and training have not run. |
 | [Molecular-partner tasks](#conditional-outlook-transfer-to-other-molecular-relationships) | Do selected explanations transfer to RNA–protein or protein–ligand pairs? Conditional dataset and evaluation work. |
 
 Encoders reading a common coding sequence can expose different predictive patterns without adding an independently measured molecule. Genomic flanks and untranslated regions can instead supply sequence context absent from a translated protein. Neither guarantees a fusion gain. Cross-notebook differences can also change datasets, targets, predictors or evaluation, so they cannot isolate one biological cause.
@@ -86,7 +86,7 @@ The latter two use validation-selected ridge penalties and retained test predict
 
 The Newton swap batch supplies the three independent training seeds and saved paired reports; its seed variation remains distinct from uncertainty over test-sequence groups. Those completed runs retain the supplied partitions: an unseen test subset or grouped bootstrap does not remove training overlap.
 
-The [grouped-stability experiment](grouped_stability.ipynb) implements the agreed follow-up to [Mina's section A.1](../../docs/Biological_Fusion_Plan.docx). It keeps identical nucleotide sequences together in a fixed 70/15/15 partition and compares the original BLF encoder combination with its mRNA-FM replacement. Six unique single-input controls and three fusion methods for each combination give 12 fits per training seed, 36 across seeds 0/1/2. Targets, existing observations and frozen caches are retained; prediction heads start fresh. Split seed 42 and this bounded panel are project choices, not values prescribed by Mina. The [runbook](RUNBOOK.md#run-the-grouped-stability-comparison) separates reading, fitting and reporting.
+The [grouped-stability experiment](grouped_stability.ipynb) implements the agreed follow-up to [section A.1 of the advisor protocol](../../docs/Biological_Fusion_Plan.docx). It keeps identical nucleotide sequences together in a fixed 70/15/15 partition and compares the original BLF encoder combination with its mRNA-FM replacement. Six unique single-input controls and three fusion methods for each combination give 12 fits per training seed, 36 across seeds 0/1/2. Targets, existing observations and frozen caches are retained; prediction heads start fresh. Split seed 42 and this bounded panel are project choices, not values prescribed by the advisor. The [runbook](RUNBOOK.md#run-the-grouped-stability-comparison) separates reading, fitting and reporting.
 
 This is an implemented protocol, not a completed result. Exact-sequence grouping does not establish family-, species- or condition-held-out generalization; near-identical clustering remains separate. The new partition changes training and test membership, so an old-to-new score difference is a split-sensitivity result, not an isolated measurement of leakage inflation. The panel was informed by existing test findings and remains exploratory.
 
@@ -94,7 +94,7 @@ Unfinished reference repeats remain with their [Stage 3 methods](../stage3/READM
 
 ## Proposed tests of fusion explanations
 
-[Mina's revised protocol](../../docs/Biological_Fusion_Plan.docx) supplies the comparisons below. Four notebooks now implement their preparation, with synthetic verification but no research runs or findings. Partner-task extensions remain conditional. The starting point is frozen encoders with trainable prediction and fusion components.
+[the advisor's revised protocol](../../docs/Biological_Fusion_Plan.docx) supplies the comparisons below. Four notebooks now implement their preparation, with synthetic verification but no research runs or findings. Partner-task extensions remain conditional. The starting point is frozen encoders with trainable prediction and fusion components.
 
 ### Can auxiliary features correct the anchor's errors?
 
@@ -110,11 +110,11 @@ Compare auxiliaries separately and jointly, with shuffled-input and parameter-ma
 
 If an auxiliary representation helps under a controlled comparison, a gate should not be assumed to retain that contribution. The existing BLF gate assigns one weight per modality per sequence. Compare its softmax competition with and without entropy regularization, independent sigmoid gates, and mean-plus-max summaries. Record per-example weights alongside prediction: a small weight alone does not establish harmful suppression or biological importance. Control feature-scale changes when comparing gate normalizations.
 
-The contribution may also vary along a sequence. Compare sequence-wide gates with position-wise weights and a nongated positional model. The approved nongated control keeps the full-width half-sum of projected features and adds a rank-2 affine update. Its 5,402 update parameters nearly match the joint gates' 5,403; equal counts do not imply equal expressive capacity. The notebook retains the count/rank preview and labels the earlier bottleneck control as historical. Keep encoders, alignment and the downstream predictor fixed. The [token-cache route](../stage3/blf_token_embeddings.ipynb) supplies a starting point; equal widths do not establish correspondence, and codon pooling changes information. CoV-Vac's translated fragment has no established biological reading frame. Gate patterns can motivate perturbations, not establish local biological mechanisms.
+The contribution may also vary along a sequence. Compare joint-input sequence and position gates with the same affine scorers, alongside a nongated positional model. The nongated control keeps the full-width half-sum of projected features and adds a rank-2 affine update. Its 5,402 update parameters nearly match the joint gates' 5,403; equal counts do not imply equal expressive capacity. The older BLF sequence gates remain separate comparisons because their scorers also differ. Keep encoders, alignment and the downstream predictor fixed. The [token-cache route](../stage3/blf_token_embeddings.ipynb) supplies a starting point; equal widths do not establish correspondence, and codon pooling changes information. CoV-Vac's translated fragment has no established biological reading frame. Gate patterns can motivate perturbations, not establish local biological mechanisms.
 
 ### Should attention retrieve auxiliary information while retaining the anchor?
 
-Let anchor positions query auxiliary streams, potentially of different lengths, then add gated updates through a skip connection. Compare anchor-only, concatenation, ordinary attention, anchor-skip attention and sequence- versus position-gated updates under the common training budget, while reporting capacity differences. Match the skip when isolating attention's contribution.
+Let anchor positions query auxiliary streams, potentially of different lengths, then add gated updates through a skip connection. Compare anchor-only, concatenation, ordinary attention, anchor-skip attention and sequence- versus position-gated updates under the common training budget. An additional nonlinear concatenation control retains the anchor skip and nearly matches the gated-attention parameter count, testing whether attention helps beyond similarly sized local processing. Parameter matching does not equalize expressive capacity or runtime.
 
 BLF's joint-context attention is a different computation. A skip retains a representation, not a guaranteed prediction score. After the correction, gate and attention comparisons, an optional experiment could compare raw auxiliary embeddings with their reconstruction residuals and both together. Those feature residuals differ from target errors; they are not necessarily uniquely biological information.
 
@@ -133,6 +133,8 @@ Retain nucleotide-resolution RNA and map protein features to annotated CDS posit
 
 Compare native-resolution with codon-pooled RNA and true with appropriately permuted masks. Supplying a mask as a feature does not enforce exclusion: multiply the protein-update gate by the CDS mask to block direct updates outside CDS. This tests correspondence, not whether proteins can regulate UTRs. These are new token-level experiments; existing pooled probes cannot recover positions lost through averaging.
 
+Within local gating, compare sequence and position gates with a full-width nongated control. Within attention, hold CDS update availability fixed while comparing unit, sequence and position weights. Select the strongest single on seed-0 validation across the RNA-only configurations and native protein-only, then hold that choice across training seeds. RNA remains the specified attention anchor even if protein wins that baseline comparison. The [control plan](../../docs/research-execution-plan.md#control-repairs-before-newton) records these adaptations, fit counts and optional comparisons.
+
 ### Conditional outlook: transfer to other molecular relationships
 
 #### RNA–protein binding
@@ -145,9 +147,9 @@ Protein–small-molecule pairs provide another transfer test. Select an assay en
 
 ### Organize the preparation notebooks around questions
 
-The four notebooks keep Mina's steps connected while giving each question its own settings, controls and results. Their supporting inspections test fold feasibility, control strength, capacity, contribution scales and region/window assumptions; they do not automatically revise the protocol. Position and attention-update gates now use Mina's joint-input affine sigmoid formulation. Source settings, agreed project choices and remaining control questions are distinguished in each notebook. They default to reading saved evidence; preparation, extraction, fitting, diagnostic inference and statistical reporting require separate switches. Implementation is not an observed finding. The [Newton recipe](../../execution/arcc/fusion_studies/README.md) prepares a source-only snapshot and points to existing inputs rather than copying caches.
+The four notebooks keep the advisor's steps connected while giving each question its own settings, controls and results. Supporting inspections examine fold feasibility, control strength, capacity, contribution scales and region/window assumptions. Position and attention-update gates use the protocol's joint-input affine sigmoid formulation; the notebooks distinguish those source requirements from the team's implemented control choices. They default to reading saved evidence, with separate switches for preparation, extraction, fitting, diagnostic inference and statistical reporting. The [Newton recipe](../../execution/arcc/fusion_studies/README.md) prepares a source-only snapshot and points to existing inputs rather than copying caches.
 
-| Project home or preparation notebook | Mina's protocol steps | Gantt task |
+| Project home or preparation notebook | the advisor's protocol steps | Gantt task |
 | --- | --- | --- |
 | Existing investigations and separate stability evaluation | 1: reliability and grouped evaluation | 24, 28, 41, 42 |
 | [Anchor correction](anchor_correction.ipynb) | 2: auxiliary target-error correction | 45 |
@@ -172,9 +174,7 @@ Select candidate gains, inputs, grouping rules, controls and tuning budgets befo
 
 ### Source and decision provenance
 
-The [unchanged advisor protocol](../../docs/Biological_Fusion_Plan.docx), supplied by Chase as Mina's notes, retains the full equations, controls and dataset candidates; its [source entry](../../docs/sources.md#minas-revised-biological-fusion-protocol) records reading scope. This guide connects those proposals to existing work without authorizing execution.
-
-The November 10 inspection found canonical seed-0 swaps complete but no canonical replacement seed-1/2 results. It also found no saved matched LucaOne/half-life follow-up or released-reference IsoFormer or Coupled Mamba prediction results. [Gantt/Details tasks 20/24/42/44](../../docs/Research_Project_Plan_Gantt.xlsx) retain the relevant coverage and limitations; these are dated observations, not live progress. Mina's unnamed candidate gains still need an explicit shortlist.
+The [advisor protocol](../../docs/Biological_Fusion_Plan.docx) retains the original equations, controls and dataset candidates; its [source entry](../../docs/sources.md#minas-revised-biological-fusion-protocol) records attribution and reading scope. The [execution plan](../../docs/research-execution-plan.md#control-repairs-before-newton) identifies the selected panels and project-specific controls. Earlier result inventories remain in the [historical runbook](RUNBOOK.md#historical-execution-snapshots); current completed Newton findings are summarized above. Additional datasets and architecture comparisons remain conditional on their own question, inputs and evaluation design.
 
 
 ## Results and supporting files

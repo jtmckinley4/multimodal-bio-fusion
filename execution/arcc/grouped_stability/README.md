@@ -1,8 +1,10 @@
 # Run the grouped-stability comparison on Newton
 
-This recipe prepares the [grouped-stability notebook](../../../Code/stage4/grouped_stability.ipynb) for the agreed 36-fit comparison: one exact-sequence-grouped split, two encoder combinations, twelve unique fits per training seed and seeds 0, 1 and 2. It changes the evaluation partition, not the encoder weights or the existing research results. The notebook owns the scientific settings and the distinction between Mina's requirements and the team's implementation choices.
+This recipe prepares the [grouped-stability notebook](../../../Code/stage4/grouped_stability.ipynb) for the agreed 36-fit comparison: one exact-sequence-grouped split, two encoder combinations, twelve unique fits per training seed and seeds 0, 1 and 2. It changes the evaluation partition, not the encoder weights or the existing research results. The notebook owns the scientific settings and the distinction between the advisor's requirements and the team's implementation choices.
 
-Preparation and synthetic checks do not establish that this experiment has run. The recipe creates no split or research result until its separately authorized notebook operation is executed. Use the [common ARCC guide](../README.md) for allocation, environment, transfer and evidence-retention practices. These relative documentation links navigate the checkout; the prepared workspace places this README and the runtime entrypoints at its root, with the notebook under `Code/stage4/`.
+The implementation and synthetic checks are complete; the grouped evaluation has not run. Split preparation and fitting are explicit notebook operations. Use the [common ARCC guide](../README.md) for allocation, environment, transfer and evidence-retention practices. These relative documentation links navigate the checkout; the prepared workspace places this README and the runtime entrypoints at its root, with the notebook under `Code/stage4/`.
+
+The [run and transfer checklist](RUN_CHECKLIST.md) gives the current cache location, environment checks, seed-0 resource review, repeat-job dependencies and evidence-return steps. It keeps submission separate from preparation.
 
 ## Prepare a separate workspace
 
@@ -12,7 +14,7 @@ From the maintained repository, inspect the source inventory without copying fil
 python -B execution/arcc/grouped_stability/prepare.py --source-root .
 ```
 
-After reviewing it, add `--destination '../ARCC Grouped Stability'` to create a new sibling execution workspace. Existing destinations, symlinks/junctions and overlap with a declared cache root are refused. The original `ARCC Execution/` and its completed swap results stay unchanged. Failed preparation leaves an incomplete directory for inspection; the completion manifest is written only after every copied source is verified.
+The current prepared workspace is the sibling `ARCC Grouped Stability 2026-11-17`. For a future source revision, add `--destination <new sibling directory>` after reviewing the inventory. Existing destinations, symlinks/junctions and overlap with a declared cache root are refused. The original `ARCC Execution/` and its completed swap results stay unchanged. Failed preparation leaves an incomplete directory for inspection; the completion manifest is written only after every copied source is verified.
 
 The package contains this notebook, shared Python source, the stability CSV, execution files and synthetic checks. It excludes old fit results, historical selection inputs, embedding arrays, model weights and recovery checkpoints. `arcc_package_support.py` and `arcc_execution_support.py` are byte-identical, hash-bound copies of the existing encoder-swap preparation/launcher modules; only their generic file verification, path protection, locking, record publication and live-text helpers are reused. Their swap-specific selection and execution methods are not called.
 
@@ -24,7 +26,7 @@ python -B -m unittest discover -s tests -p 'test_arcc_grouped_stability.py'
 python -B -m unittest discover -s tests -p 'test_grouped_stability.py'
 ```
 
-Verification checks source/input bytes without starting a notebook kernel or reading cache arrays. Tests use invented inputs and mocked execution interfaces. The copied requirements list is the existing provisional dependency specification, not an environment lock: use the installed Newton environment and compare its recorded versions instead of upgrading automatically.
+Verification checks source/input bytes without starting a notebook kernel or reading cache arrays. Adding `--kernel biofusion-arcc` also checks that the registered kernel uses the activated Python interpreter; both Slurm wrappers require this check. Tests use invented inputs and mocked execution interfaces. The copied requirements list is the existing provisional dependency specification, not an environment lock: use the installed Newton environment and compare its recorded versions instead of upgrading automatically.
 
 ## Reuse the caches already on Newton
 
@@ -42,7 +44,7 @@ Set `ARCC_PROJECT_ROOT` to the new prepared workspace, together with `ARCC_ANACO
 | `newton_grouped_stability.sbatch.example` | Execute twelve fits for one seed, supplied as `ARCC_SEED=0`, `1` or `2`, or array index 0–2. |
 | `batches.tsv` | The declared three-seed, 36-fit workload; neither submission nor completion evidence. |
 
-Supply account, partition, GPU type, CPU/RAM/time limits and allowed concurrency through reviewed `sbatch` options. No training-duration estimate or allocation budget is implied by the templates. One job per seed runs its twelve fits sequentially; the three jobs may run concurrently within the approved allocation. No out-of-fold correction fits belong to this batch.
+Supply account, partition, GPU type, CPU/RAM/time limits and allowed concurrency through reviewed `sbatch` options. No training-duration estimate or allocation budget is implied by the templates. One job per seed runs its twelve fits sequentially. Review seed 0's resource use before expanding to seeds 1 and 2; their fits are independent, but later baseline selection requires seed-0 validation results and the paired report requires all 36 fits. No out-of-fold correction fits belong to this batch.
 
 The Python command inside an approved allocation is:
 

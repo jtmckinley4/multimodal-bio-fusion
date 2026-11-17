@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, RandomSampler
+from torch.utils.data import DataLoader, Dataset, RandomSampler
 
 from .. import mrnabench
 from . import controlled_models, region_experiment as inputs, run_identity, train
@@ -23,9 +23,14 @@ SPLITS = ("train", "val", "test")
 CORE = (("rna_only", "true"), ("concat", "true"), ("concat_mask", "true"),
         ("concat_mask", "permuted"), ("position_gate", "true"),
         ("position_gate", "permuted"), ("attention_cds", "true"),
-        ("attention_cds", "permuted"))
+        ("attention_cds", "permuted"), ("sequence_gate", "true"),
+        ("position_control_residual", "true"), ("attention_cds_ungated", "true"),
+        ("attention_cds_sequence", "true"))
 OPTIONAL = (("attention_uniform", "true"), ("position_control", "true"),
             ("position_control", "permuted"))
+ATTENTION_MODES = {"attention_cds": "position_sigmoid", "attention_uniform": "skip",
+                   "attention_cds_ungated": "skip", "attention_cds_sequence": "sequence_sigmoid"}
+LOCAL_GATES = ("position_gate", "sequence_gate")
 DIAGNOSTIC_DEFINITION = {
     "version": 2,
     "population": "test rows in saved fit order; true biological regions",
@@ -44,14 +49,24 @@ class FitSpec:
 
     @property
     def key(self):
+        if self.method == "protein_only":
+            return "esm2_8m__native__protein_only"
         return f"{self.rna_encoder}__{self.grid}__{self.method}__{self.mask}"
 
 
 def fit_panel(*, include_optional=False):
     arms = CORE + OPTIONAL if include_optional else CORE
-    return tuple(FitSpec(encoder, grid, method, mask)
+    paired = tuple(FitSpec(encoder, grid, method, mask)
                  for encoder in ("rnafm", "rinalmo") for grid in ("native", "codon_pool")
                  for method, mask in arms)
+    # One native protein single per dataset/seed, independent of RNA/grid choices.
+    return (*paired, FitSpec("none", "native", "protein_only", "none"))
+
+
+def required_encoders(spec):
+    if spec.method == "protein_only":
+        return ("esm2_8m",)
+    return (spec.rna_encoder,) if spec.method == "rna_only" else (spec.rna_encoder, "esm2_8m")
 
 
 def _interval(cohort, recipient, donor):
@@ -164,23 +179,24 @@ class RegionModel(nn.Module):
     def __init__(self, widths, method, settings, channels):
         super().__init__()
         settings = _settings(settings)
-        if method not in {name for name, _ in CORE + OPTIONAL}:
+        if method not in {name for name, _ in CORE + OPTIONAL} | {"protein_only"}:
             raise ValueError("Unknown A6 method")
         self.method, self.width = method, settings["projection_width"]
         self.collect_norms = False
         self.head = TextCNN(self.width, 1, channels=channels)
-        if method in ("attention_cds", "attention_uniform"):
+        if method in ATTENTION_MODES:
             # Legacy key attention_uniform means ungated learned attention:
             # update coefficients are one; token-attention weights still learn.
             self.attention = controlled_models.AnchorAttentionFusion(
-                widths, anchor="rna", mode="position_sigmoid" if method == "attention_cds" else "skip",
+                widths, anchor="rna", mode=ATTENTION_MODES[method],
                 **{key: settings[key] for key in ("projection_width", "scorer_width", "n_heads",
                                                 "dropout", "projection_activation", "projection_norm", "update_norm")})
             return
-        names = ("rna",) if method == "rna_only" else ("rna", "prot")
+        names = (("prot",) if method == "protein_only" else
+                 ("rna",) if method == "rna_only" else ("rna", "prot"))
         self.project = nn.ModuleDict({name: nn.Sequential(nn.Linear(widths[name], self.width), nn.Tanh())
                                       for name in names})
-        if method == "rna_only":
+        if method in ("rna_only", "protein_only"):
             return
         self.with_mask = method != "concat"
         joined_width = 2 * self.width + int(self.with_mask)
@@ -189,14 +205,23 @@ class RegionModel(nn.Module):
             self.mix = nn.Sequential(nn.Linear(joined_width, rank), nn.Linear(rank, self.width))
         else:
             self.mix = nn.Linear(joined_width, self.width)
-        if method == "position_gate":
+        if method in LOCAL_GATES:
             self.gate = nn.ModuleDict({m: nn.Linear(2 * self.width, 1) for m in names})
+        if method == "position_control_residual":
+            # Full-width bypass; only the affine adjustment is rank one.
+            self.adjust_down = nn.Linear(2 * self.width, 1)
+            self.adjust_up = nn.Linear(1, 2 * self.width, bias=False)
+            nn.init.zeros_(self.adjust_up.weight)
 
     def features(self, batch):
+        if self.method == "protein_only":
+            valid = batch.masks["prot"]
+            features = self.project["prot"](batch.streams["prot"]).masked_fill(~valid.unsqueeze(-1), 0)
+            return features, valid, {}
         real = batch.masks["rna"]
-        if self.method in ("attention_cds", "attention_uniform"):
+        if self.method in ATTENTION_MODES:
             allowed = ({"prot": batch.region & batch.masks["prot"]}
-                       if self.method == "attention_cds" else None)
+                       if self.method != "attention_uniform" else None)
             self.attention.collect_norms = self.collect_norms
             features, aux = self.attention(batch.streams, batch.masks, availability=allowed)
             return features.masked_fill(~real.unsqueeze(-1), 0), real, aux
@@ -207,18 +232,28 @@ class RegionModel(nn.Module):
         protein = self.project["prot"](batch.streams["prot"])
         protein = protein.masked_fill(~batch.masks["prot"].unsqueeze(-1), 0)
         aux = {}
-        if self.method == "position_gate":
+        if self.method in LOCAL_GATES:
             projected = {"rna": rna, "prot": protein}
             joint = torch.cat((rna, protein), dim=-1)
+            if self.method == "sequence_gate":
+                joint = controlled_models.masked_summary(joint, real, reduction="mean")[:, None, :]
             gates = {name: torch.sigmoid(self.gate[name](joint)).squeeze(-1) for name in projected}
+            gates = {name: value.expand_as(real) for name, value in gates.items()}
             gates["rna"] = gates["rna"].masked_fill(~real, 0)
             gates["prot"] = gates["prot"].masked_fill(~(batch.region & batch.masks["prot"]), 0)
             rna, protein = rna * gates["rna"].unsqueeze(-1), protein * gates["prot"].unsqueeze(-1)
             aux = {"gates": torch.stack([gates["rna"], gates["prot"]], -1),
-                   "gate_kind": "region_position_sigmoid", "gate_modalities": ("rna", "prot")}
+                   "gate_kind": ("region_position_sigmoid" if self.method == "position_gate"
+                                 else "region_sequence_sigmoid"), "gate_modalities": ("rna", "prot")}
             if self.collect_norms:
                 norms = torch.stack([value.detach().norm(dim=-1) for value in projected.values()], -1)
                 aux.update(feature_norms=norms, contribution_norms=norms * aux["gates"].detach())
+        if self.method == "position_control_residual":
+            joint = torch.cat((rna, protein), dim=-1)
+            adjusted = .5 * joint + self.adjust_up(self.adjust_down(joint))
+            rna, protein = adjusted.split(self.width, dim=-1)
+            rna = rna.masked_fill(~real.unsqueeze(-1), 0)
+            protein = protein.masked_fill(~(batch.region & batch.masks["prot"]).unsqueeze(-1), 0)
         pieces = [rna, protein]
         if self.with_mask:
             pieces.append(batch.region.to(rna.dtype).unsqueeze(-1))
@@ -247,6 +282,8 @@ class RegionStreams:
 
     @property
     def widths(self):
+        if self.spec.method == "protein_only":
+            return {"prot": self.caches.caches["esm2_8m"].width}
         keys = {"rna": self.spec.rna_encoder}
         if self.spec.method != "rna_only":
             keys["prot"] = "esm2_8m"
@@ -261,6 +298,52 @@ def regression_collate(rows):
     return batch
 
 
+class NativeProteinDataset(Dataset):
+    """Read native protein residues on the common cohort, without RNA coordinates."""
+
+    def __init__(self, cohort, caches, indices):
+        if ("esm2_8m" not in caches.caches or
+                caches.plans["esm2_8m"].identity["cohort_sha256"] != cohort.identity["sha256"]):
+            raise ValueError("Protein cache must belong to the common ordered cohort")
+        self.cohort, self.caches = cohort, caches
+        self.indices = np.asarray(indices, dtype=np.int64)
+        if (self.indices.ndim != 1 or len(set(self.indices)) != len(self.indices)
+                or np.any(self.indices < 0) or np.any(self.indices >= len(cohort.frame))):
+            raise ValueError("Protein dataset requires unique valid cohort positions")
+
+    def __len__(self):
+        return len(self.indices)
+
+    def __getitem__(self, item):
+        row = int(self.indices[item])
+        length = len(self.cohort.layouts[row].protein)
+        return (self.caches.row_features("esm2_8m", row, length),
+                self.cohort.labels[row, 0], self.cohort.row_ids[row])
+
+
+def protein_collate(rows):
+    """Pad native residues only; no RNA lengths, region flags or RNA features."""
+    if not rows:
+        raise ValueError("Cannot collate an empty protein batch")
+    lengths = torch.tensor([len(features) for features, _, _ in rows])
+    if torch.any(lengths < 1):
+        raise ValueError("The matched cohort requires at least one protein residue")
+    width, longest = rows[0][0].shape[1], int(lengths.max())
+    values = torch.zeros(len(rows), longest, width, dtype=torch.float32)
+    valid = torch.arange(longest)[None, :] < lengths[:, None]
+    for index, (features, _, _) in enumerate(rows):
+        if features.shape != (int(lengths[index]), width) or not np.isfinite(features).all():
+            raise ValueError("Protein residues must have finite features with a common width")
+        values[index, :lengths[index]] = torch.as_tensor(features, dtype=torch.float32)
+    labels = torch.tensor([row[1] for row in rows], dtype=torch.float32)
+    if not torch.isfinite(labels).all():
+        raise ValueError("Protein targets must be finite")
+    # Empty coordinates keep this existing batch container portable; the model
+    # uses only prot and its validity mask. Region diagnostics do not apply.
+    return inputs.RegionBatch({"prot": values}, {"prot": valid}, torch.zeros_like(valid),
+                              lengths, labels, tuple(row[2] for row in rows), ())
+
+
 def make_loaders(streams, config):
     """Validate a direct call, then build loaders without rehashing each partition."""
     validate_preparation(streams.cohort, streams.preparation)
@@ -271,13 +354,17 @@ def _make_loaders(streams, config):
     """Internal path after this operation has validated the shared cohort once."""
     result = {}
     for name in SPLITS:
-        dataset = inputs.RegionDataset._from_validated_cohort(
-            streams.cohort, streams.caches, rna_encoder=streams.spec.rna_encoder, grid=streams.spec.grid,
-            indices=streams.preparation["positions"][name], include_protein=streams.spec.method != "rna_only",
-            region_intervals=(streams.preparation["permuted_intervals"] if streams.spec.mask == "permuted" else None))
+        protein_only = streams.spec.method == "protein_only"
+        if protein_only:
+            dataset = NativeProteinDataset(streams.cohort, streams.caches, streams.preparation["positions"][name])
+        else:
+            dataset = inputs.RegionDataset._from_validated_cohort(
+                streams.cohort, streams.caches, rna_encoder=streams.spec.rna_encoder, grid=streams.spec.grid,
+                indices=streams.preparation["positions"][name], include_protein=streams.spec.method != "rna_only",
+                region_intervals=(streams.preparation["permuted_intervals"] if streams.spec.mask == "permuted" else None))
         result[name] = DataLoader(dataset, batch_size=config.batch_size, shuffle=name == "train",
                                   generator=torch.Generator().manual_seed(config.seed), num_workers=0,
-                                  collate_fn=regression_collate)
+                                  collate_fn=protein_collate if protein_only else regression_collate)
     return result
 
 
@@ -287,7 +374,8 @@ def build_model(streams, variant, config, *, settings):
 
 
 def _validate_model_request(streams, variant, config):
-    if (variant != streams.spec.method or config.entropy_lambda != 0
+    if (streams.spec not in fit_panel(include_optional=True) or
+            variant != streams.spec.method or config.entropy_lambda != 0
             or type(config.channels) is not int or config.channels != 100):
         raise ValueError("A6 requires its declared method, no entropy and the common 100-channel head")
     if torch.get_default_dtype() != torch.float32:
@@ -304,19 +392,21 @@ def _parameter_counts(streams, config, settings):
     width, channels, method = settings["projection_width"], config.channels, streams.spec.method
     prediction = sum(channels * (width * kernel + 1) for kernel in (3, 4, 5)) + channels * 3 + 1
     fusion = sum((value + 1) * width for value in streams.widths.values())
-    if method in ("attention_cds", "attention_uniform"):
+    if method in ATTENTION_MODES:
         fusion += 4 * width * width + 4 * width  # Q/K/V and output projections, with biases.
         fusion += 2 * width if settings["update_norm"] == "layer" else 0
-        fusion += 2 * width + 1 if method == "attention_cds" else 0
-    elif method != "rna_only":
+        fusion += 2 * width + 1 if ATTENTION_MODES[method].endswith("sigmoid") else 0
+    elif method not in ("rna_only", "protein_only"):
         joined = 2 * width + int(method != "concat")
         if method == "position_control":
             rank = settings["control_bottleneck"]
             fusion += (joined + 1) * rank + (rank + 1) * width
         else:
             fusion += (joined + 1) * width
-        if method == "position_gate":
+        if method in LOCAL_GATES:
             fusion += 2 * (2 * width + 1)
+        if method == "position_control_residual":
+            fusion += 4 * width + 1  # (2d -> 1 with bias) + (1 -> 2d without bias).
     return {"total": prediction + fusion, "prediction": prediction}
 
 
@@ -349,7 +439,7 @@ def _make_identity(streams, config, settings, cache_records):
     if streams.spec not in fit_panel(include_optional=True):
         raise ValueError("Fit is outside the declared A6 panel")
     settings = _settings(settings)
-    required = {streams.spec.rna_encoder} | ({"esm2_8m"} if streams.spec.method != "rna_only" else set())
+    required = set(required_encoders(streams.spec))
     if set(cache_records) != required:
         raise ValueError("Cache evidence must identify exactly the streams this fit uses")
     for key, record in cache_records.items():
@@ -376,14 +466,23 @@ def _make_identity(streams, config, settings, cache_records):
                     "widths": streams.widths, "parameter_counts": counts, "implementation_sha256": sources,
                     "numerics": {"parameters": "float32", "inputs": "float32", "amp": False},
                     "textcnn": {"kernels": [3, 4, 5], "channels": 100, "dropout": .2}}
-    if streams.spec.method in ("position_gate", "attention_cds"):
+    if streams.spec.method in LOCAL_GATES + ("attention_cds", "attention_cds_sequence"):
         model_record["gate"] = {
             "scorer": "affine_sigmoid", "scorer_width_active": False,
-            "input": ("joint_projected_rna_protein" if streams.spec.method == "position_gate"
+            "input": ("joint_projected_rna_protein" if streams.spec.method in LOCAL_GATES
                       else "anchor_and_all_auxiliary_updates"),
-            "readout": ("gated_concat_mask_mixer" if streams.spec.method == "position_gate"
+            "readout": ("gated_concat_mask_mixer" if streams.spec.method in LOCAL_GATES
                         else "anchor_plus_gated_updates"),
         }
+    if streams.spec.method in ("sequence_gate", "attention_cds_sequence"):
+        model_record["gate"]["resolution"] = "masked_mean_joint_features_then_broadcast"
+    if streams.spec.method == "position_control_residual":
+        model_record["control"] = {"operation": "half_concat_plus_rank_one_affine_update",
+                                   "adjustment_parameters": 4 * settings["projection_width"] + 1,
+                                   "up_bias": False, "up_initialization": "zero",
+                                   "masks_reapplied": "rna_validity_and_region_intersect_protein_availability"}
+    if streams.spec.method == "protein_only":
+        model_record["input_policy"] = "native_protein_residues_only_on_common_cohort"
     identity = run_identity.make_identity(benchmark=streams.key, variant=streams.spec.method, config=config,
                                           inputs=inputs_record, model=model_record, loader=_loader_record(config))
     return identity
@@ -400,16 +499,20 @@ def validate_loaders(streams, config, loaders):
     for name, loader in loaders.items():
         expected = streams.preparation["positions"][name]
         dataset = loader.dataset
-        if (type(dataset) is not inputs.RegionDataset or dataset.cohort is not streams.cohort
+        protein_only = streams.spec.method == "protein_only"
+        expected_type = NativeProteinDataset if protein_only else inputs.RegionDataset
+        expected_collate = protein_collate if protein_only else regression_collate
+        if (type(dataset) is not expected_type or dataset.cohort is not streams.cohort
                 or dataset.caches is not streams.caches or dataset.indices.tolist() != expected
-                or dataset.rna_encoder != streams.spec.rna_encoder or dataset.grid != streams.spec.grid
-                or dataset.include_protein != (streams.spec.method != "rna_only")
                 or loader.batch_size != config.batch_size or loader.num_workers != 0
-                or loader.collate_fn is not regression_collate or loader.drop_last):
+                or loader.collate_fn is not expected_collate or loader.drop_last):
             raise ValueError(f"{name}: loader differs from declared rows, inputs or batch settings")
         desired = streams.preparation["permuted_intervals"] if streams.spec.mask == "permuted" else None
-        if dataset.region_intervals != desired:
-            raise ValueError("Loader region-mask policy differs")
+        if not protein_only:
+            if (dataset.rna_encoder != streams.spec.rna_encoder or dataset.grid != streams.spec.grid
+                    or dataset.include_protein != (streams.spec.method != "rna_only")
+                    or dataset.region_intervals != desired):
+                raise ValueError("Loader region-mask policy or declared input differs")
         expected_sampler = "RandomSampler" if name == "train" else "SequentialSampler"
         if type(loader.sampler).__name__ != expected_sampler or loader.generator.initial_seed() != config.seed:
             raise ValueError("Loader ordering or random seed differs")
@@ -450,7 +553,7 @@ def run_fit(streams, config, settings, output_dir, device, *, producer, log=prin
     """Reuse exact completed results or train once with checkpoint/RNG recovery."""
     validate_preparation(streams.cohort, streams.preparation)
     records = {key: run_identity.cache_record(streams.caches.caches[key].cache_dir)
-               for key in ({streams.spec.rna_encoder} | ({"esm2_8m"} if streams.spec.method != "rna_only" else set()))}
+               for key in required_encoders(streams.spec)}
     identity = _make_identity(streams, config, settings, records)
     destination = Path(output_dir) / streams.spec.key
     path = destination / f"seed{config.seed}.json"
@@ -533,11 +636,11 @@ def read_diagnostics(fit_path):
             or not isinstance(saved.get("producer"), dict) or not saved["producer"]):
         raise ValueError("Saved diagnostics lack complete rows or producer evidence")
     required = {"fused_norm"}
-    if result.variant == "position_gate":
+    if result.variant in LOCAL_GATES:
         required |= {"gates", "feature_norms", "contribution_norms"}
-    elif result.variant in ("attention_cds", "attention_uniform"):
+    elif result.variant in ATTENTION_MODES:
         required |= {"anchor_norm", "raw_update_norms", "update_norms", "update_weights"}
-        if result.variant == "attention_cds":
+        if ATTENTION_MODES[result.variant].endswith("sigmoid"):
             required.add("gates")
     row_ids = []
     for row in rows:
@@ -577,9 +680,11 @@ def collect_diagnostics(streams, config, settings, output_dir, device, *, produc
     Position means are per transcript; they are descriptive, not causal importance.
     The permuted control never changes the biological regions used for this report.
     """
+    if streams.spec.method == "protein_only":
+        raise ValueError("Native protein-only has no RNA-region diagnostic; use its saved predictions")
     validate_preparation(streams.cohort, streams.preparation)
     records = {key: run_identity.cache_record(streams.caches.caches[key].cache_dir)
-               for key in ({streams.spec.rna_encoder} | ({"esm2_8m"} if streams.spec.method != "rna_only" else set()))}
+               for key in required_encoders(streams.spec)}
     identity = _make_identity(streams, config, settings, records)
     fit_path = Path(output_dir) / streams.spec.key / f"seed{config.seed}.json"
     result = read_fit(fit_path, expected_identity=identity)
@@ -666,7 +771,11 @@ def _diagnostic_rows(model, loader, cohort, device):
                     for diagnostic in ("gates", "update_weights", "feature_norms", "contribution_norms",
                                        "anchor_norm", "raw_update_norms", "update_norms", "fused_norm"):
                         if diagnostic in aux:
-                            matrix = aux[diagnostic][batch_index, :len(spans)].cpu().numpy()
+                            value = aux[diagnostic]
+                            if diagnostic == "gates" and value.ndim == 2:
+                                # Sequence-level gate, constant on real RNA positions.
+                                value = value[:, None, :].expand(-1, features.shape[1], -1)
+                            matrix = value[batch_index, :len(spans)].cpu().numpy()
                             values[diagnostic] = matrix[select].mean(axis=0).tolist() if select.any() else None
                     row["regions"][name] = values
                 summaries.append(row)
@@ -681,7 +790,11 @@ def comparisons(panel):
         for grid in ("native", "codon_pool"):
             lookup = lambda method, mask="true": by[(encoder, grid, method, mask)]
             for label, first, second in (("B-A", "concat", "rna_only"), ("C-B", "concat_mask", "concat"),
-                                         ("D-C", "position_gate", "concat_mask"), ("E-D", "attention_cds", "position_gate")):
+                                         ("D-C", "position_gate", "concat_mask"), ("E-D", "attention_cds", "position_gate"),
+                                         ("D-position-sequence", "position_gate", "sequence_gate"),
+                                         ("D-position-nongated", "position_gate", "position_control_residual"),
+                                         ("E-position-sequence", "attention_cds", "attention_cds_sequence"),
+                                         ("E-position-ungated", "attention_cds", "attention_cds_ungated")):
                 contrasts.append((f"{encoder}/{grid}/{label}", lookup(first), lookup(second)))
             for method in ("concat_mask", "position_gate", "attention_cds"):
                 contrasts.append((f"{encoder}/{grid}/{method}/true-permuted", lookup(method), lookup(method, "permuted")))
@@ -689,6 +802,28 @@ def comparisons(panel):
             contrasts.append((f"{encoder}/{method}/{mask}/native-pooled",
                               by[(encoder, "native", method, mask)], by[(encoder, "codon_pool", method, mask)]))
     return contrasts
+
+
+def validation_selected_single(fits, panel):
+    """Select once on seed-0 validation from every declared single, never a subset."""
+    candidates = tuple(spec for spec in panel if spec.method in ("rna_only", "protein_only"))
+    expected = tuple(spec for spec in fit_panel() if spec.method in ("rna_only", "protein_only"))
+    if candidates != expected:
+        raise ValueError("Strongest-single selection requires all four RNA configurations and native protein")
+    rows = []
+    for spec in candidates:
+        results = fits.get(spec.key, [])
+        if len(results) != 3 or [r.config.get("seed") for r in results] != [0, 1, 2]:
+            raise ValueError("Every single candidate requires seeds 0, 1 and 2 in order")
+        score = results[0].val_score
+        if type(score) not in (int, float) or not np.isfinite(score):
+            raise ValueError("Single selection requires finite seed-0 validation scores")
+        rows.append({"fit": spec.key, "validation": score})
+    # Stable max preserves the declared panel order for exact ties.
+    selected = max(rows, key=lambda row: row["validation"])["fit"]
+    return {"selection_seed": 0, "selected": selected, "candidates": rows,
+            "tie_break": "declared panel order", "held_fixed_for_training_seeds": [0, 1, 2],
+            "attention_anchor": "rna"}
 
 
 def saved_comparisons(root, *, dataset_key, draws, bootstrap_seed, producer, run_analysis=False):
@@ -725,7 +860,11 @@ def saved_comparisons(root, *, dataset_key, draws, bootstrap_seed, producer, run
                 seen_encoders[key] = cache
             fits[spec.key].append(result)
             evidence[str(path.relative_to(directory))] = tokens_sha(path)
+    selection = validation_selected_single(fits, panel)
     requested = comparisons(panel)
+    requested += [(f"{spec.rna_encoder}/{spec.grid}/{spec.method}/{spec.mask}/best-single",
+                   spec.key, selection["selected"]) for spec in panel
+                  if spec.method not in ("rna_only", "protein_only")]
     # Keep older complete-map report descriptions intact when reading that evidence.
     resampling = ("recorded homology groups and unmapped-gene groups"
                   if preparation["cohort"]["unmapped_gene_policy"] == "gene" else "homology groups")
@@ -733,11 +872,13 @@ def saved_comparisons(root, *, dataset_key, draws, bootstrap_seed, producer, run
                "implementation_sha256": reference_implementation,
                "seeds": [0, 1, 2], "draws": draws, "bootstrap_seed": bootstrap_seed,
                "contrasts": [list(c) for c in requested], "metric": "Spearman",
+               "single_selection": selection,
                "resampling": f"{resampling}; average per-seed scores in each paired draw"}
-    path = directory / "reports" / "three_seed_core.json"
+    # The old eight-arm report remains historical, not a current complete panel.
+    path = directory / "reports" / "three_seed_controls_v2.json"
     if path.exists():
         saved = json.loads(path.read_text(encoding="utf-8"))
-        if saved.get("context") != context:
+        if saved.get("schema") != "region-three-seed-report.v2" or saved.get("context") != context:
             raise ValueError("Existing report differs; preserve it and select a separate study destination")
         return saved
     if not run_analysis:
@@ -770,7 +911,7 @@ def saved_comparisons(root, *, dataset_key, draws, bootstrap_seed, producer, run
         summary.append({**asdict(spec), "seed_scores": values, "mean": float(np.mean(values)),
                         "seed_sd": float(np.std(values, ddof=1)),
                         "parameters": fits[spec.key][0].extra_fields["identity"]["model"]["parameter_counts"]})
-    record = {"schema": "region-three-seed-report.v1", "context": context, "producer": producer,
+    record = {"schema": "region-three-seed-report.v2", "context": context, "producer": producer,
               "summary": summary, "contrasts": intervals}
     inputs._publish_once(path, record)
     return record

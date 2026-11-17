@@ -31,7 +31,7 @@ NOTEBOOK = "Code/stage4/grouped_stability.ipynb"
 DATASET = "datasets/mRNA_Stability.csv"
 RECIPE = "execution/arcc/grouped_stability/"
 RUNTIME = (
-    "README.md", "prepare.py", "run_grouped_stability.py", "batches.tsv",
+    "README.md", "RUN_CHECKLIST.md", "prepare.py", "run_grouped_stability.py", "batches.tsv",
     "newton_grouped_stability.sbatch.example", "newton_preflight.sbatch.example",
 )
 SUPPORT = {

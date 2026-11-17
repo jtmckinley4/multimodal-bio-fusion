@@ -127,6 +127,46 @@ def prepare_notebook(notebook, configuration):
     return result
 
 
+def preflight_notebook(configuration):
+    """Check the selected kernel and imports without opening research inputs."""
+    import nbformat
+    setup = [
+        "import importlib", "import importlib.metadata as metadata", "import json",
+        "from pathlib import Path", "import sys",
+        f"_execution = {configuration!r}",
+        "sys.path.insert(0, str(Path(_execution['workspace']) / 'Code'))",
+        "sys.path.insert(0, _execution['workspace'])",
+        "import numpy as np", "import torch",
+        "from run_fusion_study import observe_kernel",
+        "PRODUCER = observe_kernel(torch, _execution)",
+    ]
+    checks = [
+        "packages = {'numpy': 'numpy', 'pandas': 'pandas', 'scipy': 'scipy',",
+        "    'sklearn': 'scikit-learn', 'matplotlib': 'matplotlib', 'Bio': 'biopython',",
+        "    'torch': 'torch', 'transformers': 'transformers', 'multimolecule': 'multimolecule',",
+        "    'einops': 'einops', 'pyarrow': 'pyarrow', 'ipykernel': 'ipykernel',",
+        "    'nbconvert': 'nbconvert', 'nbformat': 'nbformat', 'nbclient': 'nbclient'}",
+        "for module in packages:",
+        "    importlib.import_module(module)",
+        "from shared_code.fusion import (correction_experiment, controlled_experiment,",
+        "    region_experiment, region_training)",
+        "versions = {distribution: metadata.version(distribution) for distribution in packages.values()}",
+        "print('Kernel packages:', json.dumps(versions, indent=2), flush=True)",
+        "x = torch.ones((32, 32), device='cuda')",
+        "answer = x @ x",
+        "torch.cuda.synchronize()",
+        "if answer.sum().item() != 32768:",
+        "    raise RuntimeError('The synthetic CUDA arithmetic check failed.')",
+        "del answer, x",
+        "print('Preflight passed: imports and synthetic GPU arithmetic only; '",
+        "      'no research data, caches, encoder weights or training were opened.', flush=True)",
+    ]
+    return nbformat.v4.new_notebook(cells=[
+        nbformat.v4.new_code_cell("\n".join(setup), id="preflight-environment"),
+        nbformat.v4.new_code_cell("\n".join(checks), id="preflight-imports-and-arithmetic"),
+    ])
+
+
 def validate_configuration(configuration, files):
     study, benchmark, action = (configuration[name] for name in ("study", "benchmark", "action"))
     if study not in PANELS or benchmark not in PANELS[study]:
@@ -169,7 +209,10 @@ def validate_configuration(configuration, files):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--verify-only", action="store_true")
+    inspection = parser.add_mutually_exclusive_group()
+    inspection.add_argument("--verify-only", action="store_true")
+    inspection.add_argument("--preflight", action="store_true",
+                            help="Check imports and a tiny CUDA calculation in the selected kernel; no research inputs.")
     parser.add_argument("--study", choices=STUDIES)
     parser.add_argument("--benchmark")
     parser.add_argument("--seed", type=int, choices=(0, 1, 2))
@@ -186,15 +229,27 @@ def main(argv=None):
     if args.verify_only:
         print(f"Verified {len(files)} source files; no kernel, data, cache or model was opened.")
         return
-    if not args.study or not args.benchmark or args.seed is None or not args.kernel:
+    if args.preflight:
+        scientific_options = (args.study, args.benchmark, args.seed, args.fit_keys,
+                              args.data_root, args.cache_root, args.reference_root,
+                              args.grouped_split, args.region_data_root, args.region_cache_root)
+        if any(value is not None for value in scientific_options) or args.action != "train":
+            parser.error("Preflight is separate from study, seed, action and research-input arguments.")
+        if not args.kernel or not args.expected_gpu.strip():
+            parser.error("Preflight requires --kernel and --expected-gpu explicitly.")
+    elif not args.study or not args.benchmark or args.seed is None or not args.kernel:
         parser.error("Select --study, --benchmark, --seed and --kernel explicitly.")
     if not os.environ.get("SLURM_JOB_ID"):
         parser.error("Research execution requires an allocated Slurm job.")
     configuration = vars(args).copy()
     configuration.pop("verify_only")
+    configuration.pop("preflight")
+    if args.preflight:
+        configuration.update(study="preflight", benchmark="environment", action="preflight")
     configuration["workspace"] = str(WORKSPACE)
-    needed = ({"region_data_root", "region_cache_root"} if args.study == "regions"
-              else {"data_root", "cache_root"})
+    needed = (set() if args.preflight else
+              {"region_data_root", "region_cache_root"} if args.study == "regions" else
+              {"data_root", "cache_root"})
     if args.study in ("gates", "attention") or (args.study == "correction" and args.benchmark != "mrna_stability"):
         needed.add("reference_root")
     if args.benchmark == "mrna_stability":
@@ -205,13 +260,19 @@ def main(argv=None):
                 parser.error(f"Declare --{name.replace('_', '-')} explicitly.")
             configuration[name] = WORKSPACE / "unused" / name
         configuration[name] = str(configuration[name].expanduser().resolve())
-    validate_configuration(configuration, files)
+    if args.preflight:
+        support.validate_destinations(WORKSPACE, configuration["output_root"],
+                                      configuration["cache_root"], files, "newton")
+    else:
+        validate_configuration(configuration, files)
     output = Path(configuration["output_root"])
     with ExitStack() as stack:
         support.acquire_locks(stack, output / ".locks",
-            (f"{args.study}-{args.benchmark}",), (args.seed,))
+            ("preflight",) if args.preflight else (f"{args.study}-{args.benchmark}",),
+            (0,) if args.preflight else (args.seed,))
         stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-        name = f"{args.study}-{args.benchmark}-seed{args.seed}-{stamp}-{uuid.uuid4().hex[:8]}"
+        prefix = "preflight" if args.preflight else f"{args.study}-{args.benchmark}-seed{args.seed}"
+        name = f"{prefix}-{stamp}-{uuid.uuid4().hex[:8]}"
         logs, notebooks = output / "logs", output / "notebooks"
         logs.mkdir(parents=True, exist_ok=True)
         notebooks.mkdir(parents=True, exist_ok=True)
@@ -226,8 +287,11 @@ def main(argv=None):
         error = None
         try:
             import nbformat
-            notebook = prepare_notebook(nbformat.read(
-                WORKSPACE / "Code/stage4" / f"{STUDIES[args.study]}.ipynb", as_version=4), configuration)
+            if args.preflight:
+                notebook = preflight_notebook(configuration)
+            else:
+                notebook = prepare_notebook(nbformat.read(
+                    WORKSPACE / "Code/stage4" / f"{STUDIES[args.study]}.ipynb", as_version=4), configuration)
             # Training always stays offline. A6 extraction may read already staged
             # encoder weights; acquisition is a separate reviewed preparation step.
             os.environ.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", TOKENIZERS_PARALLELISM="false")

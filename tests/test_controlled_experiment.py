@@ -58,6 +58,8 @@ def settings(variant):
     found = {"projection_width": 4, "projection_activation": "tanh", "projection_norm": "none"}
     if variant == "anchor_only":
         return {**found, "anchor": "rna"}
+    if variant == "anchor_concat_control":
+        return {**found, "anchor": "rna", "control_hidden_width": 11}
     if variant == "position_control":
         return {**found, "control_bottleneck": 2}
     if variant == "position_residual_control":
@@ -249,6 +251,29 @@ class ControlledExperimentTests(unittest.TestCase):
             request["encoders"]["rna"] = "mrnafm"
             with self.assertRaisesRegex(ValueError, "encoder bundle"):
                 experiment.read_panel_fit(path, **request)
+
+    def test_new_control_identities_refuse_legacy_or_missing_formula_without_writes(self):
+        for old, new, formula_key in (
+                ("sequence_sigmoid", "joint_sequence_sigmoid", "gate_formula"),
+                ("attention_skip", "anchor_concat_control", "control_formula")):
+            with self.subTest(variant=new):
+                path, _, request = self.panel_fixture(old)
+                original = path.read_bytes()
+                with self.assertRaisesRegex(ValueError, "variant"):
+                    experiment.read_panel_fit(path, **{**request, "variant": new, "settings": settings(new)})
+                self.assertEqual(path.read_bytes(), original)
+                path, result, request = self.panel_fixture(new)
+                with patch.object(experiment, "build_model", side_effect=AssertionError("Reading only")):
+                    experiment.read_panel_fit(path, **request)
+                    result.extra_fields["identity"]["model"].pop(formula_key)
+                    result.save(path)
+                    with self.assertRaisesRegex(ValueError, "architecture"):
+                        experiment.read_panel_fit(path, **request)
+
+    def test_nonlinear_control_width_is_not_a_free_tuning_choice(self):
+        changed = {**settings("anchor_concat_control"), "control_hidden_width": 10}
+        with self.assertRaisesRegex(ValueError, "derived"):
+            experiment.validate_settings("anchor_concat_control", self.config, changed)
 
     def test_saved_panel_refuses_changed_architecture_loader_and_source_contract(self):
         path, result, request = self.panel_fixture()

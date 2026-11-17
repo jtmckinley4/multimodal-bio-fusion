@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import shutil
 import sys
 import uuid
 
@@ -31,6 +32,24 @@ support = _load_support()
 WORKSPACE = Path(__file__).resolve().parent
 NOTEBOOK = "Code/stage4/grouped_stability.ipynb"
 SCHEMA = "biological-fusion.grouped-stability-package"
+
+
+def verify_kernel(kernel):
+    """Check the registered interpreter without starting a notebook kernel."""
+    from jupyter_client.kernelspec import KernelSpecManager
+
+    specification = KernelSpecManager().get_kernel_spec(kernel)
+    if not specification.argv:
+        raise ValueError(f"Kernel {kernel!r} has no interpreter command.")
+    command = specification.argv[0]
+    executable = Path(shutil.which(command) or command).expanduser().resolve()
+    expected = Path(sys.executable).resolve()
+    if executable != expected:
+        raise ValueError(
+            f"Kernel {kernel!r} uses {executable}; the activated environment uses {expected}. "
+            "Register the intended environment's ipykernel before submission."
+        )
+    return {"kernel": kernel, "registered_python": str(executable)}
 
 
 def verify_package(workspace=None):
@@ -198,6 +217,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     snapshot, files = verify_package()
     if args.verify_only:
+        if args.kernel:
+            print(json.dumps(verify_kernel(args.kernel)))
         print(f"Verified {len(files)} files; no kernel, split generation or cache reads started.")
         return
     if args.seed is None or not args.kernel or args.cache_root is None:

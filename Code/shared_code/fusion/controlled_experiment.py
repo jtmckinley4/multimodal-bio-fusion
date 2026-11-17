@@ -48,8 +48,9 @@ ATTENTION_VARIANTS = {
     "attention_sequence_sigmoid": "sequence_sigmoid",
     "attention_position_sigmoid": "position_sigmoid",
 }
-VARIANTS = (*SEQUENCE_VARIANTS, "position_sigmoid", "position_control",
-            "position_residual_control", "anchor_only", *ATTENTION_VARIANTS)
+JOINT_GATE_VARIANTS = ("joint_sequence_sigmoid", "position_sigmoid")
+VARIANTS = (*SEQUENCE_VARIANTS, *JOINT_GATE_VARIANTS, "position_control",
+            "position_residual_control", "anchor_only", "anchor_concat_control", *ATTENTION_VARIANTS)
 
 
 def _json(value):
@@ -73,6 +74,8 @@ def validate_settings(variant, config, settings):
     required = {"projection_width", "projection_activation", "projection_norm"}
     if variant == "anchor_only":
         required.add("anchor")
+    elif variant == "anchor_concat_control":
+        required.update(("anchor", "control_hidden_width"))
     elif variant in ("position_control", "position_residual_control"):
         required.add("control_bottleneck")
         if variant == "position_residual_control":
@@ -88,11 +91,15 @@ def validate_settings(variant, config, settings):
         raise ValueError(f"Settings differ: missing {sorted(required - supplied)}, "
                          f"unused {sorted(supplied - required)}.")
     made = _json(settings)
-    for name in required & {"projection_width", "scorer_width", "control_bottleneck", "n_heads"}:
+    for name in required & {"projection_width", "scorer_width", "control_bottleneck", "control_hidden_width", "n_heads"}:
         if type(made[name]) is not int or made[name] < 1:
             raise ValueError(f"{name} must be a positive integer.")
     if "shared_scorer" in made and type(made["shared_scorer"]) is not bool:
         raise ValueError("shared_scorer must be an explicit boolean.")
+    if variant == "anchor_concat_control":
+        expected = controlled_models.attention_control_budget(made["projection_width"], len(blf.MODALITIES))
+        if made["control_hidden_width"] != expected["hidden_width"]:
+            raise ValueError("Control hidden width must be derived from the joint attention budget.")
     if variant == "position_residual_control" and (
             made["control_scale"] != .5 or isinstance(made["control_scale"], bool)
             or made["control_initialization"] != "zero_output_random_input"):
@@ -109,6 +116,9 @@ def gate_formula(variant):
     """Record the dependency changed by A4/A5, separately from inherited settings."""
     if variant == "position_sigmoid":
         return {"input": "all_projected_modalities", "scorer": "affine_sigmoid", "scorer_width_active": False}
+    if variant == "joint_sequence_sigmoid":
+        return {"input": "masked_mean_all_projected_modalities", "scorer": "affine_sigmoid",
+                "scorer_width_active": False, "broadcast": "all_valid_positions"}
     if variant in ATTENTION_VARIANTS:
         return {"input": "anchor_all_auxiliary_updates", "scorer": "affine_sigmoid" if variant.endswith("sigmoid") else "unit_update",
                 "scorer_width_active": False}
@@ -122,11 +132,21 @@ def residual_control_formula(settings):
             "update_initialization": settings["control_initialization"]}
 
 
+def attention_control_formula(settings):
+    return {"version": "anchor_skip_joint_local_gelu_v1", "input": "all_projected_modalities",
+            "skip": "projected_anchor", "activation": "gelu",
+            "budget": controlled_models.attention_control_budget(settings["projection_width"], len(blf.MODALITIES)),
+            "initialization": "ordinary_linear", "gates": False, "attention": False}
+
+
 def _fusion(widths, variant, settings):
     common = {name: settings[name] for name in
               ("projection_width", "projection_activation", "projection_norm")}
     if variant == "anchor_only":
         return controlled_models.ProjectedAnchor(widths, **common, anchor=settings["anchor"])
+    if variant == "anchor_concat_control":
+        return controlled_models.ResidualConcatFusion(
+            widths, **common, anchor=settings["anchor"], hidden_width=settings["control_hidden_width"])
     if variant == "sequence_softmax":
         return GatedMILFusion(widths, out_width=settings["projection_width"],
                               attention_width=settings["scorer_width"],
@@ -139,6 +159,8 @@ def _fusion(widths, variant, settings):
             temperature_range=settings["temperature_range"])
     if variant == "position_sigmoid":
         return controlled_models.PositionGateFusion(widths, **common, scorer_width=settings["scorer_width"])
+    if variant == "joint_sequence_sigmoid":
+        return controlled_models.JointSequenceGateFusion(widths, **common, scorer_width=settings["scorer_width"])
     if variant == "position_control":
         return controlled_models.PositionalControl(widths, **common, bottleneck_width=settings["control_bottleneck"])
     if variant == "position_residual_control":
@@ -234,6 +256,8 @@ def make_identity(streams, variant, config, settings, cache_records):
                     "numerics": {"parameters": "float32", "inputs": "float32", "amp": False}}
     if variant == "position_residual_control":
         model_record["control_formula"] = residual_control_formula(settings)
+    if variant == "anchor_concat_control":
+        model_record["control_formula"] = attention_control_formula(settings)
     loader = {**base["loader"], "kind": "custom", "implementation": "shared_code.fusion.blf.loader"}
     if variant == "anchor_only":
         loader["modalities"] = [settings["anchor"]]
@@ -301,10 +325,12 @@ def read_panel_fit(path, *, benchmark, variant, config, encoders, settings):
         raise ValueError("Saved record belongs to a different declared encoder bundle.")
     if (model.get("contract") != CONTRACT or model.get("builder") != f"{__name__}.build_model"
             or model.get("settings") != settings or model.get("modalities") != modalities
-            or ((variant == "position_sigmoid" or variant in ATTENTION_VARIANTS)
+            or ((variant in JOINT_GATE_VARIANTS or variant in ATTENTION_VARIANTS)
                 and model.get("gate_formula") != gate_formula(variant))
             or (variant == "position_residual_control"
                 and model.get("control_formula") != residual_control_formula(settings))
+            or (variant == "anchor_concat_control"
+                and model.get("control_formula") != attention_control_formula(settings))
             or model.get("textcnn") != {"kernels": [3, 4, 5], "dropout": .2}
             or model.get("numerics") != {"parameters": "float32", "inputs": "float32", "amp": False}):
         raise ValueError("Saved architecture, modalities or computation contract differs from the declared panel.")

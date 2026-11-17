@@ -227,6 +227,33 @@ class PackageCase(unittest.TestCase):
         self.assertEqual(before, {p.relative_to(target): p.read_bytes()
                                  for p in target.rglob("*") if p.is_file()})
 
+    def test_registered_kernel_must_use_activated_python(self):
+        from jupyter_client.kernelspec import NoSuchKernel
+
+        manager = Mock()
+        manager.get_kernel_spec.return_value = SimpleNamespace(argv=[sys.executable, "-m", "ipykernel_launcher"])
+        with patch("jupyter_client.kernelspec.KernelSpecManager", return_value=manager):
+            record = runtime.verify_kernel("fixture")
+            self.assertEqual(record["registered_python"], str(Path(sys.executable).resolve()))
+            manager.get_kernel_spec.return_value = SimpleNamespace(argv=[str(self.base / "other-python")])
+            with self.assertRaisesRegex(ValueError, "activated environment"):
+                runtime.verify_kernel("fixture")
+            manager.get_kernel_spec.return_value = SimpleNamespace(argv=[])
+            with self.assertRaisesRegex(ValueError, "no interpreter"):
+                runtime.verify_kernel("fixture")
+            manager.get_kernel_spec.side_effect = NoSuchKernel("missing")
+            with self.assertRaises(NoSuchKernel):
+                runtime.verify_kernel("missing")
+
+    def test_verify_only_checks_requested_kernel_without_execution(self):
+        target = self.package()
+        with patch.object(runtime, "WORKSPACE", target), redirect_stdout(io.StringIO()), \
+                patch.object(runtime, "verify_kernel", return_value={"kernel": "fixture"}) as check, \
+                patch.object(runtime.support, "LiveOutputPreprocessor") as processor:
+            runtime.main(["--verify-only", "--kernel", "fixture"])
+        check.assert_called_once_with("fixture")
+        processor.assert_not_called()
+
     def test_training_refuses_login_shell_and_unsafe_output_root(self):
         target = self.package()
         arguments = ["--seed", "0", "--kernel", "fixture", "--cache-root", str(self.cache),
@@ -316,6 +343,7 @@ class PackageCase(unittest.TestCase):
             text = (RECIPE / name).read_text(encoding="utf-8")
             self.assertLess(text.index('source "$ARCC_BOOTSTRAP_CONDA_BASE'), text.index("\nmodule load"))
             self.assertIn("run_grouped_stability.py --verify-only", text)
+            self.assertIn('--verify-only --kernel "$ARCC_KERNEL"', text)
             self.assertNotIn("pip install", text)
             self.assertFalse(any(line.startswith("sbatch ") for line in text.splitlines()))
         batches = (RECIPE / "batches.tsv").read_text().strip().splitlines()[1:]

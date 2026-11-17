@@ -51,6 +51,91 @@ def attention_inputs():
 
 
 class ControlledModelsTests(unittest.TestCase):
+    def test_joint_sequence_gate_has_same_scorers_and_independent_masked_mean_equation(self):
+        settings = dict(projection_width=4, scorer_width=3,
+                        projection_activation="tanh", projection_norm="none")
+        position = models.PositionGateFusion(WIDTHS, **settings)
+        sequence = models.JointSequenceGateFusion(WIDTHS, **settings)
+        sequence.load_state_dict(position.state_dict(), strict=True)
+        self.assertEqual(models.parameter_count(sequence), models.parameter_count(position))
+        streams, mask = aligned_inputs()
+        actual, aux = sequence(streams, mask)
+        projected = {m: sequence.project[m](streams[m]) for m in WIDTHS}
+        joint = torch.cat(list(projected.values()), -1)
+        mean = torch.stack([joint[i, mask[i]].mean(0) for i in range(len(mask))])
+        logits = torch.cat([mean @ sequence.gate[m].weight.T + sequence.gate[m].bias for m in WIDTHS], -1)
+        weights = torch.sigmoid(logits)
+        expected = sum(weights[:, i, None, None] * projected[m] for i, m in enumerate(WIDTHS))
+        torch.testing.assert_close(actual, expected.masked_fill(~mask.unsqueeze(-1), 0))
+        torch.testing.assert_close(aux["gates"], weights)
+        self.assertNotIn("alpha", aux)
+        self.assertFalse(any("temperature" in key for key in sequence.state_dict()))
+        changed = {m: value.masked_fill(~mask.unsqueeze(-1), 1e4) for m, value in streams.items()}
+        repeated, repeated_aux = sequence(changed, mask)
+        torch.testing.assert_close(repeated, actual)
+        torch.testing.assert_close(repeated_aux["gates"], weights)
+        # Constant inputs give identical sequence and positional affine gates.
+        constant = {m: value[:, :1].expand_as(value) for m, value in streams.items()}
+        torch.testing.assert_close(sequence(constant, mask)[0], position(constant, mask)[0])
+
+    def test_joint_sequence_gate_uses_other_modalities_and_all_active_parameters(self):
+        head = models.JointSequenceGateFusion(WIDTHS, projection_width=4, scorer_width=3,
+            projection_activation="linear", projection_norm="none")
+        streams, mask = aligned_inputs()
+        with torch.no_grad():
+            for gate in head.gate.values():
+                gate.weight.fill_(.1)
+                gate.bias.fill_(.2)
+            head.project["prot"][0].weight.fill_(.1)
+        original = head(streams, mask)[1]["gates"]
+        changed = {**streams, "prot": streams["prot"] + 1}
+        actual, aux = head(changed, mask)
+        self.assertFalse(torch.equal(original[:, 0], aux["gates"][:, 0]))
+        actual.square().sum().backward()
+        for name, parameter in head.named_parameters():
+            self.assertIsNotNone(parameter.grad, name)
+            self.assertGreater(float(parameter.grad.abs().sum()), 0, name)
+
+    def test_attention_control_budget_and_active_mixing_counts(self):
+        budget = models.attention_control_budget(600, 3)
+        self.assertEqual(budget, {"attention_mixing": 2888402, "hidden_width": 1203,
+                                  "control_mixing": 2889003})
+        gate = models.JointSequenceGateFusion(WIDTHS, projection_width=600, scorer_width=100,
+            projection_activation="tanh", projection_norm="none")
+        self.assertEqual(models.parameter_count(gate.gate), 5403)
+        control = models.ResidualConcatFusion(WIDTHS, anchor="rna", projection_width=600,
+            hidden_width=1203, projection_activation="tanh", projection_norm="none")
+        self.assertEqual(models.parameter_count(control.mix), 2889003)
+        attention = attention_head("position_sigmoid", projection_width=600, n_heads=4)
+        mixing = models.parameter_count(attention) - models.parameter_count(attention.project)
+        self.assertEqual(mixing, 2888402)
+        self.assertLess(abs(mixing - models.parameter_count(control.mix)) / mixing, .0003)
+        with self.assertRaisesRegex(ValueError, "hidden_width"):
+            models.ResidualConcatFusion(WIDTHS, anchor="rna", projection_width=600,
+                hidden_width=1202, projection_activation="tanh", projection_norm="none")
+
+    def test_residual_concat_equation_padding_gradients_and_zero_update(self):
+        head = models.ResidualConcatFusion(WIDTHS, anchor="rna", projection_width=4,
+            hidden_width=11, projection_activation="tanh", projection_norm="none")
+        streams, mask = aligned_inputs()
+        actual, aux = head(streams, mask)
+        projected = {m: head.project[m](streams[m]) for m in WIDTHS}
+        first, _, second = head.mix
+        hidden = torch.nn.functional.gelu(torch.cat(list(projected.values()), -1) @ first.weight.T + first.bias)
+        expected = projected["rna"] + hidden @ second.weight.T + second.bias
+        torch.testing.assert_close(actual, expected.masked_fill(~mask.unsqueeze(-1), 0))
+        self.assertEqual(aux, {})
+        actual.square().sum().backward()
+        for name, parameter in head.named_parameters():
+            self.assertIsNotNone(parameter.grad, name)
+            self.assertGreater(float(parameter.grad.abs().sum()), 0, name)
+        changed = {m: value.masked_fill(~mask.unsqueeze(-1), -1e4) for m, value in streams.items()}
+        torch.testing.assert_close(head(changed, mask)[0], actual)
+        with torch.no_grad():
+            second.weight.zero_()
+            second.bias.zero_()
+        torch.testing.assert_close(head(streams, mask)[0], projected["rna"].masked_fill(~mask.unsqueeze(-1), 0))
+
     def test_mean_softmax_exactly_matches_legacy_with_transferred_state(self):
         streams, mask = aligned_inputs()
         for shared in (False, True):

@@ -98,7 +98,7 @@ class RegionNotebookTests(unittest.TestCase):
 
     def test_scientific_choices_and_execution_limits_are_visible(self):
         prose = "\n".join("".join(cell["source"]) for cell in self.book["cells"] if cell["cell_type"] == "markdown")
-        for phrase in ("192", "homology", "terminal stop", "negative control", "midpoint",
+        for phrase in ("294", "homology", "terminal stop", "negative control", "midpoint",
                        "not a published", "parameter counts", "per-seed scores", "task 42"):
             self.assertIn(phrase, prose)
         self.assertFalse(any(ord(character) < 32 and character not in "\n\t" for character in prose))

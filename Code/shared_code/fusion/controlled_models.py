@@ -211,6 +211,83 @@ class PositionGateFusion(nn.Module):
         return fused, diagnostics
 
 
+class JointSequenceGateFusion(PositionGateFusion):
+    """A4 sequence comparator: the position gate's scorers see joint masked means.
+
+    Projection and scorer state keys match PositionGateFusion exactly. Only the
+    reduction before scoring and broadcast after scoring change; no nonlinear
+    hidden scorer, entropy penalty or temperature is introduced.
+    """
+
+    def forward(self, streams, mask):
+        _aligned(streams, self.widths, mask)
+        projected = {m: self.project[m](streams[m]) for m in self.names}
+        joint = torch.cat(list(projected.values()), dim=-1)
+        summary = masked_summary(joint, mask, reduction="mean")
+        weights = torch.sigmoid(torch.cat([self.gate[m](summary) for m in self.names], dim=-1))
+        fused = sum(weights[:, i, None, None] * projected[m] for i, m in enumerate(self.names))
+        fused = fused.masked_fill(~mask.unsqueeze(-1), 0)
+        diagnostics = {"gates": weights, "gate_kind": "joint_sequence_sigmoid", "gate_modalities": self.names}
+        if self.collect_norms:
+            diagnostics.update(_gate_norms(projected, weights, fused, mask))
+        return fused, diagnostics
+
+
+def attention_control_budget(width, modality_count):
+    """Nearest active two-layer local mixer budget to joint-gated attention.
+
+    Each auxiliary attention has four d-by-d projections and four d biases.
+    Its joint gate has M*d weights and one bias. The local MLP has M*d -> h
+    -> d weights and both biases. This is a parameter control, not a claim of
+    equal expressivity, optimization difficulty or runtime.
+    """
+    _positive(width, "projection_width")
+    _positive(modality_count, "modality_count")
+    if modality_count < 2:
+        raise ValueError("The attention control needs at least one auxiliary.")
+    target = (modality_count - 1) * (4 * width * width + 4 * width + modality_count * width + 1)
+    per_hidden = (modality_count + 1) * width + 1
+    hidden = max(1, round((target - width) / per_hidden))
+    return {"attention_mixing": target, "hidden_width": hidden,
+            "control_mixing": hidden * per_hidden + width}
+
+
+class ResidualConcatFusion(nn.Module):
+    """A5 nongated local nonlinear mixing with an unchanged projected-anchor skip.
+
+    The hidden width is fixed from the joint-gated attention parameter budget,
+    before outcomes are inspected. Every registered parameter affects the model;
+    no dummy attention or gate is registered to inflate the count.
+    """
+
+    def __init__(self, widths, *, anchor, projection_width, hidden_width,
+                 projection_activation, projection_norm):
+        super().__init__()
+        self.widths = _widths(widths)
+        self.names, self.out_width = tuple(self.widths), projection_width
+        if anchor not in self.widths:
+            raise ValueError("Choose an anchor from the declared modalities.")
+        expected = attention_control_budget(projection_width, len(self.names))["hidden_width"]
+        if type(hidden_width) is not int or hidden_width != expected:
+            raise ValueError(f"The declared attention-budget control requires hidden_width={expected}.")
+        self.anchor, self.collect_norms = anchor, False
+        self.project = _projections(self.widths, projection_width, projection_activation, projection_norm)
+        self.mix = nn.Sequential(nn.Linear(len(self.names) * projection_width, hidden_width),
+                                 nn.GELU(), nn.Linear(hidden_width, projection_width))
+
+    def forward(self, streams, mask):
+        _aligned(streams, self.widths, mask)
+        projected = {m: self.project[m](streams[m]) for m in self.names}
+        anchor = projected[self.anchor]
+        update = self.mix(torch.cat(list(projected.values()), dim=-1))
+        fused = (anchor + update).masked_fill(~mask.unsqueeze(-1), 0)
+        diagnostics = {}
+        if self.collect_norms:
+            diagnostics = {"anchor_norm": anchor.detach().norm(dim=-1).masked_fill(~mask, 0),
+                           "fused_norm": fused.detach().norm(dim=-1)}
+        return fused, diagnostics
+
+
 class PositionalControl(nn.Module):
     """A4: a nongated, low-rank affine mixer at each aligned position.
 

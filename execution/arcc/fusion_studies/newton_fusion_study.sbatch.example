@@ -14,6 +14,10 @@ set -euo pipefail
 : "${ARCC_CONDA_ENV:?Prepared environment}"
 : "${ARCC_KERNEL:?Registered notebook kernel}"
 cd "$ARCC_PROJECT_ROOT"
+[[ -d outputs/logs ]] || {
+    echo "Create outputs/logs before submitting; Slurm and environment records use it." >&2
+    exit 2
+}
 if (( ${CONDA_SHLVL:-0} > 0 )); then
     ARCC_BOOTSTRAP_CONDA_BASE=$(conda info --base)
     source "$ARCC_BOOTSTRAP_CONDA_BASE/etc/profile.d/conda.sh"
