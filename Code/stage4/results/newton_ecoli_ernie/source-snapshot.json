@@ -1,0 +1,850 @@
+{
+  "schema": "biological-fusion.arcc-package",
+  "schema_version": 2,
+  "experiment": "ecoli_ernie",
+  "purpose": "New isolated execution snapshot; no transfer, launch or research execution",
+  "source_host": "cDesktopLab",
+  "source_root": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion",
+  "source_commit": "2a5c1392f1ec388395270f5f932a7d8f59f15f02",
+  "source_git_status": " M Code/shared_code/encoders.py\n M Code/shared_code/fusion/result_sets.py\n M Code/shared_code/fusion/swap_plan.py\n M Code/shared_code/fusion/token_embeddings.py\n M Code/stage1/Stage1_stability.ipynb\n M Code/stage1/mrfp_representation_control.ipynb\n M Code/stage4/README.md\n M Code/stage4/encoder_swaps.ipynb\n M docs/research-execution-plan.md\n M docs/sources.md\n M execution/arcc/encoder_swaps/README.md\n M execution/arcc/encoder_swaps/prepare.py\n M execution/arcc/encoder_swaps/run_encoder_swaps.py\n M tests/README.md\n M tests/test_stage4_swaps_resume.py\n?? execution/arcc/encoder_swaps/ecoli_ernie_batches.tsv\n?? execution/arcc/encoder_swaps/newton_ernie.sbatch.example\n?? tests/test_arcc_ernie_extension.py\n?? tests/test_ernie_encoders.py\n?? tests/test_ernie_swap_notebook.py\n?? tests/test_swap_extension.py",
+  "source_dirty": true,
+  "historical_selection": {
+    "workspace": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\ARCC Execution",
+    "snapshot_sha256": "6bc161b8ea78eda8bf8c316ce27fca60bb1b0975b1bf01d8ec241aa82863c96f",
+    "snapshot_schema_version": 1,
+    "source_commit": "e9d0fbba8a76e2c0561991c69b80253304b0da29",
+    "source_root": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion",
+    "captured_utc": "2026-11-14T02:56:17.364879+00:00",
+    "preserved_manifest": "evidence/selection-source-snapshot.json",
+    "meaning": "Original CSV and fixed-selection bytes, not fresh result coverage or a new selection."
+  },
+  "cache_reference": {
+    "path": null,
+    "copied": false,
+    "verification": "Explicit runtime preflight must verify required frozen caches at --cache-root."
+  },
+  "files": [
+    {
+      "source": "Code/shared_code/__init__.py",
+      "destination": "Code/shared_code/__init__.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "180e70140c57d20d87ae07300f68efa6c918abd94bf447bdc78a8f26ae18d1f5",
+      "initial_copy_sha256": "180e70140c57d20d87ae07300f68efa6c918abd94bf447bdc78a8f26ae18d1f5",
+      "bytes": 821
+    },
+    {
+      "source": "Code/shared_code/analysis.py",
+      "destination": "Code/shared_code/analysis.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "b2a4cc6463dcf72a7c8368189b92e3a40538ee755844e38e21c860b5db772cb7",
+      "initial_copy_sha256": "b2a4cc6463dcf72a7c8368189b92e3a40538ee755844e38e21c860b5db772cb7",
+      "bytes": 32087
+    },
+    {
+      "source": "Code/shared_code/datasets.py",
+      "destination": "Code/shared_code/datasets.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "9dc3d7471e3aecd75e8232d69b0c833cf83c6911f8f6bd240754b3929c44811c",
+      "initial_copy_sha256": "9dc3d7471e3aecd75e8232d69b0c833cf83c6911f8f6bd240754b3929c44811c",
+      "bytes": 14964
+    },
+    {
+      "source": "Code/shared_code/embeddings.py",
+      "destination": "Code/shared_code/embeddings.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "b179ec472788b91d065b58c5b83f0263908c6931b3e2ac9e772957315ed3808b",
+      "initial_copy_sha256": "b179ec472788b91d065b58c5b83f0263908c6931b3e2ac9e772957315ed3808b",
+      "bytes": 12679
+    },
+    {
+      "source": "Code/shared_code/encoders.py",
+      "destination": "Code/shared_code/encoders.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "9e8eca23dc659fd46a27bb08be2054c9ca7f28c5b77ce54ba61c91ff77501bd7",
+      "initial_copy_sha256": "9e8eca23dc659fd46a27bb08be2054c9ca7f28c5b77ce54ba61c91ff77501bd7",
+      "bytes": 17040
+    },
+    {
+      "source": "Code/shared_code/fusion/__init__.py",
+      "destination": "Code/shared_code/fusion/__init__.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "0695fb3839e3bb6b053b3a7eee618004992393d7cb9df9e6daf88c0618679d3a",
+      "initial_copy_sha256": "0695fb3839e3bb6b053b3a7eee618004992393d7cb9df9e6daf88c0618679d3a",
+      "bytes": 1019
+    },
+    {
+      "source": "Code/shared_code/fusion/anchor_correction.py",
+      "destination": "Code/shared_code/fusion/anchor_correction.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "618dee784b7ebd795c174569930fe93f827b1497d183cca92b27c4be1f9df97a",
+      "initial_copy_sha256": "618dee784b7ebd795c174569930fe93f827b1497d183cca92b27c4be1f9df97a",
+      "bytes": 12493
+    },
+    {
+      "source": "Code/shared_code/fusion/blf.py",
+      "destination": "Code/shared_code/fusion/blf.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "8b6f1857719392025b72a3850d5f269f3cc082bbfbc04eda23a8d9adb24dd9e2",
+      "initial_copy_sha256": "8b6f1857719392025b72a3850d5f269f3cc082bbfbc04eda23a8d9adb24dd9e2",
+      "bytes": 13066
+    },
+    {
+      "source": "Code/shared_code/fusion/codon_grid.py",
+      "destination": "Code/shared_code/fusion/codon_grid.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+      "initial_copy_sha256": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+      "bytes": 7524
+    },
+    {
+      "source": "Code/shared_code/fusion/controlled_experiment.py",
+      "destination": "Code/shared_code/fusion/controlled_experiment.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "cf3e5cec86a18c5d9e302c4b4746f213ce30e349c1579c065c4b698a39f443e8",
+      "initial_copy_sha256": "cf3e5cec86a18c5d9e302c4b4746f213ce30e349c1579c065c4b698a39f443e8",
+      "bytes": 43729
+    },
+    {
+      "source": "Code/shared_code/fusion/controlled_models.py",
+      "destination": "Code/shared_code/fusion/controlled_models.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "b7d3b7dbaef56b91eb58860709e1a33557e6779a36a183baf3e7c445db4b4f21",
+      "initial_copy_sha256": "b7d3b7dbaef56b91eb58860709e1a33557e6779a36a183baf3e7c445db4b4f21",
+      "bytes": 25286
+    },
+    {
+      "source": "Code/shared_code/fusion/correction_experiment.py",
+      "destination": "Code/shared_code/fusion/correction_experiment.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "46a3a588b7f45de084ad63b1068e0e5adf07c6f83bb056908a77a5efca1fbdbb",
+      "initial_copy_sha256": "46a3a588b7f45de084ad63b1068e0e5adf07c6f83bb056908a77a5efca1fbdbb",
+      "bytes": 52053
+    },
+    {
+      "source": "Code/shared_code/fusion/coupled_mamba.py",
+      "destination": "Code/shared_code/fusion/coupled_mamba.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "3a616c1e3d012d5ea2e06d55847e4bf06e0565bc81b8d5352673c2b1162ef320",
+      "initial_copy_sha256": "3a616c1e3d012d5ea2e06d55847e4bf06e0565bc81b8d5352673c2b1162ef320",
+      "bytes": 14412
+    },
+    {
+      "source": "Code/shared_code/fusion/grouped_stability.py",
+      "destination": "Code/shared_code/fusion/grouped_stability.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "038e3ba8cc0e37c03b6744becc01b21546f0d37cbd8c0651ace25330be8b34cf",
+      "initial_copy_sha256": "038e3ba8cc0e37c03b6744becc01b21546f0d37cbd8c0651ace25330be8b34cf",
+      "bytes": 21860
+    },
+    {
+      "source": "Code/shared_code/fusion/heads.py",
+      "destination": "Code/shared_code/fusion/heads.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "0f9dd428c60c74f755fb89fe550790310ed60d0dcb7393d48b647b898366aee4",
+      "initial_copy_sha256": "0f9dd428c60c74f755fb89fe550790310ed60d0dcb7393d48b647b898366aee4",
+      "bytes": 7502
+    },
+    {
+      "source": "Code/shared_code/fusion/intervention_ops.py",
+      "destination": "Code/shared_code/fusion/intervention_ops.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "c6d15ad32a691badf503834f4a17c6a3764fca27cf2acd2f820d0c63c6355fde",
+      "initial_copy_sha256": "c6d15ad32a691badf503834f4a17c6a3764fca27cf2acd2f820d0c63c6355fde",
+      "bytes": 4985
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer.py",
+      "destination": "Code/shared_code/fusion/isoformer.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "09f47cc1427c81e3fce7b348f71e44b37931c96342576143b8fabb5e0012409e",
+      "initial_copy_sha256": "09f47cc1427c81e3fce7b348f71e44b37931c96342576143b8fabb5e0012409e",
+      "bytes": 18482
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_adapters.py",
+      "destination": "Code/shared_code/fusion/isoformer_adapters.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "184aa7e484eae5114221917f7f599372f1507f141b2f5e476053a4ba7584869c",
+      "initial_copy_sha256": "184aa7e484eae5114221917f7f599372f1507f141b2f5e476053a4ba7584869c",
+      "bytes": 10692
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_cohort.py",
+      "destination": "Code/shared_code/fusion/isoformer_cohort.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "1caf65ed0354cc869ed14f89453f8eec56fa470d8329144a0bce267c49e211da",
+      "initial_copy_sha256": "1caf65ed0354cc869ed14f89453f8eec56fa470d8329144a0bce267c49e211da",
+      "bytes": 29303
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_data_checks.py",
+      "destination": "Code/shared_code/fusion/isoformer_data_checks.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "8ab1d8eff3668260ce4dfc74484b1a440a10b0b614b0ce1d2dd157fce2ef2f26",
+      "initial_copy_sha256": "8ab1d8eff3668260ce4dfc74484b1a440a10b0b614b0ce1d2dd157fce2ef2f26",
+      "bytes": 26183
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_inputs.py",
+      "destination": "Code/shared_code/fusion/isoformer_inputs.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "98ba34fc4e96e6cbe99bd2e8298b40d5bedac2b04efdf15ac6f0ac586d60bdcd",
+      "initial_copy_sha256": "98ba34fc4e96e6cbe99bd2e8298b40d5bedac2b04efdf15ac6f0ac586d60bdcd",
+      "bytes": 21260
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_reference.py",
+      "destination": "Code/shared_code/fusion/isoformer_reference.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "d3e0b8f89ca210a39b412539371d259442c5a61d7f0ff68a38402104a792e4fa",
+      "initial_copy_sha256": "d3e0b8f89ca210a39b412539371d259442c5a61d7f0ff68a38402104a792e4fa",
+      "bytes": 17149
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_results.py",
+      "destination": "Code/shared_code/fusion/isoformer_results.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "f476ff7de6b967872e695be479f2d6c5f23b237663de2b717a2643f6dc2c9237",
+      "initial_copy_sha256": "f476ff7de6b967872e695be479f2d6c5f23b237663de2b717a2643f6dc2c9237",
+      "bytes": 14265
+    },
+    {
+      "source": "Code/shared_code/fusion/region_experiment.py",
+      "destination": "Code/shared_code/fusion/region_experiment.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "a4eb311c90233a257395f47b64a4e9ffa4beee85c78ca31832308b21c092429a",
+      "initial_copy_sha256": "a4eb311c90233a257395f47b64a4e9ffa4beee85c78ca31832308b21c092429a",
+      "bytes": 39822
+    },
+    {
+      "source": "Code/shared_code/fusion/region_inputs.py",
+      "destination": "Code/shared_code/fusion/region_inputs.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "8d63ca4129ac546179a0450f968c885367214ddcfda477c22cdbae5b1caf3771",
+      "initial_copy_sha256": "8d63ca4129ac546179a0450f968c885367214ddcfda477c22cdbae5b1caf3771",
+      "bytes": 7904
+    },
+    {
+      "source": "Code/shared_code/fusion/region_training.py",
+      "destination": "Code/shared_code/fusion/region_training.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "7e375c6e3ee594033010c61ab6820d92766a945279a207ef564fecc449429efe",
+      "initial_copy_sha256": "7e375c6e3ee594033010c61ab6820d92766a945279a207ef564fecc449429efe",
+      "bytes": 54066
+    },
+    {
+      "source": "Code/shared_code/fusion/result_sets.py",
+      "destination": "Code/shared_code/fusion/result_sets.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "cd72a5d0b6d5e3f28d7e0d222349a79a5eda2599cd94468d799a8f96426ad507",
+      "initial_copy_sha256": "cd72a5d0b6d5e3f28d7e0d222349a79a5eda2599cd94468d799a8f96426ad507",
+      "bytes": 8531
+    },
+    {
+      "source": "Code/shared_code/fusion/run_identity.py",
+      "destination": "Code/shared_code/fusion/run_identity.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "f1b616ce96167d3818b628f445c42e525ea4cfebd1639b1881225cc0a962069b",
+      "initial_copy_sha256": "f1b616ce96167d3818b628f445c42e525ea4cfebd1639b1881225cc0a962069b",
+      "bytes": 44498
+    },
+    {
+      "source": "Code/shared_code/fusion/study_inputs.py",
+      "destination": "Code/shared_code/fusion/study_inputs.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "9f0a9a272addd8d740ae0c79d235b346734f9085f511e870891d18b1c4ff79ad",
+      "initial_copy_sha256": "9f0a9a272addd8d740ae0c79d235b346734f9085f511e870891d18b1c4ff79ad",
+      "bytes": 4904
+    },
+    {
+      "source": "Code/shared_code/fusion/study_references.py",
+      "destination": "Code/shared_code/fusion/study_references.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "0951ca92d8f91e43bd8018e730e92be0dfdc362b5b09c58beb77598365ef1573",
+      "initial_copy_sha256": "0951ca92d8f91e43bd8018e730e92be0dfdc362b5b09c58beb77598365ef1573",
+      "bytes": 6801
+    },
+    {
+      "source": "Code/shared_code/fusion/study_selection.py",
+      "destination": "Code/shared_code/fusion/study_selection.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "b75913e6e1cb1f9ec2369687dd1ebb328e25a4f42ddeefc3366f16b545eeeb82",
+      "initial_copy_sha256": "b75913e6e1cb1f9ec2369687dd1ebb328e25a4f42ddeefc3366f16b545eeeb82",
+      "bytes": 6075
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_plan.py",
+      "destination": "Code/shared_code/fusion/swap_plan.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "fca822bf142790ab9e5b6728bd7639dde805609b02e0d825a6bd082e7c38fe02",
+      "initial_copy_sha256": "fca822bf142790ab9e5b6728bd7639dde805609b02e0d825a6bd082e7c38fe02",
+      "bytes": 21584
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_reporting.py",
+      "destination": "Code/shared_code/fusion/swap_reporting.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "cdff58718c3525252211953ee5dc6b8d72697548dec294e8e372ebdc1c7dd50b",
+      "initial_copy_sha256": "cdff58718c3525252211953ee5dc6b8d72697548dec294e8e372ebdc1c7dd50b",
+      "bytes": 29669
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_results.py",
+      "destination": "Code/shared_code/fusion/swap_results.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "3228dd650b68b50bad900dcbec2816948c49f5dbdd76f4c56f12659d34ff6a7d",
+      "initial_copy_sha256": "3228dd650b68b50bad900dcbec2816948c49f5dbdd76f4c56f12659d34ff6a7d",
+      "bytes": 20265
+    },
+    {
+      "source": "Code/shared_code/fusion/textcnn.py",
+      "destination": "Code/shared_code/fusion/textcnn.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+      "initial_copy_sha256": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+      "bytes": 3452
+    },
+    {
+      "source": "Code/shared_code/fusion/token_embeddings.py",
+      "destination": "Code/shared_code/fusion/token_embeddings.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+      "initial_copy_sha256": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+      "bytes": 36670
+    },
+    {
+      "source": "Code/shared_code/fusion/train.py",
+      "destination": "Code/shared_code/fusion/train.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3",
+      "initial_copy_sha256": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3",
+      "bytes": 48000
+    },
+    {
+      "source": "Code/shared_code/lucaone.py",
+      "destination": "Code/shared_code/lucaone.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "aeccd0d9222b72a6ca5850056026fac0a97a145fb39d3d4b370e6758c2e465d0",
+      "initial_copy_sha256": "aeccd0d9222b72a6ca5850056026fac0a97a145fb39d3d4b370e6758c2e465d0",
+      "bytes": 11799
+    },
+    {
+      "source": "Code/shared_code/matched_probes.py",
+      "destination": "Code/shared_code/matched_probes.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "e1a2d01bbc05be9a8a79082af5bef25d7b851cd78d24ed029fc127b2f1179b25",
+      "initial_copy_sha256": "e1a2d01bbc05be9a8a79082af5bef25d7b851cd78d24ed029fc127b2f1179b25",
+      "bytes": 19150
+    },
+    {
+      "source": "Code/shared_code/matrix_cache.py",
+      "destination": "Code/shared_code/matrix_cache.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "3dea107062340cc0ab76b161600a44e481eaed659b4224e5526cf00e0cd24b69",
+      "initial_copy_sha256": "3dea107062340cc0ab76b161600a44e481eaed659b4224e5526cf00e0cd24b69",
+      "bytes": 3148
+    },
+    {
+      "source": "Code/shared_code/mrfp_cache.py",
+      "destination": "Code/shared_code/mrfp_cache.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "bb5eb9c74c135ba106ddf5dd7391f1107b49445c30a15eeb4d4de52ff2f6bb85",
+      "initial_copy_sha256": "bb5eb9c74c135ba106ddf5dd7391f1107b49445c30a15eeb4d4de52ff2f6bb85",
+      "bytes": 8912
+    },
+    {
+      "source": "Code/shared_code/mrnabench.py",
+      "destination": "Code/shared_code/mrnabench.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "c4714a9a0bd25c0eadc76caf193c488a1623b5811bb61f7b78812832aaeb772e",
+      "initial_copy_sha256": "c4714a9a0bd25c0eadc76caf193c488a1623b5811bb61f7b78812832aaeb772e",
+      "bytes": 28772
+    },
+    {
+      "source": "Code/shared_code/notebook.py",
+      "destination": "Code/shared_code/notebook.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "760caec9aeccb92b759a5ba75d37fd0868cbbfeff9028ad73ac6b3241e922be0",
+      "initial_copy_sha256": "760caec9aeccb92b759a5ba75d37fd0868cbbfeff9028ad73ac6b3241e922be0",
+      "bytes": 2035
+    },
+    {
+      "source": "Code/shared_code/saved_results.py",
+      "destination": "Code/shared_code/saved_results.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "f2ba4f11b4758608397b6754eafc5ba2964946b4b67ab291a3b78050114db571",
+      "initial_copy_sha256": "f2ba4f11b4758608397b6754eafc5ba2964946b4b67ab291a3b78050114db571",
+      "bytes": 6344
+    },
+    {
+      "source": "Code/shared_code/sequences.py",
+      "destination": "Code/shared_code/sequences.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "595e2a7674676901bae659bdecc654dff9e979b59200ee52ee345405dd8ba725",
+      "initial_copy_sha256": "595e2a7674676901bae659bdecc654dff9e979b59200ee52ee345405dd8ba725",
+      "bytes": 6007
+    },
+    {
+      "source": "Code/shared_code/splits.py",
+      "destination": "Code/shared_code/splits.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_python",
+      "source_sha256": "b3ababa37f62559a924e103b7cd85942985aea6de6239e80b1eb6f57ae0915ed",
+      "initial_copy_sha256": "b3ababa37f62559a924e103b7cd85942985aea6de6239e80b1eb6f57ae0915ed",
+      "bytes": 1969
+    },
+    {
+      "source": "Code/stage4/encoder_swaps.ipynb",
+      "destination": "Code/stage4/encoder_swaps.ipynb",
+      "source_origin": "maintained_repository",
+      "role": "scientific_notebook",
+      "source_sha256": "9c1490602fd1364365a5d9be3e42372ef2a29fb7265abc5602239101cc3552bf",
+      "initial_copy_sha256": "9c1490602fd1364365a5d9be3e42372ef2a29fb7265abc5602239101cc3552bf",
+      "bytes": 314239
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/README.md",
+      "destination": "README.md",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "01316228f7cf34be2793997d8e9d90fd4015fa4f077972759a13171e4cc555e8",
+      "initial_copy_sha256": "01316228f7cf34be2793997d8e9d90fd4015fa4f077972759a13171e4cc555e8",
+      "bytes": 14594
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/batches.tsv",
+      "destination": "batches.tsv",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "084cd75931a64cd38b72fd63f4a5277203b455e4967aab878796570ee5a51721",
+      "initial_copy_sha256": "084cd75931a64cd38b72fd63f4a5277203b455e4967aab878796570ee5a51721",
+      "bytes": 335
+    },
+    {
+      "source": "datasets/E.Coli_proteins.csv",
+      "destination": "datasets/E.Coli_proteins.csv",
+      "source_origin": "historical_selection_workspace",
+      "role": "dataset",
+      "source_sha256": "76c7f032bc6efbd2fc3951ed25284c6e7a9426d907338b80fbd9c763b20d1a42",
+      "initial_copy_sha256": "76c7f032bc6efbd2fc3951ed25284c6e7a9426d907338b80fbd9c763b20d1a42",
+      "bytes": 5353749,
+      "selection_original_source": "datasets/E.Coli_proteins.csv",
+      "selection_original_source_sha256": "76c7f032bc6efbd2fc3951ed25284c6e7a9426d907338b80fbd9c763b20d1a42"
+    },
+    {
+      "source": "docs/figures/stability/results.json",
+      "destination": "docs/figures/stability/results.json",
+      "source_origin": "maintained_repository",
+      "role": "historical_context",
+      "source_sha256": "54241667101bfa84059ae766be5a69924000e7285fef43b19dbbc14df0e386a6",
+      "initial_copy_sha256": "54241667101bfa84059ae766be5a69924000e7285fef43b19dbbc14df0e386a6",
+      "bytes": 862766
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/ecoli_ernie_batches.tsv",
+      "destination": "ecoli_ernie_batches.tsv",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "5236d5df2cb1c2a67363a78e607f724aff5b67af23f9995b44a3c7adcd65c59f",
+      "initial_copy_sha256": "5236d5df2cb1c2a67363a78e607f724aff5b67af23f9995b44a3c7adcd65c59f",
+      "bytes": 203
+    },
+    {
+      "source": "source-snapshot.json",
+      "destination": "evidence/selection-source-snapshot.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "selection_manifest",
+      "source_sha256": "6bc161b8ea78eda8bf8c316ce27fca60bb1b0975b1bf01d8ec241aa82863c96f",
+      "initial_copy_sha256": "6bc161b8ea78eda8bf8c316ce27fca60bb1b0975b1bf01d8ec241aa82863c96f",
+      "bytes": 165617
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "d256695d34522ac62afcb871443e17c99f7238d673fab1f67ab7a89e6b7f4817",
+      "initial_copy_sha256": "d256695d34522ac62afcb871443e17c99f7238d673fab1f67ab7a89e6b7f4817",
+      "bytes": 17093,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "d256695d34522ac62afcb871443e17c99f7238d673fab1f67ab7a89e6b7f4817"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "7f42dba4b73d0067499689c2889847fe3c25dd443e9172966a6c6976c7fd73ef",
+      "initial_copy_sha256": "7f42dba4b73d0067499689c2889847fe3c25dd443e9172966a6c6976c7fd73ef",
+      "bytes": 16009,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json",
+      "selection_original_source_sha256": "7f42dba4b73d0067499689c2889847fe3c25dd443e9172966a6c6976c7fd73ef"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "70895c3ed73be7b139a919e7be125cbad4f30d9392062d1495d05a42a809c8ea",
+      "initial_copy_sha256": "70895c3ed73be7b139a919e7be125cbad4f30d9392062d1495d05a42a809c8ea",
+      "bytes": 18534,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json",
+      "selection_original_source_sha256": "70895c3ed73be7b139a919e7be125cbad4f30d9392062d1495d05a42a809c8ea"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "61542bc38572907a67133401c4481c5d24fb6142b8c67e4e9fceffec9c7cb2f0",
+      "initial_copy_sha256": "61542bc38572907a67133401c4481c5d24fb6142b8c67e4e9fceffec9c7cb2f0",
+      "bytes": 17750,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "61542bc38572907a67133401c4481c5d24fb6142b8c67e4e9fceffec9c7cb2f0"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed1.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed1.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "2f737391a3102aaf773c546205539577417fa657967e0679d863fc90a268a018",
+      "initial_copy_sha256": "2f737391a3102aaf773c546205539577417fa657967e0679d863fc90a268a018",
+      "bytes": 20912,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed1.json",
+      "selection_original_source_sha256": "2f737391a3102aaf773c546205539577417fa657967e0679d863fc90a268a018"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed2.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed2.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "44ee6f3cf32a09da9a5f770d3a8af30d49d40c4cdb76f0d7851d11ef443592f1",
+      "initial_copy_sha256": "44ee6f3cf32a09da9a5f770d3a8af30d49d40c4cdb76f0d7851d11ef443592f1",
+      "bytes": 16025,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__cross__lambda0.0__ch100__equation__seed2.json",
+      "selection_original_source_sha256": "44ee6f3cf32a09da9a5f770d3a8af30d49d40c4cdb76f0d7851d11ef443592f1"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "a14480104a843499f2466c3646188bc2e2cec2a833f909882fb36dad0915ed97",
+      "initial_copy_sha256": "a14480104a843499f2466c3646188bc2e2cec2a833f909882fb36dad0915ed97",
+      "bytes": 16379,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "a14480104a843499f2466c3646188bc2e2cec2a833f909882fb36dad0915ed97"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "9b95312109f77cf4396cda01bd1f38b1d7c0cec62501996927afa4dd597a9ef1",
+      "initial_copy_sha256": "9b95312109f77cf4396cda01bd1f38b1d7c0cec62501996927afa4dd597a9ef1",
+      "bytes": 16105,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+      "selection_original_source_sha256": "9b95312109f77cf4396cda01bd1f38b1d7c0cec62501996927afa4dd597a9ef1"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "6dd3df470062814a3e88da657b45d098fca35fd043fdde1174c310a6b3f7e675",
+      "initial_copy_sha256": "6dd3df470062814a3e88da657b45d098fca35fd043fdde1174c310a6b3f7e675",
+      "bytes": 16098,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+      "selection_original_source_sha256": "6dd3df470062814a3e88da657b45d098fca35fd043fdde1174c310a6b3f7e675"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.0__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.0__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "93f7011893928cec209d9ae40dcfc80fdbf3e41f5300b1e103be6f16953dd01a",
+      "initial_copy_sha256": "93f7011893928cec209d9ae40dcfc80fdbf3e41f5300b1e103be6f16953dd01a",
+      "bytes": 16385,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.0__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "93f7011893928cec209d9ae40dcfc80fdbf3e41f5300b1e103be6f16953dd01a"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.5__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.5__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "d45894843b3e325923011273aaf2ab8a167e809c9b64c1ba4218e3e02cfd5c75",
+      "initial_copy_sha256": "d45894843b3e325923011273aaf2ab8a167e809c9b64c1ba4218e3e02cfd5c75",
+      "bytes": 16392,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda0.5__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "d45894843b3e325923011273aaf2ab8a167e809c9b64c1ba4218e3e02cfd5c75"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda1.0__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda1.0__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "6bace75f286f3dbd59c1c9754d489c46a5cd0b25f30f0e022d6d88c3be1c1d86",
+      "initial_copy_sha256": "6bace75f286f3dbd59c1c9754d489c46a5cd0b25f30f0e022d6d88c3be1c1d86",
+      "bytes": 17603,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__mil__lambda1.0__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "6bace75f286f3dbd59c1c9754d489c46a5cd0b25f30f0e022d6d88c3be1c1d86"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "c5ca90ac24bee5050ba0b4d7847337e5b47debd98df3683cd47bb6b0d6f2052d",
+      "initial_copy_sha256": "c5ca90ac24bee5050ba0b4d7847337e5b47debd98df3683cd47bb6b0d6f2052d",
+      "bytes": 17476,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-dna__lambda0.0__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "c5ca90ac24bee5050ba0b4d7847337e5b47debd98df3683cd47bb6b0d6f2052d"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "b05106839da79a6f06ebe2eb73690f9869e0451d20d5889b01b88e80d50e7b8c",
+      "initial_copy_sha256": "b05106839da79a6f06ebe2eb73690f9869e0451d20d5889b01b88e80d50e7b8c",
+      "bytes": 15618,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-grid-rna__lambda0.0__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "b05106839da79a6f06ebe2eb73690f9869e0451d20d5889b01b88e80d50e7b8c"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "fbec7c6dc8e97e0049e00ce170a4734833b4fada4ad285fe8293134a752bb124",
+      "initial_copy_sha256": "fbec7c6dc8e97e0049e00ce170a4734833b4fada4ad285fe8293134a752bb124",
+      "bytes": 18681,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "fbec7c6dc8e97e0049e00ce170a4734833b4fada4ad285fe8293134a752bb124"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed1.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed1.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "9d24ce4e30ac5025bb8f214e55f8a2eea9586a6c40fa20c3d55694e5054f4c7f",
+      "initial_copy_sha256": "9d24ce4e30ac5025bb8f214e55f8a2eea9586a6c40fa20c3d55694e5054f4c7f",
+      "bytes": 15920,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed1.json",
+      "selection_original_source_sha256": "9d24ce4e30ac5025bb8f214e55f8a2eea9586a6c40fa20c3d55694e5054f4c7f"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "597f7ee01b2fb3530949516f59e7024a374171db28bebdadc4c0b51a6ccebfd3",
+      "initial_copy_sha256": "597f7ee01b2fb3530949516f59e7024a374171db28bebdadc4c0b51a6ccebfd3",
+      "bytes": 18860,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-prot__lambda0.0__ch100__equation__seed2.json",
+      "selection_original_source_sha256": "597f7ee01b2fb3530949516f59e7024a374171db28bebdadc4c0b51a6ccebfd3"
+    },
+    {
+      "source": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "destination": "historical_results/Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "source_origin": "historical_selection_workspace",
+      "role": "historical_selection",
+      "source_sha256": "364dd75c78594b244bd6ad7cfc407a1eff97051ed6e705f0d2ed40b9bb0af87e",
+      "initial_copy_sha256": "364dd75c78594b244bd6ad7cfc407a1eff97051ed6e705f0d2ed40b9bb0af87e",
+      "bytes": 16292,
+      "selection_original_source": "Code/stage4/results/phaseA/ecoli_proteins/ecoli_proteins__unimodal-rna__lambda0.0__ch100__equation__seed0.json",
+      "selection_original_source_sha256": "364dd75c78594b244bd6ad7cfc407a1eff97051ed6e705f0d2ed40b9bb0af87e"
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/newton_ernie.sbatch.example",
+      "destination": "newton_ernie.sbatch.example",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "4eb008a4cbdc08bcf4b5ba39e1dcadd1bb85430ade9a7377a3f724aefc6093d3",
+      "initial_copy_sha256": "4eb008a4cbdc08bcf4b5ba39e1dcadd1bb85430ade9a7377a3f724aefc6093d3",
+      "bytes": 2301
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/newton_preflight.sbatch.example",
+      "destination": "newton_preflight.sbatch.example",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "33e64d9106dec91155582654910c5dfb6d33b819902be246c9dda38e680c8cf5",
+      "initial_copy_sha256": "33e64d9106dec91155582654910c5dfb6d33b819902be246c9dda38e680c8cf5",
+      "bytes": 3031
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/newton_report.sbatch.example",
+      "destination": "newton_report.sbatch.example",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "68c81dfdd9403fe6d7d1550b43ea1fe95382bb9de110cf9c0541a134bea87648",
+      "initial_copy_sha256": "68c81dfdd9403fe6d7d1550b43ea1fe95382bb9de110cf9c0541a134bea87648",
+      "bytes": 1509
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/newton_swaps.sbatch.example",
+      "destination": "newton_swaps.sbatch.example",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "608c5e175d6fbd0f8ac5432653027db7ecf79781e1b597ec79091a6db4513b95",
+      "initial_copy_sha256": "608c5e175d6fbd0f8ac5432653027db7ecf79781e1b597ec79091a6db4513b95",
+      "bytes": 2917
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/prepare.py",
+      "destination": "prepare.py",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "b9dfb01fb8c2d80801883c0b9f590935803e2ee828676c4bbf56a0a90c8e4d44",
+      "initial_copy_sha256": "b9dfb01fb8c2d80801883c0b9f590935803e2ee828676c4bbf56a0a90c8e4d44",
+      "bytes": 18945
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/requirements-notebooks.txt",
+      "destination": "requirements-notebooks.txt",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "8e6a02f702b161c72ea4ec06817849dad298228d74af1290d11cd8680e295873",
+      "initial_copy_sha256": "8e6a02f702b161c72ea4ec06817849dad298228d74af1290d11cd8680e295873",
+      "bytes": 329
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/run_encoder_swaps.py",
+      "destination": "run_encoder_swaps.py",
+      "source_origin": "maintained_repository",
+      "role": "execution_runtime",
+      "source_sha256": "f45a5ba8d6800be30088afd6fae269a3112d2148a298fda6b56cf78ee0a1f8ca",
+      "initial_copy_sha256": "f45a5ba8d6800be30088afd6fae269a3112d2148a298fda6b56cf78ee0a1f8ca",
+      "bytes": 29773
+    },
+    {
+      "source": "tests/test_arcc_batch_startup.py",
+      "destination": "tests/test_arcc_batch_startup.py",
+      "source_origin": "maintained_repository",
+      "role": "synthetic_test",
+      "source_sha256": "70572302f9cba864d99932d7e1e8f25c362f996cfb1b54f52c44b88a128da413",
+      "initial_copy_sha256": "70572302f9cba864d99932d7e1e8f25c362f996cfb1b54f52c44b88a128da413",
+      "bytes": 12560
+    },
+    {
+      "source": "tests/test_arcc_ernie_extension.py",
+      "destination": "tests/test_arcc_ernie_extension.py",
+      "source_origin": "maintained_repository",
+      "role": "synthetic_test",
+      "source_sha256": "36b582df8bacf968f2442e51d91167a6507696ff2d670cbdafdd8dff8e45714d",
+      "initial_copy_sha256": "36b582df8bacf968f2442e51d91167a6507696ff2d670cbdafdd8dff8e45714d",
+      "bytes": 12251
+    },
+    {
+      "source": "tests/test_arcc_execution.py",
+      "destination": "tests/test_arcc_execution.py",
+      "source_origin": "maintained_repository",
+      "role": "synthetic_test",
+      "source_sha256": "8e838f8ad6166c53f0b4936a331dbdca48a6d12c72fbd6860d1c437ca228e3c2",
+      "initial_copy_sha256": "8e838f8ad6166c53f0b4936a331dbdca48a6d12c72fbd6860d1c437ca228e3c2",
+      "bytes": 32380
+    },
+    {
+      "source": "tests/test_arcc_live_output.py",
+      "destination": "tests/test_arcc_live_output.py",
+      "source_origin": "maintained_repository",
+      "role": "synthetic_test",
+      "source_sha256": "1bf3393841b72f9eb6d60269bcd8f78a63121df2568d24b20724ce622ca14310",
+      "initial_copy_sha256": "1bf3393841b72f9eb6d60269bcd8f78a63121df2568d24b20724ce622ca14310",
+      "bytes": 4496
+    },
+    {
+      "source": "tests/test_arcc_swap_selection.py",
+      "destination": "tests/test_arcc_swap_selection.py",
+      "source_origin": "maintained_repository",
+      "role": "synthetic_test",
+      "source_sha256": "8b02607589cb18d0fb124e7a62c81f17ea7730fd75f8bc665b79a76154812d9a",
+      "initial_copy_sha256": "8b02607589cb18d0fb124e7a62c81f17ea7730fd75f8bc665b79a76154812d9a",
+      "bytes": 12898
+    }
+  ],
+  "total_bytes": 7992256,
+  "directories": [
+    "outputs/logs",
+    "outputs/ecoli_ernie/logs",
+    "outputs/ecoli_ernie/notebooks"
+  ],
+  "declared_workload": {
+    "benchmark": "ecoli_proteins",
+    "encoders": [
+      "rnaernie",
+      "ernierna"
+    ],
+    "heads": [
+      "mil",
+      "concat"
+    ],
+    "fits_per_seed": 4,
+    "default_training_seed": 0,
+    "available_training_seeds": [
+      0,
+      1,
+      2
+    ],
+    "new_rna_extractions": 2,
+    "single_baseline_selection": "not available"
+  },
+  "excluded": [
+    "embedding payloads and cache recovery metadata",
+    "model weights",
+    "recovery checkpoints",
+    "fresh outputs",
+    ".git"
+  ],
+  "research_executed": false,
+  "newton_validated": false,
+  "captured_utc": "2026-11-19T00:44:31.905152+00:00",
+  "package_status": "prepared; not transferred or executed"
+}

@@ -1,0 +1,213 @@
+{
+  "schema": "ecoli-ernie-accuracy-comparison-v1",
+  "created_utc": "2026-11-19T05:58:45.431502+00:00",
+  "benchmark": "ecoli_proteins",
+  "metric": "held-out classification accuracy",
+  "seed_score_unit": "fraction",
+  "mean_accuracy_percent_unit": "percent",
+  "test_rows": 712,
+  "training_seeds": [
+    0,
+    1,
+    2
+  ],
+  "selection_seed": 0,
+  "selected_mil_entropy_lambda": 0.01,
+  "source_notebook": "Code/stage4/encoder_swaps.ipynb",
+  "source_notebook_sha256": "cb06fec9cce6b3d18539cf2540b76cffbb634fa4d012b97ff4f7814890f93093",
+  "source_cell_ids": [
+    "swaps-imports",
+    "swaps-paths",
+    "1a72c669",
+    "swaps-locations",
+    "swaps-settings",
+    "swaps-selection",
+    "swaps-plan-defs",
+    "swaps-execution-plan",
+    "swaps-original-selectors",
+    "swaps-result-selectors",
+    "swaps-summary",
+    "bcddefb4"
+  ],
+  "mode": "ecoli_ernie, saved results only; local CPU summary of Newton H100 fits",
+  "descriptive_statistic": "Arithmetic mean of three unrounded test accuracies for each fixed head and RNA encoder.",
+  "execution_engine": "IPython in-process, selected cells executed in order",
+  "ordered_rows_sha256": "fac98f7ef01c899514884b8031668b9cb3d5385ee52a1d61894b2a7a577ba14e",
+  "test_indices_sha256": "13a13d2746e26d11daeaaf8b1ecc57d25b1006f12ce075d4b19243c28e5cc6f3",
+  "test_targets_sha256": "e410ed2cec7c38293df2d378cfaacbcfa04589e9e66a447384b8e5afe544ae93",
+  "runtime": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "pandas": "2.3.3",
+    "torch": "2.10.0+cu126"
+  },
+  "rows": [
+    {
+      "rna_encoder": "rinalmo",
+      "encoder_label": "RiNALMo 150M",
+      "variant": "mil",
+      "head": "MIL gated",
+      "evidence": "existing RiNALMo reference",
+      "seeds": [
+        {
+          "seed": 0,
+          "test_accuracy": 0.5941011235955056,
+          "path": "Code/stage4/results/newton_h100_seeds012/outputs/phaseB/ecoli_proteins/rinalmo/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+          "sha256": "2eeee9f8949fdfd3250afc939fc0a7658e64adc413def402279be7b081c5be27"
+        },
+        {
+          "seed": 1,
+          "test_accuracy": 0.5926966292134831,
+          "path": "Code/stage4/results/newton_h100_seeds012/outputs/phaseB/ecoli_proteins/rinalmo/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+          "sha256": "709cf5417ed3cc7bb1b9ad474936823dc964a403d55de7eb3bf00e802372bc10"
+        },
+        {
+          "seed": 2,
+          "test_accuracy": 0.5856741573033708,
+          "path": "Code/stage4/results/newton_h100_seeds012/outputs/phaseB/ecoli_proteins/rinalmo/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+          "sha256": "fbbf7ef520079c52668ad22aa381a98bf403710e8e30104ec00e57d6598b6802"
+        }
+      ],
+      "mean_accuracy_percent": 59.082397003745314
+    },
+    {
+      "rna_encoder": "rinalmo",
+      "encoder_label": "RiNALMo 150M",
+      "variant": "concat",
+      "head": "Concatenation",
+      "evidence": "existing RiNALMo reference",
+      "seeds": [
+        {
+          "seed": 0,
+          "test_accuracy": 0.598314606741573,
+          "path": "Code/stage4/results/newton_h100_seeds012/outputs/phaseB/ecoli_proteins/rinalmo/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+          "sha256": "67f2c58b01e034804bf162b666841515e751d1a25b2f2b42f00f81d393325722"
+        },
+        {
+          "seed": 1,
+          "test_accuracy": 0.6137640449438202,
+          "path": "Code/stage4/results/newton_h100_seeds012/outputs/phaseB/ecoli_proteins/rinalmo/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json",
+          "sha256": "ad9f3e4f4cb0475249986d963437ef6bb7060c59b5e646b15f1336163c29c6c7"
+        },
+        {
+          "seed": 2,
+          "test_accuracy": 0.5912921348314607,
+          "path": "Code/stage4/results/newton_h100_seeds012/outputs/phaseB/ecoli_proteins/rinalmo/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json",
+          "sha256": "5027d7f20a27552e85be166ebbb88c35a71946d674f4cb6078f1534dbbf3f5e6"
+        }
+      ],
+      "mean_accuracy_percent": 60.11235955056179
+    },
+    {
+      "rna_encoder": "rnaernie",
+      "encoder_label": "RNAErnie (author 2048)",
+      "variant": "mil",
+      "head": "MIL gated",
+      "evidence": "focused extension",
+      "seeds": [
+        {
+          "seed": 0,
+          "test_accuracy": 0.5617977528089888,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+          "sha256": "d42eefc4269321a7ef4a767bb0fc708d38f75475de1493c58beff4154ffe5e3d"
+        },
+        {
+          "seed": 1,
+          "test_accuracy": 0.5926966292134831,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+          "sha256": "e4f93f686ab8720227a8b8c99f68212fbe05900a865eeb45201601854e510b6a"
+        },
+        {
+          "seed": 2,
+          "test_accuracy": 0.5632022471910112,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+          "sha256": "5a2716fa181ae3d8f5440d3e82d31828ca2faf74db2b038ed585e4643d4c0eac"
+        }
+      ],
+      "mean_accuracy_percent": 57.2565543071161
+    },
+    {
+      "rna_encoder": "rnaernie",
+      "encoder_label": "RNAErnie (author 2048)",
+      "variant": "concat",
+      "head": "Concatenation",
+      "evidence": "focused extension",
+      "seeds": [
+        {
+          "seed": 0,
+          "test_accuracy": 0.577247191011236,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+          "sha256": "525dd7140743feb14d4008b047121aec4bd1407b494c06dd1b8dc00308b2a4ed"
+        },
+        {
+          "seed": 1,
+          "test_accuracy": 0.577247191011236,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json",
+          "sha256": "bc238d2049f56349ca47bf98536a2f53a7c7af42f071a008d59ed58dc804b792"
+        },
+        {
+          "seed": 2,
+          "test_accuracy": 0.5617977528089888,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json",
+          "sha256": "1e21bfd681418c5936530fa0ff41f51b36b936136c6208a7c1a0d3067f02c96a"
+        }
+      ],
+      "mean_accuracy_percent": 57.209737827715365
+    },
+    {
+      "rna_encoder": "ernierna",
+      "encoder_label": "ERNIE-RNA",
+      "variant": "mil",
+      "head": "MIL gated",
+      "evidence": "focused extension",
+      "seeds": [
+        {
+          "seed": 0,
+          "test_accuracy": 0.5491573033707865,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json",
+          "sha256": "bdcb5f9c5ac6e19751f72b860bb895dfd223d9a1fe56507cbd0863d1ca6c3a96"
+        },
+        {
+          "seed": 1,
+          "test_accuracy": 0.5491573033707865,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json",
+          "sha256": "8939ab335470e47e842f340809a969837c1eb4e390eb6a320d19f6f52f1c40b4"
+        },
+        {
+          "seed": 2,
+          "test_accuracy": 0.5646067415730337,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json",
+          "sha256": "5840810dc4b15e4592c8005cbe60e092556e22f60183504eb9a263fe920639b2"
+        }
+      ],
+      "mean_accuracy_percent": 55.43071161048689
+    },
+    {
+      "rna_encoder": "ernierna",
+      "encoder_label": "ERNIE-RNA",
+      "variant": "concat",
+      "head": "Concatenation",
+      "evidence": "focused extension",
+      "seeds": [
+        {
+          "seed": 0,
+          "test_accuracy": 0.5800561797752809,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json",
+          "sha256": "a01f7b165ebe9d49c9a6db9ef87c6cd6f176389408d78d673305fa4e647716d7"
+        },
+        {
+          "seed": 1,
+          "test_accuracy": 0.5617977528089888,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json",
+          "sha256": "92492acdb68cc43db94f5733a53d165ea6c4f0b3c727c2ba6d779910bbb9fbc3"
+        },
+        {
+          "seed": 2,
+          "test_accuracy": 0.5842696629213483,
+          "path": "Code/stage4/results/newton_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json",
+          "sha256": "6fe0ad0ff07e8d962e469e655119cb588c39f7e23c597ae9b48c0267c85ee8ca"
+        }
+      ],
+      "mean_accuracy_percent": 57.5374531835206
+    }
+  ]
+}

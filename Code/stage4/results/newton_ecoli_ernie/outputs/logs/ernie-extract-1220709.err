@@ -1,0 +1,15 @@
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+/home/ch806988/.conda/envs/biofusion-arcc/lib/python3.11/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+Loading weights:   0%|          | 0/202 [00:00<?, ?it/s]Loading weights:   9%|▉         | 19/202 [00:00<00:01, 134.80it/s]Loading weights:  23%|██▎       | 46/202 [00:00<00:00, 193.64it/s]Loading weights:  42%|████▏     | 84/202 [00:00<00:00, 269.32it/s]Loading weights:  63%|██████▎   | 127/202 [00:00<00:00, 320.46it/s]Loading weights:  79%|███████▉  | 160/202 [00:00<00:00, 281.64it/s]Loading weights:  94%|█████████▍| 190/202 [00:00<00:00, 236.62it/s]Loading weights: 100%|██████████| 202/202 [00:00<00:00, 258.33it/s]
+[transformers] [1mErnieRnaModel LOAD REPORT[0m from: multimolecule/ernierna
+Key                                 | Status     |  | 
+------------------------------------+------------+--+-
+lm_head.transform.layer_norm.weight | UNEXPECTED |  | 
+lm_head.transform.layer_norm.bias   | UNEXPECTED |  | 
+lm_head.transform.dense.weight      | UNEXPECTED |  | 
+lm_head.transform.dense.bias        | UNEXPECTED |  | 
+lm_head.bias                        | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.

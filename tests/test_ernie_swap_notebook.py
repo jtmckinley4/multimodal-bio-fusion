@@ -133,10 +133,36 @@ class FocusedNotebookTests(unittest.TestCase):
         self.env.update(swap_results=SimpleNamespace(read_results=reader),
                         selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
         self.execute("swaps-summary")
-        table = self.env["extension_score_table"](BENCHMARK)
-        self.assertEqual(table.loc["rinalmo", "gated accuracy (%)"], 60)
-        self.assertTrue(pd.isna(table.loc["rnaernie", "gated accuracy (%)"]))
-        self.assertTrue(pd.isna(table.loc["ernierna", "concat accuracy (%)"]))
+        table = self.env["extension_score_table"](BENCHMARK, (0,))
+        self.assertEqual(table.loc[("rinalmo", "MIL gated", "existing RiNALMo reference"), "Seed 0 (%)"], 60)
+        self.assertTrue(pd.isna(table.loc[("rnaernie", "MIL gated", "focused extension"), "Seed 0 (%)"]))
+        self.assertTrue(pd.isna(table.loc[("ernierna", "Concatenation", "focused extension"), "Seed 0 (%)"]))
+        self.assertNotIn("Mean (%)", table)
+
+    def test_saved_table_shows_all_three_seeds_without_averaging_partial_rows(self):
+        def reader(folders, *, benchmark, config, encoders, mil_lambda, variants):
+            encoder, seed = encoders["rna"], config["seed"]
+            expected_root = self.env["REFERENCE_SWAP_ROOT"] if encoder == "rinalmo" else self.env["RESULTS_ROOT"]
+            self.assertEqual(folders, [expected_root / BENCHMARK / encoder])
+            self.assertEqual((benchmark, mil_lambda, variants), (BENCHMARK, 0.01, ("mil", "concat")))
+            # One extension's middle concatenation seed is absent. Its gated fit is still complete.
+            records = [{"data": {"variant": v, "test_score": (0.6 if v == "mil" else 0.7) + 0.05 * seed}}
+                       for v in variants if (encoder, v, seed) != ("ernierna", "concat", 1)]
+            return SimpleNamespace(require_unique=lambda: records)
+
+        displayed = []
+        self.env.update(READ_SAVED_RESULTS=True, SEED=2, SCALE={BENCHMARK: 100},
+                        swap_results=SimpleNamespace(read_results=reader), display=displayed.append,
+                        selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
+        self.execute("swaps-summary")
+        self.execute("bcddefb4")
+        table, = displayed
+        self.assertEqual(table.shape, (6, 4))
+        self.assertEqual(list(table.columns), ["Seed 0 (%)", "Seed 1 (%)", "Seed 2 (%)", "Mean (%)"])
+        self.assertEqual(table.loc[("rnaernie", "MIL gated", "focused extension")].tolist(), [60, 65, 70, 65])
+        partial = table.loc[("ernierna", "Concatenation", "focused extension")]
+        self.assertEqual((partial["Seed 0 (%)"], partial["Seed 2 (%)"]), (70, 80))
+        self.assertTrue(partial[["Seed 1 (%)", "Mean (%)"]].isna().all())
 
     def test_extension_saved_report_branch_does_not_compute(self):
         self.env.update(READ_SAVED_RESULTS=True, RUN_SAVED_COMPARISONS=False, build_or_reuse_report=forbidden)

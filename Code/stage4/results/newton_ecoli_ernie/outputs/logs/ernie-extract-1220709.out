@@ -1,0 +1,62 @@
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python on evc33
+Verified 83 prepared files; no kernel, cache arrays or computation started.
+Starting extract: ('ecoli_proteins',), seed None; /lustre/fs1/home/ch806988/multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/notebooks/extract-ecoli_proteins-seedNone-20261119T020735Z-572d054f.ipynb
+torch 2.10.0+cu126 | CUDA available: True | Apple MPS available: False
+Selected device: cuda | GPU: NVIDIA H100 PCIe
+Result set: newton_h100_seeds012; evidence root: /lustre/fs1/home/ch806988/multi-modal_fusion_ecoli_ernie/Code/stage4/results/newton_h100_seeds012
+Kernel environment: {"host": "evc33", "python": "3.11.18 (main, Oct 26 2026, 18:19:35) [GCC 14.3.0]", "platform": "Linux-4.18.0-553.123.1.el8_10.0.1.x86_64-x86_64-with-glibc2.28", "device": "cuda", "gpu": "NVIDIA H100 PCIe", "cuda": "12.6", "cudnn": 91002, "packages": {"numpy": "2.3.5", "pandas": "3.1.1", "scipy": "1.16.3", "scikit-learn": "1.9.1", "torch": "2.10.0+cu126", "nbconvert": "7.17.2", "nbclient": "0.11.0"}}
+Execution: newton ('ecoli_proteins',) seed 0 outputs: /lustre/fs1/home/ch806988/multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie
+Training seed 0; selection seed 0; 4 new/resumable fits in the displayed plan.
+2 swap-benchmark pairs over 1 benchmarks, device cuda
+Estimated replacement-cache payload needed by pending fits, including existing caches: ~8 GB
+Cache arrays stay out of Git; cache_directory selects the configured roots.
+  ecoli_proteins/ntv2_100m: complete, recorded_input
+  ecoli_proteins/esm2_8m: complete, recorded_input
+  ecoli_proteins/rnaernie: new, new
+  ecoli_proteins/ernierna: new, new
+Preflight passed: 4 caches; 36 shards need extraction.
+    rnaernie: shard 1/18 (1/18 this run)
+    rnaernie: shard 2/18 (2/18 this run)
+    rnaernie: shard 3/18 (3/18 this run)
+    rnaernie: shard 4/18 (4/18 this run)
+    rnaernie: shard 5/18 (5/18 this run)
+    rnaernie: shard 6/18 (6/18 this run)
+    rnaernie: shard 7/18 (7/18 this run)
+    rnaernie: shard 8/18 (8/18 this run)
+    rnaernie: shard 9/18 (9/18 this run)
+    rnaernie: shard 10/18 (10/18 this run)
+    rnaernie: shard 11/18 (11/18 this run)
+    rnaernie: shard 12/18 (12/18 this run)
+    rnaernie: shard 13/18 (13/18 this run)
+    rnaernie: shard 14/18 (14/18 this run)
+    rnaernie: shard 15/18 (15/18 this run)
+    rnaernie: shard 16/18 (16/18 this run)
+    rnaernie: shard 17/18 (17/18 this run)
+    rnaernie: shard 18/18 (18/18 this run)
+    ernierna: shard 1/18 (1/18 this run)
+    ernierna: shard 2/18 (2/18 this run)
+    ernierna: shard 3/18 (3/18 this run)
+    ernierna: shard 4/18 (4/18 this run)
+    ernierna: shard 5/18 (5/18 this run)
+    ernierna: shard 6/18 (6/18 this run)
+    ernierna: shard 7/18 (7/18 this run)
+    ernierna: shard 8/18 (8/18 this run)
+    ernierna: shard 9/18 (9/18 this run)
+    ernierna: shard 10/18 (10/18 this run)
+    ernierna: shard 11/18 (11/18 this run)
+    ernierna: shard 12/18 (12/18 this run)
+    ernierna: shard 13/18 (13/18 this run)
+    ernierna: shard 14/18 (14/18 this run)
+    ernierna: shard 15/18 (15/18 this run)
+    ernierna: shard 16/18 (16/18 this run)
+    ernierna: shard 17/18 (17/18 this run)
+    ernierna: shard 18/18 (18/18 this run)
+Extraction/reuse checks finished in 3.2 minutes.
+Token streams open only for a pending training group.
+Training skipped: extraction-only execution; no fit was started.
+
+ecoli_proteins (accuracy x 100)
+Head scores only; no new single-encoder gain or three-seed claim is established.
+Paired intervals not recalculated. RUN_BOOTSTRAP is separate from completing fits; retained interval outputs remain historical.
+Focused extension: read the head-score table; single-control reports are not configured.
+The two new RNA encoders have no Stage 1 alignment capture; this lookup is skipped.

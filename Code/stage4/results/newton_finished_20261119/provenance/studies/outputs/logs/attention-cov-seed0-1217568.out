@@ -1,0 +1,94 @@
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python on evc32
+Verified 67 source files; no kernel, data, cache or model was opened.
+Observed GPU: NVIDIA H100 PCIe; attention train
+Explicit job: cov_vac_degradation seed 0 train
+Explicit cov_vac_degradation seed 0 fitting job on cuda.
+Parameter construction skipped; saved result counts remain available below.
+Saved records are read in place. Current input/cache checks happen only in explicit execution.
+  seed0: training
+    epoch   0  train loss 1.2098  val 0.5423  best 0.5423 @ 0
+    epoch  10  train loss 0.9749  val 0.6418  best 0.6418 @ 10
+    epoch  20  train loss 0.8838  val 0.7271  best 0.7271 @ 20
+    epoch  30  train loss 0.8107  val 0.7666  best 0.7666 @ 30
+    epoch  40  train loss 0.7433  val 0.7875  best 0.7875 @ 40
+    epoch  50  train loss 0.6817  val 0.8002  best 0.8002 @ 50
+    epoch  60  train loss 0.6420  val 0.8040  best 0.8040 @ 60
+    epoch  70  train loss 0.6042  val 0.8107  best 0.8110 @ 67
+    epoch  80  train loss 0.5462  val 0.8097  best 0.8126 @ 73
+    epoch  90  train loss 0.5442  val 0.8095  best 0.8126 @ 73
+  seed0: test 0.7861 (val 0.8126 at epoch 73, 0.9 min)
+  seed0: training
+    epoch   0  train loss 1.2068  val 0.6148  best 0.6148 @ 0
+    epoch  10  train loss 0.8139  val 0.7510  best 0.7581 @ 9
+    epoch  20  train loss 0.6493  val 0.7988  best 0.7988 @ 20
+    epoch  30  train loss 0.4674  val 0.7957  best 0.8141 @ 26
+    epoch  40  train loss 0.3828  val 0.7914  best 0.8141 @ 26
+  seed0: test 0.7765 (val 0.8141 at epoch 26, 0.4 min)
+  seed0: training
+    epoch   0  train loss 1.1961  val 0.4850  best 0.4850 @ 0
+    epoch  10  train loss 0.7779  val 0.7327  best 0.7327 @ 10
+    epoch  20  train loss 0.4721  val 0.6945  best 0.7582 @ 17
+    epoch  30  train loss 0.2495  val 0.7397  best 0.7601 @ 22
+    epoch  40  train loss 0.2267  val 0.7375  best 0.7601 @ 22
+  seed0: test 0.7156 (val 0.7601 at epoch 22, 0.6 min)
+  seed0: training
+    epoch   0  train loss 1.1955  val 0.5820  best 0.5820 @ 0
+    epoch  10  train loss 0.7880  val 0.7286  best 0.7350 @ 9
+    epoch  20  train loss 0.5221  val 0.7029  best 0.7614 @ 12
+    epoch  30  train loss 0.4889  val 0.7027  best 0.7614 @ 12
+  seed0: test 0.7240 (val 0.7614 at epoch 12, 0.4 min)
+  seed0: training
+    epoch   0  train loss 1.2013  val 0.5766  best 0.5766 @ 0
+    epoch  10  train loss 0.7768  val 0.7357  best 0.7452 @ 9
+    epoch  20  train loss 0.5003  val 0.7120  best 0.7549 @ 12
+    epoch  30  train loss 0.4681  val 0.7135  best 0.7549 @ 12
+  seed0: test 0.7186 (val 0.7549 at epoch 12, 0.4 min)
+  seed0: training
+    epoch   0  train loss 1.2014  val 0.5756  best 0.5756 @ 0
+    epoch  10  train loss 0.7769  val 0.7348  best 0.7448 @ 9
+    epoch  20  train loss 0.5011  val 0.7129  best 0.7550 @ 12
+    epoch  30  train loss 0.4702  val 0.7138  best 0.7550 @ 12
+  seed0: test 0.7182 (val 0.7550 at epoch 12, 0.4 min)
+  seed0: training
+    epoch   0  train loss 1.1830  val 0.4780  best 0.4780 @ 0
+    epoch  10  train loss 0.9447  val 0.6270  best 0.6270 @ 10
+    epoch  20  train loss 0.8420  val 0.6995  best 0.6998 @ 19
+    epoch  30  train loss 0.7465  val 0.7383  best 0.7383 @ 30
+    epoch  40  train loss 0.6637  val 0.7544  best 0.7544 @ 40
+    epoch  50  train loss 0.6109  val 0.7651  best 0.7682 @ 47
+    epoch  60  train loss 0.5528  val 0.7703  best 0.7704 @ 59
+    epoch  70  train loss 0.5528  val 0.7696  best 0.7704 @ 59
+  seed0: test 0.7856 (val 0.7704 at epoch 59, 0.3 min)
+  seed0: training
+    epoch   0  train loss 1.1912  val 0.5400  best 0.5400 @ 0
+    epoch  10  train loss 0.8199  val 0.7462  best 0.7540 @ 9
+    epoch  20  train loss 0.6324  val 0.8198  best 0.8198 @ 20
+    epoch  30  train loss 0.4689  val 0.8195  best 0.8275 @ 26
+    epoch  40  train loss 0.3734  val 0.8135  best 0.8275 @ 26
+  seed0: test 0.7800 (val 0.8275 at epoch 26, 0.3 min)
+  seed0: training
+    epoch   0  train loss 1.2112  val 0.4489  best 0.4489 @ 0
+    epoch  10  train loss 0.8267  val 0.7055  best 0.7055 @ 10
+    epoch  20  train loss 0.5321  val 0.7027  best 0.7418 @ 16
+    epoch  30  train loss 0.3635  val 0.6865  best 0.7418 @ 16
+  seed0: test 0.7098 (val 0.7418 at epoch 16, 0.4 min)
+  seed0: training
+    epoch   0  train loss 1.1936  val 0.4994  best 0.4994 @ 0
+    epoch  10  train loss 0.8101  val 0.7076  best 0.7114 @ 9
+    epoch  20  train loss 0.5984  val 0.7339  best 0.7554 @ 17
+    epoch  30  train loss 0.3979  val 0.7075  best 0.7554 @ 17
+  seed0: test 0.7273 (val 0.7554 at epoch 17, 0.4 min)
+  seed0: training
+    epoch   0  train loss 1.1926  val 0.4912  best 0.4912 @ 0
+    epoch  10  train loss 0.8006  val 0.7136  best 0.7240 @ 9
+    epoch  20  train loss 0.5822  val 0.7263  best 0.7487 @ 14
+    epoch  30  train loss 0.4694  val 0.7029  best 0.7487 @ 14
+  seed0: test 0.7233 (val 0.7487 at epoch 14, 0.4 min)
+  seed0: training
+    epoch   0  train loss 1.1927  val 0.4913  best 0.4913 @ 0
+    epoch  10  train loss 0.8004  val 0.7136  best 0.7234 @ 9
+    epoch  20  train loss 0.5811  val 0.7254  best 0.7476 @ 14
+    epoch  30  train loss 0.4678  val 0.7042  best 0.7476 @ 14
+  seed0: test 0.7236 (val 0.7476 at epoch 14, 0.4 min)
+Best-weight inference disabled; saved scores do not recreate gate diagnostics.
+No saved three-seed report.

@@ -1,0 +1,9 @@
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python on evc24
+Verified 67 source files; no kernel, data, cache or model was opened.
+Observed GPU: NVIDIA H100 PCIe; gates diagnostics
+Explicit job: cov_vac_degradation seed 2 diagnostics
+Explicit cov_vac_degradation seed 2 best-weight diagnostic inference on cuda.
+Parameter construction skipped; saved result counts remain available below.
+Saved records are read in place. Current input/cache checks happen only in explicit execution.
+Fitting disabled. Missing results remain missing.
+No saved three-seed report.

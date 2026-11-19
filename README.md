@@ -56,13 +56,13 @@ Fuller IsoFormer reproduction is [deferred](Code/stage4/RUNBOOK.md#isoformer-rep
 
 ### Stage 4: comparative and explanatory experiments
 
-The [Stage 4 investigation](Code/stage4/README.md) uses those references to test encoder substitutions, biological sequence context and the value of combining representations. The encoder-swap and pooled full-transcript half-life/translation-efficiency comparisons sit beside prepared tests of auxiliary correction, gate behavior, anchor-preserving attention and transcript regions. Molecular-partner extensions remain conditional.
+The [Stage 4 investigation](Code/stage4/README.md) uses those references to test encoder substitutions, biological sequence context and the value of combining representations. The encoder-swap and pooled half-life/translation-efficiency comparisons lead into controlled tests of auxiliary correction, gate behavior, anchor-preserving attention and transcript regions. Molecular-partner extensions remain conditional.
 
 Stage 4 remains active. The Newton encoder-swap cohort has **504 completed fits across four benchmarks and training seeds 0, 1 and 2**, with four completed three-seed reports. Its findings show task-dependent outcomes and the importance of a strong single-encoder reference. The separate grouped-stability evaluation and other unfinished comparisons remain distinct work: repetitions do not remove sequence overlap. The [Stage 4 findings](Code/stage4/README.md#newton-three-seed-findings) and [run records](docs/run-records.md) identify the evidence and its limits.
 
 The findings characterize these settings and motivate hypotheses. A prospective rule needs a stated expectation, simpler controls and an evaluation not already used to develop it. Fungal species/condition transfer remains a candidate setting, not a selected dataset or implemented experiment.
 
-Four notebooks implement the advisor's auxiliary-correction, gate, anchor-attention and transcript-region comparisons. Synthetic checks and bounded CPU input/parameter inspections are complete; their research training and token extraction have not run. Each new experiment includes its own matched baselines and repeats; a new split requires a distinct experiment identity. The [Gantt and Details sheets](docs/Research_Project_Plan_Gantt.xlsx) map reliability to tasks 24/28, correction to 45, gates to 46, attention to 25, regions to 42 and conditional partner tasks to 47/48. Recorded statuses and historical dates do not establish execution.
+The [November 19 Newton return](docs/run-records.md#2026-11-19-verified-newton-return-for-e-coli-gates-and-attention) adds the E. coli RNA encoder extension and three seeds of gate and anchor-attention comparisons on E. coli and CoV-Vac. Auxiliary correction and transcript-region experiments have separate notebooks and result sets. The [Gantt and Details sheets](docs/Research_Project_Plan_Gantt.xlsx) map reliability to tasks 24/28, correction to 45, gates to 46, attention to 25, regions to 42 and conditional partner tasks to 47/48.
 
 ## Repo structure
 
@@ -182,6 +182,7 @@ When an output changes, update this inventory and its handling, adjusting [.giti
 | `.data-cache/mrnabench/` | Local, ignored downloaded tables for the half-life/TE notebook. |
 | `Code/stage3/results/` and `Code/stage4/results/` | Small JSON/CSV and verification records are shared. Best-validation `*.weights.pt` files, recovery checkpoints, interrupted publications and `Code/*/embeddings/` remain local and ignored. Existing results without weights are reused without retraining merely to fill that gap. |
 | [Returned Newton swaps](Code/stage4/results/newton_h100_seeds012/README.md) | Separate shared fit/prediction and execution evidence; canonical benchmark CSVs remain under `datasets/`. Follow the [result-set contract](Code/stage4/RUNBOOK.md#select-a-returned-result-set) for reading and separately authorized analysis. |
+| [Focused E. coli swaps](Code/stage4/results/newton_ecoli_ernie/), [gates](Code/stage4/results/gate_diagnostics_v1/) and [anchor attention](Code/stage4/results/anchor_cross_attention_v1/) | Three-seed Newton fits, test predictions and diagnostic arrays for the Stage 4 readers. The [return manifest](Code/stage4/results/newton_finished_20261119/provenance/return-manifest.json) identifies the imported files. |
 | [Windows E. coli records](Code/stage4/results/blf_phaseA/ecoli_proteins/) and [fungal seed-0 records](Code/stage3/results/fungal_expression/reproducible/) | Separate historical configurations, not extra repetitions of another cohort. Consult their [run records](docs/run-records.md) before combining evidence; historical runner/verifier scripts depended on a trainer refactor absent from this branch. |
 
 ## Contributors

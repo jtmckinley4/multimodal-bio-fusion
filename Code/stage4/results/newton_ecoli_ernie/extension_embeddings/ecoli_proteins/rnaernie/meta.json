@@ -1,0 +1,107 @@
+{
+  "shard_version": 1,
+  "encoder": "rnaernie",
+  "checkpoint": "LLM-EDA/RNAErnie",
+  "revision": "df26681ed44bb671b61536c5e2a196d6058a44f7",
+  "max_len": 2048,
+  "dtype": "float16",
+  "n_sequences": 4450,
+  "chunk_size": 256,
+  "n_shards": 18,
+  "input_sha256": "a9e617dec0ef8b97e52b8a3884db4e4c850d569ee8e3baa3580f18e0ea2b150d",
+  "extraction_code_sha256": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+  "shards": [
+    {
+      "name": "shard_00000.npz",
+      "sha256": "d87649a7353f8ee682c6a832b5ab0286d9d4c9014f35fa875c88d9ee43c0223b"
+    },
+    {
+      "name": "shard_00001.npz",
+      "sha256": "cfee4c702e89f0d7e3dee9b68d5cb546f86a3efe442a029dda154c1ca1e66545"
+    },
+    {
+      "name": "shard_00002.npz",
+      "sha256": "6cd502229cb09390e6878c8c62290420966acaab358d7ee4db6522cc3cbac3e4"
+    },
+    {
+      "name": "shard_00003.npz",
+      "sha256": "b9cb816841d1f6db69c67369f65047b7977784a2a20b220e01ad268903374691"
+    },
+    {
+      "name": "shard_00004.npz",
+      "sha256": "1dfca1691ab74fec820f59197c06c94f6882a72045df68065d4c36510b339f8c"
+    },
+    {
+      "name": "shard_00005.npz",
+      "sha256": "10577e35eff9a429bf5949ddbc9c6bc08d6c6ca71f88d37749feb33bdeb25388"
+    },
+    {
+      "name": "shard_00006.npz",
+      "sha256": "fd67aa6a62cf8cbed636978fc1eb791765ab51a06f4179e016633eef950013c5"
+    },
+    {
+      "name": "shard_00007.npz",
+      "sha256": "8ea429f308a9be6b4e0d9f76468e2318eecddaf1c3ed66b2b0d1121c6071d48c"
+    },
+    {
+      "name": "shard_00008.npz",
+      "sha256": "b9477f6e8c22811b5ee05da835bacbb7cda497ab483d03802bc6aea3e5d243ac"
+    },
+    {
+      "name": "shard_00009.npz",
+      "sha256": "c99f0c416a8593f144a783082da866ee6df5e024df656f0915485cc9692bee45"
+    },
+    {
+      "name": "shard_00010.npz",
+      "sha256": "accd384f08f491e4048f5460e8ca92ca69e5f5b3acb3304f2e54377c821c2e26"
+    },
+    {
+      "name": "shard_00011.npz",
+      "sha256": "6955d05c4a08ebff148cc5fe642b39204809f47cf8f32a79bfd2e2fb33f620e1"
+    },
+    {
+      "name": "shard_00012.npz",
+      "sha256": "a7f5d9cc1557e5eb1741090f22298ddc0259d184925eb6b790ad23dc4dd9a974"
+    },
+    {
+      "name": "shard_00013.npz",
+      "sha256": "21410eeeb3d86bbc3d6820e0ed2d3b1440ce0bb10f0a27831bf03cbb5c8bf3e3"
+    },
+    {
+      "name": "shard_00014.npz",
+      "sha256": "d40875a25bb49f316c877b803493311b02ec6709350651be6f6173849f9f0a38"
+    },
+    {
+      "name": "shard_00015.npz",
+      "sha256": "4abcc2e2ac453eb251552dfef26564ffc4a000ac659c8c2d66d409892c9a9edd"
+    },
+    {
+      "name": "shard_00016.npz",
+      "sha256": "416521611fc919693f0b960a297c7c22941e5d03b9282306d128df2544b01b7d"
+    },
+    {
+      "name": "shard_00017.npz",
+      "sha256": "60218e514cf5eb389f7f71b03ee48e9a0aef7828fa8e11c6752c0d4b689499d5"
+    }
+  ],
+  "shard_extraction_code_sha256": {
+    "shard_00000.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00001.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00002.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00003.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00004.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00005.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00006.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00007.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00008.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00009.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00010.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00011.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00012.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00013.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00014.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00015.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00016.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37",
+    "shard_00017.npz": "a6fb977857fc5a4aa2a1dd63953ed62c680635035a98976960b088d6b7f16b37"
+  }
+}

@@ -1,0 +1,433 @@
+{
+  "schema": "controlled-fusion-diagnostics-v2",
+  "identity": {
+    "fit_identity": {
+      "benchmark": "cov_vac_degradation",
+      "config": {
+        "batch_size": 32,
+        "channels": 100,
+        "early_stopping_patience": 20,
+        "entropy_lambda": 0.0,
+        "lr": 3e-05,
+        "max_epochs": 500,
+        "plateau_patience": 5,
+        "seed": 0,
+        "tconv": "equation",
+        "weight_decay": 1e-05
+      },
+      "inputs": {
+        "caches": {
+          "dna": {
+            "array_dtype": "<f2",
+            "checkpoint": "InstaDeepAI/nucleotide-transformer-v2-100m-multi-species",
+            "chunk_size": 256,
+            "dtype": "float16",
+            "encoder": "ntv2_100m",
+            "input_sha256": "e86600893dfbcebdc837555647628a1043c8fc182546cc4286de8fb010923a1d",
+            "max_len": 2048,
+            "n_sequences": 2400,
+            "n_shards": 10,
+            "revision": "f34324c6fde36a4f635f0f1f06cac5d25acd6798",
+            "shard_version": 1,
+            "shards": [
+              {
+                "name": "shard_00000.npz",
+                "sha256": "0d3cc33eac2e363f5f4434026689e30b5c0cb4e0842a8b970c547ad197086742"
+              },
+              {
+                "name": "shard_00001.npz",
+                "sha256": "fe4a875a3caf3a2ee79771dd2ba9c9d03fbca6a669fa96cdc34c97a230877b49"
+              },
+              {
+                "name": "shard_00002.npz",
+                "sha256": "d942f909c2d63a72498c2d5d57774b154ef1bc626b3504cb0f028eb020ffafb5"
+              },
+              {
+                "name": "shard_00003.npz",
+                "sha256": "b6333ddccd113f0d5af79de62de9111f042e6f7e92614866e752534cbb85e727"
+              },
+              {
+                "name": "shard_00004.npz",
+                "sha256": "897e40bc3673311c515d1a9ed00d747257cb5cce908ed39ca97b80aa5c156363"
+              },
+              {
+                "name": "shard_00005.npz",
+                "sha256": "9d6a924e56a95d7cfbb9a9107ba6902427c97e096332250b4183b8be6eb0dd71"
+              },
+              {
+                "name": "shard_00006.npz",
+                "sha256": "59ac631fe8aa6b0298dc18db4f997a8987308c8e830a18207ca90a2260102ee9"
+              },
+              {
+                "name": "shard_00007.npz",
+                "sha256": "aa8ef5dce6ea42149733e735be227fc7a11858539b13b9a0dc3aedbc0990be7e"
+              },
+              {
+                "name": "shard_00008.npz",
+                "sha256": "15b006c19daed47c5407a6e282513e3e79d6ac2f42ed2bf565454c85b08f1f27"
+              },
+              {
+                "name": "shard_00009.npz",
+                "sha256": "d866956d8653759c06ef61254949d32a1a2b3aa1fdd9fcaa5b48c91303fedb14"
+              }
+            ],
+            "width": 512
+          },
+          "prot": {
+            "array_dtype": "<f2",
+            "checkpoint": "facebook/esm2_t6_8M_UR50D",
+            "chunk_size": 256,
+            "dtype": "float16",
+            "encoder": "esm2_8m",
+            "input_sha256": "f88dfdc8403debea6988bcd689b0cc151c135f8f9341c7d1b79f828053c6a6b4",
+            "max_len": 1024,
+            "n_sequences": 2400,
+            "n_shards": 10,
+            "revision": "",
+            "shard_version": 1,
+            "shards": [
+              {
+                "name": "shard_00000.npz",
+                "sha256": "a1473bc1e4314ff5bdc104ef155d5bb93a196971687a8abe5f7b2310ca6008ad"
+              },
+              {
+                "name": "shard_00001.npz",
+                "sha256": "bfa679bcab66436df146ae1c861a1f26338660f3fa7642f9c5fd674207773faf"
+              },
+              {
+                "name": "shard_00002.npz",
+                "sha256": "c4364925649a8f6e527e0bded15c4d903d6faf7b8af2c4626c166fdd7ea6ba31"
+              },
+              {
+                "name": "shard_00003.npz",
+                "sha256": "21cfb4be51f7223b9aad1a94daf60ec8362f3b0d6faf62f992f7a6d04724f9cc"
+              },
+              {
+                "name": "shard_00004.npz",
+                "sha256": "906bf14573ba7af1515fd030953b2e8c4fd6a232e96f2180b59169606fb5d65c"
+              },
+              {
+                "name": "shard_00005.npz",
+                "sha256": "59740eecfef8070bdb11ddfa9af3c9c1b6723915ad6af29d4f57688e2412ea8e"
+              },
+              {
+                "name": "shard_00006.npz",
+                "sha256": "417e590766249e9cb81b53066b2074b7920cbe63347116943f11061e774d66a0"
+              },
+              {
+                "name": "shard_00007.npz",
+                "sha256": "80560fce45b8a06d1a0bf37d1136f889140a04d337f51d46839625dccc54932b"
+              },
+              {
+                "name": "shard_00008.npz",
+                "sha256": "91eb9981b30465b10e9a5d49eebcc99595f64bbc92ba856d5510d3904e0e785e"
+              },
+              {
+                "name": "shard_00009.npz",
+                "sha256": "7d8cdaca478f69966cb91e2ff1ffb46e0c8cb8965a22faf90a78d40e868fae45"
+              }
+            ],
+            "width": 320
+          },
+          "rna": {
+            "array_dtype": "<f2",
+            "checkpoint": "multimolecule/mrnafm",
+            "chunk_size": 256,
+            "dtype": "float16",
+            "encoder": "mrnafm",
+            "input_sha256": "88c9f013442c4ee5e9b73b6611809e305406863042523ede729a7780eb36449c",
+            "max_len": 1024,
+            "n_sequences": 2400,
+            "n_shards": 10,
+            "revision": "",
+            "shard_version": 1,
+            "shards": [
+              {
+                "name": "shard_00000.npz",
+                "sha256": "7acf4b1877adf88daeb6e72b4bb562d4a8908891eee09d56a48ce75b41543fa5"
+              },
+              {
+                "name": "shard_00001.npz",
+                "sha256": "e13edf348a66a09d1a74c5b29870ec9f7d1af5a40cf0459b9bb9359fa93cf590"
+              },
+              {
+                "name": "shard_00002.npz",
+                "sha256": "fd7e8dcdbfacb48b27aa2a15f2924107014f84b1735b23aa7fd97f6b96694f63"
+              },
+              {
+                "name": "shard_00003.npz",
+                "sha256": "fd0095117626391e40861cc6f5d3baeec0b84ce228f96273103b10d436ab2f11"
+              },
+              {
+                "name": "shard_00004.npz",
+                "sha256": "1405619de0b5b2f044f143ff6e939e7111c97bafb33dce5cf529e5f936005ef3"
+              },
+              {
+                "name": "shard_00005.npz",
+                "sha256": "bcb08d9671ee8c563398cce5100aa48bab95a7059ebb56b4ac59395112e94376"
+              },
+              {
+                "name": "shard_00006.npz",
+                "sha256": "14364ef1371c0bf0b99db9bb7e268411f32be348abbf71982e4a9eaa45e7c0d9"
+              },
+              {
+                "name": "shard_00007.npz",
+                "sha256": "11feaa419cb06f12e3a202fc16d5a674035764b098cd9c472209c1f3524b1135"
+              },
+              {
+                "name": "shard_00008.npz",
+                "sha256": "18a4b3867b4de221ef9155b98256f71aa14d6783c8823e4cbf7a8fcc23c28c32"
+              },
+              {
+                "name": "shard_00009.npz",
+                "sha256": "061d880b8d744c8426f1c32d9c08b5f4d7d2eaf04a31c315469093e9082d97c6"
+              }
+            ],
+            "width": 1280
+          }
+        },
+        "encoders": {
+          "dna": "ntv2_100m",
+          "prot": "esm2_8m",
+          "rna": "mrnafm"
+        },
+        "rows": {
+          "columns": [
+            "sequence",
+            "length"
+          ],
+          "count": 2400,
+          "sha256": "c61f775a24c0708b49ae1016d2baebd81e48926fc01ff52ccbe4459a2afc693b"
+        },
+        "split_targets": {
+          "test": {
+            "dtype": "<f4",
+            "sha256": "7ee0a10f0ae16f26d4bb57ccb3170c42f1c9b9e6fbb9f60864d7b8fe5fb008d1",
+            "shape": [
+              400
+            ]
+          },
+          "train": {
+            "dtype": "<f4",
+            "sha256": "afcaaac23a1601f595e186db27572840b8e78083a6cb1e062611fc7eef12051c",
+            "shape": [
+              1600
+            ]
+          },
+          "val": {
+            "dtype": "<f4",
+            "sha256": "d2c01ecabee623b1852a042dee191f907da405a5e45719bfbcb72d459f4c3efd",
+            "shape": [
+              400
+            ]
+          }
+        },
+        "splits": {
+          "test": {
+            "dtype": "<i8",
+            "sha256": "6c858db47b1472286345ab14754490646e21de53af15863aba7c449f472d8246",
+            "shape": [
+              400
+            ]
+          },
+          "train": {
+            "dtype": "<i8",
+            "sha256": "ed270f494dbf4728e7f914c735e1cb7d4280869889469cb42dcb5becb3f1deeb",
+            "shape": [
+              1600
+            ]
+          },
+          "val": {
+            "dtype": "<i8",
+            "sha256": "38829656d02a9aef24b391a9613d39a16faa7b9e0832bfeb73b2495511f792a7",
+            "shape": [
+              400
+            ]
+          }
+        },
+        "targets": {
+          "columns": [
+            "Value"
+          ],
+          "dtype": "<f4",
+          "sha256": "2e4833e90d007d059f8e14fca8f00c459b19c7001113bb2e4ea1b2c26e858a80",
+          "shape": [
+            2400
+          ],
+          "task": "regression",
+          "transform": "as_supplied"
+        }
+      },
+      "loader": {
+        "batch_size": 32,
+        "drop_last": false,
+        "implementation": "shared_code.fusion.blf.loader",
+        "kind": "custom",
+        "modalities": [
+          "dna",
+          "rna",
+          "prot"
+        ],
+        "num_workers": 0,
+        "recovery": {
+          "test": {},
+          "train": {
+            "batch_sampler.sampler": {
+              "fields": [
+                "generator"
+              ],
+              "type": "torch.utils.data.sampler.RandomSampler"
+            },
+            "loader": {
+              "fields": [
+                "generator"
+              ],
+              "type": "torch.utils.data.dataloader.DataLoader"
+            },
+            "sampler": {
+              "fields": [
+                "generator"
+              ],
+              "type": "torch.utils.data.sampler.RandomSampler"
+            }
+          },
+          "val": {}
+        },
+        "seed": 0
+      },
+      "model": {
+        "builder": "shared_code.fusion.controlled_experiment.build_model",
+        "contract": "controlled-blf-interventions-v1",
+        "gate_formula": {
+          "broadcast": "all_valid_positions",
+          "input": "masked_mean_all_projected_modalities",
+          "scorer": "affine_sigmoid",
+          "scorer_width_active": false
+        },
+        "implementation_sha256": {
+          "codon_grid.py": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+          "controlled_experiment.py": "cf3e5cec86a18c5d9e302c4b4746f213ce30e349c1579c065c4b698a39f443e8",
+          "controlled_models.py": "b7d3b7dbaef56b91eb58860709e1a33557e6779a36a183baf3e7c445db4b4f21",
+          "heads.py": "0f9dd428c60c74f755fb89fe550790310ed60d0dcb7393d48b647b898366aee4",
+          "intervention_ops.py": "c6d15ad32a691badf503834f4a17c6a3764fca27cf2acd2f820d0c63c6355fde",
+          "textcnn.py": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+          "train.py": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3"
+        },
+        "modalities": [
+          "dna",
+          "rna",
+          "prot"
+        ],
+        "n_outputs": 1,
+        "numerics": {
+          "amp": false,
+          "inputs": "float32",
+          "parameters": "float32"
+        },
+        "parameter_counts": {
+          "fusion": 1274403,
+          "grid": 524800,
+          "prediction": 720601,
+          "total": 2519804
+        },
+        "settings": {
+          "projection_activation": "tanh",
+          "projection_norm": "none",
+          "projection_width": 600,
+          "scorer_width": 100
+        },
+        "textcnn": {
+          "dropout": 0.2,
+          "kernels": [
+            3,
+            4,
+            5
+          ]
+        },
+        "widths": {
+          "dna": 512,
+          "prot": 320,
+          "rna": 1280
+        }
+      },
+      "schema": "fusion.run.v1",
+      "variant": "joint_sequence_sigmoid"
+    },
+    "fit_sha256": "a4d592ae99286b8690de07d8326b0b15156cd9ea24c204f96e214e366b3d65bf",
+    "weights_sha256": "bb002aa261bb2cff04df7637ce5b30e022c86263e97aeec00bd4a8c39178e464",
+    "split": "test",
+    "diagnostic_schema": "controlled-fusion-diagnostics-v2",
+    "observer_sha256": "cf3e5cec86a18c5d9e302c4b4746f213ce30e349c1579c065c4b698a39f443e8"
+  },
+  "rows": 400,
+  "gate_kind": "joint_sequence_sigmoid",
+  "gate_modalities": [
+    "dna",
+    "rna",
+    "prot"
+  ],
+  "norm_columns": {
+    "feature_norms": [
+      "dna",
+      "rna",
+      "prot"
+    ],
+    "contribution_norms": [
+      "dna",
+      "rna",
+      "prot"
+    ],
+    "fused_norm": [
+      "fused"
+    ]
+  },
+  "temperature": null,
+  "parameter_counts": {
+    "total": 2519804,
+    "grid": 524800,
+    "fusion": 1274403,
+    "prediction": 720601
+  },
+  "producer": {
+    "device": "cuda",
+    "fusion_study_execution": {
+      "action": "diagnostics",
+      "benchmark": "cov_vac_degradation",
+      "cuda": "12.6",
+      "gpu": "NVIDIA H100 PCIe",
+      "host": "evc45",
+      "launch_record": "/lustre/fs1/home/ch806988/multi-modal_fusion_studies/outputs/logs/gates-cov_vac_degradation-seed0-20261118T153249Z-458284ce.json",
+      "seed": 0,
+      "slurm_job_id": "1217565",
+      "snapshot_sha256": "099e4e1e454ac4e7b201211da73ab410d4c99bf602542825af0a96ce4479aa58",
+      "study": "gates"
+    },
+    "git": {
+      "commit": null,
+      "dirty": null
+    },
+    "host": "evc45",
+    "packages": {
+      "numpy": "2.3.5",
+      "torch": "2.10.0+cu126"
+    },
+    "platform": "Linux-4.18.0-553.123.1.el8_10.0.1.x86_64-x86_64-with-glibc2.28",
+    "python": "3.11.18",
+    "source_sha256": {
+      "Code/shared_code/fusion/blf.py": "8b6f1857719392025b72a3850d5f269f3cc082bbfbc04eda23a8d9adb24dd9e2",
+      "Code/shared_code/fusion/codon_grid.py": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+      "Code/shared_code/fusion/heads.py": "0f9dd428c60c74f755fb89fe550790310ed60d0dcb7393d48b647b898366aee4",
+      "Code/shared_code/fusion/isoformer.py": "09f47cc1427c81e3fce7b348f71e44b37931c96342576143b8fabb5e0012409e",
+      "Code/shared_code/fusion/run_identity.py": "f1b616ce96167d3818b628f445c42e525ea4cfebd1639b1881225cc0a962069b",
+      "Code/shared_code/fusion/textcnn.py": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+      "Code/shared_code/fusion/train.py": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3"
+    },
+    "started_utc": "2026-11-18T15:32:59.800062+00:00"
+  },
+  "created_utc": "2026-11-18T15:33:09.191695+00:00",
+  "arrays": {
+    "file": "seed0.npz",
+    "sha256": "0c45d0e02f99acc50292fa7fc3af022db90f17e37e07116e701eef9f96f581a0",
+    "bytes": 264478
+  }
+}

@@ -1,0 +1,54 @@
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python on evc33
+Verified 83 prepared files; no kernel, cache arrays or computation started.
+Starting train: ('ecoli_proteins',), seed 0; /lustre/fs1/home/ch806988/multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/notebooks/train-ecoli_proteins-seed0-20261119T021310Z-a0afbfff.ipynb
+torch 2.10.0+cu126 | CUDA available: True | Apple MPS available: False
+Selected device: cuda | GPU: NVIDIA H100 PCIe
+Result set: newton_h100_seeds012; evidence root: /lustre/fs1/home/ch806988/multi-modal_fusion_ecoli_ernie/Code/stage4/results/newton_h100_seeds012
+Kernel environment: {"host": "evc33", "python": "3.11.18 (main, Oct 26 2026, 18:19:35) [GCC 14.3.0]", "platform": "Linux-4.18.0-553.123.1.el8_10.0.1.x86_64-x86_64-with-glibc2.28", "device": "cuda", "gpu": "NVIDIA H100 PCIe", "cuda": "12.6", "cudnn": 91002, "packages": {"numpy": "2.3.5", "pandas": "3.1.1", "scipy": "1.16.3", "scikit-learn": "1.9.1", "torch": "2.10.0+cu126", "nbconvert": "7.17.2", "nbclient": "0.11.0"}}
+Execution: newton ('ecoli_proteins',) seed 0 outputs: /lustre/fs1/home/ch806988/multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie
+Training seed 0; selection seed 0; 4 new/resumable fits in the displayed plan.
+2 swap-benchmark pairs over 1 benchmarks, device cuda
+Estimated replacement-cache payload needed by pending fits, including existing caches: ~8 GB
+Cache arrays stay out of Git; cache_directory selects the configured roots.
+  ecoli_proteins/ntv2_100m: complete, recorded_input
+  ecoli_proteins/esm2_8m: complete, recorded_input
+  ecoli_proteins/rnaernie: complete, recorded_input
+  ecoli_proteins/ernierna: complete, recorded_input
+Preflight passed: 4 caches; 0 shards need extraction.
+Complete caches verified; extraction and metadata repair disabled for this execution.
+Token streams open only for a pending training group.
+ecoli_proteins / rnaernie / mil / seed 0
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed0: training
+    epoch   0  train loss 1.1119  val 0.3530  best 0.3530 @ 0
+    epoch  10  train loss 1.0057  val 0.5893  best 0.5893 @ 10
+    epoch  20  train loss 0.9263  val 0.5893  best 0.5975 @ 17
+    epoch  30  train loss 0.9224  val 0.5907  best 0.5975 @ 17
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed0: test 0.5618 (val 0.5975 at epoch 17, 4.9 min)
+ecoli_proteins / ernierna / mil / seed 0
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed0: training
+    epoch   0  train loss 1.1102  val 0.3530  best 0.3530 @ 0
+    epoch  10  train loss 0.9917  val 0.5687  best 0.5687 @ 10
+    epoch  20  train loss 0.9140  val 0.5343  best 0.5687 @ 10
+  ecoli_proteins__mil__lambda0.01__ch100__equation__seed0: test 0.5492 (val 0.5687 at epoch 10, 5.1 min)
+ecoli_proteins / rnaernie / concat / seed 0
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed0: training
+    epoch   0  train loss 1.1061  val 0.4313  best 0.4313 @ 0
+    epoch  10  train loss 0.9644  val 0.5618  best 0.5783 @ 9
+    epoch  20  train loss 0.8581  val 0.5673  best 0.5838 @ 18
+    epoch  30  train loss 0.8462  val 0.5714  best 0.5838 @ 18
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed0: test 0.5772 (val 0.5838 at epoch 18, 4.3 min)
+ecoli_proteins / ernierna / concat / seed 0
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed0: training
+    epoch   0  train loss 1.1022  val 0.3530  best 0.3530 @ 0
+    epoch  10  train loss 0.9897  val 0.5783  best 0.5783 @ 10
+    epoch  20  train loss 0.9749  val 0.5769  best 0.5810 @ 16
+    epoch  30  train loss 0.9649  val 0.5769  best 0.5920 @ 22
+    epoch  40  train loss 0.9633  val 0.5838  best 0.5920 @ 22
+  ecoli_proteins__concat__lambda0.0__ch100__equation__seed0: test 0.5801 (val 0.5920 at epoch 22, 5.0 min)
+Requested seed finished in 0.32 hours.
+
+ecoli_proteins (accuracy x 100)
+Head scores only; no new single-encoder gain or three-seed claim is established.
+Paired intervals not recalculated. RUN_BOOTSTRAP is separate from completing fits; retained interval outputs remain historical.
+Focused extension: read the head-score table; single-control reports are not configured.
+The two new RNA encoders have no Stage 1 alignment capture; this lookup is skipped.

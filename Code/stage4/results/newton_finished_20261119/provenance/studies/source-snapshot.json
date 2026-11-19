@@ -1,0 +1,415 @@
+{
+  "schema": "fusion-studies.package.v1",
+  "files": [
+    {
+      "source": "Code/shared_code/__init__.py",
+      "destination": "Code/shared_code/__init__.py",
+      "sha256": "180e70140c57d20d87ae07300f68efa6c918abd94bf447bdc78a8f26ae18d1f5",
+      "bytes": 821
+    },
+    {
+      "source": "Code/shared_code/analysis.py",
+      "destination": "Code/shared_code/analysis.py",
+      "sha256": "b2a4cc6463dcf72a7c8368189b92e3a40538ee755844e38e21c860b5db772cb7",
+      "bytes": 32087
+    },
+    {
+      "source": "Code/shared_code/datasets.py",
+      "destination": "Code/shared_code/datasets.py",
+      "sha256": "9dc3d7471e3aecd75e8232d69b0c833cf83c6911f8f6bd240754b3929c44811c",
+      "bytes": 14964
+    },
+    {
+      "source": "Code/shared_code/embeddings.py",
+      "destination": "Code/shared_code/embeddings.py",
+      "sha256": "b179ec472788b91d065b58c5b83f0263908c6931b3e2ac9e772957315ed3808b",
+      "bytes": 12679
+    },
+    {
+      "source": "Code/shared_code/encoders.py",
+      "destination": "Code/shared_code/encoders.py",
+      "sha256": "c7a6d705b3be824e8a6281acc4fd026345027cafc8ae060fe4307e230df37da5",
+      "bytes": 11642
+    },
+    {
+      "source": "Code/shared_code/fusion/__init__.py",
+      "destination": "Code/shared_code/fusion/__init__.py",
+      "sha256": "0695fb3839e3bb6b053b3a7eee618004992393d7cb9df9e6daf88c0618679d3a",
+      "bytes": 1019
+    },
+    {
+      "source": "Code/shared_code/fusion/anchor_correction.py",
+      "destination": "Code/shared_code/fusion/anchor_correction.py",
+      "sha256": "618dee784b7ebd795c174569930fe93f827b1497d183cca92b27c4be1f9df97a",
+      "bytes": 12493
+    },
+    {
+      "source": "Code/shared_code/fusion/blf.py",
+      "destination": "Code/shared_code/fusion/blf.py",
+      "sha256": "8b6f1857719392025b72a3850d5f269f3cc082bbfbc04eda23a8d9adb24dd9e2",
+      "bytes": 13066
+    },
+    {
+      "source": "Code/shared_code/fusion/codon_grid.py",
+      "destination": "Code/shared_code/fusion/codon_grid.py",
+      "sha256": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+      "bytes": 7524
+    },
+    {
+      "source": "Code/shared_code/fusion/controlled_experiment.py",
+      "destination": "Code/shared_code/fusion/controlled_experiment.py",
+      "sha256": "cf3e5cec86a18c5d9e302c4b4746f213ce30e349c1579c065c4b698a39f443e8",
+      "bytes": 43729
+    },
+    {
+      "source": "Code/shared_code/fusion/controlled_models.py",
+      "destination": "Code/shared_code/fusion/controlled_models.py",
+      "sha256": "b7d3b7dbaef56b91eb58860709e1a33557e6779a36a183baf3e7c445db4b4f21",
+      "bytes": 25286
+    },
+    {
+      "source": "Code/shared_code/fusion/correction_experiment.py",
+      "destination": "Code/shared_code/fusion/correction_experiment.py",
+      "sha256": "46a3a588b7f45de084ad63b1068e0e5adf07c6f83bb056908a77a5efca1fbdbb",
+      "bytes": 52053
+    },
+    {
+      "source": "Code/shared_code/fusion/coupled_mamba.py",
+      "destination": "Code/shared_code/fusion/coupled_mamba.py",
+      "sha256": "3a616c1e3d012d5ea2e06d55847e4bf06e0565bc81b8d5352673c2b1162ef320",
+      "bytes": 14412
+    },
+    {
+      "source": "Code/shared_code/fusion/grouped_stability.py",
+      "destination": "Code/shared_code/fusion/grouped_stability.py",
+      "sha256": "038e3ba8cc0e37c03b6744becc01b21546f0d37cbd8c0651ace25330be8b34cf",
+      "bytes": 21860
+    },
+    {
+      "source": "Code/shared_code/fusion/heads.py",
+      "destination": "Code/shared_code/fusion/heads.py",
+      "sha256": "0f9dd428c60c74f755fb89fe550790310ed60d0dcb7393d48b647b898366aee4",
+      "bytes": 7502
+    },
+    {
+      "source": "Code/shared_code/fusion/intervention_ops.py",
+      "destination": "Code/shared_code/fusion/intervention_ops.py",
+      "sha256": "c6d15ad32a691badf503834f4a17c6a3764fca27cf2acd2f820d0c63c6355fde",
+      "bytes": 4985
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer.py",
+      "destination": "Code/shared_code/fusion/isoformer.py",
+      "sha256": "09f47cc1427c81e3fce7b348f71e44b37931c96342576143b8fabb5e0012409e",
+      "bytes": 18482
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_adapters.py",
+      "destination": "Code/shared_code/fusion/isoformer_adapters.py",
+      "sha256": "184aa7e484eae5114221917f7f599372f1507f141b2f5e476053a4ba7584869c",
+      "bytes": 10692
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_cohort.py",
+      "destination": "Code/shared_code/fusion/isoformer_cohort.py",
+      "sha256": "1caf65ed0354cc869ed14f89453f8eec56fa470d8329144a0bce267c49e211da",
+      "bytes": 29303
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_data_checks.py",
+      "destination": "Code/shared_code/fusion/isoformer_data_checks.py",
+      "sha256": "8ab1d8eff3668260ce4dfc74484b1a440a10b0b614b0ce1d2dd157fce2ef2f26",
+      "bytes": 26183
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_inputs.py",
+      "destination": "Code/shared_code/fusion/isoformer_inputs.py",
+      "sha256": "98ba34fc4e96e6cbe99bd2e8298b40d5bedac2b04efdf15ac6f0ac586d60bdcd",
+      "bytes": 21260
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_reference.py",
+      "destination": "Code/shared_code/fusion/isoformer_reference.py",
+      "sha256": "d3e0b8f89ca210a39b412539371d259442c5a61d7f0ff68a38402104a792e4fa",
+      "bytes": 17149
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_results.py",
+      "destination": "Code/shared_code/fusion/isoformer_results.py",
+      "sha256": "f476ff7de6b967872e695be479f2d6c5f23b237663de2b717a2643f6dc2c9237",
+      "bytes": 14265
+    },
+    {
+      "source": "Code/shared_code/fusion/region_experiment.py",
+      "destination": "Code/shared_code/fusion/region_experiment.py",
+      "sha256": "a4eb311c90233a257395f47b64a4e9ffa4beee85c78ca31832308b21c092429a",
+      "bytes": 39822
+    },
+    {
+      "source": "Code/shared_code/fusion/region_inputs.py",
+      "destination": "Code/shared_code/fusion/region_inputs.py",
+      "sha256": "8d63ca4129ac546179a0450f968c885367214ddcfda477c22cdbae5b1caf3771",
+      "bytes": 7904
+    },
+    {
+      "source": "Code/shared_code/fusion/region_training.py",
+      "destination": "Code/shared_code/fusion/region_training.py",
+      "sha256": "7e375c6e3ee594033010c61ab6820d92766a945279a207ef564fecc449429efe",
+      "bytes": 54066
+    },
+    {
+      "source": "Code/shared_code/fusion/result_sets.py",
+      "destination": "Code/shared_code/fusion/result_sets.py",
+      "sha256": "1273ede8511a7f936ca49709404c7d20ac5d8f37dae546ebf4c93f9df8b2c50b",
+      "bytes": 7213
+    },
+    {
+      "source": "Code/shared_code/fusion/run_identity.py",
+      "destination": "Code/shared_code/fusion/run_identity.py",
+      "sha256": "f1b616ce96167d3818b628f445c42e525ea4cfebd1639b1881225cc0a962069b",
+      "bytes": 44498
+    },
+    {
+      "source": "Code/shared_code/fusion/study_inputs.py",
+      "destination": "Code/shared_code/fusion/study_inputs.py",
+      "sha256": "9f0a9a272addd8d740ae0c79d235b346734f9085f511e870891d18b1c4ff79ad",
+      "bytes": 4904
+    },
+    {
+      "source": "Code/shared_code/fusion/study_references.py",
+      "destination": "Code/shared_code/fusion/study_references.py",
+      "sha256": "0951ca92d8f91e43bd8018e730e92be0dfdc362b5b09c58beb77598365ef1573",
+      "bytes": 6801
+    },
+    {
+      "source": "Code/shared_code/fusion/study_selection.py",
+      "destination": "Code/shared_code/fusion/study_selection.py",
+      "sha256": "b75913e6e1cb1f9ec2369687dd1ebb328e25a4f42ddeefc3366f16b545eeeb82",
+      "bytes": 6075
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_plan.py",
+      "destination": "Code/shared_code/fusion/swap_plan.py",
+      "sha256": "cd85ec461735867276fd2960aa2f98f9b01e0a7c96bed4a818e90a653fa9da57",
+      "bytes": 19291
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_reporting.py",
+      "destination": "Code/shared_code/fusion/swap_reporting.py",
+      "sha256": "cdff58718c3525252211953ee5dc6b8d72697548dec294e8e372ebdc1c7dd50b",
+      "bytes": 29669
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_results.py",
+      "destination": "Code/shared_code/fusion/swap_results.py",
+      "sha256": "3228dd650b68b50bad900dcbec2816948c49f5dbdd76f4c56f12659d34ff6a7d",
+      "bytes": 20265
+    },
+    {
+      "source": "Code/shared_code/fusion/textcnn.py",
+      "destination": "Code/shared_code/fusion/textcnn.py",
+      "sha256": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+      "bytes": 3452
+    },
+    {
+      "source": "Code/shared_code/fusion/token_embeddings.py",
+      "destination": "Code/shared_code/fusion/token_embeddings.py",
+      "sha256": "5219c467aa5194b76f24faba5bfe40cf2ba7ff1664b9858072a1e94e9aa39868",
+      "bytes": 36058
+    },
+    {
+      "source": "Code/shared_code/fusion/train.py",
+      "destination": "Code/shared_code/fusion/train.py",
+      "sha256": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3",
+      "bytes": 48000
+    },
+    {
+      "source": "Code/shared_code/lucaone.py",
+      "destination": "Code/shared_code/lucaone.py",
+      "sha256": "aeccd0d9222b72a6ca5850056026fac0a97a145fb39d3d4b370e6758c2e465d0",
+      "bytes": 11799
+    },
+    {
+      "source": "Code/shared_code/matched_probes.py",
+      "destination": "Code/shared_code/matched_probes.py",
+      "sha256": "e1a2d01bbc05be9a8a79082af5bef25d7b851cd78d24ed029fc127b2f1179b25",
+      "bytes": 19150
+    },
+    {
+      "source": "Code/shared_code/matrix_cache.py",
+      "destination": "Code/shared_code/matrix_cache.py",
+      "sha256": "3dea107062340cc0ab76b161600a44e481eaed659b4224e5526cf00e0cd24b69",
+      "bytes": 3148
+    },
+    {
+      "source": "Code/shared_code/mrfp_cache.py",
+      "destination": "Code/shared_code/mrfp_cache.py",
+      "sha256": "bb5eb9c74c135ba106ddf5dd7391f1107b49445c30a15eeb4d4de52ff2f6bb85",
+      "bytes": 8912
+    },
+    {
+      "source": "Code/shared_code/mrnabench.py",
+      "destination": "Code/shared_code/mrnabench.py",
+      "sha256": "c4714a9a0bd25c0eadc76caf193c488a1623b5811bb61f7b78812832aaeb772e",
+      "bytes": 28772
+    },
+    {
+      "source": "Code/shared_code/notebook.py",
+      "destination": "Code/shared_code/notebook.py",
+      "sha256": "760caec9aeccb92b759a5ba75d37fd0868cbbfeff9028ad73ac6b3241e922be0",
+      "bytes": 2035
+    },
+    {
+      "source": "Code/shared_code/saved_results.py",
+      "destination": "Code/shared_code/saved_results.py",
+      "sha256": "f2ba4f11b4758608397b6754eafc5ba2964946b4b67ab291a3b78050114db571",
+      "bytes": 6344
+    },
+    {
+      "source": "Code/shared_code/sequences.py",
+      "destination": "Code/shared_code/sequences.py",
+      "sha256": "595e2a7674676901bae659bdecc654dff9e979b59200ee52ee345405dd8ba725",
+      "bytes": 6007
+    },
+    {
+      "source": "Code/shared_code/splits.py",
+      "destination": "Code/shared_code/splits.py",
+      "sha256": "b3ababa37f62559a924e103b7cd85942985aea6de6239e80b1eb6f57ae0915ed",
+      "bytes": 1969
+    },
+    {
+      "source": "Code/stage4/anchor_correction.ipynb",
+      "destination": "Code/stage4/anchor_correction.ipynb",
+      "sha256": "054c45730b8937ade6bfd61ac174613529053749691cd23207f265d6199d1c83",
+      "bytes": 81108
+    },
+    {
+      "source": "Code/stage4/anchor_cross_attention.ipynb",
+      "destination": "Code/stage4/anchor_cross_attention.ipynb",
+      "sha256": "3e74f8573bd0bd25c83a9072fe4972046c9949cdcdbc2c0c3463ec3327708b02",
+      "bytes": 64582
+    },
+    {
+      "source": "Code/stage4/gate_diagnostics.ipynb",
+      "destination": "Code/stage4/gate_diagnostics.ipynb",
+      "sha256": "7728c6e3af83749f0a34e60c27df5e7a60046723ff29ea36398fc44b971b4e40",
+      "bytes": 68603
+    },
+    {
+      "source": "Code/stage4/region_aware_fusion.ipynb",
+      "destination": "Code/stage4/region_aware_fusion.ipynb",
+      "sha256": "6ef8c94242603a871a733fcb2a368aa1a1e29a2f6d3f1c46e94b635ef05895da",
+      "bytes": 48577
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/run_encoder_swaps.py",
+      "destination": "arcc_execution_support.py",
+      "sha256": "7f35a03df193920a4c13fbb7c80767c3cefe13e54db82c21fb516ebfc4e7b43c",
+      "bytes": 23801
+    },
+    {
+      "source": "execution/arcc/fusion_studies/README.md",
+      "destination": "README.md",
+      "sha256": "7bb9c71ed1eac5a5d8deafb5bdb43f6e7389786a7d2c9e10dcc05670054d9765",
+      "bytes": 10995
+    },
+    {
+      "source": "execution/arcc/fusion_studies/RUN_CHECKLIST.md",
+      "destination": "RUN_CHECKLIST.md",
+      "sha256": "5091409548b769aecc115cb6e7a8e67cd3ed86cc324dd8e54b27296c5a52c568",
+      "bytes": 15790
+    },
+    {
+      "source": "execution/arcc/fusion_studies/batches.tsv",
+      "destination": "batches.tsv",
+      "sha256": "d71743db41ce18dfcadfff82627518cebd887815839e84e88c1f79ab2f531b26",
+      "bytes": 8273
+    },
+    {
+      "source": "execution/arcc/fusion_studies/input-manifest.json",
+      "destination": "input-manifest.json",
+      "sha256": "f44545bbf2718aba3fabbe946be512afb32994e65060383a3e13ea60b5585b1a",
+      "bytes": 31438
+    },
+    {
+      "source": "execution/arcc/fusion_studies/newton_fusion_preflight.sbatch.example",
+      "destination": "newton_fusion_preflight.sbatch.example",
+      "sha256": "5253c385c7d1dcd0205aa065e8ba2cb4af30b199002e1fae79c39c2a58e49bad",
+      "bytes": 1503
+    },
+    {
+      "source": "execution/arcc/fusion_studies/newton_fusion_study.sbatch.example",
+      "destination": "newton_fusion_study.sbatch.example",
+      "sha256": "3c0bf1a12f8d15568242d30a213cf10757f0754c1a2ad25b95694b27fa9b8276",
+      "bytes": 1351
+    },
+    {
+      "source": "execution/arcc/fusion_studies/prepare.py",
+      "destination": "prepare.py",
+      "sha256": "6c66c49ef3c3ec11c47b62c6253dff107b2160e12b07e9b7d4ad029bd6dbe6d2",
+      "bytes": 4554
+    },
+    {
+      "source": "execution/arcc/fusion_studies/requirements.txt",
+      "destination": "requirements.txt",
+      "sha256": "d2d4c7fae0abc146ab2f5a7e24f44bfca90cd0b3e39a32b20b7578c94d7455d7",
+      "bytes": 278
+    },
+    {
+      "source": "execution/arcc/fusion_studies/run_fusion_study.py",
+      "destination": "run_fusion_study.py",
+      "sha256": "eac2dd84fd92fa29773f6e73f033e0ee555cc4bef4bd3441af0ed15c73f5ca66",
+      "bytes": 17711
+    },
+    {
+      "source": "execution/arcc/fusion_studies/verify_inputs.py",
+      "destination": "verify_inputs.py",
+      "sha256": "fa085339092c1e86ca8a28f72f1964f01f5e6ed5f2a43af5101e84693fd7be80",
+      "bytes": 3507
+    },
+    {
+      "source": "tests/test_arcc_fusion_inputs.py",
+      "destination": "tests/test_arcc_fusion_inputs.py",
+      "sha256": "b5865fffec371548d16bded8424ec2fd623ca3d0036656610e1d591dbc3f28ed",
+      "bytes": 3656
+    },
+    {
+      "source": "tests/test_arcc_fusion_package.py",
+      "destination": "tests/test_arcc_fusion_package.py",
+      "sha256": "ef1087996137859a38cd1d7c92d2dbff6dafce8be6344aef4c07aebba2871bd7",
+      "bytes": 3326
+    },
+    {
+      "source": "tests/test_arcc_fusion_studies.py",
+      "destination": "tests/test_arcc_fusion_studies.py",
+      "sha256": "79c76fc8d91d71199141972cd3a9f231ab4e93cd3f91ffa7a4772c00f2e50649",
+      "bytes": 23371
+    },
+    {
+      "source": "tests/test_controlled_experiment.py",
+      "destination": "tests/test_controlled_experiment.py",
+      "sha256": "3f4bbf19389d514ee720f3b4358fff885d7ab1c6a927a0db82a1119a84ed462c",
+      "bytes": 27560
+    },
+    {
+      "source": "tests/test_controlled_models.py",
+      "destination": "tests/test_controlled_models.py",
+      "sha256": "5b97c81d82666162bffca3b108d45dad5cd13f4b3c321c9396ec8eacc8b5f119",
+      "bytes": 30577
+    },
+    {
+      "source": "tests/test_region_training.py",
+      "destination": "tests/test_region_training.py",
+      "sha256": "04bfadeadce56273637bf4423ae1be3de1d45d929e5d5a1a33b46f6482148e26",
+      "bytes": 55616
+    }
+  ],
+  "source_root": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion",
+  "source_commit": "56c989778c8e776320481d84d295fa6c465edaff",
+  "source_dirty": true,
+  "total_bytes": 1355787,
+  "copied_data": false,
+  "copied_caches": false,
+  "research_executed": false,
+  "prepared_utc": "2026-11-17T23:08:40.709276+00:00"
+}

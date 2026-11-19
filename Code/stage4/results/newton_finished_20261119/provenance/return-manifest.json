@@ -1,0 +1,2350 @@
+{
+  "multi-modal_fusion_ecoli_ernie/evidence/selection-source-snapshot.json": {
+    "bytes": 165617,
+    "sha256": "6bc161b8ea78eda8bf8c316ce27fca60bb1b0975b1bf01d8ec241aa82863c96f"
+  },
+  "multi-modal_fusion_ecoli_ernie/extension_embeddings/ecoli_proteins/ernierna/meta.json": {
+    "bytes": 4453,
+    "sha256": "26614c076a596e7898b832e6c148047fcb2d94ba99a68b428455108680625e34"
+  },
+  "multi-modal_fusion_ecoli_ernie/extension_embeddings/ecoli_proteins/rnaernie/meta.json": {
+    "bytes": 4447,
+    "sha256": "d1ed2ec2767e94370b9a1d3980a6f900aae24280af0965c35d03fe56135148fe"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/logs/environment-1220709.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/logs/environment-1220710.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/logs/environment-1220711.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/logs/environment-1220712.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/logs/extract-ecoli_proteins-seedNone-20261119T020735Z-572d054f.json": {
+    "bytes": 12762,
+    "sha256": "b96e2b8bf3bed1fa80993dc1f52b62aca54210f69af6ad3ccbd100ff327772bd"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/logs/train-ecoli_proteins-seed0-20261119T021310Z-a0afbfff.json": {
+    "bytes": 12750,
+    "sha256": "1860319caa63c4baf403524b08025128b8681c97cb9bd1b421ab3d57b8744eb8"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/logs/train-ecoli_proteins-seed1-20261119T021546Z-c7dc6b79.json": {
+    "bytes": 12750,
+    "sha256": "6dc5e2e6c0b9f2993a1630ad22b0a49de7b5492504b0a7d9d41e1eea0fc534ab"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/logs/train-ecoli_proteins-seed2-20261119T021613Z-2cbe4256.json": {
+    "bytes": 12750,
+    "sha256": "9ca40d4b2eff8ecf34a7abb137937ca9a33b4efe84667d5965b59672964b98df"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/notebooks/extract-ecoli_proteins-seedNone-20261119T020735Z-572d054f.ipynb": {
+    "bytes": 181270,
+    "sha256": "ff95c11e72b8f197667b165e9454f15024d91f763a1a4c7b5efe055efc6857e8"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/notebooks/train-ecoli_proteins-seed0-20261119T021310Z-a0afbfff.ipynb": {
+    "bytes": 175832,
+    "sha256": "311785d64d5209aa39a50a306b2825475c918e5cfab89ab327de017c66ccafc9"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/notebooks/train-ecoli_proteins-seed1-20261119T021546Z-c7dc6b79.ipynb": {
+    "bytes": 175580,
+    "sha256": "0a58f8b41cbbd1ff5805777ed294e5683fb294a808f90c3774535e324a89ad42"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/notebooks/train-ecoli_proteins-seed2-20261119T021613Z-2cbe4256.ipynb": {
+    "bytes": 175590,
+    "sha256": "72e4629593c04f5f11b3cf2e4549d19d8ab365f3ba0be8ab085370205dda29cb"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json": {
+    "bytes": 34293,
+    "sha256": "a01f7b165ebe9d49c9a6db9ef87c6cd6f176389408d78d673305fa4e647716d7"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json": {
+    "bytes": 33785,
+    "sha256": "92492acdb68cc43db94f5733a53d165ea6c4f0b3c727c2ba6d779910bbb9fbc3"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json": {
+    "bytes": 33423,
+    "sha256": "6fe0ad0ff07e8d962e469e655119cb588c39f7e23c597ae9b48c0267c85ee8ca"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json": {
+    "bytes": 32785,
+    "sha256": "bdcb5f9c5ac6e19751f72b860bb895dfd223d9a1fe56507cbd0863d1ca6c3a96"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json": {
+    "bytes": 32520,
+    "sha256": "8939ab335470e47e842f340809a969837c1eb4e390eb6a320d19f6f52f1c40b4"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/ernierna/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json": {
+    "bytes": 32523,
+    "sha256": "5840810dc4b15e4592c8005cbe60e092556e22f60183504eb9a263fe920639b2"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__concat__lambda0.0__ch100__equation__seed0.json": {
+    "bytes": 33769,
+    "sha256": "525dd7140743feb14d4008b047121aec4bd1407b494c06dd1b8dc00308b2a4ed"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__concat__lambda0.0__ch100__equation__seed1.json": {
+    "bytes": 33778,
+    "sha256": "bc238d2049f56349ca47bf98536a2f53a7c7af42f071a008d59ed58dc804b792"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__concat__lambda0.0__ch100__equation__seed2.json": {
+    "bytes": 33032,
+    "sha256": "1e21bfd681418c5936530fa0ff41f51b36b936136c6208a7c1a0d3067f02c96a"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__mil__lambda0.01__ch100__equation__seed0.json": {
+    "bytes": 33785,
+    "sha256": "d42eefc4269321a7ef4a767bb0fc708d38f75475de1493c58beff4154ffe5e3d"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__mil__lambda0.01__ch100__equation__seed1.json": {
+    "bytes": 32907,
+    "sha256": "e4f93f686ab8720227a8b8c99f68212fbe05900a865eeb45201601854e510b6a"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/ecoli_ernie/phaseB/ecoli_proteins/rnaernie/ecoli_proteins__mil__lambda0.01__ch100__equation__seed2.json": {
+    "bytes": 32524,
+    "sha256": "5a2716fa181ae3d8f5440d3e82d31828ca2faf74db2b038ed585e4643d4c0eac"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/logs/ernie-extract-1220709.err": {
+    "bytes": 1762,
+    "sha256": "44f186386c65cfb1ae3d2825177276e356967be15cfb4ddd1095a848c89d9acf"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/logs/ernie-extract-1220709.out": {
+    "bytes": 3798,
+    "sha256": "aa88219b0fb130bb24e20ab9fe1c7a19f49f4c7a59fa36c3efc4b24ecac7a54c"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/logs/ernie-seed0-1220710.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/logs/ernie-seed0-1220710.out": {
+    "bytes": 4191,
+    "sha256": "dc99605107b3ae1cc8da4037d68edc5908d6ee1ec7a950479360144edfdd9b28"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/logs/ernie-seed1-1220711.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/logs/ernie-seed1-1220711.out": {
+    "bytes": 4124,
+    "sha256": "fcd708c7fd981de3efdcc19f02e7a27fc87b16c6c5fdf6419821233133e273fd"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/logs/ernie-seed2-1220712.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_ecoli_ernie/outputs/logs/ernie-seed2-1220712.out": {
+    "bytes": 4058,
+    "sha256": "71c3540ec2ebf6c6360a77a4bce986d94f857a9f1e0ceb99cd92af5d93171200"
+  },
+  "multi-modal_fusion_ecoli_ernie/source-snapshot.json": {
+    "bytes": 46155,
+    "sha256": "ef3bd82001cd1d05bc3e3a133158272b4a552a40968276bfb05f64799169489f"
+  },
+  "multi-modal_fusion_studies/INPUT_TRANSFER.tsv": {
+    "bytes": 6434,
+    "sha256": "b45969208149769106b955b38788288826ba7ece1995e78ddc5e0114794df7a0"
+  },
+  "multi-modal_fusion_studies/input-manifest.json": {
+    "bytes": 31438,
+    "sha256": "f44545bbf2718aba3fabbe946be512afb32994e65060383a3e13ea60b5585b1a"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/anchor-selection.json": {
+    "bytes": 2356,
+    "sha256": "9916963bee90064208026d60666d3740d56a25f3a3d84ad1ab787bc8de66ffdc"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/anchor_concat_control/seed0.json": {
+    "bytes": 40137,
+    "sha256": "b59e3c812644cec272c0dcdfdbac7b68f0c7d5b47640a7fd2cc1044c3dcbda1b"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/anchor_concat_control/seed1.json": {
+    "bytes": 41048,
+    "sha256": "f7804dedb2ef63537a76a46304c75edf81a837f9b6c1bcc3bca8c07f2b6f2d7c"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/anchor_concat_control/seed2.json": {
+    "bytes": 41120,
+    "sha256": "5a5299967d6bbfef818d10883fbed48b7bbbae13e4746b945ed7997fc191b2eb"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/anchor_only/seed0.json": {
+    "bytes": 43945,
+    "sha256": "a90f8588bdeea76249134022c7534f07494a7f008abd18f64a43b0903c8a6165"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/anchor_only/seed1.json": {
+    "bytes": 44301,
+    "sha256": "c48bd73f3a81f9dc98f40b23293a1028f1764488ad77f6e210223f0f967d3481"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/anchor_only/seed2.json": {
+    "bytes": 48334,
+    "sha256": "3578562b4daddd3427511d61a6a87dcbf6559476fb0b0bd9901f691dcc7a6893"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_ordinary/seed0.json": {
+    "bytes": 38620,
+    "sha256": "b99ed554503de4a7394e897199cc7e20604e637362495fccb2a0f110712af679"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_ordinary/seed1.json": {
+    "bytes": 38211,
+    "sha256": "71db6dc02efa31f2c89698d5ac69f18b8ca3fb7c165f1742604f4bb0c92d5521"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_ordinary/seed2.json": {
+    "bytes": 38460,
+    "sha256": "d7ff72d4930f003584ee2daede43ff54e41606c956c9cc28d9875488f32ed890"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_position_sigmoid/seed0.json": {
+    "bytes": 38329,
+    "sha256": "c500dfab49be719110b7d988b85fccacfb890ce1916e9b4668848117a3f07f22"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_position_sigmoid/seed1.json": {
+    "bytes": 38484,
+    "sha256": "0202a700e0f432c14aee7b14598d8f3e9e0ca9ad6c985319910e6ab9d4724ce0"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_position_sigmoid/seed2.json": {
+    "bytes": 39144,
+    "sha256": "4b7fbcdcef0a2403dde6baa311200f60fa657ae970991d97a2aa3cd283aff778"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_sequence_sigmoid/seed0.json": {
+    "bytes": 38360,
+    "sha256": "14baea8f8ac47e11b27e7b1c6cc1b9680d913adaa9f5f871592d85bf894f4b32"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_sequence_sigmoid/seed1.json": {
+    "bytes": 38237,
+    "sha256": "476c362b1aaf1e928cde0b5c9bf8d6e8dbdf0fd47c20fd0d0c5e6df2606c693f"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_sequence_sigmoid/seed2.json": {
+    "bytes": 39144,
+    "sha256": "c9f765edb67bfda0e217a87014458e6c0678f58d407378fdb5ac885b054a9c80"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_skip/seed0.json": {
+    "bytes": 38744,
+    "sha256": "86c4250397c68f4e8a506fb0400a26006635a12dd90f8631516b96cde7872d22"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_skip/seed1.json": {
+    "bytes": 38937,
+    "sha256": "a8db9fffba5baed1f5a11b891fdca0a4c656d0d823ad37318659d9ac37f09698"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/attention_skip/seed2.json": {
+    "bytes": 39102,
+    "sha256": "c2d71c009f3109f810be0c1fdf660f69512c41f519f8b2172da654ea1cc53b74"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_ordinary/seed0.json": {
+    "bytes": 14841,
+    "sha256": "e20ddf16f2c4012e7577d8eacf1dd33ba146c68f121319809864b13b012ed404"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_ordinary/seed0.npz": {
+    "bytes": 229773,
+    "sha256": "74e96836f87418b84fc43548b85076143dc7daf8b97598fc6554d2ce9e2e8a9d"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_ordinary/seed1.json": {
+    "bytes": 14841,
+    "sha256": "fe89b8091bff3c0bd951376efa4159976857e292c8a8b6da266104378f97e2bc"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_ordinary/seed1.npz": {
+    "bytes": 228330,
+    "sha256": "c3daad8f0102fcb2e6d54ab74ff3d7ed36bf5639dfe916d677a6462d876475b1"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_ordinary/seed2.json": {
+    "bytes": 14841,
+    "sha256": "c2f828f17901d011c9abf4c75d59c65227d1a9682aa16520205e624fdef1ce0e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_ordinary/seed2.npz": {
+    "bytes": 227424,
+    "sha256": "c0bf6270241874ca26d33bd4d7f8fceb87454825717afea255ae1debc5e1574a"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_position_sigmoid/seed0.json": {
+    "bytes": 14866,
+    "sha256": "04e167771ae1986e0b262572d22c11db5ce4ad80d6a8051bd1bc87f69c01a2d3"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_position_sigmoid/seed0.npz": {
+    "bytes": 376023,
+    "sha256": "491ecb4ec5adc722295312a23caeece7698925f45625d214fee1ab118751181e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_position_sigmoid/seed1.json": {
+    "bytes": 14866,
+    "sha256": "c5d09a4cb06c5efdda759dfaa74b6b3678cf2efd461b185b74bf0b4992dc352e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_position_sigmoid/seed1.npz": {
+    "bytes": 374164,
+    "sha256": "e5d43139d13a12d7296f4ef0d83d947f17b6004485ff2cd33e84c658d891f7b0"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_position_sigmoid/seed2.json": {
+    "bytes": 14866,
+    "sha256": "0f66c7f88cc64304929f46b5d6ba5b21aaac7c4a50aa86417a1f39e8d9a68f08"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_position_sigmoid/seed2.npz": {
+    "bytes": 371778,
+    "sha256": "db1e0286091edfb6ae211084d0f456d2be7098596f6135ff8645d052a1406cd7"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed0.json": {
+    "bytes": 14866,
+    "sha256": "f2f91c55daadcddef9797613e173d2b3043785906a82e3fb8f65c7043b908ae7"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed0.npz": {
+    "bytes": 231135,
+    "sha256": "7cc9cc1cc50894eab9f911c15d64b86916753a6aee71cb337fef563c8c687592"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed1.json": {
+    "bytes": 14866,
+    "sha256": "4f7d335e5b56b8c1793c265ad92104541cd2ed72bbe376d6d1a7892756812024"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed1.npz": {
+    "bytes": 230232,
+    "sha256": "035302a0c385b90686f93a8fb45caded7fab658bcb3cb8cd68a2631a5e1b7fdd"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed2.json": {
+    "bytes": 14866,
+    "sha256": "b87fb0adde934ec3abe81f6a6574af2353207636f87c660fabe71297071586f6"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed2.npz": {
+    "bytes": 232074,
+    "sha256": "b5e156cafd783c0e6062c831884d2af03f62c1b159bb8a971852384ac975a29c"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_skip/seed0.json": {
+    "bytes": 14837,
+    "sha256": "57694be3f53555f4b15c2d284df0e59dcff382be1283d3443592728cbd1c85cb"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_skip/seed0.npz": {
+    "bytes": 224906,
+    "sha256": "2ba73742033508753bc326de437c7617da118e19c107c553c6e7f965b15b8263"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_skip/seed1.json": {
+    "bytes": 14837,
+    "sha256": "dd36a387eea3bb34430a1eff236a2699ca54fb74466abfdd0b592566e3765496"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_skip/seed1.npz": {
+    "bytes": 224956,
+    "sha256": "a82337c4339b81354941d23d1636c19c314879d7e275963315b21145d876be1e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_skip/seed2.json": {
+    "bytes": 14837,
+    "sha256": "d86f08904f9e85d4e8ff4ee84348e541de661a61712f76077b8c542a198c14ca"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/mrnafm/diagnostics-v2/attention_skip/seed2.npz": {
+    "bytes": 224259,
+    "sha256": "eb0b82f6b5bc036f0041072118168e4f421e2409e362e6fe764fb5381cc3db43"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/anchor-selection.json": {
+    "bytes": 2686,
+    "sha256": "77b4dde1895452c76c863585ea20176f43cb3ab1ba916c91e23b7cb7cf197df6"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/anchor_concat_control/seed0.json": {
+    "bytes": 40132,
+    "sha256": "7964190e4fd5ae032e3cfbf3ad1b85d508c963be75f8a220025c6797d6212b23"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/anchor_concat_control/seed1.json": {
+    "bytes": 40273,
+    "sha256": "ff47d3deacd95bb2f4dfe1b26e380427c6ef17abca185e1df3fd2da95e9a308f"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/anchor_concat_control/seed2.json": {
+    "bytes": 38700,
+    "sha256": "76604c85656e128528b20a13e6f1ef7c03a433fab07f8c0b7b563b20efea4d6b"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/anchor_only/seed0.json": {
+    "bytes": 45625,
+    "sha256": "8a393f57a02b3ca2269fc5b69be73b2b180a1b3a9564b20ab473f14e231098b4"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/anchor_only/seed1.json": {
+    "bytes": 44048,
+    "sha256": "0a0fdd5486966bf855da1acdde41f85ec1817a6748aeeee783a399c99177d402"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/anchor_only/seed2.json": {
+    "bytes": 45952,
+    "sha256": "467768b834d130c1cf7e9fc0a0d9611edcfd81836a19f428222074b9baf7a8a7"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_ordinary/seed0.json": {
+    "bytes": 39434,
+    "sha256": "eb5083c2d2b5053edd76422168a32e0d8f837837d9f6e097febe21a99c11d803"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_ordinary/seed1.json": {
+    "bytes": 38256,
+    "sha256": "69290484778fddbddd4d24d6a0bba994142588d7d0238e44296011aac377a4f4"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_ordinary/seed2.json": {
+    "bytes": 38540,
+    "sha256": "21a2496cd8e82fef70d0089b526cd8a67659be10d9009abbae36edc7fc9d9d24"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_position_sigmoid/seed0.json": {
+    "bytes": 38054,
+    "sha256": "95e13614bd125fa10ce8c3d37dc003dced4d7afcddac9c77418f108782129c91"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_position_sigmoid/seed1.json": {
+    "bytes": 38185,
+    "sha256": "4f2f1beaf5dab09bd4221c8c4f42a312a1566e51deb8d09fe5021c7d7b51f252"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_position_sigmoid/seed2.json": {
+    "bytes": 38455,
+    "sha256": "ebee79ee28ded41f0a314492d9d97986f382db98b001ede6d820c19c0df7cdaa"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_sequence_sigmoid/seed0.json": {
+    "bytes": 38097,
+    "sha256": "140a59bcf5be7bc4e33cf9b0c6ee37955d3617bc0bd7d57cfb49d46f6d1f6c3f"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_sequence_sigmoid/seed1.json": {
+    "bytes": 38196,
+    "sha256": "0810296b1b13a2276328e9e2bdf8360981bb1da597aa14fed118966e8f4a235b"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_sequence_sigmoid/seed2.json": {
+    "bytes": 38432,
+    "sha256": "5a6984e879472ea2aeb81035bffa30cb82063a38025717180c120fa8e232a7a8"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_skip/seed0.json": {
+    "bytes": 38070,
+    "sha256": "86857da9af4a912698cead5d4ec120d29500bc1c28cb1b57e1badbe8444d5c87"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_skip/seed1.json": {
+    "bytes": 38181,
+    "sha256": "c0d1e45fbdeae0040fc53d1cd2b56a39f0c63a5e4dec2adfef8e972fc9d90351"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/attention_skip/seed2.json": {
+    "bytes": 38424,
+    "sha256": "da0df6263a073856edbb0503b901879c2d4030ad3267a4970c5ebf0293a49c86"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_ordinary/seed0.json": {
+    "bytes": 14837,
+    "sha256": "73c02a0f0b0778c8597d0a035f7722601bdbe3e65830a3c5f21470365ef71d9e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_ordinary/seed0.npz": {
+    "bytes": 229145,
+    "sha256": "6efca4d5620377d4d442b2b739f28f90f41f9222219fea10726375064a00a70e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_ordinary/seed1.json": {
+    "bytes": 14837,
+    "sha256": "1be1b14374b224aaa483dc483e68cb9657d8b223a140891cf69a462d399238d5"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_ordinary/seed1.npz": {
+    "bytes": 227477,
+    "sha256": "3e73a2ebee7b1076de3a13af0207fff905abdc79a39cc1389f6afdc3c58c3e17"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_ordinary/seed2.json": {
+    "bytes": 14837,
+    "sha256": "07c4f673dd623eca3db3011966e29e7b5a4b381cddf922e79f189e78a371d6d0"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_ordinary/seed2.npz": {
+    "bytes": 228260,
+    "sha256": "f4bf1149ee4b43a05047fe82df301a80a49009a21f0ec258d8651f7cef4c41a8"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_position_sigmoid/seed0.json": {
+    "bytes": 14862,
+    "sha256": "bd77e5b4aaba088c5ad85c47f2464da2653d0fdd7fabd05055bdfc8959b3cbdc"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_position_sigmoid/seed0.npz": {
+    "bytes": 359640,
+    "sha256": "6809f282386ee63e27c0b36e786074ad5b01bbbc08e825c7fde43531947de9b4"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_position_sigmoid/seed1.json": {
+    "bytes": 14862,
+    "sha256": "0202dddf031efddd9d97ce467ac61dce2180355ccd3dbb3d3096697f78612670"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_position_sigmoid/seed1.npz": {
+    "bytes": 358276,
+    "sha256": "2512d27cac4b3816dac3dc8956a92941cf81e8b6bb76faf4ed78bd4f61db5d28"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_position_sigmoid/seed2.json": {
+    "bytes": 14862,
+    "sha256": "683709a61df299a8485053bd85ff77bbcf3792af917ddbb78eb3da2611909850"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_position_sigmoid/seed2.npz": {
+    "bytes": 363596,
+    "sha256": "fc71bd84995d1a09a511f46f1d4f5800e4edb0c62922ed63205595d1558e0a1a"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_sequence_sigmoid/seed0.json": {
+    "bytes": 14862,
+    "sha256": "cd1c2f17cde76a135ca01d26637de9b5881f826dcba1e76bd1198f849b131a76"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_sequence_sigmoid/seed0.npz": {
+    "bytes": 210255,
+    "sha256": "c7acb11477503bb291ac6eb05b7727c830d4eca56f19838519a8d3d71eb1ed92"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_sequence_sigmoid/seed1.json": {
+    "bytes": 14862,
+    "sha256": "e0a5bdf310f27a6207da0b1390901dd8fd933c48b076fcba6ec277cc2572dc6d"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_sequence_sigmoid/seed1.npz": {
+    "bytes": 212089,
+    "sha256": "95f92a445094ce0eecc1c58bf58fada9ee0116242b10f0bfc3d6c2949210e48a"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_sequence_sigmoid/seed2.json": {
+    "bytes": 14862,
+    "sha256": "7b40791799aac5e28e82c417578dd26dd4d6f6966d5a0068ab322961d1a279b8"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_sequence_sigmoid/seed2.npz": {
+    "bytes": 217210,
+    "sha256": "9f4e52a032c6c8dd9c87bc5cef1c7756a4994a27da4715d51833b7351bce3943"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_skip/seed0.json": {
+    "bytes": 14833,
+    "sha256": "11c39cb016a4b96b9c68c5ca547bfc859c0f5957e0cdfc7152fd5e2d54e99f80"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_skip/seed0.npz": {
+    "bytes": 206644,
+    "sha256": "03fadcb7778f10a8d17b3d7998a93b274623e0ce509087dffb700f64bb0f5397"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_skip/seed1.json": {
+    "bytes": 14833,
+    "sha256": "7cf0d3b622ee468898863f3161c280a11cd02d2b3e72f798021eefcd12976ad0"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_skip/seed1.npz": {
+    "bytes": 208621,
+    "sha256": "8143f98342c2e4cad4251601b066754df372258309d1af9a5139e1615e5b97c5"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_skip/seed2.json": {
+    "bytes": 14833,
+    "sha256": "869c518138dd49f643c740e0d10ec7d76b5010c62faffed347f02109e2d1fd58"
+  },
+  "multi-modal_fusion_studies/outputs/attention/cov_vac_degradation/original/diagnostics-v2/attention_skip/seed2.npz": {
+    "bytes": 211499,
+    "sha256": "feb177e714e5cd72636095022ac04dbbd207a8f821a1ad2d547a49d90c2f5f88"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/anchor-selection.json": {
+    "bytes": 2324,
+    "sha256": "114c190b55cae74ed55fa3700dc30572d1b64372d06f31179fe6ff911aea4503"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/anchor_concat_control/seed0.json": {
+    "bytes": 33041,
+    "sha256": "707dec5c0d70e25cc335ac916a138cd5f5d012da0b732d1d06bbe99eba2f1c28"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/anchor_concat_control/seed1.json": {
+    "bytes": 32172,
+    "sha256": "f8c6c8bbbec466d243ddadea8cc217fccd8895a502d3101e0d886397e845e72d"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/anchor_concat_control/seed2.json": {
+    "bytes": 32432,
+    "sha256": "95521b6ceec7fb0bc1ca352c0448d9f43d0beb45624e03ee975d2ded9d243087"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/anchor_only/seed0.json": {
+    "bytes": 32485,
+    "sha256": "ce5f5f49eeecbd4f66b798d3df9948129b92ac5285d22b0f6a41fad68c48ad10"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/anchor_only/seed1.json": {
+    "bytes": 34875,
+    "sha256": "7ccfdd7d8bb69fe089cc0dc85cf0720cda29dcfa479b4922ffc9b4a76f65724e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/anchor_only/seed2.json": {
+    "bytes": 32492,
+    "sha256": "4b28d0df0bbe3a894ee87f77010175b441eb1039934010665f7db3ef59ac7646"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_ordinary/seed0.json": {
+    "bytes": 31274,
+    "sha256": "73fad6357e67fee0547a16e6144ca09e7f3bf86ffdbb2015719a68661938d772"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_ordinary/seed1.json": {
+    "bytes": 31016,
+    "sha256": "ff87d20060e41f9c33b84600cbf37d8f79e84210b28fc024d9c98f9e04e7f224"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_ordinary/seed2.json": {
+    "bytes": 31519,
+    "sha256": "4375daf39a716c5a02454692cbac37650a42b9d9e81df5330b6d1964a2a59a82"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_position_sigmoid/seed0.json": {
+    "bytes": 32713,
+    "sha256": "6ba435887612a367f98d001bac4966ba2512578d77e62acf29936414afcb07db"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_position_sigmoid/seed1.json": {
+    "bytes": 32326,
+    "sha256": "01d07bea68132d57c444af6f0c7065560fcd703d598aef0579d40af4910c8079"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_position_sigmoid/seed2.json": {
+    "bytes": 31552,
+    "sha256": "56945d88fd2681d99b922475fa77346d6fbe6953ec12f1dcc2ed8d4dd32a93e0"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_sequence_sigmoid/seed0.json": {
+    "bytes": 32718,
+    "sha256": "a91d7020cb61660173312ff3a3a7fd3799e02986d1ce5a7965b05f1278cb643f"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_sequence_sigmoid/seed1.json": {
+    "bytes": 32456,
+    "sha256": "9855cb8a4cc5be2b27da4318fabd007b451ec499a65e524227a877a42038cefc"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_sequence_sigmoid/seed2.json": {
+    "bytes": 32199,
+    "sha256": "b58ca8d29dea31124cd63f7c0f674e6f43fb0127fd7733bdb050ba4638667065"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_skip/seed0.json": {
+    "bytes": 33173,
+    "sha256": "b05a3c48b6a8fe1a21fbf44f33237aa8f7a2cc8a73e904b9af2300b177a9c5de"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_skip/seed1.json": {
+    "bytes": 32914,
+    "sha256": "636b2d4da0303156c8128765da681cf3882b27a91dcbbc6d141b4608120b397d"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/attention_skip/seed2.json": {
+    "bytes": 32168,
+    "sha256": "f821e3496533cd7d38ab3566772fb53f3eb61fc8737038d587b25656ec0bdd23"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_ordinary/seed0.json": {
+    "bytes": 18888,
+    "sha256": "ae2bcf631eedd8bff2a1edd32e675df41433077ac7d301a278e0666c404d59e0"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_ordinary/seed0.npz": {
+    "bytes": 2365215,
+    "sha256": "51f04c74a5192e842d69303057b05d464c83c098042977c4b30e994c19499945"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_ordinary/seed1.json": {
+    "bytes": 18888,
+    "sha256": "3789ddf8fc2992e94f5e3f3c79378daf54d8464554d51cdffc07e5f4e2f6a414"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_ordinary/seed1.npz": {
+    "bytes": 2359169,
+    "sha256": "0e03bbb5d9968e8c5d27e5b788034ec536561264cafc7e9b56e777d6798d58c3"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_ordinary/seed2.json": {
+    "bytes": 18888,
+    "sha256": "a068890bf140cd34fa1503a13ae55a1543d867502fb65bf9944e0c139288f6ff"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_ordinary/seed2.npz": {
+    "bytes": 2406992,
+    "sha256": "e191ee8d9ea18c4b4ea1aab7b0776a4fe9a5f5c09165aac966a46e95bcae4c35"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_position_sigmoid/seed0.json": {
+    "bytes": 18913,
+    "sha256": "843ab42273b93a752661d004085b175215212c9e9740d0cf677d6440d9e4eff0"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_position_sigmoid/seed0.npz": {
+    "bytes": 4515396,
+    "sha256": "41b34da7a8e12080e6eacd1d3781af72a2c3aa2c5553ed8b4cbf26b736c130dc"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_position_sigmoid/seed1.json": {
+    "bytes": 18913,
+    "sha256": "be1e9359f0c970050eddd96fa6d81f9727426e33fe1b39b913be133ca4106613"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_position_sigmoid/seed1.npz": {
+    "bytes": 4529177,
+    "sha256": "49349f729ae60b09bf8de778d42e81d3848466f011f2e28a807532842ec33989"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_position_sigmoid/seed2.json": {
+    "bytes": 18913,
+    "sha256": "a8a6c48f497acc94ae7b57372bc58a343fd3e3c49b91d59fd8a79cb174cba058"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_position_sigmoid/seed2.npz": {
+    "bytes": 4490816,
+    "sha256": "6e4c134f8c64cdfed02f3fafc2ee7bc0ffe70127959d35abe2af714b79a7002b"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed0.json": {
+    "bytes": 18913,
+    "sha256": "562825dad9d1c8bcd464df7696181a6b8f1b92d56bd47054e6d8bd65b19f13f2"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed0.npz": {
+    "bytes": 2477724,
+    "sha256": "327315295e82d562b2ef462c303d02e90f19e89c69842c4f0c99aef6cfe7f423"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed1.json": {
+    "bytes": 18913,
+    "sha256": "cf2d3277271c79fad5b0baf84fdbad317c144dc2d8155d7adf2e6fceb1d320a6"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed1.npz": {
+    "bytes": 2498773,
+    "sha256": "3555f443edc6b5a95bbd525efb06eb44f57411b8fd969f60065ab20ba4c046bb"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed2.json": {
+    "bytes": 18913,
+    "sha256": "c863e4c8b827388597d6537a2e5f708dffaa1cedc43fab071e0f7fcf70165cff"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_sequence_sigmoid/seed2.npz": {
+    "bytes": 2431341,
+    "sha256": "f629c0f146c9124357abd7a87cb82ff64c6378c807e2b6056b5d7a52e1053230"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_skip/seed0.json": {
+    "bytes": 18884,
+    "sha256": "a488214ba0c36b2c194343dbbd97e415b4fa52ed8d51f04150a73e9a045e38ce"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_skip/seed0.npz": {
+    "bytes": 2598662,
+    "sha256": "0df30d856eade031ec1d47008585d1facfdf45e51e1d1277a000d423d79a58b0"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_skip/seed1.json": {
+    "bytes": 18884,
+    "sha256": "0b7f264300123c64e7ad19938399315307ebf1c7b0ed7405f6239b8dc61234eb"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_skip/seed1.npz": {
+    "bytes": 2618441,
+    "sha256": "8998ee42c46af4df0010ab0df6031b6e2f980199865ccea10661fdd810216671"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_skip/seed2.json": {
+    "bytes": 18884,
+    "sha256": "0a8a5e56993a11a5ad0ff1d50a363dc5016ed705e1a09849f638570e6515a9bc"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/mrnafm/diagnostics-v2/attention_skip/seed2.npz": {
+    "bytes": 2594977,
+    "sha256": "13ff8d7c8680a19ec10baf22c1f46c22e6cac6fbeaf8bfc5957e42ded505b6a2"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/anchor-selection.json": {
+    "bytes": 2646,
+    "sha256": "14ffece0ee69736859996e69353c76449fae46ad0f6c66eccb3532d243440e91"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/anchor_concat_control/seed0.json": {
+    "bytes": 32037,
+    "sha256": "c07e59bec3463587f925ece51a08ff368e58f7e393531b15d85c56e02c52fe58"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/anchor_concat_control/seed1.json": {
+    "bytes": 31777,
+    "sha256": "bade56b6bac5972e0402014ae247455868b2040c45f47c305d7d00a0c9eac81e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/anchor_concat_control/seed2.json": {
+    "bytes": 32430,
+    "sha256": "09986a9d1318a7416cd8a805fe80050345d6dd9c0432c19f7203e8873154a88b"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/anchor_only/seed0.json": {
+    "bytes": 31724,
+    "sha256": "732b259b80a46e1796f5934a5eb242c13fff41d3d40bc497dd3edc4224b1a2dc"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/anchor_only/seed1.json": {
+    "bytes": 31223,
+    "sha256": "f995d47df5d1eec9afa0ae8801974f23fd61cf239f3fa2d0ad2eaad73d25d054"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/anchor_only/seed2.json": {
+    "bytes": 30954,
+    "sha256": "8ce24786d60797c4f20869f623b3285fad07b95ea4fab417dc362f327cf097a2"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_ordinary/seed0.json": {
+    "bytes": 32437,
+    "sha256": "0c5b1c51ad9811cbb93335f7cd7fe5f85835436f67413caf04759faa9513852d"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_ordinary/seed1.json": {
+    "bytes": 31655,
+    "sha256": "41531b2c4b1a2bfb711c6a45b22c4ee996e56efe655700264db6728acb1f1ad2"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_ordinary/seed2.json": {
+    "bytes": 32181,
+    "sha256": "2e5e0ca9492d340a58e4799a6638e5d0743892d46a9bfee50ac6d12b035ea5f1"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_position_sigmoid/seed0.json": {
+    "bytes": 31804,
+    "sha256": "f7d0d39c0940b8ac00a576d284f550b4b9e831f14cbfd1aaef1c62c1e4b50555"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_position_sigmoid/seed1.json": {
+    "bytes": 31934,
+    "sha256": "6e1ca43fb88af8e93a626002e67b27469de4e3522e50f38592e019efd4b79670"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_position_sigmoid/seed2.json": {
+    "bytes": 32802,
+    "sha256": "b92d2f16b5eea12aa456ca840ee774590d285996523c91e643afc8d0ca5a64bb"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_sequence_sigmoid/seed0.json": {
+    "bytes": 32580,
+    "sha256": "d0ab887a76f5093c55f9875d3c343f210941fe2fafd2cf0660e072697bb4e657"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_sequence_sigmoid/seed1.json": {
+    "bytes": 31929,
+    "sha256": "7973c826e832d69197ecc4fcd07cd27f4a9f7511b14278fd3b2323c773cfa895"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_sequence_sigmoid/seed2.json": {
+    "bytes": 32935,
+    "sha256": "af90352476ff78f878b3d8d825ad02a713d69d9ffb65c463d2e8355b38a77ab4"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_skip/seed0.json": {
+    "bytes": 32647,
+    "sha256": "96187e0ce73213f8626813f74ecb3bf4e90e9e74703543e34443d611a371b426"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_skip/seed1.json": {
+    "bytes": 31901,
+    "sha256": "d03f4a55911126188af157026480678a8964467c5561c528a9e80a1abbdd5fe8"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/attention_skip/seed2.json": {
+    "bytes": 33301,
+    "sha256": "96cd88931416ce8ab1da68a2f8d1bfd14586526f041a2a7b5864319b740cf8b6"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_ordinary/seed0.json": {
+    "bytes": 18882,
+    "sha256": "7b35bc59a32c33d36f5d5af707906427034fcbfa09348cd07ae7a6f6c7aff141"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_ordinary/seed0.npz": {
+    "bytes": 2712544,
+    "sha256": "5ad433a98e10b4cc8417199f7d7669c97acc344f1c7d7b6b1d248714f147cda8"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_ordinary/seed1.json": {
+    "bytes": 18882,
+    "sha256": "9abdd0ab51dd5e56e4646afa99da00ba2c519e5939cbab2a9f8dd01cd75697af"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_ordinary/seed1.npz": {
+    "bytes": 2679251,
+    "sha256": "ff14f40a1a834fff321e6e02fcf9676a4a008ff553d1347d9c49d2faf5769e63"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_ordinary/seed2.json": {
+    "bytes": 18882,
+    "sha256": "20020044025a64192e0f6349d4a19d8c75fc91f8636182d949f07c98ea209e71"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_ordinary/seed2.npz": {
+    "bytes": 2740903,
+    "sha256": "e9b771de6ebf1f241ec6e238c4c1a10f5bf178400ed96fb25e551965d6bd21aa"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_position_sigmoid/seed0.json": {
+    "bytes": 18907,
+    "sha256": "36894dbeafd34ba88535c43d4bab8adc3908751adb9ebfa6714368c17d050483"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_position_sigmoid/seed0.npz": {
+    "bytes": 4486938,
+    "sha256": "06bdc30de0169dac982f59786d15634f1f831b5119a1080b61b6e030bdd8006a"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_position_sigmoid/seed1.json": {
+    "bytes": 18907,
+    "sha256": "04dcbfd3e2eaf88706e23b98f4a47149831aa415e1eb3ab353343ad3709c5086"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_position_sigmoid/seed1.npz": {
+    "bytes": 4515556,
+    "sha256": "3fd303df54317850eb5a12b0040d3e4ca0c26b07aefbf4a9527e007b7f961155"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_position_sigmoid/seed2.json": {
+    "bytes": 18907,
+    "sha256": "ddff68d55aa7e7a113cd87ccaa9ce82459e7ba52b7e1fdc278ea91b508ad6aaa"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_position_sigmoid/seed2.npz": {
+    "bytes": 4548829,
+    "sha256": "d2a6720c8ecdabe0d326c120eebc9439b860292ca0621fa71c262efdc0985128"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_sequence_sigmoid/seed0.json": {
+    "bytes": 18907,
+    "sha256": "267622e459f1584bdaf0db90cf41ae1af54c8d7f68725b278d6a1d6ca9a210af"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_sequence_sigmoid/seed0.npz": {
+    "bytes": 2406206,
+    "sha256": "8044ff1a6d0feb01f357c8d690969738b6b5856fcbaffc4be2115bfacb39698e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_sequence_sigmoid/seed1.json": {
+    "bytes": 18907,
+    "sha256": "f0e66e3528e6c8047beb9785989bc7eb8eedb1aedd611f86d52e15b80342b7cf"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_sequence_sigmoid/seed1.npz": {
+    "bytes": 2351057,
+    "sha256": "ef71b5c34510b669b960cf2e32fd6a2ee5328fc4beaad64446cccdc01e6d9c93"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_sequence_sigmoid/seed2.json": {
+    "bytes": 18907,
+    "sha256": "93209bda078194770a7c66f8ab4a5f733cb31773d8a17f995570290d08359d2c"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_sequence_sigmoid/seed2.npz": {
+    "bytes": 2406604,
+    "sha256": "60fdb0d928680c8fde725a458bd7bedbb6df495398d7432d76cfb0c858bcfc20"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_skip/seed0.json": {
+    "bytes": 18878,
+    "sha256": "83c66c75dd4170635e80ccd1ad0f4ee7c02499946c48ac6d072e265b4d21fe1e"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_skip/seed0.npz": {
+    "bytes": 2392359,
+    "sha256": "bd5a234048c31949f50c5a7ed0cb759d5b343c6ce3633e9978a3a68ec8c5475f"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_skip/seed1.json": {
+    "bytes": 18878,
+    "sha256": "c21a14a3f5b7c06f53890ad575a742b930e896b890621f7a160182ac71d85223"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_skip/seed1.npz": {
+    "bytes": 2459313,
+    "sha256": "92f5960c5f6b931f2067d7b5157bd3c7173d70e56edb033f3b0a0cf78749386a"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_skip/seed2.json": {
+    "bytes": 18878,
+    "sha256": "990e3d145f67b1c1cec8be7bb1d76d5cb8a71aa35c149b7042256657ac49653f"
+  },
+  "multi-modal_fusion_studies/outputs/attention/ecoli_proteins/original/diagnostics-v2/attention_skip/seed2.npz": {
+    "bytes": 2506421,
+    "sha256": "9c46de15d387f42e36b43f1b12a15029c581d046f875b666896f71235fd5ec7c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/anchor-selection.json": {
+    "bytes": 2356,
+    "sha256": "9916963bee90064208026d60666d3740d56a25f3a3d84ad1ab787bc8de66ffdc"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed0.json": {
+    "bytes": 14805,
+    "sha256": "b220db1647f4cddad8419cb1ea96a92d9230f1c96346c708a7658cb8636ec2ee"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed0.npz": {
+    "bytes": 264478,
+    "sha256": "0c45d0e02f99acc50292fa7fc3af022db90f17e37e07116e701eef9f96f581a0"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed1.json": {
+    "bytes": 14805,
+    "sha256": "9578c44b03ead7a5be8e2589fa0eb840d9ac331e5475b17c84c951b37ec51298"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed1.npz": {
+    "bytes": 266688,
+    "sha256": "036af9698b4cfaa08f9f9be60ce95f5006c53a98350223c83d8c9dd0fa0d0a16"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed2.json": {
+    "bytes": 14805,
+    "sha256": "394dc07f9f99ca8a1477b5de204f841101b1769af79c2eae6f6dca3b4395b927"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed2.npz": {
+    "bytes": 265264,
+    "sha256": "0d6cdd4185f61ee12041fec2b48f49ae12c710421d5f48d8fd81eb2d6d852767"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_sigmoid/seed0.json": {
+    "bytes": 14813,
+    "sha256": "ca0816e8b5f778580e0b449acc0ef92bda10db143885332349d762381cb17926"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_sigmoid/seed0.npz": {
+    "bytes": 263001,
+    "sha256": "e295b4d2af0926830e9881788ae559e813132ad4bf6802d709a265e759bbbeef"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_sigmoid/seed1.json": {
+    "bytes": 14813,
+    "sha256": "96b8b0e5dbb2eeb2fe154f138d720cf18e2b1fc15e9b6435757896498c9dda96"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_sigmoid/seed1.npz": {
+    "bytes": 263774,
+    "sha256": "3c53262b7fb0392f11d9ac9abe06bb1f7689f367919bb84a3fcfa2cc3c265dce"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_sigmoid/seed2.json": {
+    "bytes": 14813,
+    "sha256": "cb85194a8e495c6511300b6a7f536e54dd74df76a457d9544107c35c3d14bed2"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_sigmoid/seed2.npz": {
+    "bytes": 263865,
+    "sha256": "adf6e2d8ae168f33a01902afb0520544411c3a74e05d54e62a32b724398916be"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_softmax/seed0.json": {
+    "bytes": 14871,
+    "sha256": "aed94898e3559c02bc1c3f1a40a3552ed149699c78b0460eeb0a00ad14c868c8"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_softmax/seed0.npz": {
+    "bytes": 275121,
+    "sha256": "78370441bec52e6467472faec0b2e3357acf1c5fd0dcb29583d563b608f5f576"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_softmax/seed1.json": {
+    "bytes": 14871,
+    "sha256": "ea444a4aa6621cb2eeacaaf5c4481e9034289f2c5a9e92442cb116d491481dc0"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_softmax/seed1.npz": {
+    "bytes": 272127,
+    "sha256": "e727ec780349afcf657839c3881d4727f99a231467f71c09242981699b95e5aa"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_softmax/seed2.json": {
+    "bytes": 14871,
+    "sha256": "28144d4fdaf00011a408d0d8b6b33fcaa211afe8455ca42903fa59a4a8f1faf3"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/meanmax_softmax/seed2.npz": {
+    "bytes": 276665,
+    "sha256": "cb887bd40837c4036848f7807b1674940968b312b04e2824507010bb73445953"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_entropy/seed0.json": {
+    "bytes": 13622,
+    "sha256": "29213fd25356d40b9566c2212af65bc1debc66aa710dcfb8de1c251e762db477"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_entropy/seed0.npz": {
+    "bytes": 273150,
+    "sha256": "08256e8bce374d681bd77873be2aabc197af00f4abfac0ebe6d8d8c557a0f027"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_entropy/seed1.json": {
+    "bytes": 13622,
+    "sha256": "500d37d4c7d669c2f4bb4d865fdc6839494b55116a279133df75f53a44b61928"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_entropy/seed1.npz": {
+    "bytes": 273326,
+    "sha256": "cf27e06e617d65c65d084581572576175c89607b724a3c32930670e37f7163b0"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_entropy/seed2.json": {
+    "bytes": 13622,
+    "sha256": "95195ad8f6e66475fcbfc504f9dc2182e68a556ccaf1697c1d0ea39c498bbd62"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_entropy/seed2.npz": {
+    "bytes": 270270,
+    "sha256": "a6d08e983ef870dcc77a25a66c0f7ec1805347630cbb04dadd9152060e04c2b7"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_no_entropy/seed0.json": {
+    "bytes": 14863,
+    "sha256": "8fd12b08e9e7ecf86286ab27a9d98c273016500cde7fbbf53bbabe6156f0b411"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_no_entropy/seed0.npz": {
+    "bytes": 273066,
+    "sha256": "471ae24ce417659bcd88bfcf3e96f22406ac01be1266077201ebcc6065254863"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_no_entropy/seed1.json": {
+    "bytes": 14863,
+    "sha256": "1167ea60bcb276b77993beca3e43e91a530ff66429fcf465bb969eb49050eb7f"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_no_entropy/seed1.npz": {
+    "bytes": 272967,
+    "sha256": "79375143025414cbada96126c2c620ca6244de680008552337be24704525fbea"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_no_entropy/seed2.json": {
+    "bytes": 14863,
+    "sha256": "9912c52b5fdb51104dfc556304e67818db7cc2701cb62e7240f4ea06ebe351ff"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/mil_no_entropy/seed2.npz": {
+    "bytes": 270298,
+    "sha256": "cd96e746806a88379bb192f5f7c35e90b2eba8aaa22da47933428befdd7d932c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/position_sigmoid/seed0.json": {
+    "bytes": 14735,
+    "sha256": "9ed508cd2a4b81acb0be1ba7e42cab69cccc848b58d291601fa62963e282f3f5"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/position_sigmoid/seed0.npz": {
+    "bytes": 364542,
+    "sha256": "ac281474bdca3ebe553244dabbe1e24764800ef6f36e99256267f2e181f44c7f"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/position_sigmoid/seed1.json": {
+    "bytes": 14735,
+    "sha256": "ee8513075cafaca467882cfb4661af6fe9baf0d7da3d242aad757abbc691e659"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/position_sigmoid/seed1.npz": {
+    "bytes": 367359,
+    "sha256": "ae4a59622166a2b82f18177293e35b5dd04b3a5c389e159f3171c15b7dfba756"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/position_sigmoid/seed2.json": {
+    "bytes": 14735,
+    "sha256": "b360730ca4c3ba8ca3e48247254fdd9cdea9ad03545be383907891c0377ae341"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/position_sigmoid/seed2.npz": {
+    "bytes": 366428,
+    "sha256": "74ef05c735a933d7c0c0265a118c54e2c74e644eb521d7adc59f96ac4fd91c72"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/sequence_sigmoid/seed0.json": {
+    "bytes": 14805,
+    "sha256": "1ac0f19547c44e6cf5bb312d560e54f1bd3872087a498271b824e09f1551be50"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/sequence_sigmoid/seed0.npz": {
+    "bytes": 262730,
+    "sha256": "0d998fb47c863e26ae24483777453a88283556b4dcc43be69b53d07108846f76"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/sequence_sigmoid/seed1.json": {
+    "bytes": 14805,
+    "sha256": "8265eaf94e181e86b9f58a0d4e6480772edc95ad7abe1a626ce6a7b5e8caa2a6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/sequence_sigmoid/seed1.npz": {
+    "bytes": 262741,
+    "sha256": "e66f73e46b500358062ae6bf3d0e81b4e93ee7897cfcbb08fa52a00aa6031399"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/sequence_sigmoid/seed2.json": {
+    "bytes": 14805,
+    "sha256": "c374a2aebe0837980539cc7b16e3ff2dfbce9cfa6fb514fd2cb991453e0de750"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/diagnostics-v2/sequence_sigmoid/seed2.npz": {
+    "bytes": 263387,
+    "sha256": "bff71e34498f6e57de679535d680f7c004da2c2c14596b9cc1c79624dd202f40"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/joint_sequence_sigmoid/seed0.json": {
+    "bytes": 39836,
+    "sha256": "a4d592ae99286b8690de07d8326b0b15156cd9ea24c204f96e214e366b3d65bf"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/joint_sequence_sigmoid/seed1.json": {
+    "bytes": 39722,
+    "sha256": "b01f8354ae1369ddf568d720938fa188cdb1342eb0e2c09ae4c523a90fa22350"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/joint_sequence_sigmoid/seed2.json": {
+    "bytes": 40101,
+    "sha256": "62bc378eeb1b99d8746c09b436064952a1ae2808fa89fc6eca54afbc4fda6198"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/meanmax_sigmoid/seed0.json": {
+    "bytes": 39841,
+    "sha256": "c3ebe10670ab519ff90ab28353b9517eb71a2ee8616af830cd3579ae033368e0"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/meanmax_sigmoid/seed1.json": {
+    "bytes": 40144,
+    "sha256": "22f4c5e91ae13e6b08b49685aeba0391a6f4f901fc03efe6d48ba132ea324ce7"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/meanmax_sigmoid/seed2.json": {
+    "bytes": 40123,
+    "sha256": "87abf0fbe5856ddf631c33b7386c62c2f406f815f9a6246492c3e26218630cd2"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/meanmax_softmax/seed0.json": {
+    "bytes": 39868,
+    "sha256": "df5be2ebe5ba5918f469c83df3b6dca77f6c37182573a1d60251c4a59123cbfc"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/meanmax_softmax/seed1.json": {
+    "bytes": 39702,
+    "sha256": "7dbe3ecb6fc42df9f05fb81213c0eaa69911c76f28fb0b0c2deea0fc8bdabf12"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/meanmax_softmax/seed2.json": {
+    "bytes": 39662,
+    "sha256": "7849a168fc318a43541e5e9db2f276bf3db80bb8eb976d27e94ae23d2354aa5a"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/mil_no_entropy/seed0.json": {
+    "bytes": 39960,
+    "sha256": "4ef949068d3bf4e211c8ee45b4fc07d729052557e612029c029a3bc34f103832"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/mil_no_entropy/seed1.json": {
+    "bytes": 40254,
+    "sha256": "72fc790d8d0d41eb8e8c84c2271205c9b0a2d208c00c13a1fd4620747268887b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/mil_no_entropy/seed2.json": {
+    "bytes": 38991,
+    "sha256": "a045529ee6162e8eda31c694d08dd84fbccac291e2a8a80ee7f466636febbfc6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/position_residual_control/seed0.json": {
+    "bytes": 41043,
+    "sha256": "a920562549f69305b20b5057095ec3dcba7751086e5730b0cf68771f246909fd"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/position_residual_control/seed1.json": {
+    "bytes": 40317,
+    "sha256": "668e2972b21ca2c8f11d4c400f982c6b2092a54b09575cedfcf8b06dcd3f8635"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/position_residual_control/seed2.json": {
+    "bytes": 40339,
+    "sha256": "e1f26ba4dd93c67a2c6cbcc97d58e77287a8d98e1a71d2a32882e6571fa10882"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/position_sigmoid/seed0.json": {
+    "bytes": 39739,
+    "sha256": "be4c7fe55f532a30304d1aac0a32e5539177caf7be5fd060f26dd73067a7788a"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/position_sigmoid/seed1.json": {
+    "bytes": 39626,
+    "sha256": "0655192d819f3ea1d781f0cf631fe0bf115281eeb4d0edfc50de2ca7c013bceb"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/position_sigmoid/seed2.json": {
+    "bytes": 40041,
+    "sha256": "b8d7c30af0ede3563d4c0fc62c68284468b8581f587b87cf072d26bccef1e6e9"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/sequence_sigmoid/seed0.json": {
+    "bytes": 39788,
+    "sha256": "ec04880cea1b2cf18d6a0d053c7dbb8cf1b5a26618f3613fec8eba3ec4049523"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/sequence_sigmoid/seed1.json": {
+    "bytes": 40146,
+    "sha256": "36b53b5c1a12006a5dae77bdbd30a2b4423dfdba756e8d1d7238f05b948bcc61"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/mrnafm/sequence_sigmoid/seed2.json": {
+    "bytes": 40145,
+    "sha256": "f4ba6ef28e03b6cce0c5a33d2834b44dae81f2a786abf40aa7f9b4080639f3d2"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/anchor-selection.json": {
+    "bytes": 2686,
+    "sha256": "77b4dde1895452c76c863585ea20176f43cb3ab1ba916c91e23b7cb7cf197df6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/joint_sequence_sigmoid/seed0.json": {
+    "bytes": 14798,
+    "sha256": "b2d3ffaabba52a022c521e413f558a8c9edb3a8a215a15e41b9a1099bffaaaee"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/joint_sequence_sigmoid/seed0.npz": {
+    "bytes": 263496,
+    "sha256": "da660005498d3adcd16dfab93ce1314df18e879b0902b38c56b25a192d0f8c8d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/joint_sequence_sigmoid/seed1.json": {
+    "bytes": 14798,
+    "sha256": "55338342d9908c1a4a0ff2e52da5c16d3ac42f07c68426e7f09ef499ae4cfdd1"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/joint_sequence_sigmoid/seed1.npz": {
+    "bytes": 263192,
+    "sha256": "86bad0a6be1e0954d1b6031c56fc3b6035d6de744b13235551418efcbfced776"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/joint_sequence_sigmoid/seed2.json": {
+    "bytes": 14798,
+    "sha256": "d08eb8c957df53afe00f664051a5293bb8325887b45d6d0174100619a78b5589"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/joint_sequence_sigmoid/seed2.npz": {
+    "bytes": 263509,
+    "sha256": "5240618e96106cc613e4d54842a033598ab6770ffb41585b368ca1ab8b6fd01d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_sigmoid/seed0.json": {
+    "bytes": 14808,
+    "sha256": "240801df2e7ee3898242d1e8819fbec72fb22c43c3f1e2c78b9b199aedc62e84"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_sigmoid/seed0.npz": {
+    "bytes": 263828,
+    "sha256": "2f5278e3c0ede39cc11dd23c32374301fef7797ed15440539653029aea22f0d8"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_sigmoid/seed1.json": {
+    "bytes": 14808,
+    "sha256": "ed0b33d9dd398f406c66b2cf59d2e74b3ae814921fd09a421379108581e80efe"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_sigmoid/seed1.npz": {
+    "bytes": 263330,
+    "sha256": "d987f5fa972ab24e7e894693926b94df28695d196becd81d5171e1bfbbf705ef"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_sigmoid/seed2.json": {
+    "bytes": 14808,
+    "sha256": "f6343af8813adc4b8e2f653d7d4965ab54a850ac13e35172d31a0d1d880db37b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_sigmoid/seed2.npz": {
+    "bytes": 263450,
+    "sha256": "5ea64695a83141b7d550aef7dfaff982189557f7f3cc551da0c95f43cf6fae78"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_softmax/seed0.json": {
+    "bytes": 14866,
+    "sha256": "9b2b3e45065a3df6889df15d3892bf4f4dc06eafc01e900b87b8d7f786b99564"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_softmax/seed0.npz": {
+    "bytes": 275399,
+    "sha256": "cae340fb9b8d72246674bf53f0ea8211e9e3186e044f2ee13cb5e74fbdc3306d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_softmax/seed1.json": {
+    "bytes": 14866,
+    "sha256": "eec6caac0239fe6b158d1a72b23261e17395bf42ab6a09d241d83a3d15b5012e"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_softmax/seed1.npz": {
+    "bytes": 272407,
+    "sha256": "ade60293ff8a7e39749b2135f8ba3ade32a304dc60aae82bdddc53d5ef54db9e"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_softmax/seed2.json": {
+    "bytes": 14865,
+    "sha256": "6a4dcb0d6bcf7d949e05e2414d53c6cf72e2b44f6fa5b7ad273be858ecece7ba"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/meanmax_softmax/seed2.npz": {
+    "bytes": 272152,
+    "sha256": "c7f98b38a1ac2208b8f9e1e0064260716a66af1c15f924a0ebffd42eff9a5505"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_entropy/seed0.json": {
+    "bytes": 13616,
+    "sha256": "ffdd19196a48c496dda9042ed2ff66244f5204a02adebe3ecd78ca26d00b0e88"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_entropy/seed0.npz": {
+    "bytes": 271059,
+    "sha256": "3d8a8353c50db071ded8c3ee031a016ff7077c71b08bd0db0a4f5b25857be9b7"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_entropy/seed1.json": {
+    "bytes": 13617,
+    "sha256": "30d6864402a1031fbe1e3969c2121ff87a8ff74ba42754a4574332be33f8a88c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_entropy/seed1.npz": {
+    "bytes": 273484,
+    "sha256": "a444abab3f4f34a9368e51c0eebe7401d76ec5847cf0b1d39a72b55ba6eb9a26"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_entropy/seed2.json": {
+    "bytes": 13617,
+    "sha256": "87b352e3d419c7e7f5cf432c5bb6c233961fbb927a963924555bde67f9392195"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_entropy/seed2.npz": {
+    "bytes": 274497,
+    "sha256": "2c5b36e32cee970b89901a942198d72ee3e0db3467acd3dd4b56e6507184e84f"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_no_entropy/seed0.json": {
+    "bytes": 14858,
+    "sha256": "f37f561117b8ffdf076f76b4f92df8817553be3c79be31b4dccafd6160d88dcb"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_no_entropy/seed0.npz": {
+    "bytes": 272445,
+    "sha256": "7a954f0e80d09ebef45ab5a55c3bc7f938d8156c1727a6f99e50e188d3cb911b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_no_entropy/seed1.json": {
+    "bytes": 14858,
+    "sha256": "a630211005d0b7265899452c40cc709dee145854533482cfd1bfe90df3150b21"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_no_entropy/seed1.npz": {
+    "bytes": 271860,
+    "sha256": "7ffa6e2ae883b927ce54fab5299500b74a5b26b32e35bfb0f4686a605cd82d05"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_no_entropy/seed2.json": {
+    "bytes": 14858,
+    "sha256": "2ccb041e6bf8ab0293b3ba1451c102640ae215ed1a913bd8cb09d1c7432ebe58"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/mil_no_entropy/seed2.npz": {
+    "bytes": 271820,
+    "sha256": "e0091e04ff00561b582f1d16e8a7d9a5e54d31e34a8ef2324038481ede55b37a"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/position_sigmoid/seed0.json": {
+    "bytes": 14728,
+    "sha256": "58d6199de8d4d253e0e28dd0ba4f449c3160f7f2350fa4dc9ed62ce7b53e77c4"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/position_sigmoid/seed0.npz": {
+    "bytes": 362909,
+    "sha256": "0ca3b8cd7f95f4c875e85897f343efab7a6b242d6bb1abddee34d2d18c800074"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/position_sigmoid/seed1.json": {
+    "bytes": 14728,
+    "sha256": "064a6bd54354447b5366a62b29e84b71fa1ade89fbcac02dc674329c17fbf7f3"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/position_sigmoid/seed1.npz": {
+    "bytes": 363610,
+    "sha256": "cb1974d80bc4688b4c5d15f27030bfbca8fc1576da87edcb44c58fc645f1f5b1"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/position_sigmoid/seed2.json": {
+    "bytes": 14728,
+    "sha256": "90d40a7bcfb30e84d3365fb6e4b2010cd44e6fca70808c763b8fa137bd92bcf8"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/position_sigmoid/seed2.npz": {
+    "bytes": 363553,
+    "sha256": "c39b4d8d98750fd4ac2899fe9f178adb6e03fe9f397205b1d6c2dda80b169bd6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/sequence_sigmoid/seed0.json": {
+    "bytes": 14800,
+    "sha256": "019269639f80d5693bd0409c556c56bc3b4850e82c0303d21df03333e8e37331"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/sequence_sigmoid/seed0.npz": {
+    "bytes": 261376,
+    "sha256": "397767dd5b71cba15670c9dcd7fff5e489a2eabc56c30159aee27d54392ac71d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/sequence_sigmoid/seed1.json": {
+    "bytes": 14800,
+    "sha256": "1bb4450224f38e843615e4b95f80575411ff4d60fea1faa52f338191e6ba52c9"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/sequence_sigmoid/seed1.npz": {
+    "bytes": 262082,
+    "sha256": "d30be7516ea3f0a069372138a2f1e4bb152a4e0d7fd555d7397097156245f9a6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/sequence_sigmoid/seed2.json": {
+    "bytes": 14800,
+    "sha256": "287a44e943fb22bc590a4fb61893d81d445b26b53c29697e83d755b77559606b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/diagnostics-v2/sequence_sigmoid/seed2.npz": {
+    "bytes": 262232,
+    "sha256": "388abb532976e9f0c49feede59fe8350a318ddaddc5b800c0fead8c40da5df1b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/joint_sequence_sigmoid/seed0.json": {
+    "bytes": 39828,
+    "sha256": "bd746dcce26419f3076b49540bef5ee088145960f551b5c9b128fcded4b48f4a"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/joint_sequence_sigmoid/seed1.json": {
+    "bytes": 39935,
+    "sha256": "1746469a354ae02765e8e5600c658f6ba10e815145036417262e956edf6fb9f6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/joint_sequence_sigmoid/seed2.json": {
+    "bytes": 40151,
+    "sha256": "ac11211863422f9ae697b1f3f09372a4462548a7a588547dcd67b61dca3c51ec"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/meanmax_sigmoid/seed0.json": {
+    "bytes": 39820,
+    "sha256": "221703d6bd639070444f2c5f8d28f020b2422868c90e972168dd5c8f3ec0a514"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/meanmax_sigmoid/seed1.json": {
+    "bytes": 39979,
+    "sha256": "a393d87399041a735567cd1d6c87a6808ab3ac88d0102467da4a4ee4d42869e1"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/meanmax_sigmoid/seed2.json": {
+    "bytes": 40179,
+    "sha256": "8b8842b1f09576636c9f75fcda86c36297743be0705bed044c19b8cee21be696"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/meanmax_softmax/seed0.json": {
+    "bytes": 40893,
+    "sha256": "02c59a1b2b1206fccc33ba27b35f7003aeda7d1115a0a5d3ac2d32631f800d69"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/meanmax_softmax/seed1.json": {
+    "bytes": 40052,
+    "sha256": "9c643f0b4ce0675c9657fb336d40b1a67d1262d42cb9944641dc32545ec2196c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/meanmax_softmax/seed2.json": {
+    "bytes": 40483,
+    "sha256": "290499ffbdf75db5f7e83b9c4c96c528f1a6e704878e10a7894422798b7ab0b1"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/mil_no_entropy/seed0.json": {
+    "bytes": 39979,
+    "sha256": "4e4102eb33a6b7ec30b95e6f674b9423fc66eda816d060da72ac3881ea33d3fe"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/mil_no_entropy/seed1.json": {
+    "bytes": 39841,
+    "sha256": "5798017fb92fb26b3e417600c2ddd1077482c581d187ce86dce6e481a420b546"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/mil_no_entropy/seed2.json": {
+    "bytes": 38961,
+    "sha256": "577f0cbedb9a6bb6fa5560b06a0758e9c8360b59590ba6e417e303b1e3f4a234"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/position_residual_control/seed0.json": {
+    "bytes": 39997,
+    "sha256": "803d20f3b9bf2fee15596bf8df2d3ded7c627bd9cb0fc0013c81d9fa0b3bfb65"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/position_residual_control/seed1.json": {
+    "bytes": 42531,
+    "sha256": "9118d5e91fd2af1a11025c4e90ed2be68a1403a737a0b457e0cfe379bb4c58e6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/position_residual_control/seed2.json": {
+    "bytes": 40373,
+    "sha256": "63972c83f359834e352ed490b1eb2d5e79659e7c576ef7157558046228093619"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/position_sigmoid/seed0.json": {
+    "bytes": 39765,
+    "sha256": "2dc9314bc21fbbac9c99f6bfb87aef2d2cda93acfca294b8a0574861743947e9"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/position_sigmoid/seed1.json": {
+    "bytes": 39875,
+    "sha256": "7654987d0c5985b75eb883ac38c34f0cc80b6ae487fb7b39e9e2fe76c7fcdbfa"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/position_sigmoid/seed2.json": {
+    "bytes": 40082,
+    "sha256": "2e08ac61427c2c01d1f2c2351cd725371f454205702f7c7251d6f5566b927f2f"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/sequence_sigmoid/seed0.json": {
+    "bytes": 39802,
+    "sha256": "049b8c8cb9fa99f642548056ccc910964f9bd78c3086b14f56b598415d76aacd"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/sequence_sigmoid/seed1.json": {
+    "bytes": 39953,
+    "sha256": "2326b3d560f0dbb63bd7aa42e13464aa1a768e600f7b060c32ff5fbcdfd34039"
+  },
+  "multi-modal_fusion_studies/outputs/gates/cov_vac_degradation/original/sequence_sigmoid/seed2.json": {
+    "bytes": 40157,
+    "sha256": "a1c7d050bc3c436316efc5f54bb7247650610db3c93c5f758808e5a2ceaa30c9"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/anchor-selection.json": {
+    "bytes": 2324,
+    "sha256": "114c190b55cae74ed55fa3700dc30572d1b64372d06f31179fe6ff911aea4503"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed0.json": {
+    "bytes": 18851,
+    "sha256": "36bb0b35c91aa4f3ee13a2a37a1f58febb2266473201a0cf55307df8731ba501"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed0.npz": {
+    "bytes": 3289631,
+    "sha256": "c012b1a540555ead90c76e0950c256100d0e57d49e32bc8bbecb094893dd3a3d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed1.json": {
+    "bytes": 18851,
+    "sha256": "b80904de61e5b9791ba913439a13a2a06956fb617a5e0142c8c3faf0748ffe33"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed1.npz": {
+    "bytes": 3293271,
+    "sha256": "741798df542f632826b440e09b71e52e6577a769c788ae90dae454e28e658845"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed2.json": {
+    "bytes": 18851,
+    "sha256": "cab7dfb225b8c7db62610b47e9e552f046fbdc4eb2cfa71aeb52141a89a84209"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/joint_sequence_sigmoid/seed2.npz": {
+    "bytes": 3312980,
+    "sha256": "1cdd9a513539b8b6505436e8c3d972b9a664ffb804ca582e3d03bac070038d7c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_sigmoid/seed0.json": {
+    "bytes": 18859,
+    "sha256": "326ba5b9e5bfa876c1d2840fb3220e143c075fc264e990ffa96f28cf060330dd"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_sigmoid/seed0.npz": {
+    "bytes": 3283386,
+    "sha256": "51783e36d7f23ee647a875b8eb2c4517b0420db5cc22f64485d3736869943c36"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_sigmoid/seed1.json": {
+    "bytes": 18859,
+    "sha256": "d9866e597053cc4fa80b5f3768d7812695553120001d4addec2ca812c69c3707"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_sigmoid/seed1.npz": {
+    "bytes": 3272819,
+    "sha256": "eea8301834309c68b064d7ee4e867ad3d087c295e7c6b6870c69fdbb93fa2cef"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_sigmoid/seed2.json": {
+    "bytes": 18859,
+    "sha256": "5648f65051c09f7c1f197a5bf82a4d5f1fbd2198629dca7c733a423cc546d31a"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_sigmoid/seed2.npz": {
+    "bytes": 3274166,
+    "sha256": "bd58c780f349b61611f57e1a69f5afe9e36c3062f11560eabbe7a47df73b94b3"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_softmax/seed0.json": {
+    "bytes": 18917,
+    "sha256": "10712990f0131706e7dbb7b5587863d13091245049db2ef026bd4dc77ce7489d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_softmax/seed0.npz": {
+    "bytes": 3393185,
+    "sha256": "a3e3758aba2cad614af18ef2d074b68bd43b284cb8c6f8ce66c4b0fc77688cd0"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_softmax/seed1.json": {
+    "bytes": 18916,
+    "sha256": "aec651c30b4392420f49288cdc6bffb876271fd740aab872b0da58c0cfaa8044"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_softmax/seed1.npz": {
+    "bytes": 3436084,
+    "sha256": "33d76bb4d66b4f875f24897f99506e65c7c323f000a8b876770f4f19dc057d3c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_softmax/seed2.json": {
+    "bytes": 18917,
+    "sha256": "6463159bbf23908634ad38bdd0323c2ad39a034587ea12df773661d1872288ce"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/meanmax_softmax/seed2.npz": {
+    "bytes": 3416329,
+    "sha256": "5ef44fdf848361de500e5ac841074fab198e1a0757342cae6b304c87315ee694"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_entropy/seed0.json": {
+    "bytes": 17668,
+    "sha256": "4f4ca70cbe9b1460be17677cb4c6d3f47896d62fb9cf37f8b686ab3c8e884878"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_entropy/seed0.npz": {
+    "bytes": 3394072,
+    "sha256": "cf1722df516fe16dff7cc7414d0e1ec0cfa1d6e34c58aee57e01b8c2dca51bab"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_entropy/seed1.json": {
+    "bytes": 17668,
+    "sha256": "35c7c59c278af74dacee9d80ab860d405198e2dcfbca122cee917365b488f4d1"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_entropy/seed1.npz": {
+    "bytes": 3317582,
+    "sha256": "0d72d8fab0f1f9fb3ffedcd95b528c8d3631f97a97b4aa2f6bc1ead34b5eb6f1"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_entropy/seed2.json": {
+    "bytes": 17668,
+    "sha256": "fe74aa13ef4099a7bb01ae58aa327c68e51beb1a7f30a461a44384538631ebfd"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_entropy/seed2.npz": {
+    "bytes": 3400398,
+    "sha256": "79eadfc0654592dcceb5403e7f5eebc47c150472d3c014fec83b85a9c08318b8"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_no_entropy/seed0.json": {
+    "bytes": 18909,
+    "sha256": "a930efd44fc921be8df666fdff073f32a214bc0dbb1865bafb9d6230232b248d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_no_entropy/seed0.npz": {
+    "bytes": 3413279,
+    "sha256": "5114dcefe79f09ddb59970c2700fcaf9ddd09904fbad3d86bfe7abe309bd776e"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_no_entropy/seed1.json": {
+    "bytes": 18909,
+    "sha256": "2435d1317dd300a8fefa3d59885859db222e236f086bc36b5955b499910d1dba"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_no_entropy/seed1.npz": {
+    "bytes": 3403384,
+    "sha256": "5ac21ed400cb65bd8e30f8b0c5a10f5f628ff710d66e9cb070f1fde590d7a36b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_no_entropy/seed2.json": {
+    "bytes": 18909,
+    "sha256": "82aba49ca455be189989732c8cefadb0450d3011223b5cb8c51318cc5e8695c3"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/mil_no_entropy/seed2.npz": {
+    "bytes": 3416644,
+    "sha256": "6305bb911a012aff3bc855e998d627a128c11fb8510067903e32e92f31b01b77"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/position_sigmoid/seed0.json": {
+    "bytes": 18781,
+    "sha256": "f6a03f66bf497a54e7367230d69d936af9dde2829d2574356fea0de1306bea25"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/position_sigmoid/seed0.npz": {
+    "bytes": 4624451,
+    "sha256": "08d844a9d41dfece06861daaf2128e915ac5867473c53084d6d4fb73d4eb155c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/position_sigmoid/seed1.json": {
+    "bytes": 18781,
+    "sha256": "10e3b8c5fcd862883bdcea399a74b7ec01a1834a244f01563b8292e130bc736c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/position_sigmoid/seed1.npz": {
+    "bytes": 4603974,
+    "sha256": "4a0b28db1a5664fc600d2700765603246f870e40dc08cdc4d9ca2c33cf23be96"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/position_sigmoid/seed2.json": {
+    "bytes": 18781,
+    "sha256": "6d593ff42fc8d0e0cf85b269b5b0d2dbb794451be8193c07ec706baea1f4d66d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/position_sigmoid/seed2.npz": {
+    "bytes": 4673781,
+    "sha256": "d4e408d058e07def12aec0ee4f090278a1a9b12d7226f06f888db978d0f10629"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/sequence_sigmoid/seed0.json": {
+    "bytes": 18851,
+    "sha256": "6784a5ba1228e451f65aa9bd347b3d9f4d6acf2677823825106c9ee3634f01bd"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/sequence_sigmoid/seed0.npz": {
+    "bytes": 3267240,
+    "sha256": "729d497a01e251ed8f9e7a63a4ec89985865556aec7276865e2dc168f10a428b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/sequence_sigmoid/seed1.json": {
+    "bytes": 18851,
+    "sha256": "760c2841ddebe555f1cf2eceaee26421d6f9df2830b361bc8f373d97f2cf4955"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/sequence_sigmoid/seed1.npz": {
+    "bytes": 3272268,
+    "sha256": "4d2563ff24a7ed566ac43acedc71543ed472f18d6d430bd4257b7de7f4f079c4"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/sequence_sigmoid/seed2.json": {
+    "bytes": 18851,
+    "sha256": "e3a1a281b43eb536e087c7bf54dc30e1633f1f91900bac561515afbf3021cdc6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/diagnostics-v2/sequence_sigmoid/seed2.npz": {
+    "bytes": 3270425,
+    "sha256": "2601ed4c1af03ade817451992354276234f6addc6da3a7b9d3d869e8c8cfa72f"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/joint_sequence_sigmoid/seed0.json": {
+    "bytes": 32363,
+    "sha256": "0f4292b98b03234cb1650a282d32204e73f257a8d0c0ff2dc99a3fbf4ab067ad"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/joint_sequence_sigmoid/seed1.json": {
+    "bytes": 34034,
+    "sha256": "2658aeacbbbbc576b7cf9e486b11c1912043eb26d1d934738f72e9ae2a0a7272"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/joint_sequence_sigmoid/seed2.json": {
+    "bytes": 31490,
+    "sha256": "3afd34baf488f0e06dcd65ec4571b031c90e1a7f9403bc7095a63e8fe4e32ebf"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/meanmax_sigmoid/seed0.json": {
+    "bytes": 32017,
+    "sha256": "35c1272eed2249ec57371a6b2c34f48f3df677ba9ee5f2300234dd15920f0020"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/meanmax_sigmoid/seed1.json": {
+    "bytes": 33427,
+    "sha256": "66d197a4c35404c852127eb0f8087a52ec930de5f80f80ea45524091154da9e6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/meanmax_sigmoid/seed2.json": {
+    "bytes": 32763,
+    "sha256": "1b23cd16b6d4e17b855094f9233c94d8ce722b952ebbabb52b586a2dd9c5ad3f"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/meanmax_softmax/seed0.json": {
+    "bytes": 31150,
+    "sha256": "e21b04ef16fd806a0f15e10f39908aad168c12296e1838598b89cfea2e374926"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/meanmax_softmax/seed1.json": {
+    "bytes": 31930,
+    "sha256": "cc997c00873b6db722e6a166c2e4bbb6e6fbb676cf97cfb10406c989a4f61eba"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/meanmax_softmax/seed2.json": {
+    "bytes": 31546,
+    "sha256": "8a6728aca2070aba81c68abc3990c35cbea2d48108afc681cb6c749648aec670"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/mil_no_entropy/seed0.json": {
+    "bytes": 33037,
+    "sha256": "cd6119bbc9dc947770db998d2848100a0c90b4ab9edcbb3744375563c45edc34"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/mil_no_entropy/seed1.json": {
+    "bytes": 33036,
+    "sha256": "8afeab5745a1f3d353646e9167d69eed03910f59570dfe4f488dd7a9f6e92312"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/mil_no_entropy/seed2.json": {
+    "bytes": 32867,
+    "sha256": "4c7abd634e9c06d548c96f9ab6fc272a1ef475e37a724f895869287e37643d80"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/position_residual_control/seed0.json": {
+    "bytes": 34230,
+    "sha256": "d1bb85a7a56350b7e2aad95b6f05bb525d1e65c33cbdd6765a2f9b6f6659f1a2"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/position_residual_control/seed1.json": {
+    "bytes": 35247,
+    "sha256": "087facd937f0c32f89d4ffc9b8972039fb030a4dabb812dd89090d255ff5066c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/position_residual_control/seed2.json": {
+    "bytes": 34105,
+    "sha256": "133101bbd62395e2a81c6f53402e82b6678b3a1855c5b90b4ddbd0263496eb07"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/position_sigmoid/seed0.json": {
+    "bytes": 32419,
+    "sha256": "ae23be568200ba59ba55d666bfc5c08b590c42cdd8246b07db4f5cf24f3e2a28"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/position_sigmoid/seed1.json": {
+    "bytes": 32816,
+    "sha256": "db8496dcc0765c181c3e5e6bf77b612ca5b2456aa4261dca7393d86e517adf59"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/position_sigmoid/seed2.json": {
+    "bytes": 31414,
+    "sha256": "c71ecb3c88a2a92acfe3ebfe1aa380ac09539eb8ff2490486334c4f272b6d588"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/sequence_sigmoid/seed0.json": {
+    "bytes": 32871,
+    "sha256": "b48bb253f3e3493a1df4b026f515964b672e621ceff07ef51e5b0a4e5df8dd35"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/sequence_sigmoid/seed1.json": {
+    "bytes": 33000,
+    "sha256": "7ada5741f7f6460da3fe27803b84a18677ffcdc2b4de9f4e080eb4e4e3dfb694"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/mrnafm/sequence_sigmoid/seed2.json": {
+    "bytes": 31482,
+    "sha256": "a2ca1a14c468bf408005c13bc258ea4c76b228ea3a5ec43d90b99016e6984c82"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/anchor-selection.json": {
+    "bytes": 2646,
+    "sha256": "14ffece0ee69736859996e69353c76449fae46ad0f6c66eccb3532d243440e91"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/joint_sequence_sigmoid/seed0.json": {
+    "bytes": 18844,
+    "sha256": "edcb389600fb7669467acfacb5f9f25e01989e2fbcd3b1d340945bd932f7fadc"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/joint_sequence_sigmoid/seed0.npz": {
+    "bytes": 3274846,
+    "sha256": "195b5214f50e9ac19b40aee0044c041d0d25e0d6ea5fb953f974be043952c033"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/joint_sequence_sigmoid/seed1.json": {
+    "bytes": 18844,
+    "sha256": "32ee8659ab4d86f9b3576795efb2767b93078fff5b9b36a23e0bd85eea475e62"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/joint_sequence_sigmoid/seed1.npz": {
+    "bytes": 3272142,
+    "sha256": "4b73d8f3be3b39d8d72676d5077b7246ab8c98bdf5013f1d0cb29b2d3c754413"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/joint_sequence_sigmoid/seed2.json": {
+    "bytes": 18844,
+    "sha256": "78db58db7848dfdc883407607947b8ab2096c0e01f9ceccd05b9a6401aa1e609"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/joint_sequence_sigmoid/seed2.npz": {
+    "bytes": 3270599,
+    "sha256": "73e634b4fc55c31b7b24825afea0aa5c4e8e5037fde52c9ba250311b1fe1e395"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_sigmoid/seed0.json": {
+    "bytes": 18854,
+    "sha256": "17029028e12d1eac4d62b3a8600fa4b358c775e0d10162e728eeeb77210a449c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_sigmoid/seed0.npz": {
+    "bytes": 3278140,
+    "sha256": "bf9604c9054eba1f13b282ed1a82c53f201f97e462e47dd268d52452b64ca589"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_sigmoid/seed1.json": {
+    "bytes": 18854,
+    "sha256": "e5eb8d0090228c5f3f2a0b2c4984f45e5804435b7fe0fdc248c794aa03da9c5b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_sigmoid/seed1.npz": {
+    "bytes": 3263342,
+    "sha256": "1b7e7e4871051ade2404b4914868d8b41bb98639e7380efc576a1d89ea09a2c8"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_sigmoid/seed2.json": {
+    "bytes": 18854,
+    "sha256": "9d3a6aede18f3ec513bcdd81377e12a9f24db661295e94db3132e32c528d96b5"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_sigmoid/seed2.npz": {
+    "bytes": 3267763,
+    "sha256": "0355dd5330f6eb5e7c39d7fbbe388a27b40d401d83287995a9c744d86d622e66"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_softmax/seed0.json": {
+    "bytes": 18912,
+    "sha256": "a9ee95392bc7ef71c6e898b5f253342648845de068fa86d2e7aa4731b8871cf7"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_softmax/seed0.npz": {
+    "bytes": 3387881,
+    "sha256": "c1da5a6ad885f2a6dab20b3ec4abdeca3c394a9ac6397bee338591a218f874f3"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_softmax/seed1.json": {
+    "bytes": 18912,
+    "sha256": "0be0e75032d2717e37fd4a842c27387d9602fc2785ff360e47f38e7f6e6d0b36"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_softmax/seed1.npz": {
+    "bytes": 3391671,
+    "sha256": "62ece63facd679741d6a13d31424c0d891a7743c834449a63a52ef82b81b0036"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_softmax/seed2.json": {
+    "bytes": 18912,
+    "sha256": "fb7e75865cfb3417f8b4dbd4f8e03535e10d08c2124fc4836df737bd2c28d8ff"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/meanmax_softmax/seed2.npz": {
+    "bytes": 3377352,
+    "sha256": "70990d76cdfde03eb63661cb9d37477915fabe50e0213a834ff6b4b17863ebfc"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_entropy/seed0.json": {
+    "bytes": 17662,
+    "sha256": "1b1c2d9bef65ef3ae7e9015cd796a3127b571155f0b72d3187ad1dd75187216c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_entropy/seed0.npz": {
+    "bytes": 3393501,
+    "sha256": "f7fd65be80d637945b18bf61bdb20f77d399bfd6f0fd0e232fb8e277025d166e"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_entropy/seed1.json": {
+    "bytes": 17663,
+    "sha256": "5483f3dcdcbeb1a474e47ad5600621e8798db50089cb70fa6057d1e77fd11655"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_entropy/seed1.npz": {
+    "bytes": 3335619,
+    "sha256": "dc3511b8525995d984bfa001c2f9adc94f4ec02c7252cb15fbc96ad1e247a822"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_entropy/seed2.json": {
+    "bytes": 17663,
+    "sha256": "96e681bb646eb1335ee886cbafc432804fdcb7109b4d79e648f6df5389b9082f"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_entropy/seed2.npz": {
+    "bytes": 3345011,
+    "sha256": "53f68dd2100ed2c22f2f88e8ea8d79aa99d63e156eca994ecbcb5bdf14376574"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_no_entropy/seed0.json": {
+    "bytes": 18904,
+    "sha256": "638c81a7c3a372fa2f4afe91ddcb2f3ffd584f16a0bba23bcd07abe7f0ff6cdb"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_no_entropy/seed0.npz": {
+    "bytes": 3378365,
+    "sha256": "2819e64640e039a9149b018664ae9fc311787d9e69e5498ab88dcb1e2dee9e01"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_no_entropy/seed1.json": {
+    "bytes": 18904,
+    "sha256": "d029a402b7f1919268b9b5aacdbd7d1e1008e90c525e2c7e50eee5c33a2c5949"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_no_entropy/seed1.npz": {
+    "bytes": 3347394,
+    "sha256": "a098b0e42d6966fea0df71fde9978481d6ec9328824e9ef08f055736ca3146a6"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_no_entropy/seed2.json": {
+    "bytes": 18904,
+    "sha256": "7d98e86714bb838aa76e71c229a65aed478025f30f81f6ee1c43396b36a71a62"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/mil_no_entropy/seed2.npz": {
+    "bytes": 3333641,
+    "sha256": "922137ed487e7d637c0bf86d94d569b625bffa3125f777307ca99c887ed80433"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/position_sigmoid/seed0.json": {
+    "bytes": 18774,
+    "sha256": "2daa677570b9102bcbb2b183651a952034419d80f285e77645e3905d9b077257"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/position_sigmoid/seed0.npz": {
+    "bytes": 4595485,
+    "sha256": "9fb052c54b21262bd2204cdf0a8399292a32931fea74d722c74188dfdee44ad5"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/position_sigmoid/seed1.json": {
+    "bytes": 18774,
+    "sha256": "1739087fb554bc40e2cb06c64f38811794aba6075cdc452a21cebe4647ece2d5"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/position_sigmoid/seed1.npz": {
+    "bytes": 4588063,
+    "sha256": "b925017b415406d984275742029699eeb5ddfff87b6af1326f60051e9336da21"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/position_sigmoid/seed2.json": {
+    "bytes": 18774,
+    "sha256": "266678eb198d3e36ee99576671506c4f72e713bbd50e8d7eaad696ed111ed4d3"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/position_sigmoid/seed2.npz": {
+    "bytes": 4560000,
+    "sha256": "54dcc834a95ff89277fed49b3301639ad5a1c3bff37f789ecb718ba2fec40277"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/sequence_sigmoid/seed0.json": {
+    "bytes": 18846,
+    "sha256": "96755c154bd6cc3252536d723730da07e12743ff5f1166b66ff686be9fee365f"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/sequence_sigmoid/seed0.npz": {
+    "bytes": 3268281,
+    "sha256": "2cfb1721ee37f94b3140c751aae9806e4a9843dde66853f8a7f93a8f2dcb207b"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/sequence_sigmoid/seed1.json": {
+    "bytes": 18846,
+    "sha256": "aa80ada971087c546229cd42acd63490b71d0a5d1e2e4abaa9e9a90c3caae962"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/sequence_sigmoid/seed1.npz": {
+    "bytes": 3259404,
+    "sha256": "abf4a58f1e2ded6f3f6f1ad13d1b959c0a9339b4d060d84bb6aa3e173d8f60a4"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/sequence_sigmoid/seed2.json": {
+    "bytes": 18846,
+    "sha256": "8b7ae95ec3e87e92b9d28bd4b006dc451f166ec074cce5b28eda04109928d69d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/diagnostics-v2/sequence_sigmoid/seed2.npz": {
+    "bytes": 3265309,
+    "sha256": "bf7017ef8daeeb802557d30504257d264194d7c9e3162ec99d5f937e38368aef"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/joint_sequence_sigmoid/seed0.json": {
+    "bytes": 32355,
+    "sha256": "db03c5c3b28ce2bb25149056de61c76d7f72088e526b168e8e1562b2346e2a34"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/joint_sequence_sigmoid/seed1.json": {
+    "bytes": 32873,
+    "sha256": "238fbf654292ed47112537d1bbf1dbcb77435ab6b59846b2476480d93b907603"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/joint_sequence_sigmoid/seed2.json": {
+    "bytes": 32870,
+    "sha256": "ab7dfd92b6486873595fefc5aa31b28f7fc1cf7401cb1cce6cf2c848a8345bd1"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/meanmax_sigmoid/seed0.json": {
+    "bytes": 32524,
+    "sha256": "c623e2667907fb7c4ad0bbd98f9ac9b3295008dc605857e9e61956b0651afc02"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/meanmax_sigmoid/seed1.json": {
+    "bytes": 31492,
+    "sha256": "16ba38814ce7cbe5c01aae04ac5d34ccd398fe2c7deb448596e14dab5975947d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/meanmax_sigmoid/seed2.json": {
+    "bytes": 31504,
+    "sha256": "be60a56a014e669d527fd1fb57762bf6f16164c1780f91e9050ac0b65f4444c9"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/meanmax_softmax/seed0.json": {
+    "bytes": 33186,
+    "sha256": "ab3918e64f4956c7f54f20922b2f1f540ead31b6aa57965fedaa8600163c2128"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/meanmax_softmax/seed1.json": {
+    "bytes": 31540,
+    "sha256": "25289cfbbd3c40cc5e83cd7b33c5cfbb0daef1753f904db176ad62ed4942b50e"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/meanmax_softmax/seed2.json": {
+    "bytes": 31531,
+    "sha256": "5ee143b9c092c1b9e613f036c295f392641987fd5e0b3987bb66d80d4880d8af"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/mil_no_entropy/seed0.json": {
+    "bytes": 33033,
+    "sha256": "9d2c9a4bc99b552f4e8553c17ed11f56fdc051689acdd1058bdcabc95953c805"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/mil_no_entropy/seed1.json": {
+    "bytes": 31601,
+    "sha256": "531d5cc76c7c5338b2bbfafa5565522aecc30b9d657e1d179224f3518cca319e"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/mil_no_entropy/seed2.json": {
+    "bytes": 31601,
+    "sha256": "2ffefb8f9fcffe4c014061acf1f0d90836c6a991e147c79f77be59559e083caa"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/position_residual_control/seed0.json": {
+    "bytes": 31281,
+    "sha256": "3892d22a9df07d185f8513ddc671b6d1d845780a1c775d0231fa17d43175276c"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/position_residual_control/seed1.json": {
+    "bytes": 31927,
+    "sha256": "25d6430a5848bed4db758ee80a1cc1bfc565b3265d9e651b46a6a88902245a4d"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/position_residual_control/seed2.json": {
+    "bytes": 33571,
+    "sha256": "83308766a506ae10430d636fc4996710a2fc955467347951affec1d401a8a0f8"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/position_sigmoid/seed0.json": {
+    "bytes": 32283,
+    "sha256": "1261416f4c08b69951eabf8ee6c1a9602bc5e5c7f09e0ff68a96e3bb0f53a9d3"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/position_sigmoid/seed1.json": {
+    "bytes": 32158,
+    "sha256": "91dc6366d9a5514f544fbe19d10834641cba5f0665dedeb5ddc03de46fdec5b5"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/position_sigmoid/seed2.json": {
+    "bytes": 32676,
+    "sha256": "3842dba65547bf161157e67caf7fa12a7b8bc72899b0414e3c6773f51d7ffae4"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/sequence_sigmoid/seed0.json": {
+    "bytes": 33388,
+    "sha256": "2404ad1a8df0339a72ccc3f821e5bc47cc4864ff492e14eb46ac83ac420bc833"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/sequence_sigmoid/seed1.json": {
+    "bytes": 32874,
+    "sha256": "ba945068b6de2a7c85f9d0be52ff84f8fbcc860f1cea53e87c5b5786e68eaa46"
+  },
+  "multi-modal_fusion_studies/outputs/gates/ecoli_proteins/original/sequence_sigmoid/seed2.json": {
+    "bytes": 32512,
+    "sha256": "c83c3200c685fa9417c65143b5ccab5598d0e88c6fd657fc8931915dd8962745"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-diag1-1220714.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-diag1-1220714.out": {
+    "bytes": 580,
+    "sha256": "36ffbf644f9abb437a536b3dd46a0456a895bade3671cb41b848829f11a614ae"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-diag2-1220722.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-diag2-1220722.out": {
+    "bytes": 580,
+    "sha256": "4071b92a1676b7a7bbc5be12ceb1f98f0ba13345951c883d813510bfc4f56a6c"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-diagnostics-1217569.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-diagnostics-1217569.out": {
+    "bytes": 580,
+    "sha256": "6b88f9e4509a051f76a59d88d9d33ce77f393d0ca87bffa2187c45ae176ec993"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-seed0-1217568.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-seed0-1217568.out": {
+    "bytes": 5275,
+    "sha256": "347215f22a65e5d3aee51499b9993278ebf09235345455ff352f96382b1491b7"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-seed1-1220713.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-seed1-1220713.out": {
+    "bytes": 5283,
+    "sha256": "cb66f90f3851c03ee413538b9e8393221786bac80e42b878cb21a68b86134e35"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-seed2-1220721.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov-seed2-1220721.out": {
+    "bytes": 5466,
+    "sha256": "3edca025f7ea5b5c5a949d818c777005078946a796d582d434ab3e98b4bda34c"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov_vac_degradation-seed0-20261118T082622Z-0e896488.json": {
+    "bytes": 10421,
+    "sha256": "cd112cdf6b7be44b253e49e867e94ac34e37e6176720488245b1486b2cdcf1e6"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov_vac_degradation-seed0-20261118T083231Z-0f37b67e.json": {
+    "bytes": 10433,
+    "sha256": "3bff0c623189920a62f3549a302fa11db359f90df4d0f7555da70e8d0653a92c"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov_vac_degradation-seed1-20261119T020904Z-361e5c5b.json": {
+    "bytes": 10421,
+    "sha256": "48a3e98edbc3abcae896f2e0dd50ebaf5d0956f32ec06b4e9bf41508902c7f7e"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov_vac_degradation-seed1-20261119T023158Z-caf2623d.json": {
+    "bytes": 10433,
+    "sha256": "7137a4892b580f0d287a7cf130f07384d4cb203ec57e85bbf631180a49bff3eb"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov_vac_degradation-seed2-20261119T020904Z-fdbc7999.json": {
+    "bytes": 10421,
+    "sha256": "73f0fb4661b50776ac85e169ba1abb89b6998d46a8596dcef3ebe0712b5bee1a"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-cov_vac_degradation-seed2-20261119T023225Z-e6b6ecf0.json": {
+    "bytes": 10433,
+    "sha256": "9fb6f177d4f168559718dbb997e6093638b4d9e3762de329937a86bd2b29d896"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-diag1-1220718.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-diag1-1220718.out": {
+    "bytes": 570,
+    "sha256": "ebe5d91eaef4070ee0f7281013487d43ec4adaa659ee6ce2a3b43f4ce360dca5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-diag2-1220726.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-diag2-1220726.out": {
+    "bytes": 570,
+    "sha256": "f759bf350ca4b6b74d002f7c1796e5ecf3231667c5b641ee7a784088d2b893dc"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-diagnostics-1217571.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-diagnostics-1217571.out": {
+    "bytes": 570,
+    "sha256": "68188552b4255655c2d07f6db86534e4a853cb9b9c67cb844854dd7d90a618a9"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-seed0-1217570.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-seed0-1217570.out": {
+    "bytes": 4257,
+    "sha256": "a9d7d9fd69bb1fd0b596b73a069a9f6c2e6afbbc2b48cc105cf6513c08d8a9a2"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-seed1-1220717.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-seed1-1220717.out": {
+    "bytes": 4308,
+    "sha256": "8a2ba9472821ec1c0b8324b544754b2927cb8df8b063c47a1b5a03dfb60c699a"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-seed2-1220725.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli-seed2-1220725.out": {
+    "bytes": 4312,
+    "sha256": "329bc99f4e6cbe16fc06d37837b816dc8ba965757ac87ac4607b5259109e5e76"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli_proteins-seed0-20261118T083258Z-b1c3b7a3.json": {
+    "bytes": 10401,
+    "sha256": "e6ebd08a3cb4f901ff5e85d2e889bcfa99865b23f5be6f05315a194da43211fa"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli_proteins-seed0-20261118T091429Z-f1f00e2c.json": {
+    "bytes": 10413,
+    "sha256": "735661b6d7e0e057c7a9d2bb46b692082ba65155ec2c24b49bb9891ef45cead0"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli_proteins-seed1-20261119T024002Z-8b273b90.json": {
+    "bytes": 10401,
+    "sha256": "3360aeeb598b464a09713b717da2b0c8323b05fa353f2c229ca5719af0645b81"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli_proteins-seed1-20261119T031851Z-3286bc32.json": {
+    "bytes": 10413,
+    "sha256": "aebd3892413378147088fba005829c9c16a829da641f1c2e0c894c01dbd99840"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli_proteins-seed2-20261119T023947Z-c37c265f.json": {
+    "bytes": 10401,
+    "sha256": "d991f13af89d6e334cec5c75e1fde72779b9c9a6e2301423595268d79711f534"
+  },
+  "multi-modal_fusion_studies/outputs/logs/attention-ecoli_proteins-seed2-20261119T031946Z-1f7ed34a.json": {
+    "bytes": 10413,
+    "sha256": "223b404e2ffe4efdec6838510ce347e59ad96fd4f44f8cd6f2e60715dbbacc19"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1217564.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1217565.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1217566.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1217567.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1217568.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1217569.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1217570.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1217571.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220713.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220714.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220715.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220716.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220717.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220718.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220719.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220720.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220721.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220722.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220723.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220724.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220725.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220726.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220727.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/environment-1220728.txt": {
+    "bytes": 2627,
+    "sha256": "4cfc5e29f2cf3592f9346c818c6b2c561b4dd7d65fefb657032aad02dd76626b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-diag1-1220716.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-diag1-1220716.out": {
+    "bytes": 576,
+    "sha256": "2f5d9cc5f8164e58215d541c73c6a1e5718692a7a3c35b441d908952e1d801e8"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-diag2-1220724.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-diag2-1220724.out": {
+    "bytes": 576,
+    "sha256": "297aeb77f7564104fad8df94723b963a20c8259263fd2e002ffc0b7924eb29ce"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-diagnostics-1217565.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-diagnostics-1217565.out": {
+    "bytes": 576,
+    "sha256": "0278ca1c66fc4d898a10878643bfbfb54cf37dc3e2a46732e0d54e0a5de222f1"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-seed0-1217564.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-seed0-1217564.out": {
+    "bytes": 6113,
+    "sha256": "06444fa39946a50b901ed91abd9c8b4abd70bfb3838bc0e504c195ad7ac9550a"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-seed1-1220715.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-seed1-1220715.out": {
+    "bytes": 6116,
+    "sha256": "31e107f9486969f5e11cc4ae361399e2f1e3abe7928d54f316cc0e703f8d6e18"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-seed2-1220723.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov-seed2-1220723.out": {
+    "bytes": 5864,
+    "sha256": "904c5b3e3aac5d53686c77b67eed2dd5e9456295513c9dec5ab23ab7e211dd5b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov_vac_degradation-seed0-20261118T151845Z-9a927c7a.json": {
+    "bytes": 10405,
+    "sha256": "5acbb26c563165b482964134eca1e8141db2a2bf06de3a81858de797f884365b"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov_vac_degradation-seed0-20261118T153249Z-458284ce.json": {
+    "bytes": 10417,
+    "sha256": "9f58be09fceb6cae0b1711dd0cb17b53ddbfd50778fbada9578acbd6002a208c"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov_vac_degradation-seed1-20261119T023255Z-4c5896f6.json": {
+    "bytes": 10405,
+    "sha256": "101dbbd4a031daa5f09a18a78f55ae460077bb6bd87f09f8d6b11daef710c309"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov_vac_degradation-seed1-20261119T023937Z-d3236b51.json": {
+    "bytes": 10417,
+    "sha256": "1ce543c36587f19f831e3ff3b06c07bcf774ef77bd800303ac659c719a7b892d"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov_vac_degradation-seed2-20261119T023255Z-139c5759.json": {
+    "bytes": 10405,
+    "sha256": "30332861e51251dd1e8558236a8693a9028de4d79b7268d1944dcbff68ff558a"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-cov_vac_degradation-seed2-20261119T023921Z-883dc23f.json": {
+    "bytes": 10417,
+    "sha256": "2306d2ff7f6669238a9dfbb3db0528924f439ef29589c2de7845bf9b35e38711"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-diag1-1220720.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-diag1-1220720.out": {
+    "bytes": 566,
+    "sha256": "4ba3852d22114929b341a4e870b65de1feb141f3cbe5fcac2d8d96104cc08180"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-diag2-1220728.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-diag2-1220728.out": {
+    "bytes": 566,
+    "sha256": "2ca0c5f0a4b05d89859666e93f76b307a6ae0a79e05123c2fbcdb734a298e6a2"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-diagnostics-1217567.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-diagnostics-1217567.out": {
+    "bytes": 566,
+    "sha256": "cfde44ea8a377d48db6b8a29ae4fd2260d91c0d0d33a515f8293c2c029ae0820"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-seed0-1217566.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-seed0-1217566.out": {
+    "bytes": 5085,
+    "sha256": "12971f083e0d89cb528e05f6b3851a0dbda6250682f50ef72c945ee40d051f88"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-seed1-1220719.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-seed1-1220719.out": {
+    "bytes": 5080,
+    "sha256": "74ce8fc0a2cfc3c7c45c8986e29efaa7d0f144267aa506b5f4eaa3550111f775"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-seed2-1220727.err": {
+    "bytes": 283,
+    "sha256": "3f2b766f08dfd18a853f26878cf7e0d8cad05ab72687a30d2e374da957f6a5a5"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli-seed2-1220727.out": {
+    "bytes": 4757,
+    "sha256": "f6e5756bf3e12b45f131bea53598978beaf90c1d864755d6b061a602021c3160"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli_proteins-seed0-20261118T153325Z-ad08dbd6.json": {
+    "bytes": 10385,
+    "sha256": "cb82e56050dd77d48b05a47ea13ed9f063e11cd01ffdb259f03e377d2ac6bc6e"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli_proteins-seed0-20261118T165306Z-11289308.json": {
+    "bytes": 10397,
+    "sha256": "8d86bd00975f69a4dcd81cf94ba4266637131cf1d590ae3fec9df7daa3cdb014"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli_proteins-seed1-20261119T032028Z-473e42cc.json": {
+    "bytes": 10385,
+    "sha256": "9837cdf2b4a92f617a7d51cc68ac1546049ff3dec48bd7ec2f0fb081a89c11aa"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli_proteins-seed1-20261119T040833Z-095eca02.json": {
+    "bytes": 10397,
+    "sha256": "70cf69f5c56c8acccfcbace9caed05d87fac1a5da461264c12f7b705ef3f4dbd"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli_proteins-seed2-20261119T032032Z-545a4293.json": {
+    "bytes": 10385,
+    "sha256": "9c3f1a5ed153dbb38914c5b26625bb1d5569e0a2e00b072a3486947fa4fbfd38"
+  },
+  "multi-modal_fusion_studies/outputs/logs/gates-ecoli_proteins-seed2-20261119T040447Z-ce0c9509.json": {
+    "bytes": 10397,
+    "sha256": "86e3da0ace830ca22fe6fef2a8f272f4c29d4e1b39325c7da9f61c36a6eceadc"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-cov_vac_degradation-seed0-20261118T082622Z-0e896488.ipynb": {
+    "bytes": 105279,
+    "sha256": "2a2497c067d240bef5284d80acc1dec57ac9b0ec33a455734ec94c5211bf1215"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-cov_vac_degradation-seed0-20261118T083231Z-0f37b67e.ipynb": {
+    "bytes": 93164,
+    "sha256": "9902711947f609ad6ceb3e36b5fd2e0bd0d1dd6a062fda982b40f4187e06ec06"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-cov_vac_degradation-seed1-20261119T020904Z-361e5c5b.ipynb": {
+    "bytes": 105324,
+    "sha256": "ce4df827e0137b04e0328fe398894b775558421cdb74d1ee70b447caf376ef23"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-cov_vac_degradation-seed1-20261119T023158Z-caf2623d.ipynb": {
+    "bytes": 93162,
+    "sha256": "6695294941ff9c22c28343b6925397f4e43ac1ef2e57b87fd2c72b84cf4b0a5d"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-cov_vac_degradation-seed2-20261119T020904Z-fdbc7999.ipynb": {
+    "bytes": 105801,
+    "sha256": "685eed8c3d491e9f0df006ad2ee9657688a90d8b0455386bb17de2da276e9924"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-cov_vac_degradation-seed2-20261119T023225Z-e6b6ecf0.ipynb": {
+    "bytes": 93162,
+    "sha256": "87d8bc49f464048aa94f0a633ea1e23f4b8dadc1b291da3cb9655b5bdcc04bd9"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-ecoli_proteins-seed0-20261118T083258Z-b1c3b7a3.ipynb": {
+    "bytes": 103188,
+    "sha256": "74dcf18d72f07341da8efd452fef36a42e7b0c644680e98bcb0ab7792071c8e1"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-ecoli_proteins-seed0-20261118T091429Z-f1f00e2c.ipynb": {
+    "bytes": 92779,
+    "sha256": "aa0721c77f2a20bdbf0087dec1498f3a7d70a4956c917ce56d1feca8ff864477"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-ecoli_proteins-seed1-20261119T024002Z-8b273b90.ipynb": {
+    "bytes": 103374,
+    "sha256": "fcfa4ee35fb88d64f7b0f69d0232014aeb479a5ea2d2537209eeedef4da040f9"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-ecoli_proteins-seed1-20261119T031851Z-3286bc32.ipynb": {
+    "bytes": 92777,
+    "sha256": "37563130e0f36aed00d956ba8ecbdedcd230924a0e67ee57a11d78ec6fe74182"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-ecoli_proteins-seed2-20261119T023947Z-c37c265f.ipynb": {
+    "bytes": 103378,
+    "sha256": "80bb9f98a677a76038b4cc6d0f9f666b1f707b1e838e339dc02f0b7470dc3d04"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/attention-ecoli_proteins-seed2-20261119T031946Z-1f7ed34a.ipynb": {
+    "bytes": 92777,
+    "sha256": "105f188eee3e239f67d9bac8e9b0dc2cb512471d0a6095d31877f6ae7fb05641"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-cov_vac_degradation-seed0-20261118T151845Z-9a927c7a.ipynb": {
+    "bytes": 117992,
+    "sha256": "95587f1604ca4ecc9a592ef4dd494a5d93bc755323990d3cda68c8a0976f3620"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-cov_vac_degradation-seed0-20261118T153249Z-458284ce.ipynb": {
+    "bytes": 103744,
+    "sha256": "1371a3d37545af201af21b5bdea69208908aaf3cb15a4dbdaafd7e12378f2c9c"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-cov_vac_degradation-seed1-20261119T023255Z-4c5896f6.ipynb": {
+    "bytes": 118037,
+    "sha256": "30d8cd9b74f3cad391c4e16f17c330429ac9e03023003e1a13b26b02fc7adc77"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-cov_vac_degradation-seed1-20261119T023937Z-d3236b51.ipynb": {
+    "bytes": 103828,
+    "sha256": "5cb28eacedb4d15de5323d9b2e6dadd2bed41105c6b4b727b27506fea7ddcbd6"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-cov_vac_degradation-seed2-20261119T023255Z-139c5759.ipynb": {
+    "bytes": 117393,
+    "sha256": "92db49330fabc46dbe4536d9a5e557039cf434a03326000786ab6555a69e4fdb"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-cov_vac_degradation-seed2-20261119T023921Z-883dc23f.ipynb": {
+    "bytes": 103828,
+    "sha256": "efc06d49efccfb1421cf553936786034dbb5ea913727025fb643781e3e3a469e"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-ecoli_proteins-seed0-20261118T153325Z-ad08dbd6.ipynb": {
+    "bytes": 115945,
+    "sha256": "b2d1655d47489aa5c9ae3a5b26cec130627701b197b5533b489a6058084d0e3c"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-ecoli_proteins-seed0-20261118T165306Z-11289308.ipynb": {
+    "bytes": 103239,
+    "sha256": "8c213dedf31f7737a55f6ff01187805834ac38e92b2c191d9eafe7a89862d617"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-ecoli_proteins-seed1-20261119T032028Z-473e42cc.ipynb": {
+    "bytes": 115982,
+    "sha256": "e3cea61af909d06d21f4cb75b268abf5e48c8aec2b5caa3f6a608ccac430446a"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-ecoli_proteins-seed1-20261119T040833Z-095eca02.ipynb": {
+    "bytes": 103323,
+    "sha256": "23075e1d422129a4c426d8ce6bc603b14a6e234685eca94c28ff758f5636fdc7"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-ecoli_proteins-seed2-20261119T032032Z-545a4293.ipynb": {
+    "bytes": 115169,
+    "sha256": "60ed5db4f5df600fee0edcd7d643cab98b06f7de99f96878373790edd9cb3d53"
+  },
+  "multi-modal_fusion_studies/outputs/notebooks/gates-ecoli_proteins-seed2-20261119T040447Z-ce0c9509.ipynb": {
+    "bytes": 103320,
+    "sha256": "2c599d4079b6bbb221d9618a3f9858a68c8eafeef8bc3689e1a0146dac435218"
+  },
+  "multi-modal_fusion_studies/source-snapshot.json": {
+    "bytes": 16580,
+    "sha256": "099e4e1e454ac4e7b201211da73ab410d4c99bf602542825af0a96ce4479aa58"
+  }
+}

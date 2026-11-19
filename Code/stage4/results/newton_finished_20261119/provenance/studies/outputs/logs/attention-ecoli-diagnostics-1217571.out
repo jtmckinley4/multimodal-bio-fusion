@@ -1,0 +1,9 @@
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python on evc32
+Verified 67 source files; no kernel, data, cache or model was opened.
+Observed GPU: NVIDIA H100 PCIe; attention diagnostics
+Explicit job: ecoli_proteins seed 0 diagnostics
+Explicit ecoli_proteins seed 0 best-weight diagnostic inference on cuda.
+Parameter construction skipped; saved result counts remain available below.
+Saved records are read in place. Current input/cache checks happen only in explicit execution.
+Fitting disabled. Missing results remain missing.
+No saved three-seed report.
