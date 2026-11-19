@@ -48,3 +48,9 @@ Claude outputs/
 # Returned Newton inputs are verified against the canonical CSVs in /datasets/.
 # Keep accidental return-transfer duplicates out of the shared results package.
 /Code/stage4/results/newton_h100_seeds012/datasets/
+
+# Stage 4 partner tasks: entity embedding caches and built pair tables.
+# Both are derived and large (1.1 GB and 31 MB); rebuild with partner_tasks.ipynb
+# (RUN_EXTRACTION) and shared_code.fusion.pair_sources respectively.
+/Code/stage4/cache/
+/Code/stage4/data/

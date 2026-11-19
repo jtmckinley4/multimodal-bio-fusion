@@ -21,7 +21,7 @@ A stronger replacement can improve a fused model without establishing complement
 | [Half-life and translation efficiency](halflife_translation_efficiency.ipynb) | Does extra RNA context help, and does protein add value once that context is available? Existing pooled comparisons and separately enabled matched follow-ups. |
 | [Auxiliary correction, gates and attention](#proposed-tests-of-fusion-explanations) | Which controlled change helps a predictor use another representation? Three seeds of gate and attention comparisons are available for CoV-Vac and E. coli. Auxiliary correction has its own workflow. |
 | [Transcript-region correspondence](region_aware_fusion.ipynb) | Does mapping protein features only to annotated coding regions help beyond simpler controls? Implemented A.6 pipeline for a matched cohort and new token caches; preparation, extraction and training have not run. |
-| [Molecular-partner tasks](#conditional-outlook-transfer-to-other-molecular-relationships) | Do selected explanations transfer to RNA–protein or protein–ligand pairs? Conditional dataset and evaluation work. |
+| [Molecular-partner tasks](#transfer-to-other-molecular-relationships) | Do selected explanations transfer to RNA–protein, DNA–protein or protein–ligand pairs? Five tables built; arms not yet established. |
 
 Encoders reading a common coding sequence can expose different predictive patterns without adding an independently measured molecule. Genomic flanks and untranslated regions can instead supply sequence context absent from a translated protein. Neither guarantees a fusion gain. Cross-notebook differences can also change datasets, targets, predictors or evaluation, so they cannot isolate one biological cause.
 
@@ -137,15 +137,25 @@ Compare native-resolution with codon-pooled RNA and true with appropriately perm
 
 Within local gating, compare sequence and position gates with a full-width nongated control. Within attention, hold CDS update availability fixed while comparing unit, sequence and position weights. Select the strongest single on seed-0 validation across the RNA-only configurations and native protein-only, then hold that choice across training seeds. RNA remains the specified attention anchor even if protein wins that baseline comparison. The [control plan](../../docs/research-execution-plan.md#control-repairs-before-newton) records these adaptations, fit counts and optional comparisons.
 
-### Conditional outlook: transfer to other molecular relationships
+### Transfer to other molecular relationships
 
-#### RNA–protein binding
+Three pairings, five built tables, one notebook: [`partner_tasks.ipynb`](partner_tasks.ipynb). These are protocol steps 7 and 8 plus a ninth this project proposes, and they are Julian's; Part A, steps 1 to 6, is Chase's. The advisor's protocol names two of the three; step 9, DNA–protein binding, is this project's own addition and is not yet approved. Tables are under `data/pairs/`, and the code is `pair_tasks`, `pair_models`, `pair_training`, `pair_sources`, `pair_dna`, `entity_embeddings` and `pair_study` in `shared_code/fusion/`. The data is built and the code is tested; arms are being fitted, and no comparison is established.
 
-Binding pairs an RNA with a separate protein partner rather than its translation. Compare single-partner and simple pair baselines with selected attention/gate variants, including partner reassignment controls. Establish label evidence and artificial-negative construction, then distinguish RNA-disjoint, protein-disjoint and dual-disjoint evaluation. Candidate datasets remain conditional, not a committed suite.
+#### Step 7: RNA–protein binding
 
-#### Protein–ligand affinity
+Binding pairs an RNA with a separate protein partner rather than its translation. Two tables: `rpi2241` (4,479 pairs; 2,238 measured positives with the 2,241 random negatives the source supplies) and `npinter-matched` (22,516 pairs; 11,258 positives with degree-matched sampled negatives). The two are not interchangeable. Measurement before fitting found that degree matching inverted the popularity signal in `npinter-matched` rather than removing it, so its negatives pose a different question from the supplied negatives of `rpi2241`, and the two should not be pooled.
 
-Protein–small-molecule pairs provide another transfer test. Select an assay endpoint, single-partner/simple-pair baselines and cold-protein, cold-ligand or cold-both splits before testing fusion. Affinity and inhibition measurements are not interchangeable. Both partner-task extensions require new preparation and representations; their purpose is to test the explanation's transfer.
+#### Step 9: DNA–protein binding (this project's addition, pending approval)
+
+A DNA region paired with the transcription factor that binds it. This is **binding, not affinity**: the label is whether a factor bound a region, not a measured strength. It is proposed because it gives the DNA encoder a task where DNA carries information the protein does not, which no existing benchmark here does. Built from DAP-seq as `dapseq`: 15,905 pairs, 7,905 positive 201 bp windows on peak summits for 40 factors in 15 families, each with one same-chromosome negative matched on GC content within 0.05 and clear of every peak of that factor. Regions group into 10 kb genomic bins (15,384 regions in 7,816 bins) and factors group by family; a split may not break either. Two limits belong with any result: DAP-seq is an *in vitro* assay, so it measures what a factor can bind on naked DNA rather than what it occupies in a cell, and 15 families leaves four in the test partition under a dual-disjoint split.
+
+#### Step 8: protein–ligand affinity
+
+Protein–small-molecule pairs provide another transfer test, and the only one of the three with a continuous label. Two tables taken directly from Harvard Dataverse: `davis` (25,772 measured pKd over 379 proteins and 68 ligands) and `kiba` (117,657 KIBA scores over 229 proteins and 2,068 ligands). Affinity and inhibition measurements are not interchangeable, and neither table pools endpoints. One property of `davis` qualifies every number from it: 18,343 of its values (71.2%) sit at exactly the pKd floor of 5.0, which is the assay's 10,000 nM censoring limit and not a measurement, so a rank correlation there largely separates the censored floor from everything else. `kiba` has no such floor. The ligand side reads through ChemBERTa 77M at a pinned revision, added to the encoder registry for this task.
+
+#### Evaluation, common to all three
+
+Splits hold out left entities, right entities or both, over groups rather than individual entities. The dual-disjoint split is the one a method should be judged on, and it is also the thinnest: it discards 38% to 49% of each table and leaves 132 to 2,088 test pairs. Two controls run with every evaluation. The degree baseline predicts from each entity's training labels alone and reads no sequence; measured before any fit, it reaches 0.867 AUROC on `rpi2241` with proteins held out, so that split is close to a popularity contest and an arm there must clear 0.867 rather than 0.5. On the dual-disjoint split it scores exactly 0.500 by construction, since neither entity of a test pair was seen in training. Partner reassignment keeps each positive pair's anchor and gives it a partner nobody measured. Group membership is exact-identity only, so every number these tables can produce is optimistic until entities are clustered at a stated threshold.
 
 ### Organize the preparation notebooks around questions
 
@@ -158,7 +168,7 @@ The four notebooks keep the advisor's steps connected while giving each question
 | [Gate diagnostics](gate_diagnostics.ipynb) | 3–4: sequence and position gates | 46 |
 | [Anchor cross-attention](anchor_cross_attention.ipynb) | 5: skip, attention and gated updates | 25 |
 | [Region-aware fusion](region_aware_fusion.ipynb) | 6: CDS/UTR correspondence | 42 |
-| Conditional partner-task extensions; dataset selection first | 7–8: RNA–protein binding and protein–ligand affinity | 47, 48 |
+| [Partner tasks](partner_tasks.ipynb) (Julian) | 7–8: RNA–protein binding and protein–ligand affinity, plus 9: DNA–protein binding as this project's addition | 47, 48 |
 
 [Gantt and Details](../../docs/Research_Project_Plan_Gantt.xlsx) owns dependencies and schedule qualifications. Task 42 spans two scopes: the existing pooled comparisons remain in Stage 4, and the proposed positional intervention is a new experiment within the same investigation.
 

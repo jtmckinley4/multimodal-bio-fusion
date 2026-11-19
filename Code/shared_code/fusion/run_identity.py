@@ -791,7 +791,9 @@ def producer_record(*, device=None, repository=None, packages=None):
     sources = {}
     if repository is not None:
         root = Path(repository)
-        for name in ("train", "blf", "isoformer", "heads", "codon_grid", "textcnn", "run_identity"):
+        for name in ("train", "blf", "isoformer", "heads", "codon_grid", "textcnn",
+                     "run_identity", "pair_tasks", "pair_models", "pair_training",
+                     "pair_sources", "pair_dna", "entity_embeddings"):
             path = root / "Code" / "shared_code" / "fusion" / f"{name}.py"
             if path.is_file():
                 sources[path.relative_to(root).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
