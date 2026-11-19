@@ -1,0 +1,70 @@
+Preparing Conda environment on evc45
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python
+{"kernel": "biofusion-arcc", "registered_python": "/lustre/fs1/home/ch806988/.conda/envs/biofusion-arcc/bin/python3.11"}
+Verified 60 files; no kernel, split generation or cache reads started.
+Starting grouped stability seed 0: 12 declared fits.
+Kernel environment: {"host": "evc45", "python": "3.11.18 (main, Oct 26 2026, 18:19:35) [GCC 14.3.0]", "platform": "Linux-4.18.0-553.123.1.el8_10.0.1.x86_64-x86_64-with-glibc2.28", "device": "cuda", "gpu": "NVIDIA H100 PCIe", "cuda": "12.6", "cudnn": 91002, "packages": {"numpy": "2.3.5", "pandas": "3.1.1", "scipy": "1.16.3", "scikit-learn": "1.9.1", "torch": "2.10.0+cu126", "nbconvert": "7.17.2", "nbclient": "0.11.0"}}
+Grouped stability: seed 0 12 fits; /lustre/fs1/home/ch806988/multi-modal_fusion_grouped_stability/outputs/study
+Training seed 0: NVIDIA H100 PCIe
+Declared workload: 12 fits × 3 seeds
+Matching grouped assignment reused.
+Source SHA-256: 50d92188f7e9d2111e526f6d520ddb28d20bd7bb19190d23e011c18c8d660dbb
+Grouped assignment: e42adf9630bc0e6b99e900036d0004030150593cdef9fc767411cceaa9682ea7
+Compatible saved fits: 4/12
+Seed 0: 8 missing/resumable fits; completed fits are preserved.
+Grouped stability / mrnafm_native / seed 0
+  seed0: training
+    epoch   0  train loss 0.8591  val 0.3692  best 0.3692 @ 0
+    epoch  10  train loss 0.4486  val 0.3915  best 0.3953 @ 8
+    epoch  20  train loss 0.3511  val 0.3846  best 0.3953 @ 8
+  seed0: test 0.3716 (val 0.3953 at epoch 8, 37.8 min)
+Grouped stability / esm2_native / seed 0
+  seed0: training
+    epoch   0  train loss 0.9161  val 0.2451  best 0.2451 @ 0
+    epoch  10  train loss 0.6854  val 0.3010  best 0.3010 @ 9
+    epoch  20  train loss 0.5646  val 0.3144  best 0.3163 @ 19
+    epoch  30  train loss 0.4929  val 0.3169  best 0.3172 @ 27
+    epoch  40  train loss 0.4870  val 0.3170  best 0.3172 @ 27
+  seed0: test 0.3017 (val 0.3172 at epoch 27, 14.4 min)
+Grouped stability / original_concat / seed 0
+  seed0: training
+    epoch   0  train loss 0.8988  val 0.2920  best 0.2920 @ 0
+    epoch  10  train loss 0.5663  val 0.3495  best 0.3541 @ 9
+    epoch  20  train loss 0.3688  val 0.3546  best 0.3584 @ 16
+    epoch  30  train loss 0.2957  val 0.3536  best 0.3584 @ 16
+  seed0: test 0.3260 (val 0.3584 at epoch 16, 85.4 min)
+Grouped stability / original_mil / seed 0
+  seed0: training
+    epoch   0  train loss 0.9164  val 0.2690  best 0.2690 @ 0
+    epoch  10  train loss 0.6499  val 0.3287  best 0.3332 @ 9
+    epoch  20  train loss 0.4834  val 0.3431  best 0.3434 @ 19
+    epoch  30  train loss 0.3897  val 0.3460  best 0.3471 @ 26
+    epoch  40  train loss 0.3844  val 0.3457  best 0.3471 @ 26
+  seed0: test 0.3191 (val 0.3471 at epoch 26, 134.5 min)
+Grouped stability / original_cross / seed 0
+  seed0: training
+    epoch   0  train loss 0.9134  val 0.2835  best 0.2835 @ 0
+    epoch  10  train loss 0.3689  val 0.3347  best 0.3462 @ 8
+    epoch  20  train loss 0.2524  val 0.3372  best 0.3462 @ 8
+  seed0: test 0.3130 (val 0.3462 at epoch 8, 47.7 min)
+Grouped stability / mrnafm_concat / seed 0
+  seed0: training
+    epoch   0  train loss 0.8579  val 0.3698  best 0.3698 @ 0
+    epoch  10  train loss 0.4582  val 0.3920  best 0.4013 @ 8
+    epoch  20  train loss 0.3365  val 0.3880  best 0.4013 @ 8
+  seed0: test 0.3759 (val 0.4013 at epoch 8, 37.9 min)
+Grouped stability / mrnafm_mil / seed 0
+  seed0: training
+    epoch   0  train loss 0.8905  val 0.3552  best 0.3552 @ 0
+    epoch  10  train loss 0.5464  val 0.3744  best 0.3911 @ 2
+    epoch  20  train loss 0.5276  val 0.3732  best 0.3911 @ 2
+  seed0: test 0.3635 (val 0.3911 at epoch 2, 18.2 min)
+Grouped stability / mrnafm_cross / seed 0
+  seed0: training
+    epoch   0  train loss 0.8776  val 0.3600  best 0.3600 @ 0
+    epoch  10  train loss 0.3459  val 0.3792  best 0.3884 @ 8
+    epoch  20  train loss 0.2414  val 0.3817  best 0.3885 @ 11
+    epoch  30  train loss 0.2298  val 0.3805  best 0.3885 @ 11
+  seed0: test 0.3821 (val 0.3885 at epoch 11, 35.7 min)
+Requested grouped seed 0 completed: 12/12 fits.
+No eligible saved report displayed; no replacement analysis was run.

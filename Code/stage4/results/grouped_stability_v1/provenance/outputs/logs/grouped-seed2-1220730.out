@@ -1,0 +1,104 @@
+Preparing Conda environment on evc22
+Using Python: /home/ch806988/.conda/envs/biofusion-arcc/bin/python
+{"kernel": "biofusion-arcc", "registered_python": "/lustre/fs1/home/ch806988/.conda/envs/biofusion-arcc/bin/python3.11"}
+Verified 60 files; no kernel, split generation or cache reads started.
+Starting grouped stability seed 2: 12 declared fits.
+Kernel environment: {"host": "evc22", "python": "3.11.18 (main, Oct 26 2026, 18:19:35) [GCC 14.3.0]", "platform": "Linux-4.18.0-553.123.1.el8_10.0.1.x86_64-x86_64-with-glibc2.28", "device": "cuda", "gpu": "NVIDIA H100 PCIe", "cuda": "12.6", "cudnn": 91002, "packages": {"numpy": "2.3.5", "pandas": "3.1.1", "scipy": "1.16.3", "scikit-learn": "1.9.1", "torch": "2.10.0+cu126", "nbconvert": "7.17.2", "nbclient": "0.11.0"}}
+Grouped stability: seed 2 12 fits; /lustre/fs1/home/ch806988/multi-modal_fusion_grouped_stability/outputs/study
+Training seed 2: NVIDIA H100 PCIe
+Declared workload: 12 fits × 3 seeds
+Matching grouped assignment reused.
+Source SHA-256: 50d92188f7e9d2111e526f6d520ddb28d20bd7bb19190d23e011c18c8d660dbb
+Grouped assignment: e42adf9630bc0e6b99e900036d0004030150593cdef9fc767411cceaa9682ea7
+Compatible saved fits: 0/12
+Seed 2: 12 missing/resumable fits; completed fits are preserved.
+Grouped stability / ntv2_native / seed 2
+  seed2: training
+    epoch   0  train loss 0.9502  val 0.1952  best 0.1952 @ 0
+    epoch  10  train loss 0.4371  val 0.2677  best 0.2677 @ 10
+    epoch  20  train loss 0.3183  val 0.2631  best 0.2699 @ 19
+    epoch  30  train loss 0.2588  val 0.2628  best 0.2699 @ 19
+  seed2: test 0.2806 (val 0.2699 at epoch 19, 2.7 min)
+Grouped stability / ntv2_grid / seed 2
+  seed2: training
+    epoch   0  train loss 0.9353  val 0.2009  best 0.2009 @ 0
+    epoch  10  train loss 0.5244  val 0.2776  best 0.2808 @ 8
+    epoch  20  train loss 0.3547  val 0.2875  best 0.2884 @ 19
+    epoch  30  train loss 0.2824  val 0.2869  best 0.2884 @ 19
+  seed2: test 0.2769 (val 0.2884 at epoch 19, 2.8 min)
+Grouped stability / rnafm_native / seed 2
+  seed2: training
+    epoch   0  train loss 0.9271  val 0.2570  best 0.2570 @ 0
+    epoch  10  train loss 0.7509  val 0.3101  best 0.3101 @ 10
+    epoch  20  train loss 0.6159  val 0.3187  best 0.3198 @ 18
+    epoch  30  train loss 0.5031  val 0.3231  best 0.3264 @ 27
+    epoch  40  train loss 0.4409  val 0.3258  best 0.3267 @ 39
+    epoch  50  train loss 0.4325  val 0.3261  best 0.3267 @ 39
+  seed2: test 0.3188 (val 0.3267 at epoch 39, 28.8 min)
+Grouped stability / rnafm_grid / seed 2
+  seed2: training
+    epoch   0  train loss 0.9303  val 0.2498  best 0.2498 @ 0
+    epoch  10  train loss 0.8026  val 0.2952  best 0.2952 @ 10
+    epoch  20  train loss 0.7084  val 0.2997  best 0.3019 @ 13
+    epoch  30  train loss 0.6972  val 0.2995  best 0.3019 @ 13
+  seed2: test 0.2862 (val 0.3019 at epoch 13, 15.9 min)
+Grouped stability / mrnafm_native / seed 2
+  seed2: training
+    epoch   0  train loss 0.8598  val 0.3756  best 0.3756 @ 0
+    epoch  10  train loss 0.4502  val 0.3775  best 0.3917 @ 4
+    epoch  20  train loss 0.3874  val 0.3887  best 0.3917 @ 4
+  seed2: test 0.3725 (val 0.3917 at epoch 4, 19.5 min)
+Grouped stability / esm2_native / seed 2
+  seed2: training
+    epoch   0  train loss 0.9153  val 0.2457  best 0.2457 @ 0
+    epoch  10  train loss 0.6773  val 0.2887  best 0.2950 @ 7
+    epoch  20  train loss 0.5626  val 0.3081  best 0.3087 @ 19
+    epoch  30  train loss 0.4803  val 0.3079  best 0.3115 @ 28
+    epoch  40  train loss 0.4350  val 0.3129  best 0.3129 @ 40
+    epoch  50  train loss 0.4248  val 0.3121  best 0.3134 @ 42
+    epoch  60  train loss 0.4256  val 0.3124  best 0.3134 @ 42
+  seed2: test 0.3066 (val 0.3134 at epoch 42, 11.6 min)
+Grouped stability / original_concat / seed 2
+  seed2: training
+    epoch   0  train loss 0.8992  val 0.2929  best 0.2929 @ 0
+    epoch  10  train loss 0.5613  val 0.3526  best 0.3528 @ 9
+    epoch  20  train loss 0.3657  val 0.3596  best 0.3635 @ 15
+    epoch  30  train loss 0.3040  val 0.3603  best 0.3635 @ 15
+  seed2: test 0.3374 (val 0.3635 at epoch 15, 45.8 min)
+Grouped stability / original_mil / seed 2
+  seed2: training
+    epoch   0  train loss 0.9199  val 0.2644  best 0.2644 @ 0
+    epoch  10  train loss 0.6515  val 0.3293  best 0.3341 @ 8
+    epoch  20  train loss 0.4864  val 0.3466  best 0.3466 @ 20
+    epoch  30  train loss 0.3851  val 0.3453  best 0.3529 @ 27
+    epoch  40  train loss 0.3315  val 0.3450  best 0.3556 @ 37
+    epoch  50  train loss 0.2836  val 0.3521  best 0.3556 @ 37
+  seed2: test 0.2988 (val 0.3556 at epoch 37, 56.5 min)
+Grouped stability / original_cross / seed 2
+  seed2: training
+    epoch   0  train loss 0.9128  val 0.2884  best 0.2884 @ 0
+    epoch  10  train loss 0.3717  val 0.3417  best 0.3544 @ 9
+    epoch  20  train loss 0.2489  val 0.3537  best 0.3545 @ 13
+    epoch  30  train loss 0.2358  val 0.3535  best 0.3545 @ 13
+  seed2: test 0.3247 (val 0.3545 at epoch 13, 40.5 min)
+Grouped stability / mrnafm_concat / seed 2
+  seed2: training
+    epoch   0  train loss 0.8638  val 0.3728  best 0.3728 @ 0
+    epoch  10  train loss 0.4532  val 0.3951  best 0.3988 @ 9
+    epoch  20  train loss 0.3322  val 0.4029  best 0.4104 @ 16
+    epoch  30  train loss 0.2654  val 0.4018  best 0.4104 @ 16
+  seed2: test 0.3760 (val 0.4104 at epoch 16, 26.6 min)
+Grouped stability / mrnafm_mil / seed 2
+  seed2: training
+    epoch   0  train loss 0.8970  val 0.3551  best 0.3551 @ 0
+    epoch  10  train loss 0.5342  val 0.3680  best 0.3887 @ 4
+    epoch  20  train loss 0.4763  val 0.3745  best 0.3887 @ 4
+  seed2: test 0.3634 (val 0.3887 at epoch 4, 11.2 min)
+Grouped stability / mrnafm_cross / seed 2
+  seed2: training
+    epoch   0  train loss 0.8859  val 0.3663  best 0.3663 @ 0
+    epoch  10  train loss 0.2870  val 0.3988  best 0.4035 @ 3
+    epoch  20  train loss 0.2478  val 0.4021  best 0.4035 @ 3
+  seed2: test 0.3490 (val 0.4035 at epoch 3, 19.5 min)
+Requested grouped seed 2 completed: 12/12 fits.
+No eligible saved report displayed; no replacement analysis was run.

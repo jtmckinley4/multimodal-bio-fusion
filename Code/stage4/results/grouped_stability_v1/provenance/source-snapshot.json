@@ -1,0 +1,579 @@
+{
+  "schema": "biological-fusion.grouped-stability-package",
+  "schema_version": 1,
+  "source_root": "D:\\academic\\UCF\\2026_fall\\Capstone Project CAP6942\\Research\\genomics-multimodal-fusion",
+  "source_host": "cDesktopLab",
+  "source_commit": "56c989778c8e776320481d84d295fa6c465edaff",
+  "source_git_status": " M execution/arcc/README.md\n M execution/arcc/fusion_studies/README.md\n M execution/arcc/fusion_studies/newton_fusion_study.sbatch.example\n M execution/arcc/fusion_studies/prepare.py\n M execution/arcc/fusion_studies/run_fusion_study.py\n M execution/arcc/grouped_stability/README.md\n M execution/arcc/grouped_stability/newton_grouped_stability.sbatch.example\n M execution/arcc/grouped_stability/newton_preflight.sbatch.example\n M execution/arcc/grouped_stability/prepare.py\n M execution/arcc/grouped_stability/run_grouped_stability.py\n M tests/README.md\n M tests/test_arcc_fusion_studies.py\n M tests/test_arcc_grouped_stability.py\n?? execution/arcc/fusion_studies/RUN_CHECKLIST.md\n?? execution/arcc/fusion_studies/batches.tsv\n?? execution/arcc/fusion_studies/input-manifest.json\n?? execution/arcc/fusion_studies/newton_fusion_preflight.sbatch.example\n?? execution/arcc/fusion_studies/verify_inputs.py\n?? execution/arcc/grouped_stability/RUN_CHECKLIST.md\n?? tests/test_arcc_fusion_inputs.py\n?? tests/test_arcc_fusion_package.py",
+  "source_dirty": true,
+  "experiment": "grouped_stability",
+  "training_seeds": [
+    0,
+    1,
+    2
+  ],
+  "fits_per_seed": 12,
+  "cache_reference": {
+    "path": null,
+    "copied": false
+  },
+  "files": [
+    {
+      "source": "Code/shared_code/__init__.py",
+      "destination": "Code/shared_code/__init__.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "180e70140c57d20d87ae07300f68efa6c918abd94bf447bdc78a8f26ae18d1f5",
+      "initial_copy_sha256": "180e70140c57d20d87ae07300f68efa6c918abd94bf447bdc78a8f26ae18d1f5",
+      "bytes": 821
+    },
+    {
+      "source": "Code/shared_code/analysis.py",
+      "destination": "Code/shared_code/analysis.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "b2a4cc6463dcf72a7c8368189b92e3a40538ee755844e38e21c860b5db772cb7",
+      "initial_copy_sha256": "b2a4cc6463dcf72a7c8368189b92e3a40538ee755844e38e21c860b5db772cb7",
+      "bytes": 32087
+    },
+    {
+      "source": "Code/shared_code/datasets.py",
+      "destination": "Code/shared_code/datasets.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "9dc3d7471e3aecd75e8232d69b0c833cf83c6911f8f6bd240754b3929c44811c",
+      "initial_copy_sha256": "9dc3d7471e3aecd75e8232d69b0c833cf83c6911f8f6bd240754b3929c44811c",
+      "bytes": 14964
+    },
+    {
+      "source": "Code/shared_code/embeddings.py",
+      "destination": "Code/shared_code/embeddings.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "b179ec472788b91d065b58c5b83f0263908c6931b3e2ac9e772957315ed3808b",
+      "initial_copy_sha256": "b179ec472788b91d065b58c5b83f0263908c6931b3e2ac9e772957315ed3808b",
+      "bytes": 12679
+    },
+    {
+      "source": "Code/shared_code/encoders.py",
+      "destination": "Code/shared_code/encoders.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "c7a6d705b3be824e8a6281acc4fd026345027cafc8ae060fe4307e230df37da5",
+      "initial_copy_sha256": "c7a6d705b3be824e8a6281acc4fd026345027cafc8ae060fe4307e230df37da5",
+      "bytes": 11642
+    },
+    {
+      "source": "Code/shared_code/fusion/__init__.py",
+      "destination": "Code/shared_code/fusion/__init__.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "0695fb3839e3bb6b053b3a7eee618004992393d7cb9df9e6daf88c0618679d3a",
+      "initial_copy_sha256": "0695fb3839e3bb6b053b3a7eee618004992393d7cb9df9e6daf88c0618679d3a",
+      "bytes": 1019
+    },
+    {
+      "source": "Code/shared_code/fusion/anchor_correction.py",
+      "destination": "Code/shared_code/fusion/anchor_correction.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "618dee784b7ebd795c174569930fe93f827b1497d183cca92b27c4be1f9df97a",
+      "initial_copy_sha256": "618dee784b7ebd795c174569930fe93f827b1497d183cca92b27c4be1f9df97a",
+      "bytes": 12493
+    },
+    {
+      "source": "Code/shared_code/fusion/blf.py",
+      "destination": "Code/shared_code/fusion/blf.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "8b6f1857719392025b72a3850d5f269f3cc082bbfbc04eda23a8d9adb24dd9e2",
+      "initial_copy_sha256": "8b6f1857719392025b72a3850d5f269f3cc082bbfbc04eda23a8d9adb24dd9e2",
+      "bytes": 13066
+    },
+    {
+      "source": "Code/shared_code/fusion/codon_grid.py",
+      "destination": "Code/shared_code/fusion/codon_grid.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+      "initial_copy_sha256": "53ac6facbcd06a60516eb1aa43dde781d0bc62674aa40a82fe2c287c2cfeddb0",
+      "bytes": 7524
+    },
+    {
+      "source": "Code/shared_code/fusion/controlled_experiment.py",
+      "destination": "Code/shared_code/fusion/controlled_experiment.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "393bd025ac083d85fb862f2759b8a0af4884e19740aa9075bdf239c72a76d1e0",
+      "initial_copy_sha256": "393bd025ac083d85fb862f2759b8a0af4884e19740aa9075bdf239c72a76d1e0",
+      "bytes": 41938
+    },
+    {
+      "source": "Code/shared_code/fusion/controlled_models.py",
+      "destination": "Code/shared_code/fusion/controlled_models.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "d4e0bf9d9fc3da7edcae54422cc4eda5f0cc62201a1eed504ff504d45a2b2baa",
+      "initial_copy_sha256": "d4e0bf9d9fc3da7edcae54422cc4eda5f0cc62201a1eed504ff504d45a2b2baa",
+      "bytes": 21224
+    },
+    {
+      "source": "Code/shared_code/fusion/correction_experiment.py",
+      "destination": "Code/shared_code/fusion/correction_experiment.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "46a3a588b7f45de084ad63b1068e0e5adf07c6f83bb056908a77a5efca1fbdbb",
+      "initial_copy_sha256": "46a3a588b7f45de084ad63b1068e0e5adf07c6f83bb056908a77a5efca1fbdbb",
+      "bytes": 52053
+    },
+    {
+      "source": "Code/shared_code/fusion/coupled_mamba.py",
+      "destination": "Code/shared_code/fusion/coupled_mamba.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "3a616c1e3d012d5ea2e06d55847e4bf06e0565bc81b8d5352673c2b1162ef320",
+      "initial_copy_sha256": "3a616c1e3d012d5ea2e06d55847e4bf06e0565bc81b8d5352673c2b1162ef320",
+      "bytes": 14412
+    },
+    {
+      "source": "Code/shared_code/fusion/grouped_stability.py",
+      "destination": "Code/shared_code/fusion/grouped_stability.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "038e3ba8cc0e37c03b6744becc01b21546f0d37cbd8c0651ace25330be8b34cf",
+      "initial_copy_sha256": "038e3ba8cc0e37c03b6744becc01b21546f0d37cbd8c0651ace25330be8b34cf",
+      "bytes": 21860
+    },
+    {
+      "source": "Code/shared_code/fusion/heads.py",
+      "destination": "Code/shared_code/fusion/heads.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "0f9dd428c60c74f755fb89fe550790310ed60d0dcb7393d48b647b898366aee4",
+      "initial_copy_sha256": "0f9dd428c60c74f755fb89fe550790310ed60d0dcb7393d48b647b898366aee4",
+      "bytes": 7502
+    },
+    {
+      "source": "Code/shared_code/fusion/intervention_ops.py",
+      "destination": "Code/shared_code/fusion/intervention_ops.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "c6d15ad32a691badf503834f4a17c6a3764fca27cf2acd2f820d0c63c6355fde",
+      "initial_copy_sha256": "c6d15ad32a691badf503834f4a17c6a3764fca27cf2acd2f820d0c63c6355fde",
+      "bytes": 4985
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer.py",
+      "destination": "Code/shared_code/fusion/isoformer.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "09f47cc1427c81e3fce7b348f71e44b37931c96342576143b8fabb5e0012409e",
+      "initial_copy_sha256": "09f47cc1427c81e3fce7b348f71e44b37931c96342576143b8fabb5e0012409e",
+      "bytes": 18482
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_adapters.py",
+      "destination": "Code/shared_code/fusion/isoformer_adapters.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "184aa7e484eae5114221917f7f599372f1507f141b2f5e476053a4ba7584869c",
+      "initial_copy_sha256": "184aa7e484eae5114221917f7f599372f1507f141b2f5e476053a4ba7584869c",
+      "bytes": 10692
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_cohort.py",
+      "destination": "Code/shared_code/fusion/isoformer_cohort.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "1caf65ed0354cc869ed14f89453f8eec56fa470d8329144a0bce267c49e211da",
+      "initial_copy_sha256": "1caf65ed0354cc869ed14f89453f8eec56fa470d8329144a0bce267c49e211da",
+      "bytes": 29303
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_data_checks.py",
+      "destination": "Code/shared_code/fusion/isoformer_data_checks.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "8ab1d8eff3668260ce4dfc74484b1a440a10b0b614b0ce1d2dd157fce2ef2f26",
+      "initial_copy_sha256": "8ab1d8eff3668260ce4dfc74484b1a440a10b0b614b0ce1d2dd157fce2ef2f26",
+      "bytes": 26183
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_inputs.py",
+      "destination": "Code/shared_code/fusion/isoformer_inputs.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "98ba34fc4e96e6cbe99bd2e8298b40d5bedac2b04efdf15ac6f0ac586d60bdcd",
+      "initial_copy_sha256": "98ba34fc4e96e6cbe99bd2e8298b40d5bedac2b04efdf15ac6f0ac586d60bdcd",
+      "bytes": 21260
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_reference.py",
+      "destination": "Code/shared_code/fusion/isoformer_reference.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "d3e0b8f89ca210a39b412539371d259442c5a61d7f0ff68a38402104a792e4fa",
+      "initial_copy_sha256": "d3e0b8f89ca210a39b412539371d259442c5a61d7f0ff68a38402104a792e4fa",
+      "bytes": 17149
+    },
+    {
+      "source": "Code/shared_code/fusion/isoformer_results.py",
+      "destination": "Code/shared_code/fusion/isoformer_results.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "f476ff7de6b967872e695be479f2d6c5f23b237663de2b717a2643f6dc2c9237",
+      "initial_copy_sha256": "f476ff7de6b967872e695be479f2d6c5f23b237663de2b717a2643f6dc2c9237",
+      "bytes": 14265
+    },
+    {
+      "source": "Code/shared_code/fusion/region_experiment.py",
+      "destination": "Code/shared_code/fusion/region_experiment.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "a4eb311c90233a257395f47b64a4e9ffa4beee85c78ca31832308b21c092429a",
+      "initial_copy_sha256": "a4eb311c90233a257395f47b64a4e9ffa4beee85c78ca31832308b21c092429a",
+      "bytes": 39822
+    },
+    {
+      "source": "Code/shared_code/fusion/region_inputs.py",
+      "destination": "Code/shared_code/fusion/region_inputs.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "8d63ca4129ac546179a0450f968c885367214ddcfda477c22cdbae5b1caf3771",
+      "initial_copy_sha256": "8d63ca4129ac546179a0450f968c885367214ddcfda477c22cdbae5b1caf3771",
+      "bytes": 7904
+    },
+    {
+      "source": "Code/shared_code/fusion/region_training.py",
+      "destination": "Code/shared_code/fusion/region_training.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "04cfd3d4129bfeef70617a111625ce05eb7269931ea71b3078b89921bb31019e",
+      "initial_copy_sha256": "04cfd3d4129bfeef70617a111625ce05eb7269931ea71b3078b89921bb31019e",
+      "bytes": 45185
+    },
+    {
+      "source": "Code/shared_code/fusion/result_sets.py",
+      "destination": "Code/shared_code/fusion/result_sets.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "1273ede8511a7f936ca49709404c7d20ac5d8f37dae546ebf4c93f9df8b2c50b",
+      "initial_copy_sha256": "1273ede8511a7f936ca49709404c7d20ac5d8f37dae546ebf4c93f9df8b2c50b",
+      "bytes": 7213
+    },
+    {
+      "source": "Code/shared_code/fusion/run_identity.py",
+      "destination": "Code/shared_code/fusion/run_identity.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "f1b616ce96167d3818b628f445c42e525ea4cfebd1639b1881225cc0a962069b",
+      "initial_copy_sha256": "f1b616ce96167d3818b628f445c42e525ea4cfebd1639b1881225cc0a962069b",
+      "bytes": 44498
+    },
+    {
+      "source": "Code/shared_code/fusion/study_inputs.py",
+      "destination": "Code/shared_code/fusion/study_inputs.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "9f0a9a272addd8d740ae0c79d235b346734f9085f511e870891d18b1c4ff79ad",
+      "initial_copy_sha256": "9f0a9a272addd8d740ae0c79d235b346734f9085f511e870891d18b1c4ff79ad",
+      "bytes": 4904
+    },
+    {
+      "source": "Code/shared_code/fusion/study_references.py",
+      "destination": "Code/shared_code/fusion/study_references.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "0951ca92d8f91e43bd8018e730e92be0dfdc362b5b09c58beb77598365ef1573",
+      "initial_copy_sha256": "0951ca92d8f91e43bd8018e730e92be0dfdc362b5b09c58beb77598365ef1573",
+      "bytes": 6801
+    },
+    {
+      "source": "Code/shared_code/fusion/study_selection.py",
+      "destination": "Code/shared_code/fusion/study_selection.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "b75913e6e1cb1f9ec2369687dd1ebb328e25a4f42ddeefc3366f16b545eeeb82",
+      "initial_copy_sha256": "b75913e6e1cb1f9ec2369687dd1ebb328e25a4f42ddeefc3366f16b545eeeb82",
+      "bytes": 6075
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_plan.py",
+      "destination": "Code/shared_code/fusion/swap_plan.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "cd85ec461735867276fd2960aa2f98f9b01e0a7c96bed4a818e90a653fa9da57",
+      "initial_copy_sha256": "cd85ec461735867276fd2960aa2f98f9b01e0a7c96bed4a818e90a653fa9da57",
+      "bytes": 19291
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_reporting.py",
+      "destination": "Code/shared_code/fusion/swap_reporting.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "cdff58718c3525252211953ee5dc6b8d72697548dec294e8e372ebdc1c7dd50b",
+      "initial_copy_sha256": "cdff58718c3525252211953ee5dc6b8d72697548dec294e8e372ebdc1c7dd50b",
+      "bytes": 29669
+    },
+    {
+      "source": "Code/shared_code/fusion/swap_results.py",
+      "destination": "Code/shared_code/fusion/swap_results.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "3228dd650b68b50bad900dcbec2816948c49f5dbdd76f4c56f12659d34ff6a7d",
+      "initial_copy_sha256": "3228dd650b68b50bad900dcbec2816948c49f5dbdd76f4c56f12659d34ff6a7d",
+      "bytes": 20265
+    },
+    {
+      "source": "Code/shared_code/fusion/textcnn.py",
+      "destination": "Code/shared_code/fusion/textcnn.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+      "initial_copy_sha256": "2a04da2b5fb0fc93be612d35c208f557ca2f68df392d81d199131427ea0cfce1",
+      "bytes": 3452
+    },
+    {
+      "source": "Code/shared_code/fusion/token_embeddings.py",
+      "destination": "Code/shared_code/fusion/token_embeddings.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "5219c467aa5194b76f24faba5bfe40cf2ba7ff1664b9858072a1e94e9aa39868",
+      "initial_copy_sha256": "5219c467aa5194b76f24faba5bfe40cf2ba7ff1664b9858072a1e94e9aa39868",
+      "bytes": 36058
+    },
+    {
+      "source": "Code/shared_code/fusion/train.py",
+      "destination": "Code/shared_code/fusion/train.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3",
+      "initial_copy_sha256": "d268530ccdf453b09cd95d717e863eb2968775f32e50093da4654a26d96bccd3",
+      "bytes": 48000
+    },
+    {
+      "source": "Code/shared_code/lucaone.py",
+      "destination": "Code/shared_code/lucaone.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "aeccd0d9222b72a6ca5850056026fac0a97a145fb39d3d4b370e6758c2e465d0",
+      "initial_copy_sha256": "aeccd0d9222b72a6ca5850056026fac0a97a145fb39d3d4b370e6758c2e465d0",
+      "bytes": 11799
+    },
+    {
+      "source": "Code/shared_code/matched_probes.py",
+      "destination": "Code/shared_code/matched_probes.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "e1a2d01bbc05be9a8a79082af5bef25d7b851cd78d24ed029fc127b2f1179b25",
+      "initial_copy_sha256": "e1a2d01bbc05be9a8a79082af5bef25d7b851cd78d24ed029fc127b2f1179b25",
+      "bytes": 19150
+    },
+    {
+      "source": "Code/shared_code/matrix_cache.py",
+      "destination": "Code/shared_code/matrix_cache.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "3dea107062340cc0ab76b161600a44e481eaed659b4224e5526cf00e0cd24b69",
+      "initial_copy_sha256": "3dea107062340cc0ab76b161600a44e481eaed659b4224e5526cf00e0cd24b69",
+      "bytes": 3148
+    },
+    {
+      "source": "Code/shared_code/mrfp_cache.py",
+      "destination": "Code/shared_code/mrfp_cache.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "bb5eb9c74c135ba106ddf5dd7391f1107b49445c30a15eeb4d4de52ff2f6bb85",
+      "initial_copy_sha256": "bb5eb9c74c135ba106ddf5dd7391f1107b49445c30a15eeb4d4de52ff2f6bb85",
+      "bytes": 8912
+    },
+    {
+      "source": "Code/shared_code/mrnabench.py",
+      "destination": "Code/shared_code/mrnabench.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "c4714a9a0bd25c0eadc76caf193c488a1623b5811bb61f7b78812832aaeb772e",
+      "initial_copy_sha256": "c4714a9a0bd25c0eadc76caf193c488a1623b5811bb61f7b78812832aaeb772e",
+      "bytes": 28772
+    },
+    {
+      "source": "Code/shared_code/notebook.py",
+      "destination": "Code/shared_code/notebook.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "760caec9aeccb92b759a5ba75d37fd0868cbbfeff9028ad73ac6b3241e922be0",
+      "initial_copy_sha256": "760caec9aeccb92b759a5ba75d37fd0868cbbfeff9028ad73ac6b3241e922be0",
+      "bytes": 2035
+    },
+    {
+      "source": "Code/shared_code/saved_results.py",
+      "destination": "Code/shared_code/saved_results.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "f2ba4f11b4758608397b6754eafc5ba2964946b4b67ab291a3b78050114db571",
+      "initial_copy_sha256": "f2ba4f11b4758608397b6754eafc5ba2964946b4b67ab291a3b78050114db571",
+      "bytes": 6344
+    },
+    {
+      "source": "Code/shared_code/sequences.py",
+      "destination": "Code/shared_code/sequences.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "595e2a7674676901bae659bdecc654dff9e979b59200ee52ee345405dd8ba725",
+      "initial_copy_sha256": "595e2a7674676901bae659bdecc654dff9e979b59200ee52ee345405dd8ba725",
+      "bytes": 6007
+    },
+    {
+      "source": "Code/shared_code/splits.py",
+      "destination": "Code/shared_code/splits.py",
+      "source_origin": "maintained_repository",
+      "role": "scientific_source",
+      "source_sha256": "b3ababa37f62559a924e103b7cd85942985aea6de6239e80b1eb6f57ae0915ed",
+      "initial_copy_sha256": "b3ababa37f62559a924e103b7cd85942985aea6de6239e80b1eb6f57ae0915ed",
+      "bytes": 1969
+    },
+    {
+      "source": "Code/stage4/grouped_stability.ipynb",
+      "destination": "Code/stage4/grouped_stability.ipynb",
+      "source_origin": "maintained_repository",
+      "role": "scientific_notebook",
+      "source_sha256": "3c5b081e2899986b3b14757cb2ec75bf26ee9909474579360ab9d6953e9e243e",
+      "initial_copy_sha256": "3c5b081e2899986b3b14757cb2ec75bf26ee9909474579360ab9d6953e9e243e",
+      "bytes": 26703
+    },
+    {
+      "source": "execution/arcc/grouped_stability/README.md",
+      "destination": "README.md",
+      "source_origin": "maintained_repository",
+      "role": "execution_recipe",
+      "source_sha256": "a1600c8e1b6b580b11e529dd9f5955b4da12b49773a047e4d6f6b2d43ee9737f",
+      "initial_copy_sha256": "a1600c8e1b6b580b11e529dd9f5955b4da12b49773a047e4d6f6b2d43ee9737f",
+      "bytes": 7471
+    },
+    {
+      "source": "execution/arcc/grouped_stability/RUN_CHECKLIST.md",
+      "destination": "RUN_CHECKLIST.md",
+      "source_origin": "maintained_repository",
+      "role": "execution_recipe",
+      "source_sha256": "5da342ddb4b42aeee50fce5d7e86aee905d96b502ba3c4f4b44e935f1a84a34b",
+      "initial_copy_sha256": "5da342ddb4b42aeee50fce5d7e86aee905d96b502ba3c4f4b44e935f1a84a34b",
+      "bytes": 6417
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/run_encoder_swaps.py",
+      "destination": "arcc_execution_support.py",
+      "source_origin": "maintained_repository",
+      "role": "reused_execution_support",
+      "source_sha256": "7f35a03df193920a4c13fbb7c80767c3cefe13e54db82c21fb516ebfc4e7b43c",
+      "initial_copy_sha256": "7f35a03df193920a4c13fbb7c80767c3cefe13e54db82c21fb516ebfc4e7b43c",
+      "bytes": 23801
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/prepare.py",
+      "destination": "arcc_package_support.py",
+      "source_origin": "maintained_repository",
+      "role": "reused_execution_support",
+      "source_sha256": "3e7340ba4eedc7a34914b2f9e28a28ba882d616bf4e5730499aabe7fafb4eb0c",
+      "initial_copy_sha256": "3e7340ba4eedc7a34914b2f9e28a28ba882d616bf4e5730499aabe7fafb4eb0c",
+      "bytes": 17265
+    },
+    {
+      "source": "execution/arcc/grouped_stability/batches.tsv",
+      "destination": "batches.tsv",
+      "source_origin": "maintained_repository",
+      "role": "execution_recipe",
+      "source_sha256": "ba7adcb03b8145a64f6496eda69a94212c6a14bbc02c0eac51a8547e88408175",
+      "initial_copy_sha256": "ba7adcb03b8145a64f6496eda69a94212c6a14bbc02c0eac51a8547e88408175",
+      "bytes": 39
+    },
+    {
+      "source": "datasets/mRNA_Stability.csv",
+      "destination": "datasets/mRNA_Stability.csv",
+      "source_origin": "maintained_repository",
+      "role": "dataset",
+      "source_sha256": "50d92188f7e9d2111e526f6d520ddb28d20bd7bb19190d23e011c18c8d660dbb",
+      "initial_copy_sha256": "50d92188f7e9d2111e526f6d520ddb28d20bd7bb19190d23e011c18c8d660dbb",
+      "bytes": 90467954
+    },
+    {
+      "source": "execution/arcc/grouped_stability/newton_grouped_stability.sbatch.example",
+      "destination": "newton_grouped_stability.sbatch.example",
+      "source_origin": "maintained_repository",
+      "role": "execution_recipe",
+      "source_sha256": "dd0f6f1d340a50e9055aad7e2463104614c19dea686725fa7e6c35d5f09e26e5",
+      "initial_copy_sha256": "dd0f6f1d340a50e9055aad7e2463104614c19dea686725fa7e6c35d5f09e26e5",
+      "bytes": 2077
+    },
+    {
+      "source": "execution/arcc/grouped_stability/newton_preflight.sbatch.example",
+      "destination": "newton_preflight.sbatch.example",
+      "source_origin": "maintained_repository",
+      "role": "execution_recipe",
+      "source_sha256": "3905c9314099819a17ad8628e0984a89c0ef79f91a8c9f4be2b2bcdb92cfa4a5",
+      "initial_copy_sha256": "3905c9314099819a17ad8628e0984a89c0ef79f91a8c9f4be2b2bcdb92cfa4a5",
+      "bytes": 2540
+    },
+    {
+      "source": "execution/arcc/grouped_stability/prepare.py",
+      "destination": "prepare.py",
+      "source_origin": "maintained_repository",
+      "role": "execution_recipe",
+      "source_sha256": "0bb4e3079b532e1a405c3a509ada607853c584077a8804e15948dff117328243",
+      "initial_copy_sha256": "0bb4e3079b532e1a405c3a509ada607853c584077a8804e15948dff117328243",
+      "bytes": 7364
+    },
+    {
+      "source": "execution/arcc/encoder_swaps/requirements-notebooks.txt",
+      "destination": "requirements-notebooks.txt",
+      "source_origin": "maintained_repository",
+      "role": "reused_execution_support",
+      "source_sha256": "8e6a02f702b161c72ea4ec06817849dad298228d74af1290d11cd8680e295873",
+      "initial_copy_sha256": "8e6a02f702b161c72ea4ec06817849dad298228d74af1290d11cd8680e295873",
+      "bytes": 329
+    },
+    {
+      "source": "execution/arcc/grouped_stability/run_grouped_stability.py",
+      "destination": "run_grouped_stability.py",
+      "source_origin": "maintained_repository",
+      "role": "execution_recipe",
+      "source_sha256": "895c2cd0c226962d935b505483e736192e160c736324055cc98f4549385d721c",
+      "initial_copy_sha256": "895c2cd0c226962d935b505483e736192e160c736324055cc98f4549385d721c",
+      "bytes": 15087
+    },
+    {
+      "source": "tests/test_arcc_grouped_stability.py",
+      "destination": "tests/test_arcc_grouped_stability.py",
+      "source_origin": "maintained_repository",
+      "role": "synthetic_test",
+      "source_sha256": "3f8007609fbf7c30d170a90916be39b0b5cab07a3fed24d17c9a3ef415b0d155",
+      "initial_copy_sha256": "3f8007609fbf7c30d170a90916be39b0b5cab07a3fed24d17c9a3ef415b0d155",
+      "bytes": 19441
+    },
+    {
+      "source": "tests/test_grouped_stability.py",
+      "destination": "tests/test_grouped_stability.py",
+      "source_origin": "maintained_repository",
+      "role": "synthetic_test",
+      "source_sha256": "fdfb8c56be8fb60bd5f51384925aac4cd74976724e5bc333af9454d69cd9c7f2",
+      "initial_copy_sha256": "fdfb8c56be8fb60bd5f51384925aac4cd74976724e5bc333af9454d69cd9c7f2",
+      "bytes": 43122
+    }
+  ],
+  "total_bytes": 91454486,
+  "directories": [
+    "outputs/logs",
+    "outputs/notebooks"
+  ],
+  "excluded": [
+    "existing results",
+    "embedding payloads",
+    "model weights",
+    "recovery checkpoints",
+    "historical selection inputs",
+    ".git"
+  ],
+  "research_executed": false,
+  "newton_validated": false,
+  "captured_utc": "2026-11-17T21:40:25.227735+00:00",
+  "package_status": "prepared; not transferred or executed"
+}
