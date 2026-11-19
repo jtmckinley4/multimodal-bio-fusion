@@ -35,6 +35,7 @@ class FocusedNotebookTests(unittest.TestCase):
         self.cells = {cell["id"]: "".join(cell["source"]) for cell in notebook["cells"]}
         self.env = dict(
             EXPERIMENT="ecoli_ernie", READ_SAVED_RESULTS=False, RUN_TRAINING=False,
+            ERNIE_ENCODERS=("rnaernie", "ernierna"),
             CACHE_REUSE_ONLY=False, CACHE_ROOT=self.root / "old", NEW_CACHE_ROOT=self.root / "new",
             REFERENCE_SWAP_ROOT=self.root / "old_results", RESULTS_ROOT=self.root / "extension",
             ORIGINAL=ORIGINAL, SWAPS=SWAPS, STABILITY_SWAPS=SWAPS, BENCHMARKS=(BENCHMARK,),
@@ -124,20 +125,23 @@ class FocusedNotebookTests(unittest.TestCase):
         self.execute("swaps-single-selection")
         self.assertIsNone(self.env["validation_selected_single"]({"unimodal:dna": object()}, benchmark=BENCHMARK))
 
-    def test_saved_extension_table_does_not_fill_missing_new_scores_from_reference(self):
+    def test_focused_writable_display_uses_one_seed_and_leaves_missing_scores_blank(self):
         def reader(folders, **kwargs):
             records = ([{"data": {"variant": "mil", "test_score": 0.6}}]
                        if kwargs["encoders"]["rna"] == "rinalmo" else [])
             return SimpleNamespace(require_unique=lambda: records)
 
-        self.env.update(swap_results=SimpleNamespace(read_results=reader),
+        displayed = []
+        self.env.update(swap_results=SimpleNamespace(read_results=reader), display=displayed.append,
+                        SEED=2, resolve_ernie_extension=forbidden,
                         selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
         self.execute("swaps-summary")
-        table = self.env["extension_score_table"](BENCHMARK, (0,))
-        self.assertEqual(table.loc[("rinalmo", "MIL gated", "existing RiNALMo reference"), "Seed 0 (%)"], 60)
-        self.assertTrue(pd.isna(table.loc[("rnaernie", "MIL gated", "focused extension"), "Seed 0 (%)"]))
-        self.assertTrue(pd.isna(table.loc[("ernierna", "Concatenation", "focused extension"), "Seed 0 (%)"]))
-        self.assertNotIn("Mean (%)", table)
+        self.execute("swaps-ernie-table")
+        table, = displayed
+        self.assertEqual(list(table.columns), ["Seed 2 (%)"])
+        self.assertEqual(table.loc[("rinalmo", "MIL gated", "existing RiNALMo reference"), "Seed 2 (%)"], 60)
+        self.assertTrue(pd.isna(table.loc[("rnaernie", "MIL gated", "focused extension"), "Seed 2 (%)"]))
+        self.assertTrue(pd.isna(table.loc[("ernierna", "Concatenation", "focused extension"), "Seed 2 (%)"]))
 
     def test_saved_table_shows_all_three_seeds_without_averaging_partial_rows(self):
         def reader(folders, *, benchmark, config, encoders, mil_lambda, variants):
@@ -152,10 +156,12 @@ class FocusedNotebookTests(unittest.TestCase):
 
         displayed = []
         self.env.update(READ_SAVED_RESULTS=True, SEED=2, SCALE={BENCHMARK: 100},
+                        resolve_ernie_extension=forbidden, benchmark_score_table=forbidden,
                         swap_results=SimpleNamespace(read_results=reader), display=displayed.append,
                         selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
         self.execute("swaps-summary")
         self.execute("bcddefb4")
+        self.execute("swaps-ernie-table")
         table, = displayed
         self.assertEqual(table.shape, (6, 4))
         self.assertEqual(list(table.columns), ["Seed 0 (%)", "Seed 1 (%)", "Seed 2 (%)", "Mean (%)"])
@@ -163,6 +169,48 @@ class FocusedNotebookTests(unittest.TestCase):
         partial = table.loc[("ernierna", "Concatenation", "focused extension")]
         self.assertEqual((partial["Seed 0 (%)"], partial["Seed 2 (%)"]), (70, 80))
         self.assertTrue(partial[["Seed 1 (%)", "Mean (%)"]].isna().all())
+
+    def test_default_newton_reader_displays_only_the_two_extensions_and_their_reference(self):
+        code = self.root / "Code"
+        extension = resolve_ernie_extension(code).swaps
+        full_panel = self.root / "original Newton" / "outputs" / "phaseB"
+        received = set()
+
+        def reader(folders, *, benchmark, config, encoders, mil_lambda, variants):
+            key, seed = encoders["rna"], config["seed"]
+            self.assertEqual(benchmark, BENCHMARK)
+            self.assertEqual(folders, [(full_panel if key == "rinalmo" else extension) / benchmark / key])
+            received.add((key, seed))
+            records = [{"data": {"variant": v, "test_score": 0.625}} for v in variants]
+            return SimpleNamespace(require_unique=lambda: records)
+
+        shown = []
+        self.env.update(EXPERIMENT="full", READ_SAVED_RESULTS=True,
+                        CODE_DIR=code, RETURNED_WORKSPACE=None, REFERENCE_SWAP_ROOT=full_panel,
+                        RESULTS_ROOT=full_panel, RESULT_PATHS=SimpleNamespace(name="newton_h100_seeds012"),
+                        resolve_ernie_extension=resolve_ernie_extension, blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL),
+                        swap_results=SimpleNamespace(read_results=reader), display=shown.append,
+                        selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
+        self.execute("swaps-settings")
+        self.assertNotIn(("rna", "rnaernie"), self.env["SWAPS"])
+        self.execute("swaps-summary")
+        self.execute("swaps-ernie-table")
+        table, = shown
+        self.assertEqual(table.shape, (6, 4))
+        self.assertEqual(received, {(k, s) for k in ("rinalmo", "rnaernie", "ernierna") for s in (0, 1, 2)})
+
+    def test_other_full_panel_scopes_do_not_read_the_bundled_extension(self):
+        for name, workspace, reading, benchmarks in [
+            ("historical", None, True, (BENCHMARK,)),
+            ("newton_h100_seeds012", self.root / "another return", True, (BENCHMARK,)),
+            ("newton_h100_seeds012", None, False, (BENCHMARK,)),
+            ("newton_h100_seeds012", None, True, ("fungal_expression",)),
+        ]:
+            with self.subTest(name=name, workspace=workspace, reading=reading, benchmarks=benchmarks):
+                self.env.update(EXPERIMENT="full", READ_SAVED_RESULTS=reading, BENCHMARKS=benchmarks,
+                                RESULT_PATHS=SimpleNamespace(name=name), RETURNED_WORKSPACE=workspace,
+                                resolve_ernie_extension=forbidden, extension_score_table=forbidden, display=forbidden)
+                self.execute("swaps-ernie-table")
 
     def test_extension_saved_report_branch_does_not_compute(self):
         self.env.update(READ_SAVED_RESULTS=True, RUN_SAVED_COMPARISONS=False, build_or_reuse_report=forbidden)

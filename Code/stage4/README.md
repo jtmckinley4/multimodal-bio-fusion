@@ -41,7 +41,7 @@ The [swap notebook](encoder_swaps.ipynb) replaces one encoder while retaining th
 
 The Newton cohort contains 504 completed fits across four benchmarks and training seeds 0, 1 and 2. Single-encoder baselines and the inherited MIL penalty (`lambda=0.01`) retain the historical seed-0 validation choices; all scores in the current three-seed reports come from Newton. Swaps test substitutions under that fixed recipe, not the best performance each replacement could achieve after individual tuning. [Result-set separation](RUNBOOK.md#select-a-returned-result-set) and [replacement settings](RUNBOOK.md#complete-the-encoder-swaps-one-seed-at-a-time).
 
-**Focused E. coli comparison.** Newton ran both BLF heads with RNAErnie and ERNIE-RNA across seeds 0, 1 and 2, retaining the original DNA and protein encoders. RiNALMo had the highest mean test accuracy under both heads. RNAErnie’s two heads finished within 0.05 percentage points of each other. For ERNIE-RNA, concatenation scored higher on all three seeds. [Three-seed table](results/newton_ecoli_ernie/local_analyses/ecoli_ernie_three_seed.ipynb) · [Verified return](../../docs/run-records.md#2026-11-19-verified-newton-return-for-e-coli-gates-and-attention) · [Execution recipe](../../execution/arcc/encoder_swaps/README.md#focused-e-coli-rna-extension) (Gantt/Details task 24).
+**Focused E. coli comparison.** Newton ran both BLF heads with RNAErnie and ERNIE-RNA across seeds 0, 1 and 2, retaining the original DNA and protein encoders. RiNALMo had the highest mean test accuracy under both heads. RNAErnie’s two heads finished within 0.05 percentage points of each other. For ERNIE-RNA, concatenation scored higher on all three seeds. [Three-seed table in encoder swaps](encoder_swaps.ipynb#Replacing-RiNALMo-with-RNAErnie-and-ERNIE-RNA) · [Verified return](../../docs/run-records.md#2026-11-19-verified-newton-return-for-e-coli-gates-and-attention) · [Execution recipe](../../execution/arcc/encoder_swaps/README.md#focused-e-coli-rna-extension) (Gantt/Details task 24).
 
 #### Newton three-seed findings
 
@@ -96,7 +96,7 @@ Unfinished reference repeats remain with their [Stage 3 methods](../stage3/READM
 
 ## Proposed tests of fusion explanations
 
-The [advisor's revised protocol](../../docs/Biological_Fusion_Plan.docx) starts from frozen encoders with trainable prediction and fusion components. The saved [gate summary](results/gate_diagnostics_v1/reports/gate_diagnostics-saved-predictions.ipynb) and [anchor-attention summary](results/anchor_cross_attention_v1/reports/anchor_cross_attention-saved-predictions.ipynb) compare three Newton training seeds on CoV-Vac and E. coli. Each includes the original encoder combination and its mRNA-FM replacement. Correction and transcript-region studies use separate inputs and result sets. Partner-task extensions remain conditional.
+The [advisor's revised protocol](../../docs/Biological_Fusion_Plan.docx) starts from frozen encoders with trainable prediction and fusion components. The [gate diagnostics](gate_diagnostics.ipynb) and [anchor cross-attention](anchor_cross_attention.ipynb) notebooks read three-seed Newton comparisons for CoV-Vac and E. coli. Each compares the original encoder combination with its mRNA-FM replacement. Use the [saved-results settings](RUNBOOK.md#read-saved-results-without-starting-work) to refresh and save their tables and figures locally. Correction and transcript-region studies use separate inputs and result sets. Partner-task extensions remain conditional.
 
 ### Can auxiliary features correct the anchor's errors?
 

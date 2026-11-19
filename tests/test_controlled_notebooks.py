@@ -49,7 +49,7 @@ class ControlledNotebookTests(unittest.TestCase):
         exec(cells["settings"], namespace)
         return cells, namespace, forbidden
 
-    def test_structure_outputs_and_single_injection_boundary(self):
+    def test_valid_source_and_single_settings_injection_boundary(self):
         for name in NAMES:
             with self.subTest(name=name):
                 document, cells = notebook(name)
@@ -65,13 +65,17 @@ class ControlledNotebookTests(unittest.TestCase):
                 for cell in document["cells"]:
                     if cell["cell_type"] == "code":
                         compile("".join(cell["source"]), f"{name}:{cell['id']}", "exec")
-                        self.assertEqual(cell["outputs"], [])
-                        self.assertIsNone(cell["execution_count"])
+                        self.assertFalse(any(output["output_type"] == "error" for output in cell["outputs"]),
+                                         f"{name}:{cell['id']} contains a saved execution error")
 
     def test_default_reading_does_not_open_inputs_fit_infer_or_analyze(self):
         for name in NAMES:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as folder:
                 cells, namespace, forbidden = self.fixture(name, Path(folder))
+                self.assertIs(namespace["READ_SAVED_RESULTS"], True)
+                self.assertIsNone(namespace["BENCHMARK"])
+                for switch in ("RUN_TRAINING", "RUN_DIAGNOSTICS", "RUN_ANALYSIS", "RUN_PARAMETER_PREVIEW"):
+                    self.assertIs(namespace[switch], False, switch)
                 with patch.object(torch.cuda, "is_available", side_effect=AssertionError("No GPU check while reading")):
                     exec(cells["execution-guards"], namespace)
                 for identity in ("panel", "configuration-helpers", "parameter-preview", "reference-readers", "selection-helper",
