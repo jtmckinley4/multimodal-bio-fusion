@@ -257,7 +257,8 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
                    original_destination, swaps, swap_root, selection_seed=0,
                    positive_lambdas=(0.01, 0.5, 1.0), checkpoint_validator=None,
                    identity_factory=None, selection_original_folders=None,
-                   selection_swap_root=None, selection_snapshot=None):
+                   selection_swap_root=None, selection_snapshot=None,
+                   fit_variants=None, include_originals=True, select_singles=True):
     """Plan all references and selected swaps for one manually chosen training seed.
 
     ``swaps`` contains (modality, encoder_key, needs_grid) triples. ``swap_root``
@@ -278,10 +279,36 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
     Historical selection records never satisfy a planned fit or checkpoint.
     selection_snapshot additionally fixes candidate membership and bytes after
     the completed Newton batch's duplicate selection copies are removed.
+
+    ``fit_variants`` optionally limits replacement fits to named fusion heads,
+    in the requested head order across all replacements. None preserves the
+    complete original sweep and its ordering. ``include_originals=False`` omits
+    original-reference fits; it does not infer their availability. A focused
+    fusion-only extension may set ``select_singles=False`` with explicit heads,
+    no original fits and historical selection roots. Only the original penalty
+    is then retained; no selected-single baseline is assigned to new encoders.
     """
     config, original_encoders = dict(config), dict(original_encoders)
     swaps, penalties = tuple(swaps), tuple(positive_lambdas)
     _validate_request(benchmark, config, selection_seed, original_encoders, swaps, penalties)
+    if type(include_originals) is not bool or type(select_singles) is not bool:
+        raise ValueError("include_originals and select_singles must be explicit booleans")
+    if fit_variants is not None:
+        if not isinstance(fit_variants, (tuple, list)):
+            raise ValueError("fit_variants must be an ordered list or tuple of fusion heads")
+        fit_variants = tuple(fit_variants)
+        if (not fit_variants or any(head not in swap_results.HEADS for head in fit_variants)
+                or len(set(fit_variants)) != len(fit_variants)):
+            raise ValueError("fit_variants must contain distinct supported fusion heads")
+    if not select_singles and (fit_variants is None or include_originals
+                              or selection_original_folders is None
+                              or selection_swap_root is None):
+        raise ValueError(
+            "Skipping single selection requires explicit fusion heads, no original fits, "
+            "and both historical selection roots"
+        )
+    if not include_originals and not swaps:
+        raise ValueError("A replacement-only plan requires at least one selected swap")
     original_destination, swap_root = Path(original_destination), Path(swap_root)
     # Include the publication location when references have historically lived elsewhere.
     original_folders = tuple(dict.fromkeys(
@@ -298,10 +325,11 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
         if selection_roots is not None:
             historical = swap_results.read_validation_selection(
                 benchmark=benchmark, config=config, original_folders=selection_roots[0],
-                original_encoders=original_encoders, swaps=swaps, swap_root=selection_roots[1],
+                original_encoders=original_encoders, swaps=swaps if select_singles else (),
+                swap_root=selection_roots[1],
                 positive_lambdas=penalties, selection_snapshot=selection_snapshot)
             plan.selection_lambda = historical["mil_lambda"]
-            plan.selected_singles = historical["best_singles"]
+            plan.selected_singles = historical["best_singles"] if select_singles else {}
             plan.selection_sources = historical["sources"]
         else:
             selection = swap_results.read_results(
@@ -317,12 +345,12 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
     except (OSError, ValueError, TypeError, KeyError) as error:
         plan.issues.append("Seed-0 MIL selection unavailable: " + str(error))
         return plan
-    if selection_roots is None and config["seed"] != selection_seed:
+    if select_singles and selection_roots is None and config["seed"] != selection_seed:
         _check_selection_singles(
             plan, config=config, original_encoders=original_encoders,
             original_folders=original_folders, swaps=swaps, swap_root=swap_root,
         )
-    for variant in ORIGINAL_VARIANTS:
+    for variant in ORIGINAL_VARIANTS if include_originals else ():
         recipe = {**config, "entropy_lambda": plan.selection_lambda if variant == "mil" else 0.0}
         plan.runs.append(_plan_fit(
             benchmark=benchmark, role="original", encoder_key=None,
@@ -332,17 +360,28 @@ def plan_benchmark(*, benchmark, config, original_encoders, original_folders,
             checkpoint_validator=checkpoint_validator, identity_factory=identity_factory,
             require_versioned_identity=selection_roots is not None,
         ))
-    for modality, encoder_key, grid in swaps:
+    if fit_variants is None:
+        replacements = (
+            (modality, encoder_key, variant)
+            for modality, encoder_key, grid in swaps
+            for variant in swap_results.swap_variants(modality, grid=grid)
+        )
+    else:
+        # A short extension can finish every requested MIL fit before concat.
+        replacements = (
+            (modality, encoder_key, variant)
+            for variant in fit_variants for modality, encoder_key, _ in swaps
+        )
+    for modality, encoder_key, variant in replacements:
         mapping = {**original_encoders, modality: encoder_key}
         directory = swap_root / encoder_key
-        for variant in swap_results.swap_variants(modality, grid=grid):
-            recipe = {**config, "entropy_lambda": plan.selection_lambda if variant == "mil" else 0.0}
-            plan.runs.append(_plan_fit(
-                benchmark=benchmark, role="replacement", encoder_key=encoder_key,
-                modality=modality, variant=variant,
-                config=recipe, encoders=mapping, folders=(directory,),
-                destination_directory=directory, native_fallback=False,
-                checkpoint_validator=checkpoint_validator, identity_factory=identity_factory,
-                require_versioned_identity=selection_roots is not None,
-            ))
+        recipe = {**config, "entropy_lambda": plan.selection_lambda if variant == "mil" else 0.0}
+        plan.runs.append(_plan_fit(
+            benchmark=benchmark, role="replacement", encoder_key=encoder_key,
+            modality=modality, variant=variant,
+            config=recipe, encoders=mapping, folders=(directory,),
+            destination_directory=directory, native_fallback=False,
+            checkpoint_validator=checkpoint_validator, identity_factory=identity_factory,
+            require_versioned_identity=selection_roots is not None,
+        ))
     return plan

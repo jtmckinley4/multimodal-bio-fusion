@@ -41,11 +41,12 @@ HISTORICAL_ROOTS = (
 RUNTIME_FILES = (
     "README.md", "batches.tsv", "newton_preflight.sbatch.example",
     "newton_report.sbatch.example", "newton_swaps.sbatch.example", "prepare.py",
-    "requirements-notebooks.txt", "run_encoder_swaps.py",
+    "requirements-notebooks.txt", "run_encoder_swaps.py", "newton_ernie.sbatch.example",
+    "ecoli_ernie_batches.tsv",
 )
 RUNTIME_TESTS = (
     "test_arcc_swap_selection.py", "test_arcc_execution.py",
-    "test_arcc_batch_startup.py", "test_arcc_live_output.py",
+    "test_arcc_batch_startup.py", "test_arcc_live_output.py", "test_arcc_ernie_extension.py",
 )
 SNAPSHOT = "source-snapshot.json"
 SELECTION_EVIDENCE = "evidence/selection-source-snapshot.json"
@@ -194,9 +195,11 @@ def _selection_entries(workspace):
     return entries, identity
 
 
-def build_plan(source_root, selection_workspace, cache_root=None):
+def build_plan(source_root, selection_workspace, cache_root=None, *, experiment="full"):
     """Return a deterministic inventory without creating any directory or artifact."""
     source_root, selection_workspace = _root(source_root), _root(selection_workspace)
+    if experiment not in {"full", "ecoli_ernie"}:
+        raise ValueError("Choose the full panel or the focused ecoli_ernie extension.")
     if _overlap(source_root, selection_workspace):
         raise ValueError("The maintained repository and selection workspace must be separate.")
     state = git_state(source_root)
@@ -223,13 +226,22 @@ def build_plan(source_root, selection_workspace, cache_root=None):
         relative = "tests/" + filename
         files.append(_entry(source_root, relative, relative, "maintained_repository", "synthetic_test"))
     selection_files, selection_identity = _selection_entries(selection_workspace)
+    if experiment == "ecoli_ernie":
+        # Keep the original manifest, copying only this task's data and original
+        # MIL tuning evidence. New RNA encoders have no historical single fits.
+        selection_files = [item for item in selection_files if (
+            item["destination"] in {"datasets/E.Coli_proteins.csv", SELECTION_EVIDENCE}
+            or item["destination"].startswith("historical_results/Code/stage4/results/phaseA/ecoli_proteins/")
+        )]
+        if not any(item["role"] == "historical_selection" for item in selection_files):
+            raise ValueError("The extension requires preserved E. coli Phase A MIL selection records.")
     files.extend(selection_files)
     files.sort(key=lambda item: item["destination"])
     if len({item["destination"].casefold() for item in files}) != len(files):
         raise ValueError("Package destination paths collide.")
     declared_cache = None if cache_root is None else str(Path(cache_root).expanduser().resolve())
     return {
-        "schema": SCHEMA, "schema_version": SCHEMA_VERSION,
+        "schema": SCHEMA, "schema_version": SCHEMA_VERSION, "experiment": experiment,
         "purpose": "New isolated execution snapshot; no transfer, launch or research execution",
         "source_host": platform.node(), "source_root": str(source_root), **state,
         "historical_selection": selection_identity,
@@ -238,7 +250,13 @@ def build_plan(source_root, selection_workspace, cache_root=None):
             "verification": "Explicit runtime preflight must verify required frozen caches at --cache-root.",
         },
         "files": files, "total_bytes": sum(item["bytes"] for item in files),
-        "directories": ["outputs/logs", "outputs/notebooks"],
+        "directories": (["outputs/logs", "outputs/ecoli_ernie/logs", "outputs/ecoli_ernie/notebooks"]
+                        if experiment == "ecoli_ernie" else ["outputs/logs", "outputs/notebooks"]),
+        "declared_workload": ({"benchmark": "ecoli_proteins", "encoders": ["rnaernie", "ernierna"],
+                               "heads": ["mil", "concat"], "fits_per_seed": 4,
+                               "default_training_seed": 0, "available_training_seeds": [0, 1, 2],
+                               "new_rna_extractions": 2, "single_baseline_selection": "not available"}
+                              if experiment == "ecoli_ernie" else None),
         "excluded": ["embedding payloads and cache recovery metadata", "model weights",
                      "recovery checkpoints", "fresh outputs", ".git"],
         "research_executed": False, "newton_validated": False,
@@ -341,9 +359,11 @@ def main(argv=None):
                         help="Declared external cache reference only; never scanned or copied")
     parser.add_argument("--destination", type=Path,
                         help="Create this NEW sibling directory; omit for a read-only JSON inventory")
+    parser.add_argument("--experiment", choices=("full", "ecoli_ernie"), default="full")
     args = parser.parse_args(argv)
     try:
-        plan = build_plan(args.source_root, args.selection_workspace, args.cache_root)
+        plan = build_plan(args.source_root, args.selection_workspace, args.cache_root,
+                          experiment=args.experiment)
         result = plan if args.destination is None else write_package(plan, args.destination)
     except (OSError, ValueError, subprocess.SubprocessError) as error:
         parser.exit(2, f"Package preparation stopped: {error}\n")

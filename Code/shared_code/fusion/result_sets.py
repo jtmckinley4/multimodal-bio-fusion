@@ -149,3 +149,30 @@ def resolve_swap_results(code_dir, name="historical", *, workspace=None):
         NewtonSelectionSnapshot(root / "provenance/source-snapshot.json", code_dir,
                                 NEWTON_SNAPSHOT_SHA256),
     )
+
+
+def resolve_ernie_extension(code_dir, *, workspace=None, reference_workspace=None):
+    """Read the focused extension separately from the completed Newton cohort.
+
+    The original cohort supplies comparison scores and historical penalty evidence,
+    never destinations for missing extension fits. Execution uses its own workspace.
+    """
+    code_dir = Path(code_dir).resolve()
+    reference = resolve_swap_results(
+        code_dir, "newton_h100_seeds012", workspace=reference_workspace,
+    )
+    root = (Path(workspace) if workspace is not None
+            else code_dir / "stage4/results/newton_ecoli_ernie").resolve()
+    protected = (reference.root, code_dir / "stage4/results/phaseA",
+                 code_dir / "stage4/results/phaseB",
+                 code_dir / "stage3/results/fungal_expression")
+    for old in protected:
+        old = old.resolve()
+        if root == old or root in old.parents or old in root.parents:
+            raise ValueError(f"Extension workspace overlaps existing evidence: {old}")
+    reports = root / "local_analyses"
+    return SwapResultSet(
+        "newton_ecoli_ernie", root, reference.originals, root / "outputs/ecoli_ernie/phaseB",
+        reference.selection_originals, reference.selection_swaps, (), reports,
+        True, True, reference.selection_snapshot,
+    )

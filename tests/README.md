@@ -22,6 +22,8 @@ Passing these checks does not reproduce scientific results or verify how a noteb
 
 ## What the checks cover
 
+The focused E. coli RNA extension has [encoder tests](test_ernie_encoders.py), [four-fit planning checks](test_swap_extension.py), [isolated notebook branches](test_ernie_swap_notebook.py), and [Newton packaging/execution checks](test_arcc_ernie_extension.py). These verify pinned identities, author token IDs and framing, final hidden-state selection, gated-first dispatch, original-cache refusal, separate destinations, retained lambda evidence and missing-score handling. They use synthetic fixtures and mocked pretrained loading; actual checkpoint loading and H100 extraction remain unverified until an authorized Newton run. The original twelve-encoder mRFP panel stays explicit despite the expanded registry.
+
 ### Setup, paths and source displays
 
 - [Setup checks](test_notebook_setup.py) execute only the `## Setup` sections of the [stability](../Code/stage1/Stage1_stability.ipynb) and [GTEx](../Code/stage1/Stage1_gtex.ipynb) notebooks, each in its own namespace within one Python process rather than a separate Jupyter kernel. They check local configuration, encoder selections, GTEx pairs, and an explicit PyTorch seed call. Known project computation, data-loading, model-loading, and network entry points are blocked during setup execution.

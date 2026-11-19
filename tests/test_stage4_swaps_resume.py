@@ -103,6 +103,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
 
     def namespace(self, seed=0):
         env = dict(
+            EXPERIMENT="full", RUN_TRAINING=True,
             READ_SAVED_RESULTS=False, SEED=seed, SELECTION_SEED=0, RUN_BOOTSTRAP=False,
             CACHE_REUSE_ONLY=False, CHECKPOINT_VALIDATOR=forbidden, FIT_PRODUCER=None,
             BATCH_SIZE=32, MAX_EPOCHS=500, CHANNELS=100, TCONV="equation", DEVICE="cpu",
@@ -123,6 +124,11 @@ class SwapResumeNotebookTests(unittest.TestCase):
             run_identity=SimpleNamespace(producer_record=lambda **kw: {"fixture": True}),
             CACHE_VERIFICATION=object(),
             time=time, pd=pd, np=np, json=json, display=lambda value: None,
+        )
+        env["cache_directory"] = lambda benchmark, key: env["CACHE_ROOT"] / benchmark / key
+        env["cache_is_read_only"] = lambda key: False
+        env["requested_variants"] = lambda modality, key: swap_results.swap_variants(
+            modality, grid=env["tokens"].grid_resolution(key) != "codon",
         )
         for cell_id in ("swaps-stream-defs", "swaps-training-defs"):
             exec(compile(self.sources[cell_id], "fixture orchestration definitions", "exec"), env)
@@ -187,7 +193,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
         return {p: p.read_bytes() for p in self.root.rglob("*.json")}
 
     def test_all_eight_stability_swaps_and_manual_seed_defaults(self):
-        env = dict(np=np, tokens=SimpleNamespace(DEFAULT_CHUNK=256),
+        env = dict(EXPERIMENT="full", np=np, tokens=SimpleNamespace(DEFAULT_CHUNK=256),
                    blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL))
         exec(compile(self.sources["swaps-settings"], "fixture settings", "exec"), env)
         self.assertEqual(env["STABILITY_SWAPS"], env["SWAPS"])

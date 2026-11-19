@@ -1,8 +1,8 @@
 """Registry of frozen pretrained encoders, and the code that loads them.
 
-Adding an encoder means adding one Encoder entry to ENCODERS. PyTorch, Transformers, and
-multimolecule are imported only when a model is loaded, so the registry can be read
-without them.
+ENCODERS records available models; each experiment selects its own panel. New tokenizers
+or checkpoint layouts also need a loader. PyTorch, Transformers, and multimolecule are
+imported only when needed, so the registry can be read without them.
 """
 
 from __future__ import annotations
@@ -10,6 +10,7 @@ from __future__ import annotations
 import gc
 import re
 from dataclasses import dataclass
+from pathlib import Path
 
 from .sequences import dna_to_rna, rna_to_dna, translate_cds
 
@@ -23,7 +24,8 @@ class Encoder:
     spaces and the rare amino acids U, Z, O, and B written as X, as ProtBERT expects).
     loader: "auto" for checkpoints that load with the Transformers auto classes,
     "remote_esm" for Nucleotide Transformer v2, "remote_dnabert2" for DNABERT-2, and
-    "bert" for ProtBERT, whose checkpoint does not name its model type.
+    "bert" for ProtBERT, whose checkpoint does not name its model type, or "rnaernie"
+    for the authors' 2048-position RNAErnie checkpoint and character tokenizer.
     attention: False when the model does not return attention weights (DNABERT-2's
     model code, and HyenaDNA, which has no attention layers). codon: True when the
     tokenizer reads one codon per token, so the encoder needs an in-frame coding sequence
@@ -67,6 +69,11 @@ ENCODERS = {
         Encoder("esm2_150m", "ESM-2 150M", "protein", "facebook/esm2_t30_150M_UR50D", "protein", 1024),
         Encoder("protbert", "ProtBERT", "protein", "Rostlab/prot_bert", "protein_spaced", 1024,
                 loader="bert", revision="7a894481acdc12202f0a415dd567f6cfdb698908"),
+        # Focused E. coli extension; these do not expand earlier notebook panels.
+        Encoder("rnaernie", "RNAErnie (author 2048)", "RNA", "LLM-EDA/RNAErnie", "rna", 2048,
+                loader="rnaernie", revision="df26681ed44bb671b61536c5e2a196d6058a44f7"),
+        Encoder("ernierna", "ERNIE-RNA", "RNA", "multimolecule/ernierna", "rna", 1026,
+                revision="9f6099b85d61f7567d4e1ed1e92e1de85fdfd292"),
     ]
 }
 
@@ -216,8 +223,102 @@ def _load_remote_model(encoder):
     return model
 
 
+def _load_rnaernie_tokenizer(encoder):
+    """Load the authors' character tokenizer without importing their training pipeline.
+
+    The checkpoint names RNAErnieTokenizer but does not ship auto-loadable tokenizer
+    code. This narrow adapter follows RNAErnie2 commit 2af56905f22b5404ea40f89e3b3cbb8cd3f631cb,
+    rnaernie/src/models/tokenization_utils.py: uppercase, T -> U, CLS + bases + EOS.
+    Its vocabulary is intentionally different from the older MultiMolecule conversion.
+    """
+    from transformers import PreTrainedTokenizer
+
+    class RNAErnieTokenizer(PreTrainedTokenizer):
+        vocab_files_names = {"vocab_file": "vocab.txt"}
+        model_input_names = ["input_ids", "attention_mask"]
+
+        def __init__(self, vocab_file, **kwargs):
+            vocabulary = Path(vocab_file).read_text(encoding="utf-8").splitlines()
+            expected = ["[PAD]", "[UNK]", "[CLS]", "[EOS]", "[SEP]", "[MASK]",
+                        "A", "U", "C", "G", "N"]
+            if vocabulary != expected:
+                raise ValueError("RNAErnie vocabulary differs from the pinned author checkpoint.")
+            self.vocab = {token: index for index, token in enumerate(vocabulary)}
+            self.ids_to_tokens = dict(enumerate(vocabulary))
+            special = dict(pad_token="[PAD]", unk_token="[UNK]", cls_token="[CLS]",
+                           bos_token="[CLS]", eos_token="[EOS]", sep_token="[SEP]",
+                           mask_token="[MASK]")
+            special.update(kwargs)
+            super().__init__(**special)
+
+        @property
+        def vocab_size(self):
+            return len(self.vocab)
+
+        def get_vocab(self):
+            return dict(self.vocab, **self.added_tokens_encoder)
+
+        def _tokenize(self, text):
+            return list(text.upper().replace("T", "U"))
+
+        def _convert_token_to_id(self, token):
+            return self.vocab.get(token, self.vocab["[UNK]"])
+
+        def _convert_id_to_token(self, index):
+            return self.ids_to_tokens.get(index, "[UNK]")
+
+        def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
+            content = list(token_ids_0)
+            if token_ids_1 is not None:
+                content += [self.sep_token_id] + list(token_ids_1)
+            return [self.cls_token_id] + content + [self.eos_token_id]
+
+        def get_special_tokens_mask(self, token_ids_0, token_ids_1=None,
+                                    already_has_special_tokens=False):
+            if already_has_special_tokens:
+                return super().get_special_tokens_mask(
+                    token_ids_0, token_ids_1, already_has_special_tokens=True)
+            mask = [1] + [0] * len(token_ids_0) + [1]
+            if token_ids_1 is not None:
+                mask += [0] * len(token_ids_1) + [1]
+            return mask
+
+    return RNAErnieTokenizer.from_pretrained(
+        encoder.checkpoint, revision=encoder.revision, model_max_length=encoder.max_len,
+    )
+
+
+def _load_rnaernie_model(encoder, eager_attention=False):
+    """Load every pretrained BERT backbone weight; exclude the unused MLM head/pooler.
+
+    The authors' extractor takes the last hidden states from BertForMaskedLM. Loading
+    BertModel directly returns those states as the first output, instead of MLM logits.
+    No missing backbone tensor is allowed to remain randomly initialized.
+    """
+    from transformers import AutoConfig, BertModel
+
+    config = AutoConfig.from_pretrained(encoder.checkpoint, revision=encoder.revision)
+    if (config.model_type, config.vocab_size, config.max_position_embeddings) != ("bert", 11, 2048):
+        raise ValueError("RNAErnie configuration differs from the pinned author checkpoint.")
+    if eager_attention:
+        config._attn_implementation = "eager"
+    model = BertModel(config, add_pooling_layer=False)
+    state = _load_checkpoint_state(encoder.checkpoint, "model.safetensors", encoder.revision)
+    unexpected = [key for key in state if not key.startswith(("bert.", "cls.predictions."))]
+    if unexpected:
+        raise RuntimeError(f"{encoder.key}: unexpected checkpoint keys: {unexpected}")
+    backbone = {key.removeprefix("bert."): value for key, value in state.items()
+                if key.startswith("bert.") and not key.startswith("bert.pooler.")}
+    model.load_state_dict(backbone, strict=True)
+    model.requires_grad_(False)
+    return model
+
+
 def load_tokenizer(encoder):
     """Return an encoder's tokenizer without loading its model, for counting input tokens."""
+    if encoder.loader == "rnaernie":
+        return _load_rnaernie_tokenizer(encoder)
+
     import multimolecule  # noqa: F401  (registers the multimolecule tokenizers with Transformers)
     from transformers import AutoTokenizer, BertTokenizer
 
@@ -228,6 +329,11 @@ def load_tokenizer(encoder):
 
 def load_encoder(encoder, device, eager_attention=False):
     """Return (tokenizer, model) for an Encoder, on device and in evaluation mode."""
+    if encoder.loader == "rnaernie":
+        tokenizer = _load_rnaernie_tokenizer(encoder)
+        model = _load_rnaernie_model(encoder, eager_attention=eager_attention)
+        return tokenizer, model.to(device).eval()
+
     import multimolecule  # noqa: F401  (registers the RNA-FM, mRNA-FM, RiNALMo, CaLM, and HyenaDNA classes with Transformers)
     from transformers import AutoModel, AutoTokenizer
 

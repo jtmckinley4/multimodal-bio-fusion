@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Submit only after the separate extension package and inputs are verified.
+# Supply approved account, partition, GPU, CPU, RAM and time limits to sbatch.
+#SBATCH --job-name=ecoli-ernie
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --output=outputs/logs/ernie-%j.out
+#SBATCH --error=outputs/logs/ernie-%j.err
+
+set -euo pipefail
+: "${SLURM_JOB_ID:?An allocated Newton Slurm job is required}"
+: "${ARCC_PROJECT_ROOT:?Absolute path to the NEW extension workspace}"
+: "${ARCC_REFERENCE_ROOT:?Completed Newton encoder-swap workspace, read-only}"
+: "${ARCC_CACHE_ROOT:?Existing original embedding cache root, read-only}"
+: "${ARCC_OPERATION:?Choose extract or train explicitly}"
+: "${ARCC_ANACONDA_MODULE:?Module confirmed on Newton}"
+: "${ARCC_CONDA_ENV:?Prepared environment name or absolute path}"
+: "${ARCC_KERNEL:?Kernel registered in that environment}"
+: "${ARCC_EXPECTED_GPU:?GPU-name substring confirmed by preflight}"
+[[ "$ARCC_OPERATION" == extract || "$ARCC_OPERATION" == train ]] || {
+    echo "ARCC_OPERATION must be extract or train" >&2; exit 2;
+}
+cd "$ARCC_PROJECT_ROOT"
+if (( ${CONDA_SHLVL:-0} > 0 )); then
+    ARCC_BOOTSTRAP_CONDA_BASE=$(conda info --base)
+    source "$ARCC_BOOTSTRAP_CONDA_BASE/etc/profile.d/conda.sh"
+fi
+module load "$ARCC_ANACONDA_MODULE"
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$ARCC_CONDA_ENV"
+printf 'Using Python: %s on %s\n' "$(command -v python)" "$(hostname)"
+python -B run_encoder_swaps.py --verify-only
+ARCC_OUTPUT_ROOT="${ARCC_OUTPUT_ROOT:-$ARCC_PROJECT_ROOT/outputs/ecoli_ernie}"
+[[ -d "$ARCC_OUTPUT_ROOT/logs" ]] || {
+    echo "Create the selected output logs directory before submission" >&2; exit 2;
+}
+python -m pip freeze > "$ARCC_OUTPUT_ROOT/logs/environment-${SLURM_JOB_ID}.txt"
+arguments=(--experiment ecoli_ernie --mode "$ARCC_OPERATION"
+    --benchmark ecoli_proteins --purpose newton --device cuda
+    --kernel "$ARCC_KERNEL" --expected-gpu "$ARCC_EXPECTED_GPU"
+    --cache-root "$ARCC_CACHE_ROOT" --reference-root "$ARCC_REFERENCE_ROOT"
+    --new-cache-root "${ARCC_NEW_CACHE_ROOT:-$ARCC_PROJECT_ROOT/extension_embeddings}"
+    --output-root "$ARCC_OUTPUT_ROOT")
+if [[ "$ARCC_OPERATION" == train ]]; then
+    arguments+=(--seed "${ARCC_SEED:-0}")
+fi
+python -u run_encoder_swaps.py "${arguments[@]}"

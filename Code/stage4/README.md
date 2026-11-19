@@ -41,6 +41,8 @@ The [swap notebook](encoder_swaps.ipynb) replaces one encoder while retaining th
 
 The Newton cohort contains 504 completed fits across four benchmarks and training seeds 0, 1 and 2. Single-encoder baselines and the inherited MIL penalty (`lambda=0.01`) retain the historical seed-0 validation choices; all scores in the current three-seed reports come from Newton. Swaps test substitutions under that fixed recipe, not the best performance each replacement could achieve after individual tuning. [Result-set separation](RUNBOOK.md#select-a-returned-result-set) and [replacement settings](RUNBOOK.md#complete-the-encoder-swaps-one-seed-at-a-time).
 
+**Focused E. coli comparison.** Newton ran both BLF heads with RNAErnie and ERNIE-RNA across seeds 0, 1 and 2, retaining the original DNA and protein encoders. The terminal readout put RNAErnie’s two heads within 0.05 percentage points on average. For ERNIE-RNA, concatenation scored higher on all three seeds. The comparison covers head choice with fixed inputs. [Seed scores and evidence status](../../docs/run-records.md#2026-11-19-newton-e-coli-encoder-extension-and-controlled-studies) · [Execution recipe](../../execution/arcc/encoder_swaps/README.md#focused-e-coli-rna-extension) (Gantt/Details task 24).
+
 #### Newton three-seed findings
 
 The [saved three-seed reports and interpretation](encoder_swaps.ipynb#Newton-three-seed-findings) distinguish improvement over a selected single from improvement over concatenation with the same inputs. Scores are means of three fitted models' scores, not prediction ensembles. The counts below use saved 95% paired test-sequence-group intervals; these condition on the three fitted seeds and are unadjusted for multiple comparisons.

@@ -339,6 +339,14 @@ The small [UCSC hg38 chromosome-length table](https://hgdownload.soe.ucsc.edu/go
 
 **Reading scope and limits:** On October 5, 2026, read the endpoint parameters, request examples and resource limits, and the wiki's normal/exhausted-rate-limit response sections. No live sequence requests or dataset rebuilds were performed. These references do not verify the historical pilot's completeness, assembly, or biological correctness; they do not pin future service contents.
 
+### RNAErnie and ERNIE-RNA checkpoint implementations
+
+The [RNAErnie author update](https://github.com/CatIIIIIIII/RNAErnie#update-log), [pinned RNAErnie2 tokenizer and extraction code](https://github.com/CatIIIIIIII/RNAErnie2/tree/2af56905f22b5404ea40f89e3b3cbb8cd3f631cb/rnaernie/src), [author checkpoint configuration](https://huggingface.co/LLM-EDA/RNAErnie/blob/df26681ed44bb671b61536c5e2a196d6058a44f7/config.json), and [ERNIE-RNA conversion](https://huggingface.co/multimolecule/ernierna/tree/9f6099b85d61f7567d4e1ed1e92e1de85fdfd292) support the [focused E. coli swap extension](../execution/arcc/encoder_swaps/README.md#focused-e-coli-rna-extension).
+
+**Use here:** The newer author RNAErnie checkpoint has 2,048 positional slots and a character tokenizer with CLS/EOS framing, accommodating the existing 999-nucleotide inputs. Chase approved this checkpoint substitution instead of cropping inputs for the older short-context port linked in the advisor's request. The implementation uses its final BERT hidden representations, excluding the prediction head. ERNIE-RNA is a separate model, using the pinned base MultiMolecule conversion; it is not the secondary-structure-finetuned checkpoint. Both replacements retain all three original sequence-derived input streams and the existing BLF head recipe.
+
+**Reading scope and limits, November 18, 2026:** Inspected author documentation, tokenizer/extractor source, checkpoint metadata and the conversion card. This is an implementation review, not a full review of either paper or a verification of model quality. Synthetic tests establish token framing, state selection and failure checks; actual pretrained loading and Newton extraction remain unrun. The longer-context RNAErnie checkpoint is a deliberate version change, not evidence that all released RNAErnie variants are equivalent.
+
 ### RNA-FM model card
 
 [multimolecule/rnafm](https://huggingface.co/multimolecule/rnafm) on Hugging Face.

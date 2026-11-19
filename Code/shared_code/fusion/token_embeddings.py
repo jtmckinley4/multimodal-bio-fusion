@@ -143,7 +143,15 @@ def token_states(text, tokenizer, model, max_len, dtype=np.float16):
     keep = np.array([int(i) not in framing for i in ids[0]], dtype=bool)
     device = next(model.parameters()).device
     out = model(**{k: v.to(device) for k, v in encoded.items()})
-    states = out[0][0].float().cpu().numpy()
+    hidden = getattr(out, "last_hidden_state", None)
+    if hidden is None:
+        if hasattr(out, "logits"):
+            raise ValueError("Token caches require backbone hidden states, not prediction logits.")
+        hidden = out[0]  # Some existing remote base models return an ordinary tuple.
+    width = getattr(getattr(model, "config", None), "hidden_size", None)
+    if hidden.ndim != 3 or (width is not None and hidden.shape[-1] != width):
+        raise ValueError("The encoder did not return a (batch, tokens, hidden_size) hidden state.")
+    states = hidden[0].float().cpu().numpy()
     if states.shape[0] != keep.shape[0]:
         raise ValueError(
             f"the model returned {states.shape[0]} states for {keep.shape[0]} token ids; "
@@ -628,6 +636,7 @@ def summarize(cache_dir):
 # vocabulary such as DNABERT-2's has no fixed rate and is deliberately absent.
 NUCLEOTIDES_PER_TOKEN = {
     "rnafm": 1, "rinalmo": 1, "hyenadna": 1,     # one token per nucleotide
+    "rnaernie": 1, "ernierna": 1,
     "mrnafm": 3, "calm": 3,                      # one token per codon
 }
 
@@ -664,7 +673,7 @@ def grid_resolution(encoder_key):
 
     kmer: one token per six nucleotides, upsampled by the learned transposed convolution
     (Nucleotide Transformer v2 and 500M). nucleotide: one token per nucleotide, averaged in
-    threes (RNA-FM, RiNALMo, HyenaDNA). codon: one token per codon or residue, used as it is
+    threes (RNA-FM, RiNALMo, RNAErnie, ERNIE-RNA, HyenaDNA). codon: one token per codon or residue, used as it is
     (mRNA-FM, CaLM, and every protein encoder). An encoder with no fixed rate, DNABERT-2's
     byte-pair vocabulary, raises: placing it on the grid needs an adapter of its own.
     """

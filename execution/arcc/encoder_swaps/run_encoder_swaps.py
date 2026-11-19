@@ -19,6 +19,7 @@ from nbconvert.preprocessors import ExecutePreprocessor
 WORKSPACE = Path(__file__).resolve().parent
 BENCHMARKS = ("cov_vac_degradation", "fungal_expression", "ecoli_proteins", "mrna_stability")
 NOTEBOOK = "Code/stage4/encoder_swaps.ipynb"
+EXPERIMENTS = ("full", "ecoli_ernie")
 
 
 class LiveOutputPreprocessor(ExecutePreprocessor):
@@ -110,6 +111,23 @@ def validate_destinations(workspace, output_root, cache_root, files, purpose):
         raise ValueError("Newton results must stay separate from local pilot outputs.")
 
 
+def validate_extension(workspace, output_root, cache_root, new_cache_root, files):
+    """An extension may write new RNA caches, never the previously used cache tree."""
+    workspace = Path(workspace).resolve()
+    output_root, new_cache_root = Path(output_root).resolve(), Path(new_cache_root).resolve()
+    if not new_cache_root.is_relative_to(workspace) or new_cache_root == workspace:
+        raise ValueError("New RNA caches must live inside the separate prepared workspace.")
+    if any(overlaps(new_cache_root, root) for root in (output_root, cache_root)):
+        raise ValueError("New RNA caches must be separate from outputs and existing caches.")
+    if any(overlaps(new_cache_root, workspace / name)
+           for name in ("Code", "datasets", "historical_results", "evidence")):
+        raise ValueError("New RNA caches overlap a protected source directory.")
+    if any(overlaps(new_cache_root, package_path(workspace, name)) for name in files):
+        raise ValueError("New RNA caches overlap a prepared file.")
+    if output_root in {workspace / "outputs", workspace / "pilot_outputs"}:
+        raise ValueError("The E. coli extension needs its own output subdirectory.")
+
+
 def acquire_locks(stack, directory, benchmarks, seeds):
     """OS locks release after failure; duplicate cooperative writers fail promptly."""
     directory.mkdir(parents=True, exist_ok=True)
@@ -148,12 +166,23 @@ class NotebookExecution:
         self.snapshot, self.files = verify_preserved_inputs(self.root)
         validate_destinations(self.root, self.output, config["cache_root"],
                               self.files, config["purpose"])
+        self.experiment = config.get("experiment", "full")
+        if self.experiment != self.snapshot.get("experiment", "full"):
+            raise ValueError("Requested experiment differs from the prepared snapshot.")
+        if self.experiment == "ecoli_ernie":
+            if config["benchmarks"] != ["ecoli_proteins"]:
+                raise ValueError("The E. coli extension cannot run another benchmark.")
+            validate_extension(self.root, self.output, config["cache_root"],
+                               config["new_cache_root"], self.files)
+            if any(overlaps(config["reference_root"], path)
+                   for path in (self.root, self.output, config["new_cache_root"])):
+                raise ValueError("The completed reference workspace must remain separate and read-only.")
         self.snapshot_sha = sha256(self.root / "source-snapshot.json")
         self.device = config["device"]
 
     def observe_kernel(self, torch):
         """Check the executing kernel, not merely the submission shell's request."""
-        if self.config["mode"] == "train":
+        if self.config["mode"] in {"train", "extract"}:
             if self.config["purpose"] == "newton" and not os.environ.get("SLURM_JOB_ID"):
                 raise RuntimeError("Newton training requires an allocated Slurm job.")
             if self.device == "cuda":
@@ -206,6 +235,8 @@ class NotebookExecution:
                     "output_root": str(self.output)}
         if any(context.get(key) != value for key, value in expected.items()):
             raise ValueError("Result/checkpoint belongs to another execution cohort; preserve it.")
+        if context.get("experiment", "full") != self.experiment:
+            raise ValueError("Result/checkpoint belongs to another experiment.")
         if not context.get("launch_record") or not context.get("selection_source_sha256"):
             raise ValueError("Result/checkpoint lacks launch or fixed-selection evidence.")
         if context.get("selection_seed") != 0:
@@ -238,6 +269,7 @@ class NotebookExecution:
                 or settings.get("purpose") != self.config["purpose"]
                 or settings.get("output_root") != str(self.output)
                 or settings.get("workspace") != str(self.root)
+                or settings.get("experiment", "full") != self.experiment
                 or settings.get("mode") != "train"
                 or launch.get("status") not in {"running", "completed", "failed_or_interrupted"}):
             raise ValueError("Launch evidence does not describe this training cohort.")
@@ -284,6 +316,7 @@ class NotebookExecution:
         producer = run_identity.producer_record(device=self.device, repository=self.root)
         producer["arcc_execution"] = {
             "purpose": self.config["purpose"], "output_root": str(self.output),
+            "experiment": self.experiment,
             "launch_record": Path(self.config["launch_record"]).name,
             "source_snapshot_sha256": self.snapshot_sha, "selection_seed": 0,
             "selected_single_variants": plan.selected_singles,
@@ -317,11 +350,19 @@ def prepare_notebook(notebook, config):
         "from run_encoder_swaps import NotebookExecution",
         "EXECUTION = NotebookExecution(_execution_config)",
         "EXECUTION.observe_kernel(torch)", "EXECUTION.check_results()",
-        "READ_SAVED_RESULTS = _execution_config['mode'] != 'train'",
+        "EXPERIMENT = _execution_config.get('experiment', 'full')",
+        "READ_SAVED_RESULTS = _execution_config['mode'] not in ('train', 'extract')",
+        "RUN_TRAINING = _execution_config['mode'] == 'train'",
         "RUN_SAVED_COMPARISONS = _execution_config['mode'] == 'report'",
         "RUN_BOOTSTRAP = False", "CACHE_REUSE_ONLY = True",
+        "if _execution_config['mode'] == 'extract': CACHE_REUSE_ONLY = False",
         "SEED = _execution_config['seed']", "BENCHMARKS = tuple(_execution_config['benchmarks'])",
         "DEVICE = EXECUTION.device", "CACHE_ROOT = Path(_execution_config['cache_root'])",
+        "NEW_CACHE_ROOT = (Path(_execution_config['new_cache_root']) if EXPERIMENT == 'ecoli_ernie' else None)",
+        "if EXPERIMENT == 'ecoli_ernie':",
+        "    SWAPS = [('rna', 'rnaernie'), ('rna', 'ernierna')]",
+        "    STABILITY_SWAPS = []",
+        "    REFERENCE_SWAP_ROOT = Path(_execution_config['reference_root']) / 'outputs/phaseB'",
         "RESULT_PATHS = EXECUTION.result_paths()", "RESULTS_ROOT = RESULT_PATHS.swaps",
         "ORIGINAL_RESULTS = RESULT_PATHS.originals", "COMPARISON_DIR = RESULT_PATHS.analysis_dir",
         "CHECKPOINT_VALIDATOR = EXECUTION.checkpoint_preflight",
@@ -335,13 +376,19 @@ def prepare_notebook(notebook, config):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verify-only", action="store_true")
-    parser.add_argument("--mode", choices=("train", "report"))
+    parser.add_argument("--mode", choices=("train", "report", "extract"))
+    parser.add_argument("--experiment", choices=EXPERIMENTS,
+                        help="Must match the separately prepared snapshot; defaults to its experiment")
     parser.add_argument("--benchmark", choices=(*BENCHMARKS, "all"))
     parser.add_argument("--seed", type=int, choices=(0, 1, 2))
     parser.add_argument("--kernel")
     parser.add_argument("--purpose", choices=("newton", "local_pilot"), default="newton")
     parser.add_argument("--device", choices=("cpu", "cuda"))
     parser.add_argument("--cache-root", type=Path, default=WORKSPACE / "Code/stage3/embeddings")
+    parser.add_argument("--new-cache-root", type=Path,
+                        help="New RNA caches inside the extension workspace; existing caches stay read-only")
+    parser.add_argument("--reference-root", type=Path,
+                        help="Completed Newton swap workspace, read-only reference for the extension")
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--expected-gpu", default=os.environ.get("ARCC_EXPECTED_GPU", ""))
     args = parser.parse_args(argv)
@@ -349,10 +396,27 @@ def main(argv=None):
     if args.verify_only:
         print(f"Verified {len(files)} prepared files; no kernel, cache arrays or computation started.")
         return
+    experiment = args.experiment or snapshot.get("experiment", "full")
+    if experiment not in EXPERIMENTS or experiment != snapshot.get("experiment", "full"):
+        parser.error("Experiment must match the prepared snapshot.")
+    if experiment == "ecoli_ernie" and args.benchmark is None:
+        args.benchmark = "ecoli_proteins"
+    if experiment == "ecoli_ernie" and args.benchmark != "ecoli_proteins":
+        parser.error("The E. coli extension only supports ecoli_proteins.")
+    if experiment == "ecoli_ernie" and args.mode == "report":
+        parser.error("The extension has no selected-single/three-seed report; read its saved fit table.")
+    if args.mode == "extract" and experiment != "ecoli_ernie":
+        parser.error("Extraction is limited to the explicitly prepared E. coli extension.")
+    if args.mode == "extract" and args.seed is not None:
+        parser.error("RNA extraction is shared across training seeds; omit --seed.")
+    if experiment == "ecoli_ernie" and args.mode == "train" and args.seed is None:
+        args.seed = 0
+    if experiment == "ecoli_ernie" and args.reference_root is None:
+        parser.error("The extension requires --reference-root for completed Newton comparison evidence.")
     if not args.mode or not args.benchmark or not args.kernel:
         parser.error("Execution requires --mode, --benchmark and --kernel.")
-    if args.mode == "train":
-        if args.benchmark == "all" or args.seed is None:
+    if args.mode in {"train", "extract"}:
+        if args.benchmark == "all" or (args.mode == "train" and args.seed is None):
             parser.error("Train one explicit benchmark and seed per invocation.")
         if args.purpose == "newton" and not os.environ.get("SLURM_JOB_ID"):
             parser.error("Newton training requires an allocated Slurm job.")
@@ -367,18 +431,36 @@ def main(argv=None):
         if args.seed is not None or args.device == "cuda":
             parser.error("Reporting uses CPU and all three seeds; omit --seed and --device cuda.")
         device = "cpu"
-    output = (args.output_root or WORKSPACE / (
-        "outputs" if args.purpose == "newton" else "pilot_outputs")).expanduser().resolve()
+    default_output = WORKSPACE / ("outputs" if args.purpose == "newton" else "pilot_outputs")
+    if experiment == "ecoli_ernie":
+        default_output /= "ecoli_ernie"
+    output = (args.output_root or default_output).expanduser().resolve()
     cache = args.cache_root.expanduser().resolve()
     validate_destinations(WORKSPACE, output, cache, files, args.purpose)
+    new_cache = (args.new_cache_root or WORKSPACE / "extension_embeddings").expanduser().resolve()
+    if experiment == "ecoli_ernie":
+        validate_extension(WORKSPACE, output, cache, new_cache, files)
+        reference = args.reference_root.expanduser().resolve()
+        if not (reference / "outputs/phaseB/ecoli_proteins/rinalmo").is_dir():
+            parser.error("--reference-root lacks the completed Newton E. coli/RiNALMo directory.")
+        if overlaps(reference, WORKSPACE):
+            parser.error("Use a separate extension workspace; preserve the completed Newton reference workspace.")
+    elif args.new_cache_root is not None:
+        parser.error("--new-cache-root belongs only to the E. coli extension.")
+    else:
+        reference = None
     benchmarks = BENCHMARKS if args.benchmark == "all" else (args.benchmark,)
     config = {"workspace": str(WORKSPACE), "output_root": str(output), "cache_root": str(cache),
               "mode": args.mode, "purpose": args.purpose, "device": device,
+              "experiment": experiment, "new_cache_root": str(new_cache) if experiment == "ecoli_ernie" else None,
+              "reference_root": str(reference) if reference is not None else None,
               "benchmarks": list(benchmarks), "seed": args.seed or 0, "expected_gpu": args.expected_gpu}
     import nbformat
     with ExitStack() as stack:
         seeds = (args.seed,) if args.mode == "train" else (0, 1, 2)
         acquire_locks(stack, output / ".locks", benchmarks, seeds)
+        if args.mode == "extract":
+            acquire_locks(stack, new_cache / ".locks", benchmarks, (0,))
         stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         name = f"{args.mode}-{args.benchmark}-seed{args.seed}-{stamp}-{uuid.uuid4().hex[:8]}"
         logs, notebooks = output / "logs", output / "notebooks"
@@ -389,13 +471,14 @@ def main(argv=None):
         record = {"status": "running", "started_utc": datetime.now(timezone.utc).isoformat(),
                   "configuration": config, "snapshot_sha256": sha256(WORKSPACE / "source-snapshot.json"),
                   "source_commit": snapshot.get("source_commit"), "execution_source_sha256": files,
-                  "selection": "preserved historical seed-0 validation choices",
+                  "selection": ("historical seed-0 MIL penalty only; new single baseline not selected"
+                                if experiment == "ecoli_ernie" else "preserved historical seed-0 validation choices"),
                   "host": platform.node(), "launcher_python": sys.version,
                   "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
                   "executed_notebook": str(executed_path.relative_to(WORKSPACE))}
         notebook = prepare_notebook(nbformat.read(WORKSPACE / NOTEBOOK, as_version=4), config)
         save_record(record_path, record)
-        # No model downloads or extraction fallback is allowed in this execution route.
+        # Even explicit extraction uses staged pinned weights; no network fallback.
         for key, value in {"HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1",
                            "TOKENIZERS_PARALLELISM": "false"}.items():
             previous = os.environ.get(key)

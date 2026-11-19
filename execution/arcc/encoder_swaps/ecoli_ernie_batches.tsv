@@ -1,0 +1,4 @@
+batch_id	benchmark	seed	fits	status
+0	ecoli_proteins	0	4	initial requested panel
+1	ecoli_proteins	1	4	optional repeat; separate authorization
+2	ecoli_proteins	2	4	optional repeat; separate authorization

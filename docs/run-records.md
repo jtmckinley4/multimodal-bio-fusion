@@ -977,3 +977,22 @@ After reviewing the [written control-repair plan](research-execution-plan.md#con
 **Checks and prepared package.** The 72 controlled-fusion, 88 region and 26 package/input/launcher tests passed, plus five source-display and three notebook-setup checks. They use invented tensors, temporary records and isolated notebook branches; tiny CPU fixture fits test training mechanics only. All three changed notebooks parse. All 19 maintained notebooks retain non-source cell state and metadata; 1,031 protected result/source file hashes and 1,580 cache-file size/mtime signatures match the pre-change snapshots. These checks do not establish scientific findings or Newton runtime readiness.
 
 The replacement sibling **`ARCC Fusion Studies 2026-11-17 Controls`** contains 67 source/test/checklist files totaling 1,355,787 bytes, with snapshot SHA-256 `099e4e1e454ac4e7b201211da73ab410d4c99bf602542825af0a96ce4479aa58`. All source/copy hashes match; all 113 tests carried in that assembled package pass. The operation inventory still has 49 study operations because the added fits stay within the existing study/benchmark/seed jobs. Its 18-row `INPUT_TRANSFER.tsv` remains a local transfer aid; no data, caches or weights were copied. The prior fusion package is retained as superseded preparation. The unchanged `ARCC Grouped Stability 2026-11-17` package still passes its own 60-file verification. Use the [updated checklist](../execution/arcc/fusion_studies/RUN_CHECKLIST.md) for a later authorized transfer; remote input verification, storage, resource limits and execution remain outstanding.
+
+---
+
+## 2026-11-19 Newton E. coli encoder extension and controlled studies
+
+The advisor requested the two E. coli RNA substitutions under the existing Table 25 head settings (Gantt/Details task 24). Chase reported Newton job 1220709 completed extraction and jobs 1220710–1220712 completed training seeds 0–2. The table transcribes the per-seed test accuracy printed from the Newton fit JSONs. The RiNALMo rows come from the earlier 504-fit Newton cohort.
+
+| RNA encoder | BLF head | Seed 0 | Seed 1 | Seed 2 |
+| --- | --- | ---: | ---: | ---: |
+| RiNALMo | MIL gated | 59.41% | 59.27% | 58.57% |
+| RiNALMo | Concatenation | 59.83% | 61.38% | 59.13% |
+| RNAErnie | MIL gated | 56.18% | 59.27% | 56.32% |
+| RNAErnie | Concatenation | 57.72% | 57.72% | 56.18% |
+| ERNIE-RNA | MIL gated | 54.92% | 54.92% | 56.46% |
+| ERNIE-RNA | Concatenation | 58.01% | 56.18% | 58.43% |
+
+At this checkpoint the 12 extension scores were available from the terminal. The local return and verification of their fit records, predictions and launch metadata was still pending. The table gives descriptive head comparisons. The extension has no RNAErnie or ERNIE-RNA single-head controls or paired uncertainty estimates.
+
+For the separate gate and attention studies (tasks 46 and 25), Slurm reported completion of training and diagnostic jobs 1217564–1217571 (seed 0) and 1220713–1220728 (seeds 1 and 2). Their paired comparisons require the returned predictions and diagnostic arrays. Grouped stability seed 0 completed, and the two repeat jobs were running at last observation (task 28). The next 17 jobs, 1221260–1221276, were visible as pending for correction and human half-life (tasks 45 and 42). Translation efficiency still follows a review of half-life. [Newton study workflow](../execution/arcc/fusion_studies/RUN_CHECKLIST.md#7-return-compact-evidence-then-report-across-seeds).
