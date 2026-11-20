@@ -9,7 +9,7 @@ Read the BioLangFusion route from datasets through token caches and build checks
 | BioLangFusion inputs | [Dataset audit](blf_datasets.ipynb) and [token embeddings](blf_token_embeddings.ipynb) establish the retained rows and frozen token inputs. |
 | BioLangFusion validation | [Build check](blf_build_check.ipynb) examines fungal expression and convolution choices; [reference benchmarks](blf_reference_benchmarks.ipynb) extends the original-encoder comparison. |
 | Historical BLF alternative | [Appendix comparison](blf_appendix_comparison.ipynb) reads a distinct convolution configuration and its own selection/uncertainty protocol. |
-| GTEx inputs and frozen fusion | [Released-data audit](isoformer_gtex_audit.ipynb) examines input policies; [frozen fusion reference](gtex_frozen_fusion_reference.ipynb) combines the pilot and its repeat route. |
+| Frozen GTEx pilot | [Fusion reference](gtex_frozen_fusion_reference.ipynb) combines the pilot and its repeat route. |
 | Adapted Coupled Mamba | [Reference and controls](coupled_mamba_reference.ipynb) compares bottleneck, uncoupled and coupled recurrence under the BLF input recipe. |
 
 ## BioLangFusion: inputs, implementation and reference comparisons
@@ -57,9 +57,9 @@ The recorded main comparison found positive paired intervals for E. coli concate
 
 ## GTEx: input suitability and a frozen fusion reference
 
-The [GTEx audit](isoformer_gtex_audit.ipynb) connects released targets, transcript annotations, partition identities and sequence lengths to possible input policies. Its saved JSONs describe the released table; they do not recover undocumented historical training membership or demonstrate predictive performance. The audit does not adopt a training protocol.
-
 The [frozen fusion reference](gtex_frozen_fusion_reference.ipynb) brings together the original pilot and its additional-seed route. It predicts Stage 1's 30 tissue RNA-abundance targets with frozen NT v2 100M for genomic DNA and transcript RNA and ESM-2 150M for protein. Six configurations compare individual inputs, DNA+protein, DNA+RNA and all three. These are transformed tissue-averaged RNA-abundance targets, not tissue inputs or protein production; the [target trace](../../docs/methods/data-and-targets.md#gtex-tissue-expression-labels) records the transformation and normalization uncertainties.
+
+Chase archived the full-release GTEx input audit locally for a future study that needs to choose a cohort. The [source review](../../docs/sources.md#isoformer-dataset-and-model-cards) records the release's annotation, sequence-length and partition questions. Those measurements describe the released table rather than the authors' undocumented training membership or the pilot's predictive performance. [Audit deferral](../../docs/run-records.md#2026-11-20-defer-the-gtex-cohort-audit)
 
 The local pilot updates each available stream through cross-attention, normalizes, pools and concatenates them for prediction. The released Enformer-based design instead updates and pools DNA. The [shared source record](../../docs/sources.md#isoformer-dataset-and-model-cards) documents that difference. Avoiding a codon grid changes the computation without establishing learned biological correspondence; comparing fungal and GTEx results also changes the task.
 
@@ -87,6 +87,6 @@ Saved outputs can be read without executing cells. The notebooks also default to
 
 The notebooks explain and assemble the references; [shared fusion code](../shared_code/fusion/) supplies reused extraction, grid, head and training operations. [Software tests](../../tests/README.md) check controlled cases, while notebooks and [run records](../../docs/run-records.md) retain research evidence. Gantt/Details tasks 16/17/41/44 retain the baseline and reference work; task 25 covers proposed attention comparisons.
 
-Results and caches retain their existing paths. The main BLF benchmarks use `Code/stage4/results/phaseA/`; the separate appendix uses `Code/stage4/results/blf_phaseA/` for E. coli and `Code/stage3/results/fungal_expression/reproducible/` for fungal records. GTEx audit/repeat evidence and Mamba destinations likewise retain their historical Stage 4 directories. Token caches stay in `Code/stage3/embeddings/`. The [cache policy](../../README.md#results-caches-and-intermediate-files) and run records govern reuse, not the current notebook folder.
+The main BLF benchmarks use `Code/stage4/results/phaseA/`; the separate appendix uses `Code/stage4/results/blf_phaseA/` for E. coli and `Code/stage3/results/fungal_expression/reproducible/` for fungal records. GTEx repeat and Mamba destinations use their historical Stage 4 directories. Token caches stay in `Code/stage3/embeddings/`. The [cache policy](../../README.md#results-caches-and-intermediate-files) and run records govern reuse, not the current notebook folder.
 
 [Fungal results](results/fungal_expression/) include a separate [Windows seed-0 cohort](results/fungal_expression/reproducible/) without per-row predictions; it must not be mixed with the verified three-seed prediction cohort. [GTEx records](results/gtex_pilot/) preserve separately tagged configurations. The historical appendix exporter under the E. coli records remains a producer snapshot with its old notebook path, not a current execution command; the maintained analysis route is [the appendix notebook](blf_appendix_comparison.ipynb).

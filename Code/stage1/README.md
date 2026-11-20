@@ -11,13 +11,13 @@ The two main notebooks examine different relationships between biological inputs
 | [mRNA stability](Stage1_stability.ipynb) | A profile-standardized, decay-derived score; higher means relatively more stable, not hours of half-life. | DNA and RNA versions of the same coding sequence, plus its protein translation. Translation loses synonymous codon distinctions. |
 | [GTEx transcript expression](Stage1_gtex.ipynb) | Processed RNA-abundance targets across 30 human tissues. | Genomic DNA around the transcription start site; full transcripts for single-nucleotide RNA encoders or CDS for codon encoders; corresponding proteins. |
 
-Stability compares representations of a common sequence origin. GTEx adds genomic and untranslated-region context absent from the protein input. It also changes the population and target, so differences between the notebooks cannot isolate the effect of extra sequence context. The [target guide](../../docs/methods/data-and-targets.md) traces the measurements and transformations; the [input comparison](../../docs/stage1-overview.md#published-comparisons-and-distinct-inputs) connects them to the papers.
+Stability compares representations of a common sequence origin. GTEx adds genomic and untranslated-region context absent from the protein input. It also changes the population and target, so differences between the notebooks cannot isolate the effect of extra sequence context. The target guide traces the measurements and transformations. Each notebook describes how its published-split probe relates to the corresponding paper. [Target guide](../../docs/methods/data-and-targets.md) · [BioLangFusion comparison](Stage1_stability.ipynb#Published-split-comparison) · [IsoFormer comparison](Stage1_gtex.ipynb#GTEx-published-split-comparison)
 
 Read stability first for the shared methods, then GTEx for the changed inputs and evaluation. Neither notebook requires the other to run. The separate [mRFP control](mrfp_representation_control.ipynb) extends the synonymous-recoding analysis, and [LucaOne](lucaone_representation_comparison.ipynb) adds a matched comparison of another representation family. Neither locally reproduces a learned fusion architecture.
 
 ## Comparing the encoders
 
-The retained panel contains twelve frozen encoders and all 66 distinct pairs, including pairs within a modality. The [encoder table](../../docs/stage1-overview.md#models-and-input-settings) owns checkpoint and input settings. Selected compatible nucleotide encoders also supply the separate attention diagnostic.
+The retained panel contains twelve frozen encoders and all 66 distinct pairs, including pairs within a modality. Selected compatible nucleotide encoders also supply the separate attention diagnostic. The shared registry defines the checkpoints and token limits. [Encoder registry](../shared_code/encoders.py)
 
 Each encoder's final-layer token representations are averaged into one sequence vector. Its weights stay fixed while standardized ridge predictors are fitted to the vectors. This tests what the chosen predictor makes accessible, not the best performance possible with another head or fine-tuning. See [sequence preparation and pooling](../../docs/methods/sequences-to-predictions.md#from-sequences-to-embeddings) and [linear probing](../../docs/methods/sequences-to-predictions.md#linear-probing) for the computational details.
 
@@ -75,13 +75,13 @@ LucaOne's GTEx comparison is excluded under the selected 1,280-token whole-input
 
 ## What carries into the next stages
 
-The retained [result tables](../../docs/stage1-overview.md#result-tables) support three useful observations:
+- **Stability:** codon-level RNA and protein encoders are useful candidates under the linear probes. [Stability probes](Stage1_stability.ipynb#Stability-and-composition-probes-across-all-encoders)
+- **GTEx:** transcript-length features provide a strong reference for subsequent models. [Length and composition baselines](Stage1_gtex.ipynb#Length-and-composition-baselines)
+- **Representation agreement:** the specified composition features account for a substantial part of the measured agreement. [Stability pairs](Stage1_stability.ipynb#Before-and-after-composition-control-across-all-pairs) · [GTEx pairs](Stage1_gtex.ipynb#Raw-and-composition-residual-agreement-across-all-pairs)
 
-- **Stability:** codon-level RNA and protein encoders are useful candidates under the linear probes.
-- **GTEx:** transcript-length features provide a strong reference for subsequent models.
-- **Representation agreement:** the specified composition features account for a substantial part of the measured agreement.
+These findings nominate encoders and controls. They do not establish that enforcing alignment improves prediction, that learned fusion beats concatenation, or that attention reveals a biological mechanism.
 
-These findings nominate encoders and controls. They do not establish that enforcing alignment improves prediction, that learned fusion beats concatenation, or that attention reveals a biological mechanism. Some composition-controlled values also disagree across saved sources used by the [swap notebook](../stage4/encoder_swaps.ipynb); exact alignment-to-performance comparisons must identify their source and remain provisional where unresolved.
+For RNA-FM and RiNALMo on stability, composition-controlled linear CKA is **0.378** in the saved notebook summary and **0.486** in the figure capture used by Encoder Swaps. The discrepancy remains unresolved, so cite the exact source when relating controlled alignment to prediction performance and treat the comparison as provisional. [Notebook summary](Stage1_stability.ipynb#Composition-control) · [Figure capture](../../docs/figures/stability/results.json) · [Encoder Swaps](../stage4/encoder_swaps.ipynb#Relate-the-comparisons-to-Stage-1-alignment)
 
 [Stage 2](../../README.md#stage-2-defining-alignment) distinguishes biological correspondence, representation agreement and predictive complementarity. [Stage 3](../stage3/README.md) establishes reference methods and baselines, and [Stage 4](../stage4/README.md) investigates encoder substitutions, fusion methods and biological context. Reusing a dataset does not make their scores interchangeable: filtering, pooling, heads and evaluation can change.
 
@@ -89,7 +89,7 @@ A prospective rule for selecting pairs or a new alignment objective remains a hy
 
 ## Notebooks and supporting files
 
-The notebooks retain calculations and saved outputs; [the Stage 1 overview](../../docs/stage1-overview.md) brings together encoder settings and result tables. [Representation analysis](representation-analysis.md) owns the detailed metrics and diagnostics, while [the shared method guides](../../docs/README.md#understand-the-methods) explain targets and prediction procedures.
+The notebooks retain the encoder settings, calculations, result tables and interpretations for each experiment. The representation guide explains the metrics and diagnostics. The shared method guides cover targets and prediction procedures. [Representation guide](representation-analysis.md) · [Method guides](../../docs/README.md#understand-the-methods)
 
 [build_gtex_pilot.py](build_gtex_pilot.py) rebuilds the pilot dataset; reading existing results does not require rebuilding it. Embeddings and older caches remain local under `embeddings/` and `embeddings_legacy/`, following the [cache policy](../../README.md#results-caches-and-intermediate-files).
 

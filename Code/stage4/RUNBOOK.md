@@ -75,9 +75,9 @@ Encoder swaps now defaults to `READ_SAVED_RESULTS = True` and `RESULT_SET = "new
 
 ## Read saved results without starting work
 
-The active Stage 1, 3 and 4 notebooks default to reading saved evidence. Keep `READ_SAVED_RESULTS = True` and separate calculation switches off; the GTEx audit instead uses `AUDIT_MODE = "read_results"`. Check the actual saved settings because a notebook used for computation may retain changed values. Reading refreshes available displays without downloads, model timing, extraction, fitting, bootstrap recalculation or result-file publication. Missing evidence stays unavailable. The [Stage 4 guide](README.md#read-completed-results-from-the-top) explains historical metadata limits and the distinction between refreshed cell displays and unchanged result artifacts.
+The active Stage 1, 3 and 4 notebooks default to reading saved evidence. Keep `READ_SAVED_RESULTS = True` and separate calculation switches off. Check the actual saved settings because a notebook used for computation may retain changed values. Reading refreshes available displays without downloads, model timing, extraction, fitting, bootstrap recalculation or result-file publication. Missing evidence stays unavailable. The [Stage 4 guide](README.md#read-completed-results-from-the-top) explains historical metadata limits and the distinction between refreshed cell displays and unchanged result artifacts.
 
-Keep `RUN_SAVED_COMPARISONS` off in swaps, `RUN_LUCAONE_COMPARISON` off in LucaOne, `RUN_MATCHED_PROBES` off in half-life/TE, and `RUN_BOOTSTRAP` off in Mamba. The [frozen GTEx reference](../stage3/gtex_frozen_fusion_reference.ipynb) separates its original pilot (`RUN_PILOT`), repeated fits (`RUN_ISOFORMER_SEEDS`) and calculations from saved predictions (`RUN_SAVED_ANALYSIS`); all default off. These switches request computation, even when it uses only CPU or previously saved predictions. The [GTEx audit](../stage3/isoformer_gtex_audit.ipynb) retains its verified JSON reader and fails closed if the selected audit cannot be read; `run_audit` explicitly enables a new audit and publication.
+Keep `RUN_SAVED_COMPARISONS` off in swaps, `RUN_LUCAONE_COMPARISON` off in LucaOne, `RUN_MATCHED_PROBES` off in half-life/TE, and `RUN_BOOTSTRAP` off in Mamba. The [frozen GTEx reference](../stage3/gtex_frozen_fusion_reference.ipynb) separates its original pilot (`RUN_PILOT`), repeated fits (`RUN_ISOFORMER_SEEDS`) and calculations from saved predictions (`RUN_SAVED_ANALYSIS`); all default off. These switches request computation, even when it uses only CPU or previously saved predictions.
 
 For [gate diagnostics](gate_diagnostics.ipynb) and [anchor cross-attention](anchor_cross_attention.ipynb), keep `BENCHMARK = None` and `READ_SAVED_RESULTS = True`. Leave `RUN_ANALYSIS`, `RUN_TRAINING`, `RUN_DIAGNOSTICS` and `RUN_PARAMETER_PREVIEW` at `False`. Choose **Run All**, then **Save** in each main notebook. This rebuilds tables and figures from the published comparison and distribution reports for both benchmarks and all three training seeds. Save writes the refreshed displays to the `.ipynb` file.
 
@@ -307,11 +307,11 @@ These recorded collaboration conventions support coordination; execution, commit
 
 ## IsoFormer reproduction specification
 
-Fuller IsoFormer reproduction is deferred. Its preparation notebook, detailed specification and figures are retained privately and are not supplied with this checkout.
+Chase keeps the preparation notebook, detailed specification and figures for fuller IsoFormer reproduction in a local archive. The full-release GTEx audit notebook and its saved JSONs are archived there for a future cohort decision involving transcript lengths, missing proteins or genomic windows. [Reproduction deferral](../../docs/run-records.md#2026-11-11-stage-boundaries-and-deferred-reference-work) · [Audit deferral](../../docs/run-records.md#2026-11-20-defer-the-gtex-cohort-audit)
 
 The shared [fusion operation](../shared_code/fusion/isoformer_reference.py), [input helpers](../shared_code/fusion/isoformer_inputs.py), [adapters](../shared_code/fusion/isoformer_adapters.py) and [synthetic checks](../../tests/README.md#isoformer-reference-foundations) remain available. They establish implementation foundations, not a completed pretrained training pipeline. The [source record](../../docs/sources.md#isoformer-dataset-and-model-cards) preserves the public evidence and source disagreements.
 
-The [frozen GTEx reference](../stage3/gtex_frozen_fusion_reference.ipynb) and [GTEx audit](../stage3/isoformer_gtex_audit.ipynb) remain shared Stage 3 work. Controlled fusion comparisons do not require completing the fuller reproduction.
+Use the [frozen GTEx reference](../stage3/gtex_frozen_fusion_reference.ipynb) to read the earlier fusion pilot. For controlled comparisons, reuse the shared reference operation with the selected experiment's own cohort and inputs.
 
 ## Evaluation and results audit, November 4, 2026
 

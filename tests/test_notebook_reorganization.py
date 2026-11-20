@@ -18,16 +18,20 @@ ACTIVE = {
     "stage1/lucaone_representation_comparison.ipynb",
     "stage3/blf_datasets.ipynb", "stage3/blf_token_embeddings.ipynb",
     "stage3/blf_build_check.ipynb", "stage3/blf_reference_benchmarks.ipynb",
-    "stage3/blf_appendix_comparison.ipynb", "stage3/isoformer_gtex_audit.ipynb",
+    "stage3/blf_appendix_comparison.ipynb",
     "stage3/gtex_frozen_fusion_reference.ipynb", "stage3/coupled_mamba_reference.ipynb",
-    "stage4/encoder_swaps.ipynb", "stage4/halflife_translation_efficiency.ipynb",
+    "stage4/anchor_correction.ipynb", "stage4/anchor_cross_attention.ipynb",
+    "stage4/encoder_swaps.ipynb", "stage4/gate_diagnostics.ipynb",
+    "stage4/grouped_stability.ipynb", "stage4/halflife_translation_efficiency.ipynb",
+    "stage4/partner_tasks.ipynb", "stage4/region_aware_fusion.ipynb",
 }
 REPLACED = {
     "stage3/01_blf_datasets.ipynb", "stage3/02_token_embeddings.ipynb",
     "stage3/03_blf_build_check.ipynb", "stage3/04_lucaone_isoformer_check.ipynb",
     "stage4/tier1_mrfp_control.ipynb", "stage4/tier2_blf_phaseA.ipynb",
     "stage4/tier2_blf_phaseA_appendix.ipynb", "stage4/tier2_encoder_swaps.ipynb",
-    "stage4/tier2_isoformer_gtex_audit.ipynb", "stage4/tier2_lucaone_isoformer.ipynb",
+    "stage3/isoformer_gtex_audit.ipynb", "stage4/tier2_isoformer_gtex_audit.ipynb",
+    "stage4/tier2_lucaone_isoformer.ipynb",
     "stage4/tier3_halflife_te.ipynb", "stage4/tier4_designs.ipynb",
 }
 
@@ -95,13 +99,6 @@ class NotebookReorganizationTests(unittest.TestCase):
                 "RESULTS_ROOT": "CODE_DIR / 'stage4' / 'results' / 'tier4_designs'",
                 "PHASE_A": "CODE_DIR / 'stage4' / 'results' / 'phaseA'",
                 "LEGACY_REFERENCE_RECORD": "CODE_DIR / 'stage4' / 'legacy_reference_reuse.json'",
-            }),
-            ("stage3/isoformer_gtex_audit.ipynb", "settings", {
-                "CSV_PATH": "REPO_ROOT / '.data-cache' / 'GTEx_final.csv'",
-                "RESULTS_DIR": "CODE_DIR / 'stage4' / 'results' / 'isoformer_cohort_audit'",
-                "RESULT_PATH": "RESULTS_DIR / 'gtex_audit_v2.json'",
-                "PREVIOUS_RECORD": "RESULTS_DIR / 'cohort_audit.json'",
-                "HISTORICAL_RECORD": "RESULTS_DIR / 'full_csv_2026-11-09.json'",
             }),
             ("stage3/gtex_frozen_fusion_reference.ipynb", "gtex-execution-paths", {
                 "CACHE_ROOT": "CODE_DIR / 'stage3' / 'embeddings'",

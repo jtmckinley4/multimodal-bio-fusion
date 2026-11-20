@@ -11,7 +11,7 @@ Treat recorded status as a dated statement; dates alone do not establish complet
 ## Working with shared files
 
 - Inspect the requested files and current Git changes before editing. Preserve other contributors' work and keep changes within the agreed scope.
-- Identify the notebook named in the task before editing or running it. For Stage 1, use the [Stage 1 overview](docs/stage1-overview.md) to distinguish the overview document from the stability and GTEx experiment notebooks. Confirm the current file contents rather than inferring its role from an older task summary.
+- Identify the notebook named in the task before editing or running it. The [Stage 1 README](Code/stage1/README.md#why-stability-and-gtex) explains which notebook analyzes stability and which analyzes GTEx expression. Confirm the current file contents rather than inferring its role from an older task summary.
 - For presentation-only notebook edits, preserve executable cells, saved outputs, execution counts, and metadata unless the request includes changing them. Keep experiment-specific choices and interpretations with the analysis; use the [method guides](docs/README.md#understand-the-methods) for shared explanations.
 - Run notebooks, change experimental methods, create commits, push changes, or publish material only when those actions are included in the user's request. A previous task summary does not authorize resuming its work.
 - Follow the [results and cache policy](README.md#results-caches-and-intermediate-files). Check whether an artifact is already tracked before changing ignore rules or proposing cleanup; preserve results needed as evidence.

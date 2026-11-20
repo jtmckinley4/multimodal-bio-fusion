@@ -25,7 +25,7 @@ A stronger replacement can improve a fused model without establishing complement
 
 Encoders reading a common coding sequence can expose different predictive patterns without adding an independently measured molecule. Genomic flanks and untranslated regions can instead supply sequence context absent from a translated protein. Neither guarantees a fusion gain. Cross-notebook differences can also change datasets, targets, predictors or evaluation, so they cannot isolate one biological cause.
 
-The BLF benchmark and appendix comparisons, frozen GTEx reference, GTEx audit and adapted Coupled Mamba now belong to [Stage 3](../stage3/README.md). The mRFP control and LucaOne ridge comparison belong to [Stage 1](../stage1/README.md). Their original result directories and dated run identities are retained.
+The BLF benchmark and appendix comparisons, frozen GTEx reference and adapted Coupled Mamba belong to [Stage 3](../stage3/README.md). The mRFP control and LucaOne ridge comparison belong to [Stage 1](../stage1/README.md). Their original result directories and dated run identities are retained.
 
 ## Read completed results from the top
 
@@ -174,7 +174,7 @@ The four notebooks keep the advisor's steps connected while giving each question
 
 ### Keep published references and proposed methods distinct
 
-The [IsoFormer audit](../stage3/isoformer_gtex_audit.ipynb) has saved evidence; the [shared model/input foundations](../shared_code/fusion/isoformer_reference.py) have synthetic checks. Pretrained integration and research training remain unfinished. [Full experimental reproduction is deferred](RUNBOOK.md#isoformer-reproduction-specification) from the main investigation route; the private preparation notebook and specification are not supplied with this checkout. Faithful reference operations can support a controlled comparison without reconstructing the paper's whole experiment; generic anchor-query attention should not be labeled an IsoFormer reproduction.
+The [shared IsoFormer model and input foundations](../shared_code/fusion/isoformer_reference.py) have synthetic checks. The [deferred GTEx audit](../../docs/run-records.md#2026-11-20-defer-the-gtex-cohort-audit) documents the released cohort's input questions, and the [deferred reproduction preparation](RUNBOOK.md#isoformer-reproduction-specification) tracks integration and training choices. Controlled fusion comparisons can reuse the verified reference operation on matched inputs. Describe each comparison by the attention operation and adaptation it implements.
 
 The [Coupled Mamba reference](../stage3/coupled_mamba_reference.ipynb) supplies an adapted implementation and controls. Its corresponding DNA/RNA/protein codon streams do not by themselves establish a pipeline for separately paired molecules. Further Mamba work is conditional on a measured long-sequence runtime or memory bottleneck (tasks 20/21), not a prerequisite for gate/attention tests. The reference methods remain in Stage 3; using one on a new partner task requires a separate input and evaluation design.
 

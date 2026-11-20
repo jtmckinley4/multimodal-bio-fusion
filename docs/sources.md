@@ -100,6 +100,10 @@ UCF ARCC's [cluster documentation](https://arcc.ist.ucf.edu/docs/), [Newton desc
 
 **Reading scope and limits, November 1, 2026:** Read resource descriptions and registration/orientation requirements. The pages do not establish this project's allocation, queue availability or permission to use a particular GPU. No account request or contact was submitted; availability and requirements need rechecking before execution.
 
+### Slurm job dependencies
+
+**Use on Newton, November 20, 2026.** Read the remaining-dependency format in `squeue` and dependency updates in `scontrol`. `afterok` waits for successful completion, while `afterany` waits for the job to end. This distinction let the remaining correction seeds become eligible independently after seed 0 succeeded, while the half-life seeds still waited for the native-token trial. Eligible jobs still wait for scheduling priority and available resources. [Slurm queue fields](https://slurm.schedmd.com/squeue.html) · [Slurm job updates](https://slurm.schedmd.com/scontrol.html) · [Newton monitoring guide](../execution/arcc/README.md#monitor-or-retry)
+
 ## Papers raised in October 2026 (fusion evaluation, alignment, multi-omics benchmarks)
 
 Eight papers came in by email on October 9 and 10 (three from Chase, five from Mina). Each is placed by role in the Overleaf related-work table and in Section 6.6 of the project notes; this index records why each is retained.
@@ -250,7 +254,9 @@ Section 5.3 gives **six** recommendations: comparable experimental conditions, m
 
 **Source figures in the reproduction notebook.** [Fuller reproduction is deferred](../Code/stage4/RUNBOOK.md#isoformer-reproduction-specification); its preparation notebook and detailed specification are private material, not supplied with this checkout. Their mentions below record earlier decisions and source influence. During preparation, the notebook used the authors' [Figure 2](https://proceedings.neurips.cc/paper_files/paper/2024/file/8f6b3692297e49e5d5c91ba00281379c-Paper-Conference.pdf#page=5) (p. 5) to connect isoform biology to expression prediction and [Figure 1](https://proceedings.neurips.cc/paper_files/paper/2024/file/8f6b3692297e49e5d5c91ba00281379c-Paper-Conference.pdf#page=2) (p. 2) to explain the aggregation module. Both were visually checked and cropped directly from the [retained final paper](../Papers/core/Multi-Modal-Transfer-Learning.pdf), also available from [NeurIPS](https://proceedings.neurips.cc/paper_files/paper/2024/file/8f6b3692297e49e5d5c91ba00281379c-Paper-Conference.pdf). The artwork and labels were not redrawn; each PNG records the source URL, PDF SHA-256, page, crop bounds and rendering scale in its metadata. The notebook distinguishes the paper's general three-stream diagram from the released configuration's DNA-only update/pooling path. These images explain the source architecture, not an executed reproduction.
 
-**Current use, November 6, 2026.** These sources support understanding the paper, its released Enformer implementation and the differences from our frozen GTEx pilot. The [current investigation scope](../Code/stage4/RUNBOOK.md#current-investigation-scope) defers the fuller replication proposal below in favor of explaining the method and selecting focused comparisons. The dated November 4–5 readings remain evidence of what was inspected and unresolved; their implementation proposals are not an active training queue.
+**Matched fusion comparison, November 20, 2026.** Read BioLangFusion's fusion methods, IsoFormer's aggregation description and the released forward pass. BLF concatenation joins features at each aligned codon. Its joint attention lets each modality read a shared context. IsoFormer's released model updates DNA from RNA, then uses that updated DNA to read protein before pooling. The paper's general formulation can concatenate representations after attention. This distinction motivates the proposed Stage 3 sequential-attention reference and its use in Stage 4 encoder swaps with matched frozen embeddings, codon grid and predictor. That comparison would test the adapted head on our benchmarks. [BLF §2.2](https://arxiv.org/html/2506.08936v1#S2.SS2) · [IsoFormer §§4.1–4.2](https://proceedings.neurips.cc/paper_files/paper/2024/file/8f6b3692297e49e5d5c91ba00281379c-Paper-Conference.pdf#page=4) · [Released forward pass](https://huggingface.co/InstaDeepAI/isoformer/blob/main/modeling_isoformer.py#L233) · [Stage 4 encoder comparisons](../Code/stage4/encoder_swaps.ipynb)
+
+**Earlier scope, November 6, 2026.** These sources explained the released Enformer implementation and its differences from the frozen GTEx pilot. The dated November 4–5 entries below retain the questions and proposals from that preparation. The [runbook](../Code/stage4/RUNBOOK.md#isoformer-reproduction-specification) records the local deferral of the fuller GTEx reproduction.
 
 **Runtime reading.** Appendix B, “Training and architecture details,” on [page 16 of the final paper](https://proceedings.neurips.cc/paper_files/paper/2024/file/8f6b3692297e49e5d5c91ba00281379c-Paper-Conference.pdf#page=16) reports five seeds, four A100 GPUs with 80 GB RAM, and one to five hours per training run depending on the model. This source was read during the November 6 planning discussion. It does not establish local runtime, memory requirements or the duration of the complete proposed study; it is especially not a timing estimate for a frozen-embedding head comparison. The workload and measured resources should follow the question selected for a future run.
 
@@ -327,11 +333,11 @@ This reading informs the sequence-length explanation and unresolved choices. The
 
 **Full release-data audit, November 9, 2026.** With explicit authorization, read all rows of the pinned [GTEx CSV](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/blob/330ab1795abca683e692c7ee138a2e89c0c882f1/transcript_expression/GTEx_final.csv) through temporary storage and verified its bytes against the [Hugging Face file metadata](https://huggingface.co/api/datasets/InstaDeepAI/multi_omics_transcript_expression/tree/330ab1795abca683e692c7ee138a2e89c0c882f1/transcript_expression?recursive=false&expand=true). The [deterministic audit record](run-records.md#2026-11-09-gtex-full-csv-length-and-token-audit) identifies inputs, token-count rules, versions and checks; the audit tables recorded affected rows. This supersedes the earlier source-only limitation about not inspecting the full CSV, without claiming recovery of the training cohort.
 
-**Cohort-history review, November 9, 2026.** Read the final paper's Sections 4–5 and appendices, the earlier arXiv version, current and sampled historical dataset loaders, the dataset card/file history, and official GitHub inference history/issues. The [card](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/blob/330ab1795abca683e692c7ee138a2e89c0c882f1/README.md), last edited March 13, 2024, describes 91,241 coding-associated transcripts; its partition counts differ from the current CSV's protein-present group despite equal totals. [March 26 metadata](https://huggingface.co/api/datasets/InstaDeepAI/multi_omics_transcript_expression/tree/ce68d96a7bd99db9f543e2cf3c9be57d8253b93d/transcript_expression?expand=true) identifies the historical fixed CSV with the same SHA-256 as the current file. This supports historical drift in the card, not recovery of training membership. No inspected loader supplied a missing/overlength-protein rule, and the released model always executes its protein branch. OpenReview author responses were inaccessible; no author clarification was recovered there. The [GTEx data-audit notebook](../Code/stage3/isoformer_gtex_audit.ipynb) retains these source observations and the original measurements. It adopts no cohort or length policy.
+**Cohort-history review, November 9, 2026.** Read the final paper's Sections 4–5 and appendices, the earlier arXiv version, current and sampled historical dataset loaders, the dataset card/file history, and official GitHub inference history/issues. The [card](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/blob/330ab1795abca683e692c7ee138a2e89c0c882f1/README.md), last edited March 13, 2024, describes 91,241 coding-associated transcripts; its partition counts differ from the current CSV's protein-present group despite equal totals. [March 26 metadata](https://huggingface.co/api/datasets/InstaDeepAI/multi_omics_transcript_expression/tree/ce68d96a7bd99db9f543e2cf3c9be57d8253b93d/transcript_expression?expand=true) identifies the historical fixed CSV with the same SHA-256 as the current file. This supports historical drift in the card, not recovery of training membership. No inspected loader supplied a missing/overlength-protein rule, and the released model always executes its protein branch. OpenReview author responses were inaccessible; no author clarification was recovered there. The GTEx audit recorded these source observations and the original measurements. Cohort and length policies require a separate decision. [Archive decision](run-records.md#2026-11-20-defer-the-gtex-cohort-audit)
 
 **Additional schema inspection.** A bounded read of the pinned CSV header verified `RNA_type_gff`, `transcript_id_ensembl_protein`, RNA, Protein and CDS fields. There is a transcript-type annotation to investigate, but no explicit protein-absence reason column. Missing protein strings alone therefore do not establish noncoding status. This header inspection did not measure annotation distributions. The [pinned CSV](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/blob/330ab1795abca683e692c7ee138a2e89c0c882f1/transcript_expression/GTEx_final.csv) and [loader's separate label and normalization-statistic fields](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/blob/330ab1795abca683e692c7ee138a2e89c0c882f1/multi_omics_transcript_expression.py#L375) inform the expanded audit's annotation and raw-target checks. Those calculations preserve supplied values; distribution shape cannot recover an undocumented transformation or training population.
 
-**Current project use.** The expanded notebook connects annotations, identifier/sequence overlap, target quality, length distributions and grouped policy effects, with tables and inline figures derived from a selected JSON. Its new checks require an explicit `run_audit` and a separate `gtex_audit_v2.json`; their implementation and synthetic verification are not new full-data findings. Earlier count records remain readable without being relabeled as expanded audits.
+**Expanded audit.** The notebook connects annotations, identifier and sequence overlap, target quality, length distributions and grouped policy effects in tables and inline figures from saved JSON. An explicit `run_audit` publishes expanded measurements to `gtex_audit_v2.json`. The expanded report and its predecessor count records are archived together under their recorded identities. [Audit preparation and verification](run-records.md#2026-11-09-gtex-audit-expansion-and-notebook-rename)
 
 The file contains a raw `eval` partition and many missing or overlength protein fields. Re-reading the loader confirmed that its standard validation request still selects raw `test`, not `eval`, and that it does not explicitly filter missing/long proteins. These are consequential cohort ambiguities; the data audit does not resolve them by inventing an exclusion or substitution. [Split mapping](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/blob/330ab1795abca683e692c7ee138a2e89c0c882f1/multi_omics_transcript_expression.py#L156) · [CSV handling and field emission](https://huggingface.co/datasets/InstaDeepAI/multi_omics_transcript_expression/blob/330ab1795abca683e692c7ee138a2e89c0c882f1/multi_omics_transcript_expression.py#L322).
 
@@ -505,7 +511,7 @@ Elnaggar et al.'s [ProtTrans paper](https://arxiv.org/abs/2007.06225), the [Rost
 
 **Reading scope and limits:** The October 5, 2026 review read the introduction, data/split discussion, Box 1, and Table 1 in the [author-hosted PDF](https://www.biofold.org/pages/documents/papers/walsh_nmeth2021.pdf), which carries a placeholder publication date. The publisher's correction notice identifies a corrected specificity equation in Figure 2; that notice was checked through search when direct retrieval failed. Consult the corrected publication before reusing that equation.
 
-**Coding-review follow-up:** The October 5 coding review additionally read the Optimization discussion for the [proposed data and evaluation contracts](shared-coding-proposal.md#what-research-software-engineering-adds). No corrected specificity equation was used.
+**Coding-review follow-up.** The October 5 coding review also read the Optimization discussion for its proposed data and evaluation contracts. No corrected specificity equation was used. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal)
 
 ### Scikit-learn: Validation selection and grouped evaluation
 
@@ -529,7 +535,7 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Reading scope and limits:** The sections named above were read on October 5, 2026. This is supporting rationale for the present organization, not evidence that passing tests validates a biological interpretation or reproduces saved research results.
 
-**Coding-review follow-up:** The October 5 coding review also read Make Incremental Changes, Plan for Mistakes, Optimize Software Only after It Works Correctly, and Document Design and Purpose, Not Mechanics for the [coding proposal](shared-coding-proposal.md#what-research-software-engineering-adds).
+**Coding-review follow-up.** The October 5 coding review also read Make Incremental Changes, Plan for Mistakes, Optimize Software Only after It Works Correctly, and Document Design and Purpose, Not Mechanics. These readings informed the coding proposal that preceded the current workflow. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal)
 
 ### Wilson et al.: Good enough practices in scientific computing
 
@@ -539,7 +545,7 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Reading scope and limits:** The sections named above were read on October 5, 2026. They support keeping the [reading route](../README.md#stage-1-representation-analysis) and [checks](../tests/README.md) proportionate. The paper does not prescribe this repository's exact folders or notebook boundaries, or require adding CI now.
 
-**Coding-review follow-up:** The October 5 coding review revisited Software (especially 2g–2i), Collaboration, and What we left out for the [proposed proportionate coding workflow](shared-coding-proposal.md#shared-skill-and-how-both-agents-use-it).
+**Coding-review follow-up.** The October 5 coding review revisited Software (especially 2g–2i), Collaboration, and What we left out when proposing a coding workflow in which checks and structure match the scope of the change. [Current shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md)
 
 ### Sandve et al.: Ten Simple Rules for Reproducible Computational Research
 
@@ -549,7 +555,7 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Reading scope and limits:** Rules 1–6 were read on October 5, 2026. Complete run provenance remains a future design consideration; preserved outputs and regression checks do not establish that it exists. Recording a seed alone does not establish deterministic behavior across hardware and libraries.
 
-**Coding-review follow-up:** The later October 5 coding review read Rules 1–3 and 5–9 for the [coding proposal](shared-coding-proposal.md#what-research-software-engineering-adds). The current [manual run-record procedure](run-records.md) is now available; its existence does not establish complete historical provenance.
+**Coding-review follow-up.** The later October 5 coding review read Rules 1–3 and 5–9 for the coding proposal. The current manual procedure records run provenance as far as the available evidence supports it. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal) · [Run-record procedure](run-records.md#apply-the-provenance-workflow)
 
 ### Git and GitHub: Version history and plan-change review
 
@@ -567,13 +573,13 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 **Reading scope and limits:** The introduction and named rules were checked on October 5, 2026. They support evaluating the organization, not this repository's exact folder names, heading levels, or approval batches.
 
-**Coding-review follow-up:** The October 5 coding review revisited the introduction and Rules 1–3 and 6–8 for the [proposed notebook/computation boundary](shared-coding-proposal.md#what-research-software-engineering-adds).
+**Coding-review follow-up.** The October 5 coding review revisited the introduction and Rules 1–3 and 6–8 when proposing what to keep in notebooks and what to move into shared code. The current workflow keeps experiment choices and interpretation visible in the notebook. [Choose useful boundaries](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md#choose-useful-boundaries)
 
 ### Xie et al.: Testing when the exact answer is unknown
 
 [Xie et al. (2011), Testing and validating machine learning classifiers by metamorphic testing](https://www.cs.columbia.edu/wp-content/uploads/sites/7/2016/08/jss2011.pdf), Journal of Systems and Software 84, 544–558; DOI 10.1016/j.jss.2010.11.920.
 
-**Why retain it:** It helps distinguish required mathematical relationships from plausible statistical expectations when exact expected outputs are unavailable. It informs the [proposed scientific checks](shared-coding-proposal.md#what-research-software-engineering-adds); jointly permuting paired rows in CKA is our local application, not an experiment in this paper.
+**Why retain it.** It helps distinguish required mathematical relationships from plausible statistical expectations when exact expected outputs are unavailable. The coding review applied this idea to a proposed check that jointly permutes paired rows in CKA. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal)
 
 **Reading scope and limits:** On October 5, 2026, the research pass read the abstract/introduction, sections 2.3, 3.1–3.2, and 4.3.1; case-study details were sampled. The classifier study does not validate this repository's metrics. A surprising result is not automatically a coding fault unless the violated relation is a necessary property. The remote PDF was not archived.
 
@@ -581,7 +587,7 @@ For an introduction, read Wilson et al. (2017), then Wilson et al. (2014) for mo
 
 [National Academies of Sciences, Engineering, and Medicine (2019), Reproducibility and Replicability in Science, chapter 3](https://www.nationalacademies.org/read/25303/chapter/6), especially pages 43–47 and Conclusion 3-1.
 
-**Why retain it:** Its convention distinguishes computational consistency with the same data/code/conditions from a new study using newly obtained data. This informs the [proposal's evidence distinctions](shared-coding-proposal.md#what-research-software-engineering-adds) and interpretation of [run records](run-records.md). Repeated folds are not new biological observations.
+**Why retain it.** Its convention distinguishes computational consistency with the same data, code and conditions from a new study using newly obtained data. This distinction informed the coding proposal and still helps interpret run records. Repeated folds reuse observed data. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal) · [Run records](run-records.md)
 
 **Reading scope and limits:** The terminology discussion and Conclusion 3-1 were read on October 5, 2026. Terminology differs across communities; these definitions should be stated when needed, not assumed universal. Reproducing an output does not establish the method's validity. The remote chapter was not archived.
 
@@ -630,7 +636,7 @@ The remote pages in this section were checked on October 5, 2026 and were not ar
 
 ## Choosing code boundaries
 
-These sources inform the [coding review](shared-coding-proposal.md) and the adopted [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md). The proposal adapts Chase's personal Shared Engineering criteria for this research repository without requiring that personal installation. The sources below were read on October 5, 2026; remote pages were not archived.
+The October 5, 2026 coding review drew on these sources and adapted Chase's personal Shared Engineering criteria for the repository. The adopted workflow lives in the repository and can be used independently of Chase's personal skill. The source record for the remote pages consists of links and reading notes. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal) · [Current shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md)
 
 ### Fowler: YAGNI
 
@@ -642,7 +648,7 @@ These sources inform the [coding review](shared-coding-proposal.md) and the adop
 
 [Dave Thomas and Andy Hunt, The Pragmatic Programmer: The Evils of Duplication](https://media.pragprog.com/titles/tpp20/dry.pdf), 20th Anniversary Edition excerpt.
 
-**Use and scope:** Read “DRY is More Than Code” and “Not All Code Duplication is Knowledge Duplication,” PDF pages 7 and 9–10. These distinguish shared intent from matching text. They inform sharing the ridge definition while preserving different dataset evaluations in the [proposal](shared-coding-proposal.md#share-the-ridge-definition-without-hiding-the-experiment). They do not require eliminating independent test expectations.
+**Use and scope.** Read “DRY is More Than Code” and “Not All Code Duplication is Knowledge Duplication,” PDF pages 7 and 9–10. These distinguish shared intent from matching text. The coding review applied that distinction to sharing the ridge definition while preserving different dataset evaluations. Independent test expectations are useful for checking the shared rule. [Choose useful boundaries](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md#choose-useful-boundaries)
 
 ### Martin: SOLID as responsibility and interface guidance
 
@@ -654,19 +660,19 @@ These sources inform the [coding review](shared-coding-proposal.md) and the adop
 
 [C++ Core Guidelines, F.1–F.2](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#f1-package-meaningful-operations-as-carefully-named-functions) and [C.1–C.2](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c1-organize-related-data-into-structures-structs-or-classes).
 
-**Use and scope:** Read those sections' rationales and examples. They inform the [function/record/class decision table](shared-coding-proposal.md#choosing-between-inline-code-a-function-and-a-class): name meaningful operations and represent genuinely related state. These are C++ guidelines; its class/struct distinction and language mechanics are not Python requirements. No numerical function-length limit is adopted.
+**Use and scope.** Read those sections' rationales and examples. They informed the proposal's criteria for functions, records and classes. The current Python guidance uses them to name meaningful operations and represent genuinely related state. The C++ mechanics, including the class/struct distinction, are specific to the original guidance. Function length depends on the operation. [Choose useful boundaries](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md#choose-useful-boundaries)
 
 ### Google: Reviewing complexity and useful tests
 
 [Google Engineering Practices, What to look for in a code review](https://google.github.io/eng-practices/review/reviewer/looking-for.html#complexity).
 
-**Use and scope:** Read Design, Complexity, Tests, Naming, Comments, and Context. Reader comprehension, present needs, and tests that can detect realistic failures inform the [proposal's review criteria](shared-coding-proposal.md#what-the-shared-skill-should-accomplish). This is Google review guidance, not a mandate to import all its process or infrastructure.
+**Use and scope.** Read Design, Complexity, Tests, Naming, Comments, and Context. The coding review drew on Google's guidance for reader comprehension, present needs, and tests that can detect realistic failures. The repository workflow applies these criteria to its own code and tests. [Current shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md)
 
 ### AWS: Retries and operation identity
 
 [Malcolm Featonby, Making retries safe with idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/), AWS Builders' Library.
 
-**Use and scope:** Read Retrying and side effects, Reducing client complexity, Late arriving requests, Same client request ID/different intent, and the conclusion. It informs the [builder recovery proposal](shared-coding-proposal.md#recoverable-files-and-model-cleanup), especially preserving operation intent and distinguishing retryable failures. The article concerns service contracts; it neither establishes Ensembl's API behavior nor calls for distributed coordination here. Publication date was not established.
+**Use and scope.** Read Retrying and side effects, Reducing client complexity, Late arriving requests, Same client request ID/different intent, and the conclusion. The article discusses service contracts. The coding review applied its ideas about operation intent and retryable failures to the local dataset builder. The linked Ensembl sources cover the API's own behavior. Publication date was not established. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal) · [Ensembl sequence requests and rate limits](#ensembl-sequence-requests-and-rate-limits)
 
 
 ## Mathematics in notebook Markdown
@@ -705,7 +711,7 @@ These sources inform the [coding review](shared-coding-proposal.md) and the adop
 
 **Reading scope and limits:** Discovery, naming, invocation, and supporting-file sections were read. A personal skill can take precedence over a project skill with the same name, which motivates the distinctive project name and explicit path. The two-entry-point arrangement is this project's design, not a vendor-provided integration recipe.
 
-**Coding-review follow-up:** Project skill locations, description-based selection, explicit invocation, supporting files, and name precedence were rechecked on October 5, 2026 for the [shared coding proposal](shared-coding-proposal.md#shared-skill-and-how-both-agents-use-it). Julian's actual application discovery was not tested.
+**Coding-review follow-up.** Project skill locations, description-based selection, explicit invocation, supporting files, and name precedence were rechecked on October 5, 2026 for the proposed coding workflow. The review checked documentation and left discovery in Julian's application unverified. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal)
 
 ### Claude Code: Repository access and the Desktop Code surface
 
@@ -731,7 +737,7 @@ These sources inform the [coding review](shared-coding-proposal.md) and the adop
 
 **Reading scope and limits:** Discovery, invocation, and local locations were read. Same-named skills are not merged, so a personal installation should not be assumed to replace or reproduce the repository workflow.
 
-**Coding-review follow-up:** Discovery and explicit/implicit invocation were rechecked on October 5, 2026 for the [proposed shared coding skill](shared-coding-proposal.md#shared-skill-and-how-both-agents-use-it). That initial research pass did not install an entry point; the subsequently authorized implementation added the shared workflow and thin Claude route.
+**Coding-review follow-up.** Discovery and explicit or implicit invocation were rechecked on October 5, 2026 for the proposed shared coding skill. The subsequent authorized implementation added the shared workflow and a Claude entry point that directs readers to it. [Coding proposal decision record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal) · [Claude entry point](../.claude/skills/multimodal-bio-shared-engineering/SKILL.md)
 
 ## Checking a teammate's setup
 

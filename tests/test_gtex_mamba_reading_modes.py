@@ -3,7 +3,7 @@
 Every code cell runs in notebook order in a temporary repository layout. Research
 loaders, model construction, fitting, metrics, resampling, downloads and filesystem
 publication are blocked. This checks reading branches, not research execution or
-scientific correctness. Audit fixtures retain its deliberate fail-closed reader.
+scientific correctness.
 """
 
 from contextlib import ExitStack, redirect_stdout
@@ -36,22 +36,24 @@ from shared_code.fusion import (
     isoformer_data_checks, isoformer_results, run_identity, swap_results,
     token_embeddings, train,
 )
-from test_isoformer_cohort import ProteinTokenizer, RNATokenizer
 
 
 NOTEBOOKS = {
     name: json.loads((ROOT / "Code/stage3" / f"{name}.ipynb").read_text(encoding="utf-8"))
-    for name in ("gtex_frozen_fusion_reference", "coupled_mamba_reference", "isoformer_gtex_audit")
+    for name in ("gtex_frozen_fusion_reference", "coupled_mamba_reference")
 }
 
 
-class DefaultReadingTests(unittest.TestCase):
+class NotebookReadingFixture(unittest.TestCase):
+    notebooks = NOTEBOOKS
+    notebook_directory = "stage3"
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix="b3-reading-fixture-")
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name).resolve()
         self.code = self.root / "Code"
-        self.cwd = self.code / "stage3"
+        self.cwd = self.code / self.notebook_directory
         self.cwd.mkdir(parents=True)
         (self.code / "shared_code").mkdir()
         self.producer = Mock(side_effect=AssertionError("Producer reached in default reading"))
@@ -108,9 +110,9 @@ class DefaultReadingTests(unittest.TestCase):
                 stack.enter_context(patch.object(Path, "open", readonly_path_open))
                 stack.enter_context(patch.object(IPython.display, "display", self.displays.append))
                 stack.enter_context(patch.object(plt, "show", lambda: plt.close("all")))
-                # Keep the audit's already-loaded helpers instrumented across its reload calls.
+                # Keep instrumented helpers in place across notebook setup reloads.
                 stack.enter_context(patch.object(importlib, "reload", lambda module: module))
-                for cell in NOTEBOOKS[name]["cells"]:
+                for cell in self.notebooks[name]["cells"]:
                     if cell["cell_type"] != "code":
                         continue
                     exec(compile("".join(cell["source"]), f"fixture:{name}:{cell['id']}", "exec"), env)
@@ -126,6 +128,8 @@ class DefaultReadingTests(unittest.TestCase):
             self.producer.assert_not_called()
         return env, output.getvalue()
 
+
+class DefaultReadingTests(NotebookReadingFixture):
     def gtex_record(self, variant, seed, *, repeat=False, score=0.25):
         parent = "stage4/results/gtex_isoformer" if repeat else "stage3/results/gtex_pilot"
         return self.save(
@@ -206,64 +210,6 @@ class DefaultReadingTests(unittest.TestCase):
         self.assertTrue(env["reader_issues"])
         self.assertEqual(env["rows"], [])
         self.assertIn("report unavailable", output)
-
-    def audit_fixture(self):
-        source = self.root / "invented.csv"
-        source.write_text("transcript_id_gtex,split,RNA,Protein,chr,start,end,strand\n"
-                          "fixture1,train,ACGTAC,M,chr1,300001,300010,+\n"
-                          "fixture2,test,N,,chr1,400001,400010,+\n", encoding="utf-8")
-        report = isoformer_cohort.audit_csv(
-            source, RNATokenizer(), ProteinTokenizer(), chromosome_sizes={"chr1": 1_000_000})
-        report.update({
-            "started_utc": "2026-01-01T00:00:00+00:00",
-            "finished_utc": "2026-01-01T00:00:01+00:00",
-            "dataset_revision": "a" * 40, "model_revision": "b" * 40,
-            "vocabulary_sha256": {"rna": "c" * 64, "protein": "d" * 64},
-            "chromosome_sizes_sha256": "e" * 64,
-            "transformers": "fixture", "host": "synthetic-host",
-        })
-        report["audit_identity"] = {
-            key: report[key] for key in (
-                "source_sha256", "source_bytes", "dataset_revision", "model_revision",
-                "vocabulary_sha256", "chromosome_sizes_sha256", "transformers",
-            )
-        }
-        report["audit_identity"]["method_version"] = isoformer_cohort.METHOD_VERSION
-        return report
-
-    def configure_audit_identity(self, report):
-        def configure(cell, env):
-            if cell["id"] == "source-identity":
-                identity = {key: value for key, value in report["audit_identity"].items()
-                            if key != "transformers"}
-                env.update(SOURCE_IDENTITY=identity, PREVIOUS_IDENTITY=identity,
-                           LEGACY_IDENTITY={key: value for key, value in identity.items()
-                                            if key != "method_version"})
-        return configure
-
-    def test_audit_valid_saved_record_completes_without_csv_or_measurement(self):
-        report = self.audit_fixture()
-        path = self.save("stage4/results/isoformer_cohort_audit/gtex_audit_v2.json", report)
-        # Make its CSV unavailable before reading; only the compact JSON remains.
-        (self.root / "invented.csv").unlink()
-        env, output = self.execute("isoformer_gtex_audit", configure=self.configure_audit_identity(report))
-        self.assertEqual(env["AUDIT_MODE"], "read_results")
-        self.assertEqual(env["audit"], report)
-        self.assertEqual(env["selected_path"], path)
-        self.assertIn("synthetic-host", str(self.displays[0]))
-        self.assertIn("Historical reference is unavailable", output)
-
-    def test_audit_missing_report_stops_without_starting_audit(self):
-        with self.assertRaisesRegex(FileNotFoundError, "No completed audit"):
-            self.execute("isoformer_gtex_audit")
-
-    def test_audit_corrupt_preferred_record_does_not_fall_back(self):
-        report = self.audit_fixture()
-        self.save("stage4/results/isoformer_cohort_audit/gtex_audit_v2.json", {})
-        self.save("stage4/results/isoformer_cohort_audit/cohort_audit.json", report)
-        with self.assertRaises(ValueError):
-            self.execute("isoformer_gtex_audit", configure=self.configure_audit_identity(report))
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -26,11 +26,11 @@ Stage 1 characterizes representations; Stage 2 defines what alignment means; Sta
 
 The [stability and GTEx notebooks](Code/stage1/README.md) compare twelve frozen encoders using pooled vectors and fitted ridge predictors. Stability supplies DNA/RNA views and a translation of the same coding sequence. GTEx supplies genomic, transcript and protein contexts with 30 tissue-expression targets. Because both inputs and targets change, differences between these tasks cannot isolate the value of extra context.
 
-The analyses examine individual prediction, representation agreement and pairwise concatenation; selected attention diagnostics generate hypotheses. The [mRFP control](Code/stage1/mrfp_representation_control.ipynb) tests what nucleotide embeddings add beyond calculated features when protein input stays fixed. The [LucaOne comparison](Code/stage1/lucaone_representation_comparison.ipynb) compares separately encoded nucleotide and protein representations with the same ridge predictor family; it does not locally reproduce LucaOne's pretraining or a learned fusion architecture. Detailed encoder settings and pair coverage belong in the [Stage 1 overview](docs/stage1-overview.md).
+The analyses examine individual prediction, representation agreement and pairwise concatenation. Selected attention diagnostics generate hypotheses. The [mRFP control](Code/stage1/mrfp_representation_control.ipynb) tests what nucleotide embeddings add beyond calculated features when protein input stays fixed. The [LucaOne comparison](Code/stage1/lucaone_representation_comparison.ipynb) uses frozen nucleotide and protein representations with matched ridge predictors. See the [Stage 1 encoder guide](Code/stage1/README.md#comparing-the-encoders) for the model panel and input settings.
 
-**Findings.** Retained probes make codon-level RNA and protein encoders useful stability candidates. Composition explains substantial measured agreement, and transcript length is a strong GTEx reference. These are findings under the chosen probes, not proof that enforcing alignment or adding complex fusion will improve prediction. See the [result tables and qualifications](docs/stage1-overview.md#result-tables).
+**Findings.** Retained probes make codon-level RNA and protein encoders useful stability candidates. Composition explains substantial measured agreement, and transcript length is a strong GTEx reference. The [Stage 1 findings](Code/stage1/README.md#what-carries-into-the-next-stages) explain what those probes support and where the saved evidence differs.
 
-**Published comparisons.** The [published-split probes](docs/stage1-overview.md#published-comparisons-and-distinct-inputs) compare with BioLangFusion and IsoFormer inputs and partitions. Small frozen probes are distinct from reproducing their complete trained systems; split overlap and preprocessing limits remain attached to the scores.
+**Published comparisons.** The frozen probes use the supplied partitions for [stability](Code/stage1/README.md#how-the-stability-data-are-evaluated) and [GTEx](Code/stage1/README.md#how-gtex-is-evaluated). Those sections explain how the probes relate to BioLangFusion and IsoFormer and how split overlap and preprocessing affect the scores.
 
 ### Stage 2: defining alignment
 
@@ -44,7 +44,7 @@ Stage 2 is a definition and interpretation step, without a separate executable f
 
 ### Stage 3: reference methods and baselines
 
-The [Stage 3 guide](Code/stage3/README.md) connects BioLangFusion's data and token preparation, build checks and reference benchmark comparisons; the GTEx input audit and frozen IsoFormer-style reference; and the adapted Coupled-Mamba reference and its controls. These notebooks establish what later experiments use as baselines, including predictive validation and repeats. Token-level fusion retains positions that Stage 1's pooled vectors summarize away; matching array dimensions alone does not establish biological correspondence.
+The [Stage 3 guide](Code/stage3/README.md) connects BioLangFusion's data and token preparation, build checks and reference benchmarks. It also traces the earlier frozen IsoFormer-style GTEx pilot and the adapted Coupled Mamba reference and its controls. These notebooks establish what later experiments use as baselines, including predictive validation and repeats. Token-level fusion retains positions that Stage 1's pooled vectors summarize away. Matching array dimensions alone does not establish biological correspondence.
 
 The available BLF comparison uses four benchmarks; Ab1 was absent from the inspected public release. The GTEx and Coupled-Mamba implementations record their adaptations explicitly. Establishing a usable reference does not establish a complete published reproduction or make its input assumptions suitable for a different task.
 
@@ -174,8 +174,7 @@ When an output changes, update this inventory and its handling, adjusting [.giti
 | --- | --- |
 | `Code/stage1/embeddings/` | Local, ignored per-encoder matrices for sampled stability, published train/test subsets and `gtex_pilot_train/` / `gtex_pilot_test/`. Matching metadata govern reuse; preserve old evidence and choose a fresh directory for deliberate recomputation. |
 | `Code/stage1/embeddings_legacy/` | Local historical caches; current Stage 1 notebooks do not read them. |
-| `.data-cache/GTEx_final.csv` | Local, ignored full source table for pilot preparation. The GTEx audit can read it; explicit `run_audit` temporarily downloads it if absent. Reading saved audit JSON needs no CSV. |
-| [Code/stage4/results/isoformer_cohort_audit/](Code/stage4/results/isoformer_cohort_audit/) | Shared audit/provenance JSONs. `gtex_audit_v2.json` remains separate from predecessor/historical records. Identical reruns retain existing bytes; conflicting identities/measurements cannot overwrite them. Temporary downloads are removed; inline plots create no separate figure files. |
+| `.data-cache/GTEx_final.csv` | Local, ignored full source table used to prepare the frozen GTEx pilot. |
 | [docs/figures/stability/](docs/figures/stability/) and [docs/figures/gtex/](docs/figures/gtex/) | Deliberately shared figures, numeric data and manifests. The [figure guide](docs/figures/README.md) describes export from saved snapshots without encoder or analysis reruns. Export does not commit or push. |
 | `.data-cache/mrnabench/` | Local, ignored downloaded tables for the half-life/TE notebook. |
 | `Code/stage3/results/` and `Code/stage4/results/` | Small JSON/CSV and verification records are shared. Best-validation `*.weights.pt` files, recovery checkpoints, interrupted publications and `Code/*/embeddings/` remain local and ignored. Existing results without weights are reused without retraining merely to fill that gap. |

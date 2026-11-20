@@ -19,9 +19,9 @@ Start with the [Stage 1 guide](../Code/stage1/README.md), then read [stability](
 
 | Find | Location |
 | --- | --- |
-| Encoder settings and consolidated findings | [Stage 1 overview](stage1-overview.md), [result tables](stage1-overview.md#result-tables) and [summary](stage1-overview.md#summary). |
+| Encoder settings and findings | [Encoder panel](../Code/stage1/README.md#comparing-the-encoders) and [Stage 1 findings](../Code/stage1/README.md#what-carries-into-the-next-stages). The notebooks hold the saved tables. |
 | Row/target meaning and retained examples | [Data overview](../README.md#data), stability's [dataset audit](../Code/stage1/Stage1_stability.ipynb#Dataset-audit-for-published-comparisons), and [GTEx data](../Code/stage1/Stage1_gtex.ipynb#GTEx-data). |
-| Comparisons with published studies | [Scope and limitations](stage1-overview.md#published-comparisons-and-distinct-inputs), with the producing notebook sections linked there. |
+| Comparisons with published studies | The [stability](../Code/stage1/README.md#how-the-stability-data-are-evaluated) and [GTEx](../Code/stage1/README.md#how-gtex-is-evaluated) evaluation sections explain the scope and link to the notebook comparisons. |
 | Figures and their numeric inputs | [Figure guide](figures/README.md): saved snapshots and figure regeneration without model reruns. |
 
 Older planning entries name `Stage1_analysis.ipynb`, which the two linked experiment notebooks replaced.
@@ -46,7 +46,7 @@ Use [software checks](../tests/README.md) after edits; synthetic checks do not r
 
 For cluster work, the [common ARCC guide](../execution/arcc/README.md) covers workspace separation, environment/GPU preflight and transfer/evidence handling. Choose the recipe for [encoder swaps](../execution/arcc/encoder_swaps/README.md), [grouped stability](../execution/arcc/grouped_stability/README.md) or [controlled fusion studies](../execution/arcc/fusion_studies/README.md). The [returned-result route](../Code/stage4/RUNBOOK.md#select-a-returned-result-set) covers reading the distinct Newton cohort with canonical dataset files; the [November 16 record](run-records.md#2026-11-16-arcc-recipe-layout-and-returned-input-deduplication) retains verified batch history and the returned-input mapping.
 
-For code changes, consult the [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md). The [coding review and implementation plan](shared-coding-proposal.md) retains its rationale and verification history.
+For code changes, consult the [shared engineering workflow](../.agents/skills/multimodal-bio-shared-engineering/SKILL.md). The [documentation retirement record](run-records.md#2026-11-20-retire-the-stage-1-overview-and-coding-proposal) identifies the Git revision with the original coding review and its verification history.
 
 ## Follow the research plan
 
