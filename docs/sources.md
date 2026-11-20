@@ -42,6 +42,12 @@ These textbooks connect the biological processes to the quantities used in the [
 
 **Reading scope and limits:** The introductory page was read. It offers a way to choose a document's purpose; it does not mandate this repository's folders, Markdown formatting, or scientific conclusions.
 
+### Connecting steps in a workflow
+
+Gopen and Swan describe how familiar information at the start of a sentence helps readers connect it to what they just read. Procida applies a related idea at the scale of a guide by following the order in which the reader does the work. Google’s procedure guidance says to name the tool or location before the action and explain the result where it helps the reader take the next step. [The Science of Scientific Writing](https://inpp.ohio.edu/~meisel/PHYS6751/file/ScientificWriting_GGopenJSwanAmSci1990.pdf) · [Diátaxis how-to guides](https://diataxis.fr/how-to-guides/#describe-a-logical-sequence) · [Google’s procedure guidance](https://developers.google.com/style/procedures#steps-that-say-where-to-complete-a-task)
+
+The ARCC guide uses these ideas to carry the local upload folder into the WinSCP step, then carry the Newton output path into the download step. The reading focused on sentence connections, sequence and flow, and where to perform each action. [ARCC guide](../execution/arcc/README.md)
+
 ### Pautasso and Purdue OWL: Writing a literature review
 
 [Pautasso (2013), Ten Simple Rules for Writing a Literature Review](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003149), especially Rule 6, and [Purdue OWL, Writing a Literature Review](https://owl.purdue.edu/owl/research_and_citation/conducting_research/writing_a_literature_review.html).

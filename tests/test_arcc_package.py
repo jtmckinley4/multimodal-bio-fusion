@@ -1,10 +1,8 @@
 """Test execution packaging with invented source, CSV and selection bytes only."""
 
-from contextlib import redirect_stderr, redirect_stdout
 import copy
 import hashlib
 import importlib.util
-import io
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -14,7 +12,7 @@ from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("arcc_prepare", ROOT / "execution/arcc/encoder_swaps/prepare.py")
+SPEC = importlib.util.spec_from_file_location("arcc_package", ROOT / "execution/arcc/encoder_swaps/package_spec.py")
 prepare = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(prepare)
 GIT_STATE = {"source_commit": "a" * 40, "source_git_status": " M Code/shared_code/helper.py",
@@ -52,6 +50,7 @@ class ArccPackageTests(unittest.TestCase):
             write(self.source / relative, b'"""Invented shared execution source."""\n')
         for name in prepare.RUNTIME_FILES:
             write(self.source / "execution/arcc/encoder_swaps" / name, ("runtime fixture: " + name + "\n").encode())
+        write(self.source / "execution/arcc/requirements.txt", b"numpy==1.2.3\n")
         for name in prepare.RUNTIME_TESTS:
             write(self.source / "tests" / name, ("synthetic test fixture: " + name + "\n").encode())
         # Neither current repository inputs nor any cache payload may enter this package.
@@ -116,31 +115,49 @@ class ArccPackageTests(unittest.TestCase):
         self.assertFalse(any("embeddings" in name or name.endswith(".npy") for name in names))
         self.assertEqual(tree_bytes(self.parent), before)
 
-    def test_default_cli_prints_inventory_without_making_a_package(self):
-        output = io.StringIO()
-        before = tree_bytes(self.parent)
-        with redirect_stdout(output):
-            prepare.main(["--source-root", str(self.source), "--selection-workspace", str(self.selection)])
-        document = json.loads(output.getvalue())
-        self.assertEqual(document["schema_version"], 2)
-        self.assertNotIn("package_status", document)
-        self.assertEqual(tree_bytes(self.parent), before)
-        self.assertFalse(self.destination.exists())
+    def install_archived_selection(self):
+        for record in self.selection_records:
+            write(self.source / record["source"], (self.selection / record["destination"]).read_bytes())
+        original = (self.selection / prepare.SNAPSHOT).read_bytes()
+        write(self.source / prepare.ARCHIVED_SELECTION_SNAPSHOT, original)
+        pin = patch.object(prepare, "ARCHIVED_SELECTION_SHA256", hashlib.sha256(original).hexdigest())
+        pin.start()
+        self.addCleanup(pin.stop)
 
-    def test_cli_requires_an_explicit_selection_workspace(self):
-        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as caught:
-            prepare.main(["--source-root", str(self.source)])
-        self.assertEqual(caught.exception.code, 2)
+    def test_archived_selection_matches_original_bytes_for_both_panels_without_external_workspace(self):
+        self.add_selection(prepare.HISTORICAL_ROOTS[1] + "/ecoli_proteins/mil.json", b'{"fixture":1}')
+        self.save_snapshot()
+        self.install_archived_selection()
+        write(self.source / "Code/stage4/results/phaseA/ecoli_proteins/additional-fit.json", b"{}")
+        expected = {}
+        for panel in ("full", "ecoli_ernie"):
+            external = prepare.build_plan(self.source, self.selection, experiment=panel)
+            expected[panel] = {item["destination"]: item["initial_copy_sha256"] for item in external["files"]}
+        self.selection.rename(self.parent / "unused-selection")
+        for panel, pinned in expected.items():
+            with self.subTest(panel=panel):
+                plan = prepare.build_plan(self.source, experiment=panel)
+                self.assertEqual({item["destination"]: item["initial_copy_sha256"] for item in plan["files"]}, pinned)
+                self.assertTrue(all(item["source_origin"] == "maintained_repository" for item in plan["files"]))
+                destination = self.parent / f"standalone-{panel}"
+                prepare.write_package(plan, destination)
+                for name, digest in pinned.items():
+                    self.assertEqual(hashlib.sha256((destination / name).read_bytes()).hexdigest(), digest)
+                self.assertFalse(any("additional-fit" in name for name in pinned))
+                if panel == "ecoli_ernie":
+                    self.assertEqual({name for name in pinned if name.startswith("datasets/")},
+                                     {"datasets/E.Coli_proteins.csv"})
 
-    def test_cli_defaults_to_repository_root_from_nested_recipe(self):
-        output = io.StringIO()
-        before = tree_bytes(self.parent)
-        recipe_script = self.source / "execution/arcc/encoder_swaps/prepare.py"
-        with patch.object(prepare, "__file__", str(recipe_script)), redirect_stdout(output):
-            prepare.main(["--selection-workspace", str(self.selection)])
-        document = json.loads(output.getvalue())
-        self.assertEqual(Path(document["source_root"]), self.source)
-        self.assertEqual(tree_bytes(self.parent), before)
+    def test_archived_selection_rejects_tampering_with_either_snapshot_or_canonical_inputs(self):
+        self.install_archived_selection()
+        first_dataset = self.source / prepare.DATASETS[0]
+        first_dataset.write_bytes(b"newer cohort")
+        with self.assertRaisesRegex(ValueError, "Preserved input changed"):
+            prepare.build_plan(self.source)
+        snapshot_path = self.source / prepare.ARCHIVED_SELECTION_SNAPSHOT
+        snapshot_path.write_bytes(snapshot_path.read_bytes() + b" ")
+        with self.assertRaisesRegex(ValueError, "Original Newton selection manifest changed"):
+            prepare.build_plan(self.source)
         self.assertFalse(self.destination.exists())
 
     def test_recipe_runtime_is_packaged_flat_without_other_arcc_files(self):
@@ -150,8 +167,9 @@ class ArccPackageTests(unittest.TestCase):
         write(self.source / "execution/arcc/other_experiment/run.py", b"unrelated experiment\n")
         plan = self.plan()
         runtime = [item for item in plan["files"] if item["role"] == "execution_runtime"]
-        self.assertEqual({item["destination"]: item["source"] for item in runtime},
-                         {name: "execution/arcc/encoder_swaps/" + name for name in prepare.RUNTIME_FILES})
+        expected = {name: "execution/arcc/encoder_swaps/" + name for name in prepare.RUNTIME_FILES}
+        expected["requirements.txt"] = "execution/arcc/requirements.txt"
+        self.assertEqual({item["destination"]: item["source"] for item in runtime}, expected)
         prepare.write_package(plan, self.destination)
         for item in runtime:
             self.assertEqual((self.destination / item["destination"]).read_bytes(),
@@ -183,6 +201,7 @@ class ArccPackageTests(unittest.TestCase):
 
     def test_missing_maintained_notebook_shared_initializer_or_runtime_stops_before_writing(self):
         missing_paths = [prepare.NOTEBOOK, *prepare.HISTORICAL_CONTEXT, *prepare.REQUIRED_SHARED,
+                         "execution/arcc/requirements.txt",
                          *["execution/arcc/encoder_swaps/" + name for name in prepare.RUNTIME_FILES],
                          *["tests/" + name for name in prepare.RUNTIME_TESTS]]
         for relative in missing_paths:

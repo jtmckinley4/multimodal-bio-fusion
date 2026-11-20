@@ -263,4 +263,6 @@
 /datasets/mRNA_Stability.csv text eol=crlf
 
 # Maintained Slurm scripts must remain executable by Linux shells.
+/execution/arcc/**/*.sbatch text eol=lf
 /execution/arcc/**/*.sbatch.example text eol=lf
+/execution/arcc/requirements.txt text eol=lf

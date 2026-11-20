@@ -28,7 +28,7 @@ def load(name, filename):
     return module
 
 
-prepare = load("grouped_prepare", "prepare.py")
+prepare = load("grouped_prepare", "package_spec.py")
 runtime = load("grouped_runtime", "run_grouped_stability.py")
 
 
@@ -106,6 +106,8 @@ class PackageCase(unittest.TestCase):
         snapshot, files = runtime.verify_package(target)
         self.assertEqual(snapshot["schema"], runtime.SCHEMA)
         self.assertIn(prepare.NOTEBOOK, files)
+        self.assertEqual((target / "requirements.txt").read_bytes(),
+                         (self.source / "execution/arcc/requirements.txt").read_bytes())
         before = {p.relative_to(target): p.read_bytes() for p in target.rglob("*") if p.is_file()}
         with self.assertRaises(FileExistsError):
             prepare.write_package(prepare.build_plan(self.source), target)
@@ -339,7 +341,7 @@ class PackageCase(unittest.TestCase):
         self.assertFalse((target / "outputs/study").exists())
 
     def test_shell_templates_bootstrap_conda_before_module_and_never_install(self):
-        for name in ("newton_grouped_stability.sbatch.example", "newton_preflight.sbatch.example"):
+        for name in ("newton_grouped_stability.sbatch.example", "grouped_stability_preflight.sbatch"):
             text = (RECIPE / name).read_text(encoding="utf-8")
             self.assertLess(text.index('source "$ARCC_BOOTSTRAP_CONDA_BASE'), text.index("\nmodule load"))
             self.assertIn("run_grouped_stability.py --verify-only", text)

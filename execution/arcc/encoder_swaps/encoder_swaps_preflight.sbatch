@@ -2,7 +2,6 @@
 # Source/input verification and actual allocated environment only; no research notebook.
 # Supply account, partition, GPU class, CPU, RAM and time through approved sbatch options.
 # Resource requirements must come from the selected workload, not this example.
-# requirements-notebooks.txt is the unchanged historical provisional list, not a lockfile.
 #SBATCH --job-name=biofusion-preflight
 #SBATCH --nodes=1
 #SBATCH --ntasks=1

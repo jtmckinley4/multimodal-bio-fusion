@@ -1,6 +1,5 @@
 """Inventory or copy a new source-only A2-A6 workspace; no datasets or caches."""
 
-import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -27,8 +26,10 @@ def inventory(root):
         pairs[relative] = relative
     recipe = root / "execution/arcc/fusion_studies"
     for path in recipe.iterdir():
-        if path.is_file() and path.suffix in {".py", ".md", ".txt", ".example", ".json", ".tsv"}:
+        if path.is_file() and path.suffix in {".py", ".sbatch", ".example", ".json", ".tsv"}:
             pairs[path.relative_to(root).as_posix()] = path.name
+    pairs["execution/arcc/fusion_studies/README.md"] = "README.md"
+    pairs["execution/arcc/requirements.txt"] = "requirements.txt"
     pairs["execution/arcc/encoder_swaps/run_encoder_swaps.py"] = "arcc_execution_support.py"
     for name in TESTS:
         pairs[f"tests/{name}"] = f"tests/{name}"
@@ -53,12 +54,11 @@ def inventory(root):
             "copied_data": False, "copied_caches": False, "research_executed": False}
 
 
-def prepare(root, destination):
-    """Create a new sibling; existing preparations and all scientific inputs stay put."""
-    root, destination = Path(root).resolve(), Path(destination).absolute()
+def write_package(plan, destination):
+    """Write the inventoried sources to a new sibling of the checkout."""
+    root, destination = Path(plan["source_root"]), Path(destination).absolute()
     if destination.exists() or destination.parent.resolve() != root.parent:
         raise ValueError("Choose a new sibling directory; existing destinations are preserved.")
-    plan = inventory(root)
     destination.mkdir(exist_ok=False)
     for item in plan["files"]:
         source, target = root / item["source"], destination / item["destination"]
@@ -78,16 +78,3 @@ def prepare(root, destination):
     with (destination / "source-snapshot.json").open("x", encoding="utf-8") as handle:
         json.dump(plan, handle, indent=2)
     return plan
-
-
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-root", type=Path, default=Path(__file__).resolve().parents[3])
-    parser.add_argument("--destination", type=Path)
-    args = parser.parse_args()
-    plan = prepare(args.source_root, args.destination) if args.destination else inventory(args.source_root)
-    print(json.dumps(plan, indent=2))
-
-
-if __name__ == "__main__":
-    main()

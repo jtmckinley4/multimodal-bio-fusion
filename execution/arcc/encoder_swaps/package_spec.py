@@ -1,14 +1,7 @@
-"""Inventory a new ARCC execution snapshot; copy only with --destination.
-
-The maintained repository supplies scientific source and runtime files. An
-explicit selection workspace supplies the hash-bound original CSVs and historical
-selection records. Frozen arrays, weights and recovery checkpoints are never
-inventoried or copied by this command. It does not execute or submit research.
-"""
+"""Package encoder swaps with the exact CSVs and validation evidence used on Newton."""
 
 from __future__ import annotations
 
-import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -39,9 +32,9 @@ HISTORICAL_ROOTS = (
     "historical_results/Code/stage4/results/phaseB",
 )
 RUNTIME_FILES = (
-    "README.md", "batches.tsv", "newton_preflight.sbatch.example",
-    "newton_report.sbatch.example", "newton_swaps.sbatch.example", "prepare.py",
-    "requirements-notebooks.txt", "run_encoder_swaps.py", "newton_ernie.sbatch.example",
+    "README.md", "batches.tsv", "encoder_swaps_preflight.sbatch",
+    "newton_report.sbatch.example", "newton_swaps.sbatch.example", "package_spec.py",
+    "run_encoder_swaps.py", "newton_ernie.sbatch.example",
     "ecoli_ernie_batches.tsv",
 )
 RUNTIME_TESTS = (
@@ -50,6 +43,8 @@ RUNTIME_TESTS = (
 )
 SNAPSHOT = "source-snapshot.json"
 SELECTION_EVIDENCE = "evidence/selection-source-snapshot.json"
+ARCHIVED_SELECTION_SNAPSHOT = "Code/stage4/results/newton_h100_seeds012/provenance/source-snapshot.json"
+ARCHIVED_SELECTION_SHA256 = "6bc161b8ea78eda8bf8c316ce27fca60bb1b0975b1bf01d8ec241aa82863c96f"
 
 
 def _relative(value):
@@ -132,9 +127,13 @@ def _entry(root, source, destination, origin, role):
     }
 
 
-def _selection_entries(workspace):
-    snapshot_path = _source_file(workspace, SNAPSHOT)
-    snapshot_bytes = snapshot_path.read_bytes()
+def _selection_entries(workspace, *, archived):
+    snapshot_path = ARCHIVED_SELECTION_SNAPSHOT if archived else SNAPSHOT
+    origin = "maintained_repository" if archived else "historical_selection_workspace"
+    snapshot_bytes = _source_file(workspace, snapshot_path).read_bytes()
+    snapshot_hash = hashlib.sha256(snapshot_bytes).hexdigest()
+    if archived and snapshot_hash != ARCHIVED_SELECTION_SHA256:
+        raise ValueError(f"Original Newton selection manifest changed: {snapshot_path}")
     snapshot = json.loads(snapshot_bytes)
     if not isinstance(snapshot, dict) or snapshot.get("schema_version") not in (1, 2):
         raise ValueError("Selection evidence requires a version 1 or 2 source-snapshot.json.")
@@ -163,7 +162,13 @@ def _selection_entries(workspace):
         expected = recorded.get("initial_copy_sha256")
         if not isinstance(expected, str) or not re.fullmatch(r"[0-9a-f]{64}", expected):
             raise ValueError(f"Missing initial-copy hash for preserved input: {relative}")
-        item = _entry(workspace, relative, relative, "historical_selection_workspace",
+        source = relative
+        if archived:
+            # Newton used a historical_results/ prefix to separate reference fits from new fits.
+            source = relative.removeprefix("historical_results/")
+            if recorded.get("source") != source or recorded.get("source_sha256") != expected:
+                raise ValueError(f"Original selection record does not identify the canonical file: {relative}")
+        item = _entry(workspace, source, relative, origin,
                       "dataset" if relative in DATASETS else "historical_selection")
         if item["source_sha256"] != expected:
             raise ValueError(f"Preserved input changed: {relative}; inspect the original evidence.")
@@ -178,9 +183,8 @@ def _selection_entries(workspace):
         raise ValueError("Selection snapshot must contain all four named CSV inputs.")
     if roots_found != set(HISTORICAL_ROOTS):
         raise ValueError("Selection snapshot must retain fungal, Phase A and Phase B selection evidence.")
-    evidence = _entry(workspace, SNAPSHOT, SELECTION_EVIDENCE,
-                      "historical_selection_workspace", "selection_manifest")
-    if evidence["source_sha256"] != hashlib.sha256(snapshot_bytes).hexdigest():
+    evidence = _entry(workspace, snapshot_path, SELECTION_EVIDENCE, origin, "selection_manifest")
+    if evidence["source_sha256"] != snapshot_hash:
         raise ValueError("Selection source snapshot changed during inventory.")
     entries.append(evidence)
     identity = {
@@ -195,12 +199,14 @@ def _selection_entries(workspace):
     return entries, identity
 
 
-def build_plan(source_root, selection_workspace, cache_root=None, *, experiment="full"):
+def build_plan(source_root, selection_workspace=None, cache_root=None, *, experiment="full"):
     """Return a deterministic inventory without creating any directory or artifact."""
-    source_root, selection_workspace = _root(source_root), _root(selection_workspace)
+    source_root = _root(source_root)
     if experiment not in {"full", "ecoli_ernie"}:
         raise ValueError("Choose the full panel or the focused ecoli_ernie extension.")
-    if _overlap(source_root, selection_workspace):
+    archived = selection_workspace is None
+    selection_workspace = source_root if archived else _root(selection_workspace)
+    if not archived and _overlap(source_root, selection_workspace):
         raise ValueError("The maintained repository and selection workspace must be separate.")
     state = git_state(source_root)
     files = [_entry(source_root, NOTEBOOK, NOTEBOOK, "maintained_repository", "scientific_notebook")]
@@ -222,10 +228,12 @@ def build_plan(source_root, selection_workspace, cache_root=None, *, experiment=
     for filename in RUNTIME_FILES:
         files.append(_entry(source_root, "execution/arcc/encoder_swaps/" + filename, filename,
                             "maintained_repository", "execution_runtime"))
+    files.append(_entry(source_root, "execution/arcc/requirements.txt", "requirements.txt",
+                        "maintained_repository", "execution_runtime"))
     for filename in RUNTIME_TESTS:
         relative = "tests/" + filename
         files.append(_entry(source_root, relative, relative, "maintained_repository", "synthetic_test"))
-    selection_files, selection_identity = _selection_entries(selection_workspace)
+    selection_files, selection_identity = _selection_entries(selection_workspace, archived=archived)
     if experiment == "ecoli_ernie":
         # Keep the original manifest, copying only this task's data and original
         # MIL tuning evidence. New RNA encoders have no historical single fits.
@@ -348,27 +356,3 @@ def write_package(plan, destination):
     with (destination / SNAPSHOT).open("x", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
     return manifest
-
-
-def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-root", type=Path, default=Path(__file__).resolve().parents[3])
-    parser.add_argument("--selection-workspace", type=Path, required=True,
-                        help="Explicit original selection workspace with source-snapshot.json")
-    parser.add_argument("--cache-root", type=Path,
-                        help="Declared external cache reference only; never scanned or copied")
-    parser.add_argument("--destination", type=Path,
-                        help="Create this NEW sibling directory; omit for a read-only JSON inventory")
-    parser.add_argument("--experiment", choices=("full", "ecoli_ernie"), default="full")
-    args = parser.parse_args(argv)
-    try:
-        plan = build_plan(args.source_root, args.selection_workspace, args.cache_root,
-                          experiment=args.experiment)
-        result = plan if args.destination is None else write_package(plan, args.destination)
-    except (OSError, ValueError, subprocess.SubprocessError) as error:
-        parser.exit(2, f"Package preparation stopped: {error}\n")
-    print(json.dumps(result, indent=2, ensure_ascii=False))
-
-
-if __name__ == "__main__":
-    main()

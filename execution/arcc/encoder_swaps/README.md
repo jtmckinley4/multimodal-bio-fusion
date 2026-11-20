@@ -1,120 +1,140 @@
-# Prepare an encoder-swap execution workspace
+# Encoder swaps on Newton
 
-This recipe maintains preparation and launch code for the existing encoder-swap experiment: four benchmarks, training seeds 0/1/2 and fixed historical seed-0 validation choices. The focused `ecoli_ernie` extension uses the same notebook for two additional RNA encoders and only the existing MIL gated and concatenation heads. It does not implement the separate correction, gate-variant or attention studies. In the repository, read the [common ARCC guide](../README.md) for environment initialization, GPU preflight, transfer selection and evidence retention. Repository-relative links in this README are navigation for the checkout; a prepared flat workspace does not contain those linked repository guides.
+The encoder-swap notebook compares what changes when we replace one DNA, RNA or protein encoder at a time. It already contains the saved [four-benchmark findings](../../../Code/stage4/encoder_swaps.ipynb#Newton-three-seed-findings) and [E. coli RNA comparison](../../../Code/stage4/encoder_swaps.ipynb#Replacing-RiNALMo-with-RNAErnie-and-ERNIE-RNA). For account access, file transfers, Conda and job monitoring, follow the [shared Newton guide](../README.md).
 
-The repository notebook owns scientific settings and calculations. Preparation copies it byte-for-byte, including historical saved outputs. The launcher creates a disposable execution copy, clears that copy's outputs, and inserts one cell containing paths, mode, benchmark/seed, device and producer checks. It leaves the source notebook unchanged. Completed run copies and logs go under the selected output root.
+[Prepare the original panel](#prepare-the-original-panel) · [Prepare the E. coli RNA extension](#prepare-the-e-coli-rna-extension) · [Update an existing workspace](#update-an-existing-workspace)
 
-The completed historical Newton batch used a different, version-1 preparation. Its original sibling `ARCC Execution/` workspace remains preserved evidence. The maintained version-2 recipe has synthetic checks; those checks are not a new cluster execution. See the repository's [November 16 verification record](../../../docs/run-records.md#2026-11-16-arcc-recipe-layout-and-returned-input-deduplication) for the historical batch and returned-input mapping. A new snapshot is not a reason to repeat completed fits.
+## Prepare the original panel
 
-## Inspect before preparing
-
-From the maintained repository, this command prints an inventory and hashes without creating a workspace:
+From the repository root on your computer, create the local upload folder. The package includes the four benchmark CSVs and the historical seed-0 validation records used to keep selection fixed. Omit `--destination` to preview the upload and input checks.
 
 ```powershell
-python -B execution/arcc/encoder_swaps/prepare.py --source-root . --selection-workspace '../ARCC Execution'
+python -B execution/arcc/prepare.py encoder_swaps --destination "../ARCC Encoder Swaps"
 ```
 
-`--selection-workspace` still requires the full separate original workspace, including its four CSVs, historical selection records and original snapshot. The script verifies those inputs against that snapshot. The [compact returned root](../../../Code/stage4/results/newton_h100_seeds012/README.md) is for reading evidence, not preparation. Its duplicate inputs and historical selection records resolve through original snapshot membership and byte hashes to canonical repository files. The archived `provenance/` layout does not change this preparation contract.
+[Upload the folder's contents](../README.md#upload-to-newton) to your Newton workspace. These paths follow the original layout. If you are keeping the completed workspace as it is, choose a new `ARCC_PROJECT_ROOT` and reuse its embeddings through `ARCC_CACHE_ROOT` if you can read them there.
 
-The inventory includes the maintained notebook and shared Python source, four source CSVs, preserved historical selection JSONs, the original selection manifest, the saved Stage 1 alignment capture, recipe files and focused runtime tests. The alignment JSON is historical context used by the notebook after fitting; packaging neither recomputes it nor treats it as a Newton result. The manifest identifies the maintained source commit and uncommitted changes separately from the historical selection source. A hash identifies bytes, not execution or scientific acceptance.
+```bash
+export ARCC_PROJECT_ROOT="$HOME/multi-modal_fusion"
+export ARCC_CACHE_ROOT="$HOME/multi-modal_fusion/Code/stage3/embeddings"
+export ARCC_OUTPUT_ROOT="$ARCC_PROJECT_ROOT/outputs"
+```
 
-To materialize a reviewed inventory, add `--destination '../ARCC Execution next'`. The destination must be a new sibling directory. An existing directory, overlap with preserved sources, or escaping symlink/junction is refused. Copying uses exclusive writes and publishes `source-snapshot.json` last. Failed preparation leaves an incomplete directory for inspection; it does not delete it or mark it complete.
+If the required embeddings are missing, transfer the benchmark and encoder folders that the run needs. For an older cache that relies on `recovery-records.json`, bring its copy of that file to the cache root so the notebook can verify the original input order and embedding file hashes. [Cache recovery history](../../../docs/run-records.md#2026-10-25-encoder-swap-cache-and-checkpoint-recovery)
 
-The preparation script, launcher, Slurm wrappers, requirements and batch inventories belong to this recipe. Preparation places them and this README at the generated workspace root, preserving the existing flat runtime layout. The preflight is recipe-specific because it verifies the swap launcher; it is not a generic standalone ARCC utility.
+[Set up the Newton session](../README.md#set-up-your-newton-session) and continue to [check the upload and GPU](#check-the-upload-and-gpu).
 
-No embedding arrays, model weights or recovery checkpoints are copied. Preparation's `--cache-root` declares an external cache location and checks separation; it does not inventory or verify its arrays. The execution command's `--cache-root` selects the actual cache location. Preparation performs no network transfer, environment installation or job submission.
+## Prepare the E. coli RNA extension
 
-## Focused E. coli RNA extension
+The extension runs the existing MIL gated and concatenation heads with RNAErnie and ERNIE-RNA on the same E. coli split. It keeps the DNA and protein encoders, codon grid and historical MIL penalty (0.01). The RiNALMo comparison comes from the original Newton batch.
 
-Prepare a fresh snapshot with `--experiment ecoli_ernie`. This retains the original E. coli rows, NT-v2 100M and ESM-2 8M caches, codon grid and training recipe. It schedules four seed-0 fits: the two new encoders' MIL heads first, followed by their concatenation heads. The inherited MIL penalty is selected from the preserved original seed-0 tuning records; the expected value for these inputs is 0.01. No original-reference, single-encoder or cross-attention fits are scheduled. New single controls would be needed to estimate gains over a validation-selected single; this panel does not claim that endpoint.
+From the repository root on your computer, prepare the extension as a separate upload folder. Omit `--destination` to preview this package and its input checks.
 
 ```powershell
-python -B execution/arcc/encoder_swaps/prepare.py --source-root . `
-  --selection-workspace '../ARCC Execution' --experiment ecoli_ernie `
-  --destination '../ARCC Ecoli RNA Extension'
+python -B execution/arcc/prepare.py encoder_swaps --experiment ecoli_ernie --destination "../ARCC E. coli RNA Extension"
 ```
 
-This profile copies only the E. coli CSV and original E. coli Phase A selection JSONs, alongside source, tests and the original selection manifest. It excludes the other three CSVs and historical replacement results. Keep the old Newton workspace and running study workspaces intact. Upload the new package into its own Newton directory, for example `$HOME/multi-modal_fusion_ecoli_ernie`; merge neither its source nor its outputs into the completed swap workspace.
+[Upload the folder's contents](../README.md#upload-to-newton) to the extension workspace. Point `ARCC_REFERENCE_ROOT` to the original workspace containing `outputs/phaseB/ecoli_proteins/rinalmo/` and `ARCC_CACHE_ROOT` to its readable E. coli DNA and protein embedding caches.
 
-The approved RNAErnie checkpoint is the authors' newer [LLM-EDA/RNAErnie](https://huggingface.co/LLM-EDA/RNAErnie/tree/df26681ed44bb671b61536c5e2a196d6058a44f7), not the shorter `multimolecule/rnaernie` conversion. Its 2,048-token context accommodates the retained 999-nucleotide inputs with framing tokens. ERNIE-RNA uses the pinned base [multimolecule/ernierna](https://huggingface.co/multimolecule/ernierna/tree/9f6099b85d61f7567d4e1ed1e92e1de85fdfd292). The shared loader implements the author RNAErnie tokenizer and reads hidden representations. Actual pinned-weight loading and GPU extraction remain runtime checks; synthetic tests do not establish them.
+```bash
+export ARCC_PROJECT_ROOT="$HOME/multi-modal_fusion_ecoli_ernie"
+export ARCC_REFERENCE_ROOT="$HOME/multi-modal_fusion"
+export ARCC_CACHE_ROOT="$ARCC_REFERENCE_ROOT/Code/stage3/embeddings"
+export ARCC_OUTPUT_ROOT="$ARCC_PROJECT_ROOT/outputs/ecoli_ernie"
+```
 
-Before the separately authorized extraction, stage only the required files in the existing Hugging Face cache. These commands download weights; they are not verification-only commands. Do not upgrade the environment used by running jobs.
+[Set up the Newton session](../README.md#set-up-your-newton-session) in the extension workspace. If the checkpoints are missing from your Hugging Face cache, download these pinned files before extraction. The RNAErnie checkpoint has room for the 999-nucleotide inputs and their framing tokens. [RNAErnie weights](https://huggingface.co/LLM-EDA/RNAErnie/tree/df26681ed44bb671b61536c5e2a196d6058a44f7) · [ERNIE-RNA weights](https://huggingface.co/multimolecule/ernierna/tree/9f6099b85d61f7567d4e1ed1e92e1de85fdfd292)
 
-```shell
+```bash
 hf download LLM-EDA/RNAErnie --revision df26681ed44bb671b61536c5e2a196d6058a44f7 \
   model.safetensors config.json tokenizer_config.json special_tokens_map.json vocab.txt
 hf download multimolecule/ernierna --revision 9f6099b85d61f7567d4e1ed1e92e1de85fdfd292 \
   model.safetensors config.json tokenizer_config.json vocab.txt
 ```
 
-After package verification and environment preflight, the execution sequence is explicit: extract the two new RNA caches once, then train the four requested heads. Both commands below are for an authorized GPU allocation; neither submits a job.
+## Check the upload and GPU
 
-```shell
-python -u run_encoder_swaps.py --experiment ecoli_ernie --mode extract \
-  --kernel biofusion-arcc --expected-gpu 'NVIDIA H100 PCIe' \
-  --reference-root "$HOME/multi-modal_fusion" \
-  --cache-root "$HOME/multi-modal_fusion/Code/stage3/embeddings"
+With Conda active in the Newton workspace, check the upload against its source snapshot.
 
-python -u run_encoder_swaps.py --experiment ecoli_ernie --mode train --seed 0 \
-  --kernel biofusion-arcc --expected-gpu 'NVIDIA H100 PCIe' \
-  --reference-root "$HOME/multi-modal_fusion" \
-  --cache-root "$HOME/multi-modal_fusion/Code/stage3/embeddings"
-```
-
-The reference workspace and existing cache root are read-only inputs. New RNA caches default to `extension_embeddings/`; new fits, launch records and executed notebook copies go under `outputs/ecoli_ernie/`. Those directories must remain separate from the completed cohort. Extraction is offline, requires the staged weights and cannot train. Training requires complete compatible caches and cannot extract. An incomplete original DNA/protein cache blocks both operations instead of being regenerated. Completed extension fits are reused only after their identities and producer evidence match.
-
-For Slurm, use `newton_ernie.sbatch.example` with `ARCC_OPERATION=extract` or `train`, `ARCC_REFERENCE_ROOT` pointing to the completed workspace and `ARCC_CACHE_ROOT` pointing to its embeddings. It defaults to seed 0 for training; `ARCC_SEED=1` or `2` selects a separately approved repeat. `ecoli_ernie_batches.tsv` records four fits per seed, not authorization to schedule all three. Follow the existing resource/queue procedure and use an `afterok` dependency when scheduling fitting after extraction. The old `batches.tsv` and `newton_swaps.sbatch.example` still describe the original full panel.
-
-Return `outputs/ecoli_ernie/`, the new source snapshot and its execution sources into `Code/stage4/results/newton_ecoli_ernie/`, retaining the fits under `outputs/ecoli_ernie/phaseB/`. The new RNA caches can stay on Newton. The [encoder-swaps notebook](../../../Code/stage4/encoder_swaps.ipynb#Replacing-RiNALMo-with-RNAErnie-and-ERNIE-RNA) shows both heads and all three seeds beside the RiNALMo reference. Its default saved-result mode reads both Newton returns at their standard locations. To read custom locations, select `EXPERIMENT = "ecoli_ernie"` and set `RETURNED_WORKSPACE` for the extension and `REFERENCE_WORKSPACE` for the original Newton cohort.
-
-The reader checks the fit recipe and encoder combination and displays a mean only for complete rows. The [return record](../../../docs/run-records.md#2026-11-19-verified-newton-return-for-e-coli-gates-and-attention) documents the producer and matched-row checks. This panel supports descriptive head comparisons. Its launcher disables `--mode report`, which requires the larger panel's baselines.
-
-## Verify the prepared workspace
-
-Inside the new workspace, with the intended Python environment active, use the flat runtime paths:
-
-```shell
+```bash
 python -B run_encoder_swaps.py --verify-only
-python -B -m unittest discover -s tests -p 'test_arcc_*.py'
 ```
 
-The first command verifies every prepared file, including code and historical inputs. It does not start a notebook kernel or open cache arrays. Tests use invented inputs and mocked kernel/GPU interfaces; they do not fit research models or establish GPU readiness. This version-2 launcher deliberately refuses the original version-1 workspace.
+Run the external-input checks printed by preparation to check that the embeddings are readable. For the extension, also check the reference directory and staged weights. The launcher and notebook verify the inputs they actually use at runtime.
 
-## Choose the operation and destination
+For a resumed run, keep its original output directory. If you are running a changed snapshot alongside earlier results, set `ARCC_OUTPUT_ROOT` to a fresh subfolder under the workspace's `outputs/`. With [your allocation set](../README.md#choose-the-slurm-allocation), submit the GPU check from the workspace and keep its job ID.
 
-| Operation | Execution choice | What it may do |
-| --- | --- | --- |
-| Inspect package | `--verify-only` | Check source/input bytes; no kernel or research artifact writes. |
-| Newton fitting | `--mode train --purpose newton` | One benchmark/seed; requires a Slurm allocation, CUDA and an observed GPU matching `--expected-gpu`. Reuses compatible completions and recovery state. |
-| Saved-prediction analysis | `--mode report --purpose newton` | CPU analysis of completed seeds 0/1/2; no extraction or replacement fits. This produces a report and requires research-analysis authorization. |
-| Explicit local pilot | `--mode train --purpose local_pilot --device cpu` or `cuda` | Same declared scientific settings, separate `pilot_outputs` destination and pilot producer label. It is a real fit, not a synthetic check. |
-
-Newton defaults to `outputs/`; local pilots default to `pilot_outputs/`. An explicit `--output-root` must remain within the prepared workspace and separate from code, historical inputs, caches and the other purpose's default destination. Records carry their purpose and actual output root, so changing a path does not promote a pilot into a Newton result. Imported completed results are not training destinations.
-
-Fitting requires complete compatible token caches. Missing shards, incompatible evidence or metadata requiring repair stop before fitting; they never trigger extraction or downloads. Transfer required caches and provenance only through a separately authorized operation, retaining `recovery-records.json` at the cache root when legacy verification needs it. Fully completed fits do not require reopening their cache arrays.
-
-## Preflight and launch in the selected allocation
-
-Configure `ARCC_PROJECT_ROOT`, `ARCC_ANACONDA_MODULE`, `ARCC_CONDA_ENV`, `ARCC_KERNEL`, `ARCC_EXPECTED_GPU` and, if needed, `ARCC_CACHE_ROOT` / `ARCC_OUTPUT_ROOT`. Follow the common guide's environment, allocation and log-directory procedure before submission. The wrappers retain inherited-Conda initialization and verify the package before proceeding.
-
-- `newton_preflight.sbatch.example` verifies this package and observes the allocated GPU and installed environment without running a research notebook.
-- `newton_swaps.sbatch.example` runs one explicit `ARCC_BENCHMARK` / `ARCC_SEED`, or the selected `batches.tsv` row for an array. The table describes the intended four-benchmark, three-seed grid; it is not a submission instruction or a completion record.
-- `newton_report.sbatch.example` explicitly analyzes saved predictions on CPU after the intended results are available.
-
-For example, the Python fit command inside an authorized allocation is:
-
-```shell
-python -u run_encoder_swaps.py --mode train --purpose newton \
-  --benchmark cov_vac_degradation --seed 0 --kernel biofusion-arcc \
-  --expected-gpu 'NVIDIA H100 PCIe' --cache-root /absolute/path/to/embeddings
+```bash
+mkdir -p outputs/logs "${ARCC_OUTPUT_ROOT:?}/logs" "$ARCC_OUTPUT_ROOT/notebooks"
+PREFLIGHT_JOB=$(sbatch --parsable --job-name=encoder-swaps-preflight \
+  --account="${ARCC_ACCOUNT:?}" --partition=normal --qos=normal \
+  --gres=gpu:nvidia_h100_pcie:1 --cpus-per-task=2 --mem=8G --time=00:10:00 \
+  encoder_swaps_preflight.sbatch)
+PREFLIGHT_JOB=${PREFLIGHT_JOB%%;*}
+echo "$PREFLIGHT_JOB"
 ```
 
-Confirm the exact benchmark/seed matrix, source snapshot, allocation, resource limits and output destination before a new compute batch. Do not submit a job merely to validate package construction. A prior H100 observation does not establish the next allocation's GPU.
+## Run the original panel
 
-## Inspect progress and preserve failures
+Set `ARCC_CPUS`, `ARCC_MEM` and `ARCC_TIME` to the agreed limits before submitting. This example submits E. coli seed 0 after the GPU check succeeds. For another run, set the benchmark and seed from the [batch list](batches.tsv). The launcher also supports arrays using that list's indexes 0–11.
 
-Epoch text is forwarded immediately to stdout/stderr while rich displays remain in the executed notebook. Per-launch records retain prepared source hashes, fixed-selection evidence and the environment observed inside the kernel. Results and checkpoints retain the launch link; cohort checks precede the shared trainer's identity and recovery checks.
+```bash
+export ARCC_BENCHMARK=ecoli_proteins ARCC_SEED=0
+sbatch --job-name="encoder-swaps-${ARCC_BENCHMARK}-seed${ARCC_SEED}" \
+  --account="${ARCC_ACCOUNT:?}" --partition=normal --qos=normal \
+  --gres=gpu:nvidia_h100_pcie:1 --cpus-per-task="${ARCC_CPUS:?}" \
+  --mem="${ARCC_MEM:?}" --time="${ARCC_TIME:?}" --dependency="afterok:${PREFLIGHT_JOB:?}" \
+  newton_swaps.sbatch.example
+```
 
-Cooperative locks reject concurrent writers for the same benchmark/seed. Interrupted launches retain their notebook/record when Python can finalize them, and completed fits remain reusable. Forced termination can prevent final evidence saving; inspect scheduler status, logs and actual artifacts before deciding whether to resume. An incompatible completed result is a blocker, never permission to replace it.
+Expect 42 fit records per benchmark and seed, 504 across the full panel. From `ARCC_OUTPUT_ROOT`, download the fit and prediction JSONs in `phaseA/` and `phaseB/` and the matching `logs/` records. Keep those paths under `outputs/` in a distinct local result folder. [Download results](../README.md#download-results)
 
-Use the common guide's return whitelist and retain source/input mappings alongside the returned evidence. In the repository, the [result-set contract](../../../Code/stage4/RUNBOOK.md#select-a-returned-result-set) owns import and reading. Its named Newton reader expects the default `outputs/` layout; a custom output root needs an explicit matching import/reader decision. Returning evidence and calculating a saved-prediction report remain separate operations.
+Keep the current workspace's `source-snapshot.json` with the launch evidence. The notebook checks a separate snapshot of the original validation selection. Copy the upload's `evidence/selection-source-snapshot.json` to `provenance/source-snapshot.json` under the local result folder. Keep `RESULT_SET = "newton_h100_seeds012"` and point `RETURNED_WORKSPACE` to that result folder. [Saved result layout and settings](../../../Code/stage4/RUNBOOK.md#select-a-returned-result-set)
+
+To calculate a report from previously saved full-panel predictions on Newton, use the optional [CPU report wrapper](newton_report.sbatch.example). For inspection, keep the notebook's default [saved-results settings](../../../Code/stage4/RUNBOOK.md#read-saved-results-without-starting-work).
+
+## Focused E. coli RNA extension
+
+[Prepare the extension workspace](#prepare-the-e-coli-rna-extension) and use its [GPU check job ID](#check-the-upload-and-gpu). Set `ARCC_CPUS`, `ARCC_MEM` and `ARCC_TIME` to the agreed limits for extraction. Extract both RNA embedding caches once. The job uses the staged weights offline and writes the caches under `extension_embeddings/`.
+
+```bash
+export ARCC_OPERATION=extract
+EXTRACT_JOB=$(sbatch --parsable --job-name=ecoli-ernie-extract \
+  --account="${ARCC_ACCOUNT:?}" --partition=normal --qos=normal \
+  --gres=gpu:nvidia_h100_pcie:1 --cpus-per-task="${ARCC_CPUS:?}" \
+  --mem="${ARCC_MEM:?}" --time="${ARCC_TIME:?}" --dependency="afterok:${PREFLIGHT_JOB:?}" \
+  newton_ernie.sbatch.example)
+EXTRACT_JOB=${EXTRACT_JOB%%;*}
+echo "$EXTRACT_JOB"
+```
+
+Set the training limits before submitting. This submits seed 0 after extraction succeeds. Change `ARCC_SEED` to 1 or 2 if submitting another seed. If you are reusing completed caches from an earlier session, use `PREFLIGHT_JOB` in place of `EXTRACT_JOB` in the dependency below. Training checks cache compatibility before starting. Expect four fits per seed. [Batch list](ecoli_ernie_batches.tsv)
+
+```bash
+export ARCC_OPERATION=train ARCC_SEED=0
+sbatch --job-name="ecoli-ernie-train-seed${ARCC_SEED}" \
+  --account="${ARCC_ACCOUNT:?}" --partition=normal --qos=normal \
+  --gres=gpu:nvidia_h100_pcie:1 --cpus-per-task="${ARCC_CPUS:?}" \
+  --mem="${ARCC_MEM:?}" --time="${ARCC_TIME:?}" --dependency="afterok:${EXTRACT_JOB:?}" \
+  newton_ernie.sbatch.example
+```
+
+From `ARCC_OUTPUT_ROOT`, download the fit and prediction JSONs in `phaseB/` and the matching `logs/` records. Put them under `outputs/ecoli_ernie/` in a separate local result folder and keep the source snapshot for those launches. Keep `extension_embeddings/` on Newton. [Download results](../README.md#download-results)
+
+To read a new return, keep `READ_SAVED_RESULTS = True`, select `EXPERIMENT = "ecoli_ernie"`, and set `RETURNED_WORKSPACE` to the extension's local result folder. Set `REFERENCE_WORKSPACE` if you also keep the original cohort at a custom path. [Verified extension return](../../../docs/run-records.md#2026-11-19-verified-newton-return-for-e-coli-gates-and-attention)
+
+## Update an existing workspace
+
+From the repository root on your computer, preview the update for the folder you already have. Use the same experiment option you used to create it.
+
+```powershell
+python -B execution/arcc/prepare.py encoder_swaps --update "../ARCC Encoder Swaps"
+```
+
+For the E. coli RNA extension, use this command.
+
+```powershell
+python -B execution/arcc/prepare.py encoder_swaps --experiment ecoli_ernie --update "../ARCC E. coli RNA Extension"
+```
+
+After reviewing the preview, add `--apply` to update the local folder. Then sync that folder to its Newton workspace and verify the upload. [Sync an update](../README.md#update-an-existing-workspace)

@@ -1,11 +1,6 @@
-"""Prepare a separate grouped-stability workspace without copying cache arrays.
-
-Without --destination, print the source inventory only. No split, model fit,
-analysis, download, transfer or scheduler operation is performed.
-"""
+"""Files and provenance for the grouped-stability Newton package."""
 from __future__ import annotations
 
-import argparse
 from datetime import datetime, timezone
 import importlib.util
 import json
@@ -17,7 +12,7 @@ def _load_support():
     here = Path(__file__).resolve().parent
     path = here / "arcc_package_support.py"
     if not path.is_file():
-        path = here.parent / "encoder_swaps/prepare.py"
+        path = here.parent / "encoder_swaps/package_spec.py"
     spec = importlib.util.spec_from_file_location("arcc_package_support", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -31,13 +26,13 @@ NOTEBOOK = "Code/stage4/grouped_stability.ipynb"
 DATASET = "datasets/mRNA_Stability.csv"
 RECIPE = "execution/arcc/grouped_stability/"
 RUNTIME = (
-    "README.md", "RUN_CHECKLIST.md", "prepare.py", "run_grouped_stability.py", "batches.tsv",
-    "newton_grouped_stability.sbatch.example", "newton_preflight.sbatch.example",
+    "README.md", "package_spec.py", "run_grouped_stability.py", "batches.tsv",
+    "newton_grouped_stability.sbatch.example", "grouped_stability_preflight.sbatch",
 )
 SUPPORT = {
-    "execution/arcc/encoder_swaps/prepare.py": "arcc_package_support.py",
+    "execution/arcc/encoder_swaps/package_spec.py": "arcc_package_support.py",
     "execution/arcc/encoder_swaps/run_encoder_swaps.py": "arcc_execution_support.py",
-    "execution/arcc/encoder_swaps/requirements-notebooks.txt": "requirements-notebooks.txt",
+    "execution/arcc/requirements.txt": "requirements.txt",
 }
 
 
@@ -145,18 +140,3 @@ def write_package(plan, destination):
     with (target / "source-snapshot.json").open("x", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(record, indent=2) + "\n")
     return record
-
-
-def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-root", type=Path, default=Path(__file__).resolve().parents[3])
-    parser.add_argument("--cache-root", type=Path)
-    parser.add_argument("--destination", type=Path)
-    args = parser.parse_args(argv)
-    plan = build_plan(args.source_root, args.cache_root)
-    result = plan if args.destination is None else write_package(plan, args.destination)
-    print(json.dumps(result, indent=2))
-
-
-if __name__ == "__main__":
-    main()

@@ -29,7 +29,7 @@ def module(name, path):
 
 
 runtime = module("ernie_runtime_test", RECIPE / "run_encoder_swaps.py")
-prepare = module("ernie_prepare_test", RECIPE / "prepare.py")
+prepare = module("ernie_prepare_test", RECIPE / "package_spec.py")
 
 
 class ErnieExecutionTests(unittest.TestCase):

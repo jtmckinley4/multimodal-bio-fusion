@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECIPE = ROOT / "execution/arcc/fusion_studies"
 if not RECIPE.is_dir():
     RECIPE = ROOT
-spec = importlib.util.spec_from_file_location("fusion_package_check", RECIPE / "prepare.py")
+spec = importlib.util.spec_from_file_location("fusion_package_check", RECIPE / "package_spec.py")
 prepare = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(prepare)
 
@@ -30,7 +30,9 @@ class PackageInventoryTests(unittest.TestCase):
                   "execution/arcc/encoder_swaps/run_encoder_swaps.py",
                   "execution/arcc/fusion_studies/input-manifest.json",
                   "execution/arcc/fusion_studies/batches.tsv",
-                  "execution/arcc/fusion_studies/RUN_CHECKLIST.md",
+                  "execution/arcc/fusion_studies/fusion_studies_preflight.sbatch",
+                  "execution/arcc/fusion_studies/README.md",
+                  "execution/arcc/requirements.txt",
                   "execution/arcc/fusion_studies/run_fusion_study.py",
                   "Code/stage3/embeddings/cache.npz", "datasets/source.parquet"]
         for name in names:
@@ -44,12 +46,16 @@ class PackageInventoryTests(unittest.TestCase):
             self.fixture(root)
             plan = prepare.inventory(root)
             names = {p["destination"] for p in plan["files"]}
-            self.assertTrue({"input-manifest.json", "batches.tsv", "RUN_CHECKLIST.md"} <= names)
+            self.assertTrue({"input-manifest.json", "batches.tsv", "README.md", "requirements.txt",
+                             "fusion_studies_preflight.sbatch"} <= names)
             self.assertTrue({f"tests/{n}" for n in prepare.TESTS} <= names)
             self.assertFalse(any(n.endswith((".npz", ".parquet")) for n in names))
             target = root.parent / "prepared"
-            prepare.prepare(root, target)
+            prepare.write_package(plan, target)
             self.assertEqual((target / "input-manifest.json").read_text(), "fixture")
+            self.assertEqual((target / "fusion_studies_preflight.sbatch").read_text(), "fixture")
+            self.assertEqual((target / "requirements.txt").read_bytes(),
+                             (root / "execution/arcc/requirements.txt").read_bytes())
             self.assertFalse((target / "datasets").exists())
 
     def test_duplicate_flat_runtime_destination_is_refused(self):

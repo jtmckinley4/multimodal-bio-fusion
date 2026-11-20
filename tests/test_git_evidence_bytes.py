@@ -157,13 +157,15 @@ class GitEvidenceBytesTests(unittest.TestCase):
         for name in names:
             self.assertEqual(self.git("show", f":{name}"), content)
 
-    def test_all_six_maintained_slurm_scripts_store_and_checkout_lf(self):
+    def test_maintained_slurm_scripts_store_and_checkout_lf(self):
         names = (
-            "execution/arcc/encoder_swaps/newton_preflight.sbatch.example",
+            "execution/arcc/encoder_swaps/encoder_swaps_preflight.sbatch",
+            "execution/arcc/encoder_swaps/newton_ernie.sbatch.example",
             "execution/arcc/encoder_swaps/newton_report.sbatch.example",
             "execution/arcc/encoder_swaps/newton_swaps.sbatch.example",
-            "execution/arcc/grouped_stability/newton_preflight.sbatch.example",
+            "execution/arcc/grouped_stability/grouped_stability_preflight.sbatch",
             "execution/arcc/grouped_stability/newton_grouped_stability.sbatch.example",
+            "execution/arcc/fusion_studies/fusion_studies_preflight.sbatch",
             "execution/arcc/fusion_studies/newton_fusion_study.sbatch.example",
         )
         content = b"#!/bin/bash\n# synthetic fixture only\n"

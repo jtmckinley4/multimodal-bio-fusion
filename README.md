@@ -124,7 +124,7 @@ The primary half-life target is a consensus stability component, not time in hou
 
 ### Notebook dependencies
 
-Use the project's Python environment. Install PyTorch through its [official selector](https://pytorch.org/get-started/locally/) for the operating system/backend, then install these notebook dependencies:
+To reproduce the Newton runs, use the [recorded package versions](execution/arcc/requirements.txt) and [Newton session setup](execution/arcc/README.md#set-up-your-newton-session). For desktop notebooks, install PyTorch through its [official selector](https://pytorch.org/get-started/locally/) for your operating system and backend, then install these dependencies:
 
 ```sh
 python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biopython "transformers==5.15.1" multimolecule einops ipykernel ViennaRNA pyarrow
@@ -132,7 +132,7 @@ python -m pip install numpy pandas scipy scikit-learn umap-learn matplotlib biop
 
 `ViennaRNA` is imported as `RNA` for folding calculations in the [mRFP notebook](Code/stage1/mrfp_representation_control.ipynb). Its calculation mode also uses pooled embeddings from [Stage 1's control analysis](Code/stage1/Stage1_stability.ipynb); reading saved results requires neither ViennaRNA nor those embeddings.
 
-`pyarrow` reads the parquet inputs used in the full-transcript experiments. For an existing Newton environment, follow the selected execution recipe's version checks before changing installed packages.
+`pyarrow` reads the parquet inputs used in the full-transcript experiments.
 
 In VS Code, use the Python/Jupyter extensions and [select that environment as the notebook kernel](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management). Stage 1 expects `Code/stage1/` as the kernel working directory for imports and relative embedding paths; dataset loaders resolve the repository's `datasets/` independently. Other notebooks retain their own settings and prerequisites.
 

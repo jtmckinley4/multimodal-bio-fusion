@@ -18,7 +18,7 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[1]
 WORKSPACE = ROOT if (ROOT / "run_encoder_swaps.py").is_file() else ROOT / "execution/arcc/encoder_swaps"
 TEMPLATES = (
-    "newton_swaps.sbatch.example", "newton_preflight.sbatch.example",
+    "newton_swaps.sbatch.example", "encoder_swaps_preflight.sbatch",
     "newton_report.sbatch.example",
 )
 BASH = (str(Path(os.environ.get("ProgramFiles", "C:/Program Files")) / "Git/bin/bash.exe")
@@ -217,7 +217,7 @@ class PreflightEnvironmentTests(unittest.TestCase):
     """The inline observation uses fake CUDA and package metadata, never real devices."""
 
     def inspect(self, *, available=True, gpu="Fixture GPU", expected="fixture"):
-        template = (WORKSPACE / "newton_preflight.sbatch.example").read_text(encoding="utf-8")
+        template = (WORKSPACE / "encoder_swaps_preflight.sbatch").read_text(encoding="utf-8")
         source = template.split("<<'PY'\n", 1)[1].split("\nPY\n", 1)[0]
         fake_torch = SimpleNamespace(
             cuda=SimpleNamespace(is_available=lambda: available, get_device_name=lambda _: gpu),

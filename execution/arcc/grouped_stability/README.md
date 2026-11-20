@@ -1,70 +1,81 @@
-# Run the grouped-stability comparison on Newton
+# Grouped stability on Newton
 
-This recipe prepares the [grouped-stability notebook](../../../Code/stage4/grouped_stability.ipynb) for the agreed 36-fit comparison: one exact-sequence-grouped split, two encoder combinations, twelve unique fits per training seed and seeds 0, 1 and 2. It changes the evaluation partition, not the encoder weights or the existing research results. The notebook owns the scientific settings and the distinction between the advisor's requirements and the team's implementation choices.
+This comparison measures how well predictors generalize to mRNA sequences they did not train on. All rows with the same nucleotide sequence stay in one partition, even if their measured values differ. The three training seeds share that split, with 12 fits per seed. [Grouped-stability notebook](../../../Code/stage4/grouped_stability.ipynb)
 
-The implementation and synthetic checks are complete; the grouped evaluation has not run. Split preparation and fitting are explicit notebook operations. Use the [common ARCC guide](../README.md) for allocation, environment, transfer and evidence-retention practices. These relative documentation links navigate the checkout; the prepared workspace places this README and the runtime entrypoints at its root, with the notebook under `Code/stage4/`.
+[Review the 36 completed fits](#review-saved-results) · [Run or resume on Newton](#run-or-resume-on-newton) · [Update an existing workspace](#update-an-existing-workspace)
 
-The [run and transfer checklist](RUN_CHECKLIST.md) gives the current cache location, environment checks, seed-0 resource review, repeat-job dependencies and evidence-return steps. It keeps submission separate from preparation.
+## Review saved results
 
-## Prepare a separate workspace
+Open the notebook locally and point `RESULTS_ROOT` at the returned folder. Use `READ_SAVED_RESULTS = True`, `RUN_TRAINING = False`, and `RUN_COMPARISONS = False` to read compatible saved fits and the paired report. Set `RUN_COMPARISONS = True` only when you want to calculate a report from the 36 saved fits. [Returned results](../../../Code/stage4/results/grouped_stability_v1/)
 
-From the maintained repository, inspect the source inventory without copying files:
+## Run or resume on Newton
+
+### Prepare and upload
+
+From the repository root on your computer, omit `--destination` to see the upload and cache requirements. Include it to create a folder beside the repository with the stability CSV, notebook, shared Python code, requirements and launch files.
 
 ```powershell
-python -B execution/arcc/grouped_stability/prepare.py --source-root .
+python -B execution/arcc/prepare.py grouped_stability --destination "../ARCC Grouped Stability"
 ```
 
-The current prepared workspace is the sibling `ARCC Grouped Stability 2026-11-17`. For a future source revision, add `--destination <new sibling directory>` after reviewing the inventory. Existing destinations, symlinks/junctions and overlap with a declared cache root are refused. The original `ARCC Execution/` and its completed swap results stay unchanged. Failed preparation leaves an incomplete directory for inspection; the completion manifest is written only after every copied source is verified.
+Upload the contents of `ARCC Grouped Stability` to `~/multi-modal_fusion_grouped_stability/`. On Newton, set the workspace path and point `ARCC_CACHE_ROOT` to a readable directory containing `mrna_stability/`. Adjust the paths if your directories differ. [Upload to Newton](../README.md#upload-to-newton)
 
-The package contains this notebook, shared Python source, the stability CSV, execution files and synthetic checks. It excludes old fit results, historical selection inputs, embedding arrays, model weights and recovery checkpoints. `arcc_package_support.py` and `arcc_execution_support.py` are byte-identical, hash-bound copies of the existing encoder-swap preparation/launcher modules; only their generic file verification, path protection, locking, record publication and live-text helpers are reused. Their swap-specific selection and execution methods are not called.
-
-Inside the prepared workspace:
-
-```shell
-python -B run_grouped_stability.py --verify-only
-python -B -m unittest discover -s tests -p 'test_arcc_grouped_stability.py'
-python -B -m unittest discover -s tests -p 'test_grouped_stability.py'
+```bash
+export ARCC_PROJECT_ROOT="$HOME/multi-modal_fusion_grouped_stability"
+export ARCC_CACHE_ROOT="$HOME/multi-modal_fusion/Code/stage3/embeddings"
+export ARCC_OUTPUT_ROOT="$ARCC_PROJECT_ROOT/outputs"
 ```
 
-Verification checks source/input bytes without starting a notebook kernel or reading cache arrays. Adding `--kernel biofusion-arcc` also checks that the registered kernel uses the activated Python interpreter; both Slurm wrappers require this check. Tests use invented inputs and mocked execution interfaces. The copied requirements list is the existing provisional dependency specification, not an environment lock: use the installed Newton environment and compare its recorded versions instead of upgrading automatically.
+### Verify the upload and cache
 
-## Reuse the caches already on Newton
+With the shared environment active, check that the uploaded files match the snapshot and that the requested kernel uses the active Python. [Set up your Newton session](../README.md#set-up-your-newton-session)
 
-Upload only the prepared package's contents into a new Newton directory. Point `ARCC_CACHE_ROOT` to the existing directory containing the benchmark folders, for example `/home/ch806988/multi-modal_fusion/Code/stage3/embeddings`. This panel uses `mrna_stability/ntv2_100m`, `rnafm`, `mrnafm` and `esm2_8m` beneath that root. Each cache must already record its ordered-input identity and complete shard hashes; the recipe does not repair legacy metadata. No duplicate transfer or extraction is implied.
-
-The training route requires complete compatible caches and refuses extraction or download fallback. Its launcher additionally sets Hugging Face and Transformers offline flags. Changing the partition does not change the cached per-sequence representations, provided their input and row identities remain compatible.
-
-## Select and launch the approved workload
-
-Set `ARCC_PROJECT_ROOT` to the new prepared workspace, together with `ARCC_ANACONDA_MODULE`, `ARCC_CONDA_ENV`, `ARCC_KERNEL`, `ARCC_EXPECTED_GPU` and `ARCC_CACHE_ROOT`. The wrappers initialize inherited Conda correctly before module loading. GPU availability and the observed device name are checked inside the executing notebook kernel; production fits refuse CPU fallback.
-
-| File | Operation |
-| --- | --- |
-| `newton_preflight.sbatch.example` | Verify the package and observe the allocated environment without running the research notebook. |
-| `newton_grouped_stability.sbatch.example` | Execute twelve fits for one seed, supplied as `ARCC_SEED=0`, `1` or `2`, or array index 0–2. |
-| `batches.tsv` | The declared three-seed, 36-fit workload; neither submission nor completion evidence. |
-
-Supply account, partition, GPU type, CPU/RAM/time limits and allowed concurrency through reviewed `sbatch` options. No training-duration estimate or allocation budget is implied by the templates. One job per seed runs its twelve fits sequentially. Review seed 0's resource use before expanding to seeds 1 and 2; their fits are independent, but later baseline selection requires seed-0 validation results and the paired report requires all 36 fits. No out-of-fold correction fits belong to this batch.
-
-The Python command inside an approved allocation is:
-
-```shell
-python -u run_grouped_stability.py --seed 0 --kernel biofusion-arcc \
-  --expected-gpu 'NVIDIA H100 PCIe' \
-  --cache-root /home/ch806988/multi-modal_fusion/Code/stage3/embeddings
+```bash
+cd "$ARCC_PROJECT_ROOT" && python -B run_grouped_stability.py --verify-only --kernel "$ARCC_KERNEL"
 ```
 
-Do not submit from the maintained repository or overwrite the historical Newton workspace. A prepared package is required. Slurm opens stdout/stderr before the script runs, so the selected log directory must exist before submission. The default paths are prepared as empty directories; custom output roots also need matching Slurm `--output` and `--error` options.
+Run the separate cache command from the preparation preview to check sample files under `mrna_stability/{ntv2_100m,rnafm,mrnafm,esm2_8m}`. Training verifies the embedding hashes and their correspondence to the input rows.
 
-## Read progress and return evidence
+### Submit a seed
 
-Text progress is forwarded to Slurm logs as the notebook executes. The source notebook remains unchanged; a disposable execution copy is saved under `outputs/notebooks/`. Each launch records the exact package hashes, seed and actual kernel environment. Cooperative per-seed locks prevent duplicate writers. Compatible completed fits and recovery checkpoints can be reused, while incompatible evidence is preserved and rejected.
+Set `ARCC_ACCOUNT` for this session. For a new snapshot alongside earlier results, set `ARCC_OUTPUT_ROOT` to a fresh directory under the workspace’s `outputs/`. To resume an interrupted seed, use the original workspace, source snapshot, and output directory so compatible fits and checkpoints can be reused. Submit the GPU check from the Newton workspace. [Choose the Slurm allocation](../README.md#choose-the-slurm-allocation) · [Check and submit a job](../README.md#check-and-submit-a-job)
 
-The default destinations are:
+```bash
+mkdir -p outputs/logs "$ARCC_OUTPUT_ROOT/logs" "$ARCC_OUTPUT_ROOT/notebooks"
+PREFLIGHT_JOB=$(sbatch --parsable --account="${ARCC_ACCOUNT:?}" --partition=normal --qos=normal \
+  --gres=gpu:nvidia_h100_pcie:1 --cpus-per-task=2 --mem=8G --time=00:10:00 \
+  grouped_stability_preflight.sbatch)
+PREFLIGHT_JOB=${PREFLIGHT_JOB%%;*}
+echo "$PREFLIGHT_JOB"
+```
 
-- `outputs/study/split.json`: saved grouped allocation and input identity.
-- `outputs/study/fits/`: twelve separately identified fit records per seed and their linked weights/recovery state.
-- `outputs/logs/` and `outputs/notebooks/`: launch, environment, scheduler and executed-notebook evidence.
-- `outputs/study/reports/`: separately authorized saved-prediction analyses; training keeps comparison execution disabled.
+Replace `CPUS`, `MEMORY` and `HH:MM:SS` with the requested CPUs per job, memory including units (such as `32G`), and time limit. Start a new comparison at seed 0. For a retry, set `seed` to the interrupted seed number. The dependency waits for the GPU check to succeed.
 
-Return fit/prediction JSONs, the split record, launch/environment logs, executed notebooks and source-snapshot evidence. Retain linked final weights and incomplete checkpoints in the execution archive when recovery or later use needs them. Do not return embedding caches. Preserve the package's source files so returned hashes remain checkable, and keep this experiment separate from the completed supplied-split Newton results. A returned record or passed synthetic check does not establish a scientific conclusion.
+```bash
+export ARCC_CPUS=CPUS ARCC_MEM=MEMORY ARCC_TIME=HH:MM:SS
+seed=0
+TRAIN_JOB=$(sbatch --parsable --account="${ARCC_ACCOUNT:?}" --partition=normal --qos=normal \
+  --job-name="grouped-stability-seed${seed}" \
+  --gres=gpu:nvidia_h100_pcie:1 --cpus-per-task="${ARCC_CPUS:?}" \
+  --mem="${ARCC_MEM:?}" --time="${ARCC_TIME:?}" \
+  --dependency="afterok:${PREFLIGHT_JOB:?}" --export="ALL,ARCC_SEED=$seed" \
+  newton_grouped_stability.sbatch.example)
+TRAIN_JOB=${TRAIN_JOB%%;*}
+echo "$TRAIN_JOB"
+```
+
+After seed 0 succeeds, review its resource use before submitting seeds 1 and 2. To queue both as an array, replace the `--export` option above with `--array=1-2%1` for one job at a time or `--array=1-2%2` for up to two GPUs. Use `--job-name=grouped-stability-repeats` and set the dependency to `afterok:` followed by the seed-0 job ID. If Slurm no longer knows that ID, verify the successful seed-0 run in job history before omitting the dependency. [Batch inventory](batches.tsv) · [Monitor or retry](../README.md#monitor-or-retry)
+
+## Return results
+
+From `$ARCC_OUTPUT_ROOT/study/` on Newton, copy `split.json` and the 12 `fits/<configuration>/seed<N>.json` files per seed. The existing local cohort lives at `Code/stage4/results/grouped_stability_v1/`. For a new cohort, choose a separate local folder and point the notebook’s `RESULTS_ROOT` at it. Keep `split.json` at that folder’s root and preserve the `fits/` paths. Save the workspace’s `source-snapshot.json` and the matching launch records from `$ARCC_OUTPUT_ROOT/logs/` with the returned evidence. [Download results](../README.md#download-results)
+
+Keep the original `study/` directory on Newton, including the split, fit records and best weights. Grouped-stability correction reads this evidence for the matching seed. [Fusion mechanism experiments](../fusion_studies/README.md)
+
+## Update an existing workspace
+
+From the local repository root, preview what would change in the existing upload folder. Add `--apply` when ready to update it locally, then follow the shared instructions to sync and verify the Newton copy. [Update an existing workspace](../README.md#update-an-existing-workspace)
+
+```powershell
+python -B execution/arcc/prepare.py grouped_stability --update "../ARCC Grouped Stability"
+```

@@ -29,7 +29,7 @@ def module(name):
     return result
 
 
-prepare, runner = module("prepare"), module("run_fusion_study")
+prepare, runner = module("package_spec"), module("run_fusion_study")
 
 
 class ExecutionTests(unittest.TestCase):
@@ -212,6 +212,7 @@ class ExecutionTests(unittest.TestCase):
             for name in ("Code/shared_code/fusion/train.py", "Code/stage3/embeddings/shard.npz",
                          "datasets/large.csv", "Code/stage4/results/old.json",
                          "execution/arcc/encoder_swaps/run_encoder_swaps.py",
+                         "execution/arcc/requirements.txt", "execution/arcc/fusion_studies/README.md",
                          "execution/arcc/fusion_studies/run_fusion_study.py",
                          *(f"tests/{name}" for name in prepare.TESTS)):
                 path = root / name
@@ -221,10 +222,10 @@ class ExecutionTests(unittest.TestCase):
             names = [item["destination"] for item in plan["files"]]
             self.assertFalse(any("datasets" in p or "embeddings" in p or "results" in p for p in names))
             destination = root.parent / "package"
-            prepare.prepare(root, destination)
+            prepare.write_package(plan, destination)
             runner.verify_package(destination)
             with self.assertRaisesRegex(ValueError, "existing destinations"):
-                prepare.prepare(root, destination)
+                prepare.write_package(plan, destination)
             (destination / "Code/shared_code/fusion/train.py").write_text("changed")
             with self.assertRaisesRegex(ValueError, "changed prepared source"):
                 runner.verify_package(destination)
