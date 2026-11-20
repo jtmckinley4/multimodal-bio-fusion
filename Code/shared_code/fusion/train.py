@@ -127,7 +127,7 @@ def paired_bootstrap(first, second, task, draws=2000, seed=0):
 
 
 def seed_averaged_bootstrap(task, truth, predictions, comparisons, rows=None, groups=None,
-                            draws=4000, seed=0):
+                            draws=4000, seed=0, score_fn=None):
     """Paired differences between models on one test split, seeds averaged inside each draw.
 
     predictions maps a model name to a list of per-seed prediction arrays, every one scored
@@ -141,7 +141,12 @@ def seed_averaged_bootstrap(task, truth, predictions, comparisons, rows=None, gr
     groups are then resampled, so repeated measurements of one sequence move together rather
     than counting as independent evidence. Without groups each row is its own group, and with
     one seed per model this is exactly paired_bootstrap.
+
+    score_fn replaces score_rows for a task whose metric lives elsewhere, such as the pair
+    tasks' AUROC and average precision (pair_tasks.score_rows). The resampling rule, the
+    pairing and the seed averaging are unchanged; only the metric differs.
     """
+    score_of = score_rows if score_fn is None else score_fn
     truth = np.asarray(truth)
     rows = np.arange(len(truth)) if rows is None else np.asarray(rows)
     needed = {name for _, first, second in comparisons for name in (first, second)}
@@ -162,7 +167,7 @@ def seed_averaged_bootstrap(task, truth, predictions, comparisons, rows=None, gr
         members = np.split(rows[order], np.cumsum(np.bincount(inverse))[:-1])
 
     def averaged(name, pick):
-        return float(np.mean([score_rows(task, truth[pick], p[pick]) for p in seeds_of[name]]))
+        return float(np.mean([score_of(task, truth[pick], p[pick]) for p in seeds_of[name]]))
 
     observed = {name: averaged(name, rows) for name in needed}
     rng = np.random.default_rng(seed)

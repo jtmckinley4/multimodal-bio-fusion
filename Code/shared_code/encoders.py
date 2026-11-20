@@ -20,8 +20,10 @@ class Encoder:
     """A frozen pretrained encoder and the input it reads.
 
     alphabet: "dna" (U replaced by T), "rna" (T replaced by U), "protein" (translated
-    coding sequence), or "protein_spaced" (the translation with residues separated by
-    spaces and the rare amino acids U, Z, O, and B written as X, as ProtBERT expects).
+    coding sequence), "protein_spaced" (the translation with residues separated by
+    spaces and the rare amino acids U, Z, O, and B written as X, as ProtBERT expects), or
+    "smiles" (a chemical string, which is not derived from a coding sequence at all and so
+    is read only through fusion.entity_embeddings, never through encoder_input).
     loader: "auto" for checkpoints that load with the Transformers auto classes,
     "remote_esm" for Nucleotide Transformer v2, "remote_dnabert2" for DNABERT-2, and
     "bert" for ProtBERT, whose checkpoint does not name its model type, or "rnaernie"
@@ -67,6 +69,12 @@ ENCODERS = {
         Encoder("esm2_8m", "ESM-2 8M", "protein", "facebook/esm2_t6_8M_UR50D", "protein", 1024),
         Encoder("esm2_35m", "ESM-2 35M", "protein", "facebook/esm2_t12_35M_UR50D", "protein", 1024),
         Encoder("esm2_150m", "ESM-2 150M", "protein", "facebook/esm2_t30_150M_UR50D", "protein", 1024),
+        # The partner tasks score a small molecule against a protein, so they need an
+        # encoder for a chemical string rather than a biological sequence. ChemBERTa reads
+        # SMILES one character-level token at a time, which gives the fusion heads the same
+        # thing every other stream gives them: a variable-length run of token states.
+        Encoder("chemberta", "ChemBERTa 77M", "ligand", "DeepChem/ChemBERTa-77M-MLM",
+                "smiles", 512, revision="ed8a5374f2024ec8da53760af91a33fb8f6a15ff"),
         Encoder("protbert", "ProtBERT", "protein", "Rostlab/prot_bert", "protein_spaced", 1024,
                 loader="bert", revision="7a894481acdc12202f0a415dd567f6cfdb698908"),
         # Focused E. coli extension; these do not expand earlier notebook panels.
@@ -91,6 +99,10 @@ def encoder_input(encoder, seq):
         return rna_to_dna(seq)
     if encoder.alphabet == "rna":
         return dna_to_rna(seq)
+    if encoder.alphabet == "smiles":
+        raise ValueError(
+            f"{encoder.key} reads a chemical string, not a coding sequence; the partner "
+            "tasks prepare its input in fusion.entity_embeddings.")
     return protein_input(encoder, translate_cds(seq))
 
 
