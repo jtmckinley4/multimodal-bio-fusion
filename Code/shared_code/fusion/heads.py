@@ -1,4 +1,4 @@
-"""The three BioLangFusion fusion strategies, each taking codon-aligned streams to one.
+"""Fusion heads for codon-aligned DNA, RNA and protein streams.
 
 Every head reads the dictionary CodonGrid returns, three (batch, T', width) streams and
 the mask of real codons, and returns a fused (batch, T', out_width) stream together with
@@ -35,6 +35,8 @@ from __future__ import annotations
 
 import torch
 from torch import nn
+
+from .isoformer_reference import ReferenceCrossAttention
 
 MODALITIES = ("dna", "rna", "prot")
 SHARED_WIDTH = 600
@@ -136,6 +138,37 @@ class CrossModalFusion(nn.Module):
         joined = self.fuse(torch.cat([updated[m] for m in MODALITIES], dim=-1))
         average = sum(updated[m] for m in MODALITIES) / len(MODALITIES)
         return self.fused_norm(average + joined) * mask.unsqueeze(-1), {}
+
+
+class IsoFormerSequentialFusion(nn.Module):
+    """Project the codon grid and update DNA from RNA, then from protein.
+
+    Each residual attention block uses the released IsoFormer attention operation.
+    The BLF-style projections and shared real-codon mask adapt it to this grid.
+    Return the final DNA tokens for a TextCNN readout.
+    """
+
+    def __init__(self, widths, out_width=SHARED_WIDTH, n_heads=N_HEADS):
+        super().__init__()
+        self.out_width = out_width
+        self.project = nn.ModuleDict({
+            modality: nn.Sequential(nn.Linear(widths[modality], out_width), nn.Tanh())
+            for modality in MODALITIES
+        })
+        self.read_rna = ReferenceCrossAttention(out_width, out_width, n_heads)
+        self.read_protein = ReferenceCrossAttention(out_width, out_width, n_heads)
+
+    def forward(self, streams, mask):
+        padding = ~mask.unsqueeze(-1)
+        projected = {
+            modality: projection(streams[modality].masked_fill(padding, 0))
+            for modality, projection in self.project.items()
+        }
+        dna_after_rna = self.read_rna(projected["dna"], projected["rna"], context_mask=mask)
+        dna_after_protein = self.read_protein(dna_after_rna, projected["prot"],
+                                              context_mask=mask)
+        # TextCNN may evaluate a padded window when a transcript is shorter than a kernel.
+        return dna_after_protein.masked_fill(padding, 0), {}
 
 
 FUSIONS = {"concat": ConcatFusion, "mil": GatedMILFusion, "cross": CrossModalFusion}

@@ -187,21 +187,26 @@ def seed_averaged_bootstrap(task, truth, predictions, comparisons, rows=None, gr
     return results
 
 
-def predict(model, batches, device, task):
+def _batch_slices(batch, batch_slice_size):
+    return (batch,) if batch_slice_size is None else batch.slices(batch_slice_size)
+
+
+def predict(model, batches, device, task, *, batch_slice_size=None):
     """Return the labels, the predictions, and the mean modality weights over a split."""
     model.eval()
     truth, predicted, weights = [], [], []
     with torch.no_grad():
         for batch in batches:
-            batch = batch.to(device)
-            output, aux = model(batch)
-            truth.append(batch.labels.cpu().numpy())
-            predicted.append(output.squeeze(-1).cpu().numpy() if task == "regression"
-                             else output.cpu().numpy())
-            # A classification output keeps its class axis for argmax; an expression panel
-            # keeps its tissue axis; only single-output regression is squeezed.
-            if "alpha" in aux:
-                weights.append(aux["alpha"].cpu().numpy())
+            for piece in _batch_slices(batch, batch_slice_size):
+                device_batch = piece.to(device)
+                output, aux = model(device_batch)
+                truth.append(device_batch.labels.cpu().numpy())
+                predicted.append(output.squeeze(-1).cpu().numpy() if task == "regression"
+                                 else output.cpu().numpy())
+                # Keep the class or tissue axis whenever the task has multiple outputs.
+                if "alpha" in aux:
+                    weights.append(aux["alpha"].cpu().numpy())
+                del device_batch, output, aux
     alpha = np.concatenate(weights).mean(axis=0) if weights else None
     return np.concatenate(truth), np.concatenate(predicted), alpha
 
@@ -670,8 +675,18 @@ def _save_weights(path, model, result):
             "sha256": checksum, "size_bytes": path.stat().st_size}
 
 
+def _validate_batch_slicing(identity, streams, batch_slice_size):
+    if batch_slice_size is not None:
+        if type(batch_slice_size) is not int or batch_slice_size < 1:
+            raise ValueError("Batch slice size must be a positive integer")
+        if streams.task != "regression":
+            raise ValueError("Batch slicing currently supports scalar regression")
+    if identity.get("loader", {}).get("batch_slice_size") != batch_slice_size:
+        raise ValueError("Batch slice size must match the recorded loader identity")
+
+
 def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_every=10,
-        loaders=None, keep_checkpoint=False, run_identity=None, producer=None):
+        loaders=None, keep_checkpoint=False, run_identity=None, producer=None, *, batch_slice_size=None):
     """Train to the early stop, restore the best epoch, and score the test split.
 
     With a checkpoint path, the run is written there every checkpoint_every epochs and
@@ -688,6 +703,7 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
     if strict:
         from .run_identity import validate_identity, validate_loaders
         identity = validate_identity(identity, config=asdict(config), benchmark=streams.key)
+    _validate_batch_slicing(identity, streams, batch_slice_size)
     checkpoint = Path(checkpoint) if checkpoint else None
     saved = _read_checkpoint(checkpoint) if checkpoint and checkpoint.exists() else None
     if saved is not None:
@@ -745,25 +761,35 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
         if log:
             log(f"    resumed at epoch {first_epoch}, best {best['score']:.4f} @ {best['epoch']}")
     for epoch in range(first_epoch, config.max_epochs):
+        epoch_started = time.perf_counter()
         model.train()
         running = 0.0
-        for batch in splits["train"]:
-            batch = batch.to(device)
+        for batch_number, batch in enumerate(splits["train"], start=1):
             optimiser.zero_grad()
-            output, aux = model(batch)
-            target = (batch.labels if task in ("classification", "expression")
-                      else batch.labels.view(-1, 1))
-            loss = criterion(output, target)
-            if config.entropy_lambda and "alpha" in aux:
-                alpha = aux["alpha"].clamp_min(1e-12)
-                loss = loss + config.entropy_lambda * (-(alpha * alpha.log()).sum(1).mean())
-            loss.backward()
+            batch_rows = len(batch.labels)
+            for piece in _batch_slices(batch, batch_slice_size):
+                device_batch = piece.to(device)
+                output, aux = model(device_batch)
+                target = (device_batch.labels if task in ("classification", "expression")
+                          else device_batch.labels.view(-1, 1))
+                loss = criterion(output, target)
+                if config.entropy_lambda and "alpha" in aux:
+                    alpha = aux["alpha"].clamp_min(1e-12)
+                    loss = loss + config.entropy_lambda * (-(alpha * alpha.log()).sum(1).mean())
+                # Weight each slice by its actual share of the logical batch, including the tail.
+                if batch_slice_size is None:
+                    loss.backward()
+                else:
+                    (loss * (len(device_batch.labels) / batch_rows)).backward()
+                running += float(loss.detach()) * len(device_batch.labels)
+                del device_batch, output, aux, target, loss
             optimiser.step()
-            # len(labels), not len(codons): the same loop trains the codon-grid models
-            # and the expression panel, and only one of those batches has codons.
-            running += float(loss.detach()) * len(batch.labels)
+            if log and batch_slice_size is not None and (batch_number == 1 or batch_number % 50 == 0):
+                elapsed = (time.perf_counter() - epoch_started) / 60
+                log(f"    epoch {epoch:3d}  trained batch {batch_number}/{len(splits['train'])}  "
+                    f"{elapsed:.1f} min elapsed")
 
-        truth, predicted, _ = predict(model, splits["val"], device, task)
+        truth, predicted, _ = predict(model, splits["val"], device, task, batch_slice_size=batch_slice_size)
         val = score(task, truth, predicted)
         # An undefined score is not an improvement, but the first epoch's weights are kept
         # regardless so that there is always a model to restore.
@@ -777,16 +803,18 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
                     "state": {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}}
         elif epoch - best["epoch"] >= config.early_stopping_patience:
             break
-        if log and (epoch % 10 == 0 or epoch == config.max_epochs - 1):
+        if log and (batch_slice_size is not None or epoch % 10 == 0 or epoch == config.max_epochs - 1):
+            timing = (f"  {(time.perf_counter() - epoch_started) / 60:.1f} min"
+                      if batch_slice_size is not None else "")
             log(f"    epoch {epoch:3d}  train loss {history[-1]['train_loss']:.4f}  "
-                f"val {val:.4f}  best {best['score']:.4f} @ {best['epoch']}")
+                f"val {val:.4f}  best {best['score']:.4f} @ {best['epoch']}{timing}")
         if checkpoint and epoch % checkpoint_every == 0:
             _save_checkpoint(checkpoint, epoch, model, optimiser, best, history,
                              before + time.perf_counter() - started, scheduler=schedule,
                              splits=splits, identity=identity, device=device, producer=producer)
 
     model.load_state_dict(best["state"])
-    truth, predicted, alpha = predict(model, splits["test"], device, task)
+    truth, predicted, alpha = predict(model, splits["test"], device, task, batch_slice_size=batch_slice_size)
     result = Result(
         variant=identity["variant"],
         benchmark=streams.key, config=asdict(config), epochs=len(history),
@@ -811,7 +839,7 @@ def fit(model, streams, config, device, log=print, checkpoint=None, checkpoint_e
 
 def run(streams, variant, config, device, results_dir, log=print,
         require_predictions=False, builder=None, loaders=None, tag=None,
-        run_identity=None, producer=None, **model_kwargs):
+        run_identity=None, producer=None, *, batch_slice_size=None, **model_kwargs):
     """Train one variant, or return the run already on disk under the same settings.
 
     require_predictions refuses a stored run without per-row predictions; it never
@@ -831,6 +859,7 @@ def run(streams, variant, config, device, results_dir, log=print,
         identity = validate_identity(run_identity, config=asdict(config),
                                      variant=variant, benchmark=streams.key)
         validate_model_request(identity, builder=builder, model_kwargs=model_kwargs)
+    _validate_batch_slicing(identity, streams, batch_slice_size)
     if producer is not None:
         if not isinstance(producer, dict):
             raise ValueError("producer must be a mapping")
@@ -866,7 +895,8 @@ def run(streams, variant, config, device, results_dir, log=print,
                         **model_kwargs))
     result = fit(model, streams, config, device, log=log, loaders=loaders,
                  checkpoint=checkpoint, keep_checkpoint=True, run_identity=identity,
-                 producer=producer)
+                  producer=producer, batch_slice_size=batch_slice_size,
+                  checkpoint_every=1 if batch_slice_size is not None else 10)
     result.extra_fields["identity"] = identity
     if producer is not None:
         result.extra_fields["producer"] = producer

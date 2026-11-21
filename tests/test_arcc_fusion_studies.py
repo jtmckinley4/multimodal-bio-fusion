@@ -250,14 +250,18 @@ class ExecutionTests(unittest.TestCase):
         for study, filename in runner.STUDIES.items():
             notebook = nbformat.read(ROOT / "Code/stage4" / f"{filename}.ipynb", as_version=4)
             actions = ("train",) if study == "correction" else ("train", "diagnostics")
+            cases = [(action, None) for action in actions]
             if study == "regions":
-                actions += ("prepare", "extract")
-            for action in actions:
-                with self.subTest(study=study, action=action):
+                cases.extend([("prepare", None), ("extract", None), ("train", 4)])
+            for action, slice_size in cases:
+                with self.subTest(study=study, action=action, slice_size=slice_size):
                     config = self.configuration(Path("/synthetic"))
                     config.update(study=study, benchmark=runner.PANELS[study][0], action=action,
                                   seed=0 if action in ("prepare", "extract") else 2,
                                   fit_keys=["rnafm__native__rna_only__true"] if study == "regions" and action in ("train", "diagnostics") else None)
+                    if slice_size is not None:
+                        config.update(seed=0, fit_keys=["rnafm__native__attention_cds__true"],
+                                      slice_size=slice_size, output_root="/synthetic/outputs/halflife-native-sliced")
                     prepared = runner.prepare_notebook(notebook, config)
                     index = next(i for i, cell in enumerate(prepared.cells)
                                  if "fusion-study-settings" in cell.metadata.get("tags", []))
@@ -290,11 +294,16 @@ class ExecutionTests(unittest.TestCase):
                     self.assertFalse(namespace["RUN_ANALYSIS"])
                     if config["fit_keys"]:
                         self.assertEqual(namespace["FIT_KEYS"], config["fit_keys"])
+                    if study == "regions":
+                        self.assertEqual(namespace["BATCH_SLICE_SIZE"], slice_size)
+                    else:
+                        self.assertNotIn("BATCH_SLICE_SIZE", namespace)
 
     def test_later_top_level_assignments_do_not_restore_local_paths_or_modes(self):
         protected = {"DEVICE", "PRODUCER", "BENCHMARK", "DATASET_KEY", "SEED", "DATA_ROOT", "CACHE_ROOT",
                      "REFERENCE_ROOT", "GROUPED_SPLIT_PATH", "DATA_CACHE_ROOT", "TOKEN_CACHE_ROOT", "RESULTS_ROOT",
-                     "READ_SAVED_RESULTS", "RUN_TRAINING", "RUN_EXTRACTION", "RUN_PREPARATION", "RUN_DIAGNOSTICS", "RUN_ANALYSIS"}
+                     "READ_SAVED_RESULTS", "RUN_TRAINING", "RUN_EXTRACTION", "RUN_PREPARATION", "RUN_DIAGNOSTICS",
+                     "RUN_ANALYSIS", "BATCH_SLICE_SIZE"}
         for filename in runner.STUDIES.values():
             notebook = nbformat.read(ROOT / "Code/stage4" / f"{filename}.ipynb", as_version=4)
             index = next(i for i, cell in enumerate(notebook.cells)
@@ -359,6 +368,43 @@ class ExecutionTests(unittest.TestCase):
                             {"fit_keys": ["same", "same"]}, {"study": "gates", "benchmark": "ecoli_proteins"}):
                 with self.subTest(changes=changes), self.assertRaises(ValueError):
                     runner.validate_configuration({**config, **changes}, {})
+
+    def test_a6_slice_size_requires_one_fit_and_a_separate_output_root(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config = self.configuration(root)
+            config.update(study="regions", benchmark="rnahl-human", slice_size=4,
+                          fit_keys=["rnafm__native__attention_cds__true"],
+                          output_root=str(root / "outputs/halflife-native-sliced"))
+            runner.validate_configuration(config, {})
+            for changes in (
+                {"slice_size": 2}, {"slice_size": 4.0}, {"seed": 1},
+                {"benchmark": "translation-efficiency-human"}, {"action": "diagnostics"},
+                {"study": "gates", "benchmark": "ecoli_proteins", "fit_keys": None},
+                {"fit_keys": None}, {"fit_keys": ["rnafm__native__rna_only__true"]},
+                {"fit_keys": [*config["fit_keys"], "rnafm__native__rna_only__true"]},
+            ):
+                with self.subTest(changes=changes), self.assertRaisesRegex(ValueError, "--slice-size 4"):
+                    runner.validate_configuration({**config, **changes}, {})
+            for relative in ("outputs", "outputs/regions", "outputs/regions/rnahl-human/retry",
+                             "outputs/logs/retry"):
+                with self.subTest(relative=relative), self.assertRaisesRegex(ValueError, "separate --output-root"):
+                    runner.validate_configuration({**config, "output_root": str(root / relative)}, {})
+
+    def test_a6_slice_option_is_rejected_for_inspection(self):
+        for option, reason in (("--verify-only", "requires a training job"),
+                               ("--preflight", "Preflight is separate")):
+            with (
+                self.subTest(option=option),
+                patch.object(runner, "verify_package", return_value=({}, {})),
+                patch.object(runner.support, "LiveOutputPreprocessor") as kernel,
+                patch.object(sys, "stderr", io.StringIO()) as stderr,
+            ):
+                with self.assertRaises(SystemExit) as error:
+                    runner.main([option, "--slice-size", "4"])
+                self.assertEqual(error.exception.code, 2)
+                self.assertIn(reason, stderr.getvalue())
+                kernel.assert_not_called()
 
     def test_a6_writable_cache_must_not_overlap_sources_or_evidence(self):
         with tempfile.TemporaryDirectory() as temporary:

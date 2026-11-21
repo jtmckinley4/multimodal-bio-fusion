@@ -2,13 +2,14 @@
 
 Stage 3 establishes the reference computations and evidence used by later fusion experiments. [Stage 1](../stage1/README.md) characterizes representations; Stage 2 clarifies alignment; [Stage 4](../stage4/README.md) investigates encoder substitutions, biological context and proposed explanations of fusion behavior. Establishing a reference includes input checks, implementation validation, predictive comparisons and repeated fits.
 
-Read the BioLangFusion route from datasets through token caches and build checks to the reference benchmarks. The frozen GTEx reference and adapted Coupled Mamba are separate method families, not subsequent steps required to complete BLF. Software checks establish what an implementation computes; held-out comparisons establish its predictive behavior. Neither alone explains a biological mechanism or reproduces a paper's entire experiment.
+Read the BioLangFusion route from datasets through token caches and build checks to the reference benchmarks. The IsoFormer-style reference then shows how the same codon grid and prediction head can support two attention updates in sequence. The frozen GTEx pilot and adapted Coupled Mamba have their own comparisons. Software checks establish what an implementation computes. Held-out comparisons establish its predictive behavior under the chosen protocol.
 
 | Reference route | Notebook and role |
 | --- | --- |
 | BioLangFusion inputs | [Dataset audit](blf_datasets.ipynb) and [token embeddings](blf_token_embeddings.ipynb) establish the retained rows and frozen token inputs. |
 | BioLangFusion validation | [Build check](blf_build_check.ipynb) examines fungal expression and convolution choices; [reference benchmarks](blf_reference_benchmarks.ipynb) extends the original-encoder comparison. |
 | Historical BLF alternative | [Appendix comparison](blf_appendix_comparison.ipynb) reads a distinct convolution configuration and its own selection/uncertainty protocol. |
+| Adapted IsoFormer | [Sequential attention reference](isoformer_reference.ipynb) demonstrates a DNA-anchored fusion head on the BLF grid using synthetic inputs. |
 | Frozen GTEx pilot | [Fusion reference](gtex_frozen_fusion_reference.ipynb) combines the pilot and its repeat route. |
 | Adapted Coupled Mamba | [Reference and controls](coupled_mamba_reference.ipynb) compares bottleneck, uncoupled and coupled recurrence under the BLF input recipe. |
 
@@ -55,6 +56,12 @@ The main Equation 1 comparison remains distinct from the [appendix-convolution r
 
 The recorded main comparison found positive paired intervals for E. coli concatenation and gated fusion against the selected single; cross-attention's interval included zero. CoV-Vac did not show the same advantage. Stability retains extensive training/test sequence overlap: an unseen-sequence subset is informative but does not convert the original fit into a clean-split experiment. Matching some published scores likewise does not establish faithful reproduction. The [reference notebook](blf_reference_benchmarks.ipynb#What-this-comparison-establishes) retains those limits.
 
+## IsoFormer-style sequential attention on the BLF grid
+
+The [reference notebook](isoformer_reference.ipynb) shows DNA reading RNA first, then the RNA-updated DNA reading protein. The [shared adapter](../shared_code/fusion/heads.py) uses the released residual attention operation twice. It projects all three aligned streams to 600 features, uses four attention heads per update, masks padded codons in both contexts, and sends the final DNA tokens to the 100-channel TextCNN. The released model instead pools a selected DNA window and uses an expression head. [IsoFormer source review](../../docs/sources.md#isoformer-dataset-and-model-cards)
+
+This notebook uses invented tensors to check the update order, padding and the prediction shape. A future matched encoder-swap comparison would keep the cached embeddings, codon grid, splits and prediction-head settings fixed. The complete fusion heads still differ in capacity and computation. [Comparison plan](../../docs/research-execution-plan.md#isoformer-style-baseline-and-matched-comparisons)
+
 ## GTEx: input suitability and a frozen fusion reference
 
 The [frozen fusion reference](gtex_frozen_fusion_reference.ipynb) brings together the original pilot and its additional-seed route. It predicts Stage 1's 30 tissue RNA-abundance targets with frozen NT v2 100M for genomic DNA and transcript RNA and ESM-2 150M for protein. Six configurations compare individual inputs, DNA+protein, DNA+RNA and all three. These are transformed tissue-averaged RNA-abundance targets, not tissue inputs or protein production; the [target trace](../../docs/methods/data-and-targets.md#gtex-tissue-expression-labels) records the transformation and normalization uncertainties.
@@ -83,7 +90,7 @@ The [Gantt and Details sheets](../../docs/Research_Project_Plan_Gantt.xlsx), tas
 
 ## Reading, execution and retained evidence
 
-Saved outputs can be read without executing cells. The notebooks also default to reading available records or metadata when run from the top, with missing evidence reported rather than computed. Keep separate pilot, repeat and analysis switches off for this route; Mamba's bootstrap now requires its own explicit switch. The [runbook](../stage4/RUNBOOK.md#read-saved-results-without-starting-work) explains each boundary. Changing a reading switch does not establish that a computation will run only missing work.
+Saved outputs can be read without executing cells. The experiment notebooks default to reading available records or metadata, with missing evidence reported rather than computed. Keep separate pilot, repeat and analysis switches off for this route. Mamba's bootstrap requires its own switch. The new IsoFormer reference runs only synthetic tensor examples. The [runbook](../stage4/RUNBOOK.md#read-saved-results-without-starting-work) explains the experiment modes.
 
 The notebooks explain and assemble the references; [shared fusion code](../shared_code/fusion/) supplies reused extraction, grid, head and training operations. [Software tests](../../tests/README.md) check controlled cases, while notebooks and [run records](../../docs/run-records.md) retain research evidence. Gantt/Details tasks 16/17/41/44 retain the baseline and reference work; task 25 covers proposed attention comparisons.
 

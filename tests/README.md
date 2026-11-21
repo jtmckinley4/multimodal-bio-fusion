@@ -82,6 +82,7 @@ The retained shared IsoFormer model, input helpers and adapters have no pretrain
 
 ```shell
 python -B -m unittest discover -s tests -p "test_isoformer_reference.py" -v
+python -B -m unittest discover -s tests -p "test_isoformer_sequential.py" -v
 python -B -m unittest discover -s tests -p "test_isoformer_inputs.py" -v
 python -B -m unittest discover -s tests -p "test_isoformer_adapters.py" -v
 ```
@@ -89,6 +90,8 @@ python -B -m unittest discover -s tests -p "test_isoformer_adapters.py" -v
 [Reference tests](test_isoformer_reference.py) check hand-calculated attention, update order, masks, pooling and gradients. Missing-protein fixtures cover exact all-present preservation, compact mixed-row order, complete bias-inclusive bypass, all-absent encoder skipping and gradient isolation. [Input tests](test_isoformer_inputs.py) check missing versus malformed fields, RNA suffixes, whole-row long-protein exclusions, unchanged targets/source indices, raw-eval exclusion before validation, and released window rules. Eligibility fixtures cover strict right-boundary equality, shifted-only and overlapping boundary failures, strand-specific anchors, mitochondrial exclusions, invalid/missing chromosome sizes and preserved train/test labels. Schema reading retains raw `eval` for inspection; validation still refuses accidentally unfiltered rows.
 
 [Adapter tests](test_isoformer_adapters.py) exercise the Enformer embedding request and final NT/ESM hidden-state selection with small substitute backbones, including mixed/all-absent composition with the live wrapper. They check special-token and mask contracts, non-truncating per-example padding and refusal of unequal lengths. No real tokenizers or checkpoint weights are loaded.
+
+[Sequential fusion tests](test_isoformer_sequential.py) check that protein attention depends on the RNA-updated DNA, that the two context masks ignore padding, and that the BLF grid and TextCNN accept the new head's shapes. The [Stage 3 notebook](../Code/stage3/isoformer_reference.ipynb) explains the same operation with invented tensors.
 
 These tests perform no optimizer updates, research-data loading, pretrained downloads, embedding extraction or result publication. Actual tokenizer/backbone compatibility, real-cohort eligibility, normalization, stopping and GPU behavior are not verified. The old [pilot tests](test_isoformer.py) address a different model and remain separate. On Windows, preserve NumPy-before-PyTorch import order rather than bypassing an OpenMP runtime conflict with unsafe environment flags.
 

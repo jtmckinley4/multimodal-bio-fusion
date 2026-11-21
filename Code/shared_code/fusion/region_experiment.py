@@ -714,6 +714,21 @@ class RegionBatch:
     row_ids: tuple
     positions: tuple
 
+    def slices(self, max_rows):
+        """Yield row slices with padding limited to the longest row in each slice."""
+        if type(max_rows) is not int or max_rows < 1:
+            raise ValueError("Batch slice size must be a positive integer")
+        for start in range(0, len(self.labels), max_rows):
+            rows = slice(start, start + max_rows)
+            lengths = self.lengths[rows]
+            longest = int(lengths.max())
+            yield RegionBatch(
+                {key: value[rows, :longest] for key, value in self.streams.items()},
+                {key: value[rows, :longest] for key, value in self.masks.items()},
+                self.region[rows, :longest], lengths, self.labels[rows],
+                self.row_ids[rows], self.positions[rows],
+            )
+
     def to(self, device):
         return RegionBatch({key: value.to(device) for key, value in self.streams.items()},
                            {key: value.to(device) for key, value in self.masks.items()},

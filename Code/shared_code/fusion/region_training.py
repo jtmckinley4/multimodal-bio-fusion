@@ -410,7 +410,20 @@ def _parameter_counts(streams, config, settings):
     return {"total": prediction + fusion, "prediction": prediction}
 
 
-def _loader_record(config):
+def validate_batch_slice_size(dataset_key, spec, config, batch_slice_size):
+    """Allow GPU slicing only for the approved native half-life retry."""
+    if batch_slice_size is None:
+        return
+    if (type(batch_slice_size) is not int or batch_slice_size != 4
+            or dataset_key != "rnahl-human"
+            or spec != FitSpec("rnafm", "native", "attention_cds", "true")
+            or type(config.seed) is not int or config.seed != 0
+            or type(config.batch_size) is not int or config.batch_size != 32):
+        raise ValueError("A6 batch slicing requires size 4, batch size 32, and the "
+                         "rnahl-human RNA-FM native true-CDS attention fit at seed 0")
+
+
+def _loader_record(config, *, batch_slice_size=None):
     """The existing fixed DataLoader contract, checked against constructed loaders."""
     if (type(config.batch_size) is not int or config.batch_size < 1
             or type(config.seed) is not int or config.seed < 0):
@@ -421,23 +434,27 @@ def _loader_record(config):
     recovery = {name: {"loader": generator_contract(DataLoader)} for name in SPLITS}
     for name in ("sampler", "batch_sampler.sampler"):
         recovery["train"][name] = generator_contract(RandomSampler)
-    return {"kind": "custom", "batch_size": config.batch_size, "seed": config.seed,
-            "num_workers": 0, "implementation": f"{__name__}.make_loaders", "recovery": recovery}
+    record = {"kind": "custom", "batch_size": config.batch_size, "seed": config.seed,
+              "num_workers": 0, "implementation": f"{__name__}.make_loaders", "recovery": recovery}
+    if batch_slice_size is not None:
+        record["batch_slice_size"] = batch_slice_size
+    return record
 
 
-def make_identity(streams, config, settings, loaders, cache_records):
+def make_identity(streams, config, settings, loaders, cache_records, *, batch_slice_size=None):
     """Validate a standalone request, including its actual loader contracts."""
     validate_preparation(streams.cohort, streams.preparation)
-    identity = _make_identity(streams, config, settings, cache_records)
+    identity = _make_identity(streams, config, settings, cache_records, batch_slice_size=batch_slice_size)
     validate_loaders(streams, config, loaders)
     run_identity.validate_loaders(identity, loaders)
     return identity
 
 
-def _make_identity(streams, config, settings, cache_records):
+def _make_identity(streams, config, settings, cache_records, *, batch_slice_size=None):
     """Build identity after this operation's cohort/preparation boundary check."""
     if streams.spec not in fit_panel(include_optional=True):
         raise ValueError("Fit is outside the declared A6 panel")
+    validate_batch_slice_size(streams.key, streams.spec, config, batch_slice_size)
     settings = _settings(settings)
     required = set(required_encoders(streams.spec))
     if set(cache_records) != required:
@@ -483,8 +500,9 @@ def _make_identity(streams, config, settings, cache_records):
                                    "masks_reapplied": "rna_validity_and_region_intersect_protein_availability"}
     if streams.spec.method == "protein_only":
         model_record["input_policy"] = "native_protein_residues_only_on_common_cohort"
+    loader = _loader_record(config, batch_slice_size=batch_slice_size)
     identity = run_identity.make_identity(benchmark=streams.key, variant=streams.spec.method, config=config,
-                                          inputs=inputs_record, model=model_record, loader=_loader_record(config))
+                                          inputs=inputs_record, model=model_record, loader=loader)
     return identity
 
 
@@ -549,12 +567,14 @@ def read_fit(path, *, expected_identity=None, preparation=None):
     return result
 
 
-def run_fit(streams, config, settings, output_dir, device, *, producer, log=print):
+def run_fit(streams, config, settings, output_dir, device, *, producer, log=print,
+            batch_slice_size=None):
     """Reuse exact completed results or train once with checkpoint/RNG recovery."""
+    validate_batch_slice_size(streams.key, streams.spec, config, batch_slice_size)
     validate_preparation(streams.cohort, streams.preparation)
     records = {key: run_identity.cache_record(streams.caches.caches[key].cache_dir)
                for key in required_encoders(streams.spec)}
-    identity = _make_identity(streams, config, settings, records)
+    identity = _make_identity(streams, config, settings, records, batch_slice_size=batch_slice_size)
     destination = Path(output_dir) / streams.spec.key
     path = destination / f"seed{config.seed}.json"
     if path.exists():
@@ -564,9 +584,10 @@ def run_fit(streams, config, settings, output_dir, device, *, producer, log=prin
     loaders = _make_loaders(streams, config)
     validate_loaders(streams, config, loaders)
     run_identity.validate_loaders(identity, loaders)
+    execution = {} if batch_slice_size is None else {"batch_slice_size": batch_slice_size}
     train.run(streams, streams.spec.method, config, device, destination, log=log,
               require_predictions=True, builder=build_model, loaders=loaders, tag=f"seed{config.seed}",
-              run_identity=identity, producer=producer, settings=settings)
+              run_identity=identity, producer=producer, settings=settings, **execution)
     return read_fit(path, expected_identity=identity)
 
 
@@ -679,6 +700,7 @@ def collect_diagnostics(streams, config, settings, output_dir, device, *, produc
 
     Position means are per transcript; they are descriptive, not causal importance.
     The permuted control never changes the biological regions used for this report.
+    The expected identity requires the original unsliced execution mode.
     """
     if streams.spec.method == "protein_only":
         raise ValueError("Native protein-only has no RNA-region diagnostic; use its saved predictions")
@@ -842,6 +864,8 @@ def saved_comparisons(root, *, dataset_key, draws, bootstrap_seed, producer, run
             if result.config["seed"] != seed or result.extra_fields["identity"]["inputs"]["spec"] != asdict(spec):
                 raise ValueError("Result name and requested comparison cell differ")
             identity = result.extra_fields["identity"]
+            if identity["loader"].get("batch_slice_size") is not None:
+                raise ValueError("Read the sliced native attention fit as a separate pilot")
             budget = {key: value for key, value in result.config.items() if key != "seed"}
             settings = identity["model"]["settings"]
             implementation = identity["model"].get("implementation_sha256")

@@ -79,6 +79,8 @@ def observe_kernel(torch, configuration):
         "slurm_job_id": os.environ["SLURM_JOB_ID"],
         "launch_record": configuration["launch_record"],
     }
+    if configuration.get("slice_size") is not None:
+        producer["fusion_study_execution"]["slice_size"] = configuration["slice_size"]
     path = Path(configuration["launch_record"])
     record = json.loads(path.read_text(encoding="utf-8"))
     record["kernel_producer"] = producer
@@ -121,6 +123,8 @@ def prepare_notebook(notebook, configuration):
              "TOKEN_CACHE_ROOT = Path(_execution['region_cache_root'])",
              "if _execution.get('fit_keys') is not None:",
              "    FIT_KEYS = _execution['fit_keys']",
+             "if _execution['study'] == 'regions':",
+             "    BATCH_SLICE_SIZE = _execution.get('slice_size')",
              "print('Explicit job:', BENCHMARK, 'seed', SEED, _execution['action'], flush=True)"]
     result.cells.insert(settings[0] + 1, nbformat.v4.new_code_cell(
         "\n".join(lines), id="newton-study-execution"))
@@ -185,11 +189,23 @@ def validate_configuration(configuration, files):
     if keys is not None and (study != "regions" or action not in ("train", "diagnostics")
                             or not keys or len(set(keys)) != len(keys)):
         raise ValueError("An explicit unique fit subset is supported only for A6 fits/diagnostics.")
+    slice_size = configuration.get("slice_size")
+    if slice_size is not None and (
+        type(slice_size) is not int or slice_size != 4
+        or (study, benchmark, action, configuration["seed"]) != ("regions", "rnahl-human", "train", 0)
+        or keys != ["rnafm__native__attention_cds__true"]
+    ):
+        raise ValueError("--slice-size 4 requires the single native RNA-FM attention fit for human half-life seed 0.")
     if action != "prepare" and not configuration["expected_gpu"].strip():
         raise ValueError("Declare the GPU name confirmed by preflight.")
     output = configuration["output_root"]
     support.validate_destinations(configuration["workspace"], output,
                                   configuration["cache_root"], files, "newton")
+    if slice_size is not None:
+        original = Path(configuration["workspace"]) / "outputs"
+        existing_paths = (*STUDIES, "logs", "notebooks", ".locks")
+        if any(support.overlaps(output, original / name) for name in existing_paths):
+            raise ValueError("Use a separate --output-root for the sliced fit to preserve existing evidence.")
     for name in ("data_root", "reference_root", "grouped_split", "region_data_root", "region_cache_root"):
         if support.overlaps(output, configuration[name]):
             raise ValueError(f"Outputs overlap {name}; preserve inputs and completed results.")
@@ -220,17 +236,21 @@ def main(argv=None):
     parser.add_argument("--kernel")
     parser.add_argument("--fit-key", action="append", dest="fit_keys",
                         help="One declared A6 core fit key; repeat for a bounded subset.")
+    parser.add_argument("--slice-size", type=int, choices=(4,),
+                        help="GPU slice size for the native RNA-FM attention retry at half-life seed 0.")
     parser.add_argument("--expected-gpu", default=os.environ.get("ARCC_EXPECTED_GPU", ""))
     for name in ("data-root", "cache-root", "reference-root", "grouped-split", "region-data-root", "region-cache-root"):
         parser.add_argument("--" + name, type=Path)
     parser.add_argument("--output-root", type=Path, default=WORKSPACE / "outputs")
     args = parser.parse_args(argv)
+    if args.verify_only and args.slice_size is not None:
+        parser.error("--slice-size requires a training job.")
     snapshot, files = verify_package()
     if args.verify_only:
         print(f"Verified {len(files)} source files; no kernel, data, cache or model was opened.")
         return
     if args.preflight:
-        scientific_options = (args.study, args.benchmark, args.seed, args.fit_keys,
+        scientific_options = (args.study, args.benchmark, args.seed, args.fit_keys, args.slice_size,
                               args.data_root, args.cache_root, args.reference_root,
                               args.grouped_split, args.region_data_root, args.region_cache_root)
         if any(value is not None for value in scientific_options) or args.action != "train":

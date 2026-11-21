@@ -12,10 +12,10 @@ On your computer, open a terminal at the repository root. Run the command withou
 python -B execution/arcc/prepare.py fusion_studies --destination "../ARCC Fusion Studies"
 ```
 
-Upload the contents to `~/multi-modal_fusion_studies/`. In your Newton terminal, set the path to the workspace you uploaded. [Upload to Newton](../README.md#upload-to-newton)
+Upload the contents to `~/multi-modal-fusion/fusion-mechanisms/`. In your Newton terminal, set the path to the workspace you uploaded. [Upload to Newton](../README.md#upload-to-newton)
 
 ```bash
-export ARCC_PROJECT_ROOT="$HOME/multi-modal_fusion_studies"
+export ARCC_PROJECT_ROOT="$HOME/multi-modal-fusion/fusion-mechanisms"
 ```
 
 Enter the workspace and activate the shared environment. From there, check the upload against its source snapshot. The study sections cover their input checks separately. [Set up your Newton session](../README.md#set-up-your-newton-session)
@@ -184,6 +184,53 @@ sbatch "${job_options[@]}" --gres=gpu:nvidia_h100_pcie:1 \
   newton_fusion_study.sbatch.example --study regions --benchmark "$dataset" \
   --seed "$seed" --action diagnostics "${region_inputs[@]}"
 ```
+
+### Retry the native half-life attention fit
+
+The size-four stress probe finished two Adam updates and a validation batch on one H100. Use this option for the RNA-FM native true-CDS attention fit at seed 0. It keeps one optimizer update per 32 examples and uses four rows at a time on the GPU for training and scoring. The fit records the slice size in its execution identity. [Half-life checkpoint](../../../docs/agent-context.md#current-execution-and-retained-evidence)
+
+After the existing jobs finish, follow [Update an existing workspace](#update-an-existing-workspace) and verify the transferred files. From Newton, use the original preparation and token caches. The retry gets a separate output directory so its checkpoints and result can be read alongside the earlier fits.
+
+```bash
+export ARCC_PROJECT_ROOT="$HOME/multi-modal-fusion/fusion-mechanisms"
+export ARCC_ANACONDA_MODULE="anaconda/anaconda-2024.10"
+export ARCC_CONDA_ENV="$HOME/.conda/envs/biofusion-arcc"
+export ARCC_KERNEL="biofusion-arcc"
+export ARCC_EXPECTED_GPU="NVIDIA H100 PCIe"
+retry_root="$ARCC_PROJECT_ROOT/outputs/halflife-native-sliced"
+
+(
+  set -e
+  cd "$ARCC_PROJECT_ROOT"
+  "$ARCC_CONDA_ENV/bin/python" -B run_fusion_study.py --verify-only
+  original="outputs/regions/rnahl-human/preparation.json"
+  retry_prep="$retry_root/regions/rnahl-human/preparation.json"
+  mkdir -p outputs/logs "$(dirname "$retry_prep")"
+  cp -n -- "$original" "$retry_prep"
+  cmp -- "$original" "$retry_prep"
+)
+```
+
+Once the checks pass, submit one fit with the resource limits you intend to use. The 48-hour walltime below is a cap. If the job times out after a checkpoint has been saved, resume with the same package, options, and output directory.
+
+```bash
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+sbatch --chdir="$ARCC_PROJECT_ROOT" --account="${ARCC_ACCOUNT:?Set your Newton account}" \
+  --partition=normal --qos=normal --gres=gpu:nvidia_h100_pcie:1 \
+  --cpus-per-task=4 --mem=64G --time=2-00:00:00 \
+  --job-name=halflife-native-attention-seed0 \
+  "$ARCC_PROJECT_ROOT/newton_fusion_study.sbatch.example" \
+  --study regions --benchmark rnahl-human --seed 0 --action train \
+  --fit-key rnafm__native__attention_cds__true --slice-size 4 \
+  --region-data-root "$ARCC_PROJECT_ROOT/inputs/mrnabench" \
+  --region-cache-root "$ARCC_PROJECT_ROOT/token_caches" \
+  --output-root "$retry_root"
+```
+
+Follow the ordinary Slurm output under `outputs/logs/`. The returned preparation, seed-0 predictions, best weights and launch record form a pilot cohort. The full-panel report still requires matching implementation hashes and all declared seeds.
+
 
 ## Return and review results
 

@@ -465,6 +465,48 @@ class RegionModelTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "loader differs"):
             study.validate_loaders(stream, config, loaders)
 
+    def test_native_retry_records_slicing_and_preserves_unsliced_result(self):
+        stream = streams(study.FitSpec("rnafm", "native", "attention_cds", "true"))
+        config = train.TrainConfig(tconv="equation")
+        loaders = study.make_loaders(stream, config)
+        records = cache_records(stream)
+        unsliced = study.make_identity(stream, config, SETTINGS, loaders, records)
+        for key, cache in stream.caches.caches.items():
+            cache.cache_dir = key
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            original = root / stream.spec.key / "seed0.json"
+            original.parent.mkdir()
+            fake_result(stream, config, unsliced).save(original)
+            before = original.read_bytes()
+
+            def save_sliced(actual, method, training, device, destination, **options):
+                self.assertEqual(options["batch_slice_size"], 4)
+                identity = options["run_identity"]
+                self.assertEqual(identity["loader"]["batch_slice_size"], 4)
+                self.assertEqual(identity["loader"]["batch_size"], 32)
+                destination.mkdir(parents=True)
+                fake_result(actual, training, identity).save(destination / "seed0.json")
+
+            with patch.object(run_identity, "cache_record", side_effect=lambda key: records[key]), \
+                 patch.object(train, "run", side_effect=save_sliced) as runner:
+                with self.assertRaisesRegex(ValueError, "different region experiment"):
+                    study.run_fit(stream, config, SETTINGS, root, "cpu", producer={"test": True},
+                                  batch_slice_size=4)
+                pilot = root / "pilot"
+                result = study.run_fit(stream, config, SETTINGS, pilot / stream.key / "fits", "cpu",
+                                       producer={"test": True}, batch_slice_size=4)
+                runner.assert_called_once()
+            self.assertEqual(result.extra_fields["identity"]["inputs"], unsliced["inputs"])
+            self.assertEqual(original.read_bytes(), before)
+
+            study.publish_preparation(pilot / stream.key / "preparation.json", stream.preparation)
+            with patch.object(study, "fit_panel", return_value=(stream.spec,)):
+                with self.assertRaisesRegex(ValueError, "separate pilot"):
+                    study.saved_comparisons(pilot, dataset_key=stream.key, draws=5,
+                                             bootstrap_seed=0, producer=None)
+
     def test_declared_counts_and_loader_contract_match_actual_components(self):
         base = streams()
         config = train.TrainConfig(batch_size=2, tconv="equation")
