@@ -1,0 +1,71 @@
+{
+  "schema": "pair-dataset.v2",
+  "name": "davis",
+  "kind": "affinity",
+  "summary": {
+    "name": "davis",
+    "kind": "affinity",
+    "pairs": 25772,
+    "left_entities": 379,
+    "right_entities": 68,
+    "left_groups": 379,
+    "right_groups": 68,
+    "pairs_per_left": [
+      68,
+      68
+    ],
+    "pairs_per_right": [
+      379,
+      379
+    ],
+    "provenance": {
+      "measured_positive": 25772
+    },
+    "density": 1.0,
+    "note": "Measured pKd (Kd in nM, negative log10) per protein-ligand pair. Proteins are amino-acid sequences, ligands are SMILES strings, and groups are exact sequence or exact SMILES identity.",
+    "endpoint": "pKd (Kd in nM, negative log10)",
+    "label_range": [
+      5.0,
+      10.7959
+    ],
+    "label_mean": 5.4085,
+    "label_sd": 0.8311,
+    "at_floor": 18343,
+    "at_floor_share": 0.7117
+  },
+  "groups": {
+    "file": "groups.json",
+    "rule": {
+      "left": "declared by the builder",
+      "right": "declared by the builder"
+    },
+    "counts": {
+      "left": 379,
+      "right": 68
+    },
+    "known_gap": "similar but non-identical sequences are not grouped unless the builder grouped them; cluster by identity before the reported runs"
+  },
+  "sides": {
+    "left": {
+      "modality": "protein",
+      "file": "protein.fasta",
+      "written_as": "amino acids, as published",
+      "entities": 379
+    },
+    "right": {
+      "modality": "ligand",
+      "file": "ligand.smi",
+      "written_as": "SMILES, as published",
+      "entities": 68
+    }
+  },
+  "negative_sampling": null,
+  "construction": null,
+  "duplicates_removed": 0,
+  "dropped_records": {
+    "count": 0,
+    "reason": "a sequence carried letters its alphabet does not have, or was empty; the record was not repaired",
+    "headers": []
+  },
+  "note": "Measured pKd (Kd in nM, negative log10) per protein-ligand pair. Proteins are amino-acid sequences, ligands are SMILES strings, and groups are exact sequence or exact SMILES identity."
+}

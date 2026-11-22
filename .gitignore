@@ -49,8 +49,10 @@ Claude outputs/
 # Keep accidental return-transfer duplicates out of the shared results package.
 /Code/stage4/results/newton_h100_seeds012/datasets/
 
-# Stage 4 partner tasks: entity embedding caches and built pair tables.
-# Both are derived and large (1.1 GB and 31 MB); rebuild with partner_tasks.ipynb
-# (RUN_EXTRACTION) and shared_code.fusion.pair_sources respectively.
+# Stage 4 partner tasks: entity embedding caches, which are derived and over a gigabyte.
+# Rebuild them with partner_tasks.ipynb at RUN_EXTRACTION = True; they depend only on the
+# built tables and the encoder revision, both of which are recorded.
+# The built tables themselves (Code/stage4/data/pairs, 31 MB) ARE tracked: rebuilding them
+# needs external downloads (RPIMotif, Harvard Dataverse 5219748 and 5255037, GSE60143 with
+# TAIR10) that can change under us, and the tables are the scientific artifact.
 /Code/stage4/cache/
-/Code/stage4/data/

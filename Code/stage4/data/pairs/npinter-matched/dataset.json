@@ -1,0 +1,72 @@
+{
+  "schema": "pair-dataset.v2",
+  "name": "npinter-matched",
+  "kind": "binding",
+  "summary": {
+    "name": "npinter-matched",
+    "kind": "binding",
+    "pairs": 22516,
+    "left_entities": 6147,
+    "right_entities": 327,
+    "left_groups": 6145,
+    "right_groups": 317,
+    "pairs_per_left": [
+      2,
+      70
+    ],
+    "pairs_per_right": [
+      1,
+      2444
+    ],
+    "provenance": {
+      "artificial_sampled": 11258,
+      "measured_positive": 11258
+    },
+    "density": 0.011202,
+    "note": "Positives from npinter. Negatives sampled from pairs no source records, with degree matching, seed 0. No negative here was measured.",
+    "positives": 11258,
+    "negatives": 11258,
+    "positive_rate": 0.5,
+    "positives_per_left_median": 1.0
+  },
+  "groups": {
+    "file": "groups.json",
+    "rule": {
+      "left": "declared by the builder",
+      "right": "declared by the builder"
+    },
+    "counts": {
+      "left": 6145,
+      "right": 317
+    },
+    "known_gap": "similar but non-identical sequences are not grouped unless the builder grouped them; cluster by identity before the reported runs"
+  },
+  "sides": {
+    "left": {
+      "modality": "rna",
+      "file": "rna.fasta",
+      "written_as": "T mapped to U",
+      "entities": 6147
+    },
+    "right": {
+      "modality": "protein",
+      "file": "protein.fasta",
+      "written_as": "amino acids, as published",
+      "entities": 327
+    }
+  },
+  "negative_sampling": {
+    "ratio": 1.0,
+    "seed": 0,
+    "match_degree": true,
+    "negatives": 11258
+  },
+  "construction": null,
+  "duplicates_removed": 0,
+  "dropped_records": {
+    "count": 0,
+    "reason": "a sequence carried letters its alphabet does not have, or was empty; the record was not repaired",
+    "headers": []
+  },
+  "note": "Positives from npinter. Negatives sampled from pairs no source records, with degree matching, seed 0. No negative here was measured."
+}

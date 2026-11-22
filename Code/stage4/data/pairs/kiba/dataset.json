@@ -1,0 +1,71 @@
+{
+  "schema": "pair-dataset.v2",
+  "name": "kiba",
+  "kind": "affinity",
+  "summary": {
+    "name": "kiba",
+    "kind": "affinity",
+    "pairs": 117657,
+    "left_entities": 229,
+    "right_entities": 2068,
+    "left_groups": 229,
+    "right_groups": 2068,
+    "pairs_per_left": [
+      11,
+      1432
+    ],
+    "pairs_per_right": [
+      11,
+      166
+    ],
+    "provenance": {
+      "measured_positive": 117657
+    },
+    "density": 0.248446,
+    "note": "Measured KIBA score per protein-ligand pair. Proteins are amino-acid sequences, ligands are SMILES strings, and groups are exact sequence or exact SMILES identity.",
+    "endpoint": "KIBA score",
+    "label_range": [
+      0.0,
+      17.2002
+    ],
+    "label_mean": 11.7207,
+    "label_sd": 0.8343,
+    "at_floor": 1,
+    "at_floor_share": 0.0
+  },
+  "groups": {
+    "file": "groups.json",
+    "rule": {
+      "left": "declared by the builder",
+      "right": "declared by the builder"
+    },
+    "counts": {
+      "left": 229,
+      "right": 2068
+    },
+    "known_gap": "similar but non-identical sequences are not grouped unless the builder grouped them; cluster by identity before the reported runs"
+  },
+  "sides": {
+    "left": {
+      "modality": "protein",
+      "file": "protein.fasta",
+      "written_as": "amino acids, as published",
+      "entities": 229
+    },
+    "right": {
+      "modality": "ligand",
+      "file": "ligand.smi",
+      "written_as": "SMILES, as published",
+      "entities": 2068
+    }
+  },
+  "negative_sampling": null,
+  "construction": null,
+  "duplicates_removed": 0,
+  "dropped_records": {
+    "count": 0,
+    "reason": "a sequence carried letters its alphabet does not have, or was empty; the record was not repaired",
+    "headers": []
+  },
+  "note": "Measured KIBA score per protein-ligand pair. Proteins are amino-acid sequences, ligands are SMILES strings, and groups are exact sequence or exact SMILES identity."
+}

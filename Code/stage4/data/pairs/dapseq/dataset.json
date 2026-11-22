@@ -1,0 +1,78 @@
+{
+  "schema": "pair-dataset.v2",
+  "name": "dapseq",
+  "kind": "binding",
+  "summary": {
+    "name": "dapseq",
+    "kind": "binding",
+    "pairs": 15905,
+    "left_entities": 15384,
+    "right_entities": 40,
+    "left_groups": 7816,
+    "right_groups": 15,
+    "pairs_per_left": [
+      1,
+      4
+    ],
+    "pairs_per_right": [
+      358,
+      439
+    ],
+    "provenance": {
+      "artificial_sampled": 8000,
+      "measured_positive": 7905
+    },
+    "density": 0.025847,
+    "note": "Positives are 201 bp windows centred on DAP-seq peak summits, the strongest 200 per factor. Each has one negative from the same chromosome, GC-matched and clear of every peak of that factor. DAP-seq is in vitro: this is what a factor can bind, not what it occupies in a cell.",
+    "positives": 7905,
+    "negatives": 8000,
+    "positive_rate": 0.497,
+    "positives_per_left_median": 1.0
+  },
+  "groups": {
+    "file": "groups.json",
+    "rule": {
+      "left": "declared by the builder",
+      "right": "declared by the builder"
+    },
+    "counts": {
+      "left": 7816,
+      "right": 15
+    },
+    "known_gap": "similar but non-identical sequences are not grouped unless the builder grouped them; cluster by identity before the reported runs"
+  },
+  "sides": {
+    "left": {
+      "modality": "dna",
+      "file": "dna.fasta",
+      "written_as": "ACGT, uppercase",
+      "entities": 15384
+    },
+    "right": {
+      "modality": "protein",
+      "file": "protein.fasta",
+      "written_as": "amino acids, as published",
+      "entities": 40
+    }
+  },
+  "negative_sampling": null,
+  "construction": {
+    "window": 201,
+    "peaks_per_factor": 200,
+    "gc_tolerance": 0.05,
+    "bin": 10000,
+    "seed": 0,
+    "factors": 40,
+    "duplicates_removed": 157,
+    "unresolved_experiments": 169,
+    "region_groups": "genomic bins",
+    "factor_groups": "family"
+  },
+  "duplicates_removed": 0,
+  "dropped_records": {
+    "count": 0,
+    "reason": "a sequence carried letters its alphabet does not have, or was empty; the record was not repaired",
+    "headers": []
+  },
+  "note": "Positives are 201 bp windows centred on DAP-seq peak summits, the strongest 200 per factor. Each has one negative from the same chromosome, GC-matched and clear of every peak of that factor. DAP-seq is in vitro: this is what a factor can bind, not what it occupies in a cell."
+}

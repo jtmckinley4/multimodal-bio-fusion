@@ -1,0 +1,71 @@
+{
+  "schema": "pair-dataset.v2",
+  "name": "rpi2241",
+  "kind": "binding",
+  "summary": {
+    "name": "rpi2241",
+    "kind": "binding",
+    "pairs": 4479,
+    "left_entities": 968,
+    "right_entities": 3582,
+    "left_groups": 440,
+    "right_groups": 951,
+    "pairs_per_left": [
+      1,
+      35
+    ],
+    "pairs_per_right": [
+      1,
+      6
+    ],
+    "provenance": {
+      "artificial_sampled": 2241,
+      "measured_positive": 2238
+    },
+    "density": 0.001292,
+    "note": "Positives are RNA and protein chains of one structural complex. The supplied negatives pair a protein from one complex with an RNA from another: nobody measured them, and they are predictable from how often each chain appears.",
+    "positives": 2238,
+    "negatives": 2241,
+    "positive_rate": 0.4997,
+    "positives_per_left_median": 1.0
+  },
+  "groups": {
+    "file": "groups.json",
+    "rule": {
+      "left": "declared by the builder",
+      "right": "declared by the builder"
+    },
+    "counts": {
+      "left": 440,
+      "right": 951
+    },
+    "known_gap": "similar but non-identical sequences are not grouped unless the builder grouped them; cluster by identity before the reported runs"
+  },
+  "sides": {
+    "left": {
+      "modality": "rna",
+      "file": "rna.fasta",
+      "written_as": "T mapped to U",
+      "entities": 968
+    },
+    "right": {
+      "modality": "protein",
+      "file": "protein.fasta",
+      "written_as": "amino acids, as published",
+      "entities": 3582
+    }
+  },
+  "negative_sampling": null,
+  "construction": null,
+  "duplicates_removed": 0,
+  "dropped_records": {
+    "count": 3,
+    "reason": "a sequence carried letters its alphabet does not have, or was empty; the record was not repaired",
+    "headers": [
+      "1ob5_C,1ob5_B",
+      "1f7u_A,1f7u_B",
+      "2x9r_G,2x9r_W"
+    ]
+  },
+  "note": "Positives are RNA and protein chains of one structural complex. The supplied negatives pair a protein from one complex with an RNA from another: nobody measured them, and they are predictable from how often each chain appears."
+}
