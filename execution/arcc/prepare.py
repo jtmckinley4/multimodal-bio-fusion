@@ -1,7 +1,7 @@
 """
 Prepare a local upload folder for a Newton experiment.
 
-Each recipe lists the files its notebook needs. By default this command prints
+Each recipe lists the files its experiment needs. By default this command prints
 what the upload includes, which inputs to supply separately and how to check
 them on Newton. Use --destination to create the folder or --update to compare
 an existing folder with the recipe. Add --apply to write that update locally.
@@ -17,6 +17,7 @@ from textwrap import indent
 from encoder_swaps import package_spec as encoder_swaps
 from fusion_studies import package_spec as fusion_studies
 from grouped_stability import package_spec as grouped_stability
+from partner_tasks import package_spec as partner_tasks
 from input_guidance import describe_inputs
 from package_update import update_package
 
@@ -25,6 +26,7 @@ RECIPES = {
     "encoder_swaps": encoder_swaps,
     "grouped_stability": grouped_stability,
     "fusion_studies": fusion_studies,
+    "partner_tasks": partner_tasks,
 }
 
 
@@ -50,7 +52,7 @@ def read_command_line_options(argv):
         recipe.add_argument("--apply", action="store_true", help="write the update to the local folder")
         recipe.add_argument("--json", action="store_true", help="print the report and full file list as JSON")
 
-        if name != "fusion_studies":
+        if name in {"encoder_swaps", "grouped_stability"}:
             recipe.add_argument(
                 "--cache-root", type=Path,
                 help="protect an embedding cache path on creation (updates keep the original path)",
@@ -81,7 +83,7 @@ def prepare(options):
     elif options.recipe == "grouped_stability":
         plan = grouped_stability.build_plan(options.source_root, options.cache_root)
     else:
-        plan = fusion_studies.inventory(options.source_root)
+        plan = RECIPES[options.recipe].inventory(options.source_root)
 
     # Every mode uses the same file list and instructions for checking external inputs.
     report = {

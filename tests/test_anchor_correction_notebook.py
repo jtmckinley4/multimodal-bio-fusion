@@ -319,6 +319,54 @@ class NotebookTrainingTests(unittest.TestCase):
 
 
 class NotebookReportingTests(unittest.TestCase):
+    def test_correction_report_pairs_exact_rows_and_float32_targets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            scope = definitions(directory)
+            selected = {"key": "ntv2_native", "modality": "dna", "selection_sha256": "s" * 64}
+            scope.update(
+                TRAINING_SEEDS=(0,), CONTROL_KINDS=("real",), CORRECTION_FAMILIES=("ridge",),
+                auxiliary_sets=Mock(return_value=("rna",)), read_selection=Mock(return_value=selected),
+            )
+            rows = [6, 7, 8]
+            ridge_truth = (0.1, 0.2, 0.3)
+            anchor_truth = np.asarray(ridge_truth, dtype=np.float32).tolist()
+            self.assertNotEqual(list(ridge_truth), anchor_truth)
+            entry = {"positions": rows, "row_ids": rows, "truth": anchor_truth, "values": [1., 2., 3.]}
+            anchor = {
+                "kind": "neural", "predictions": {"test": entry},
+                "identity": {"config": {"seed": 0}, "inputs": {
+                    "protocol": {"candidate": selected["key"]}, "groups": list("abcdefghi"),
+                }},
+            }
+            protocol = {
+                "training_seed": 0, "bundle": "original", "selection_sha256": selected["selection_sha256"],
+                "offset_sources": {"final_anchor_sha256": "a" * 64}, "control": {"kind": "real"},
+            }
+            ridge_entry = {**entry, "truth": list(ridge_truth)}
+            ridge = {"kind": "ridge", "identity": {"protocol": protocol}, "predictions": {"test": ridge_entry}}
+            scope["read_prediction_record"] = Mock(side_effect=lambda path: anchor if "anchors" in path.parts else ridge)
+
+            with (
+                patch.object(study_selection, "file_sha256", return_value="a" * 64),
+                patch.object(train, "score", return_value=0.5) as score,
+            ):
+                _, _, _, panel = scope["collect_report_panel"]("fungal_expression", "original")
+                payload = panel["models"]["rna/real/ridge"][0]["data"]
+                self.assertEqual(payload["test_truth"], anchor_truth)
+                self.assertEqual(score.call_args.args[1].tolist(), anchor_truth)
+                self.assertEqual(ridge_entry["truth"], list(ridge_truth))
+
+                for change in ({"truth": [0.1, 0.25, 0.3]}, {"row_ids": [7, 6, 8]}):
+                    with self.subTest(change=change):
+                        ridge["predictions"]["test"] = {**ridge_entry, **change}
+                        with self.assertRaisesRegex(ValueError, "test observations differ"):
+                            scope["collect_report_panel"]("fungal_expression", "original")
+
+                ridge["predictions"]["test"] = ridge_entry
+                protocol["offset_sources"]["final_anchor_sha256"] = "b" * 64
+                with self.assertRaisesRegex(ValueError, "different anchor or validation selection"):
+                    scope["collect_report_panel"]("fungal_expression", "original")
+
     def test_complete_three_seed_report_has_paired_anchors_and_no_training(self):
         with tempfile.TemporaryDirectory() as directory:
             scope = definitions(directory)

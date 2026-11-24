@@ -1,0 +1,98 @@
+{
+  "schema": "rpi2241-newton.inputs.v1",
+  "table": {
+    "name": "rpi2241",
+    "kind": "binding",
+    "modalities": {
+      "left": "rna",
+      "right": "protein"
+    },
+    "pairs": 4479,
+    "entities": {
+      "left": 968,
+      "right": 3582
+    },
+    "provenance": {
+      "artificial_sampled": 2241,
+      "measured_positive": 2238
+    },
+    "pairs_sha256": "a2030fd198b7d056df7ab54879ff3c00814b11013545237eadbc910f2bb57a33"
+  },
+  "caches": {
+    "left": {
+      "modality": "rna",
+      "encoder": "rinalmo",
+      "revision": "5e3a682eb856148fe81f12a25301962c9ffaf0ed",
+      "width": 640,
+      "token_limit": 1022,
+      "entities": 968,
+      "at_token_limit": 263,
+      "input_sha256": "a9bb7e540de6ed84be72c06ae5641dbde9b241afb3e2684776e2fd7fa056c672"
+    },
+    "right": {
+      "modality": "protein",
+      "encoder": "esm2_150m",
+      "revision": "",
+      "width": 640,
+      "token_limit": 1022,
+      "entities": 3582,
+      "at_token_limit": 10,
+      "input_sha256": "89feb71a1d484ffa849b27f8d3a887f28fe7a150b52f34ab49a82f69d03200f2"
+    }
+  },
+  "config": {
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "batch_size": 32,
+    "max_epochs": 50,
+    "early_stopping_patience": 5,
+    "max_tokens": 1024,
+    "positive_weight": "balanced",
+    "selection_metric": null,
+    "seed": 0,
+    "microbatch": 8
+  },
+  "split_seed": 42,
+  "recorded_splits": {
+    "both": {
+      "held_out": "both",
+      "seed": 42,
+      "ratios": [
+        0.7,
+        0.15,
+        0.15
+      ],
+      "dropped": 2201,
+      "rows": {
+        "train": 2026,
+        "val": 120,
+        "test": 132
+      },
+      "indices_sha256": {
+        "train": "747f9eac58a13c5281c08beefdba4d1d6571ef224975f0cb777fe9c13f6e0852",
+        "val": "06cde8a32f7665465a32f411578f2c8a6fa57acd4952b6e686533e34ccaf7896",
+        "test": "4170afd189dfc55ae1c4a6ae99fde1aff6fa0caa2902a497a5de695139f34228"
+      }
+    },
+    "left": {
+      "held_out": "left",
+      "seed": 42,
+      "ratios": [
+        0.7,
+        0.15,
+        0.15
+      ],
+      "dropped": 0,
+      "rows": {
+        "train": 2891,
+        "val": 694,
+        "test": 894
+      },
+      "indices_sha256": {
+        "train": "cd9723e8dba2a8195cc609ef2841c39338193f8c402f1ab6bcd5647b6b06bdc6",
+        "val": "174116241cd2916221d7d7c252d9300c12a33b1a465acbb4fb1a26b3a4f365ae",
+        "test": "e135d880289812e853df2d749592004aed6a5b40762371fb127e6321794d47e8"
+      }
+    }
+  }
+}

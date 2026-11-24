@@ -1,4 +1,4 @@
-# All three recipes use this package list on Newton (Linux x86_64, Python 3.11.18).
+# The ARCC recipes use this package list on Newton (Linux x86_64, Python 3.11.18).
 # Exact versions come from environment-1220728.txt. The link supplies the PyTorch
 # build used with CUDA 12.6 on the H100. See the ARCC README for installation.
 --find-links https://download.pytorch.org/whl/cu126/torch/

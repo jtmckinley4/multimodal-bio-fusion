@@ -26,6 +26,7 @@ SCHEMAS = {
     "encoder_swaps": ("biological-fusion.arcc-package", 2),
     "grouped_stability": ("biological-fusion.grouped-stability-package", 1),
     "fusion_studies": ("fusion-studies.package.v1", None),
+    "partner_tasks": ("partner-tasks.package.v1", None),
 }
 SNAPSHOT = "source-snapshot.json"
 HISTORY = ".arcc-history"

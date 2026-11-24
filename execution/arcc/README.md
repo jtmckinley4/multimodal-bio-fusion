@@ -9,6 +9,7 @@ An easy way to follow the commands is to keep the guide for the experiment you�
 - [Grouped stability](grouped_stability/README.md)
 - [Encoder swaps](encoder_swaps/README.md)
 - [Fusion mechanism experiments](fusion_studies/README.md)
+- [RPI2241 partner-task fits](partner_tasks/README.md)
 
 Already uploaded the workspace? [Start a new Newton session](#enter-the-uploaded-workspace) to use it. If you’ve changed the files, go to [Update an existing workspace](#update-an-existing-workspace).
 
@@ -35,6 +36,8 @@ lfs quota -h -u "$USER" /lustre/fs1
 ```
 
 Use the experiment’s README and the preparation checklist to identify which embedding caches the run needs. Reuse a copy you can read on Newton or transfer the required benchmark and encoder directories with their metadata. If you need to regenerate a BioLangFusion cache, follow its extraction notebook. [BioLangFusion token embedding extraction](../../Code/stage3/blf_token_embeddings.ipynb)
+
+The RPI2241 partner-task recipe uses a built pair table and two per-entity caches supplied separately; they have a different layout from BioLangFusion caches. Follow its [exact input list](partner_tasks/README.md#get-the-prepared-inputs-from-julian) and retain the original folder names and metadata.
 
 Set the input paths from the experiment’s README and run the preview’s file-access checks from the Newton account that will submit the jobs. Run checks that call an uploaded script after the workspace and environment are ready. If the run generates new inputs on Newton, follow the job order in its guide. [Verify the upload and required inputs](#verify-the-upload-and-required-inputs)
 

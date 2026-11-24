@@ -16,6 +16,31 @@ def describe_inputs(recipe, experiment="full"):
     """
     List what the upload contains, what Newton needs, and how to check it.
     """
+    if recipe == "partner_tasks":
+        return {
+            "packaged": [
+                "Partner-task Python helpers, command-line launcher, Slurm wrapper, "
+                "nine-row batch plan, source/input identity records and Python package versions. "
+                "No notebook, dataset, embeddings or previous fit is copied."
+            ],
+            "newton_needs": [
+                "Stage the complete built RPI2241 table at inputs/rpi2241/, including "
+                "dataset.json, pairs.csv, both FASTA files and groups.json if supplied.",
+                "Stage the complete entity caches at "
+                "inputs/pair_entities/rpi2241/left__rna__rinalmo/ and "
+                "inputs/pair_entities/rpi2241/right__protein__esm2_150m/. "
+                "Each directory needs entities.json and every recorded shard.",
+                "Run the staged-input check on a compute node. It verifies the recorded "
+                "input identities and complete caches without extracting embeddings or training.",
+                "New fit evidence belongs under outputs/rpi2241-newton/ and logs under "
+                "outputs/logs/. Preparation updates manage source files only; staged inputs "
+                "and outputs remain outside the update inventory.",
+            ],
+            "verify": [
+                "python -B run_partner_tasks.py --verify-only",
+                "python -B run_partner_tasks.py --verify-inputs",
+            ],
+        }
     if recipe == "grouped_stability":
         return {
             "packaged": [
