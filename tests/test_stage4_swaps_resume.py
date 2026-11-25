@@ -103,16 +103,15 @@ class SwapResumeNotebookTests(unittest.TestCase):
 
     def namespace(self, seed=0):
         env = dict(
-            EXPERIMENT="full", RUN_TRAINING=True,
-            READ_SAVED_RESULTS=False, SEED=seed, SELECTION_SEED=0, RUN_BOOTSTRAP=False,
+            EXPERIMENT="encoder_swaps", RUN_TRAINING=True,
+            READ_SAVED_RESULTS=False, SEED=seed, SELECTION_SEED=0, RUN_SINGLE_SEED_INTERVALS=False,
             CACHE_REUSE_ONLY=False, CHECKPOINT_VALIDATOR=forbidden, FIT_PRODUCER=None,
             BATCH_SIZE=32, MAX_EPOCHS=500, CHANNELS=100, TCONV="equation", DEVICE="cpu",
             BENCHMARKS=(BENCHMARK,), ORIGINAL=ORIGINAL, CODE_DIR=self.code,
             CACHE_ROOT=self.code / "stage3/embeddings", RESULTS_ROOT=self.swap_root,
             ORIGINAL_RESULTS={BENCHMARK: [self.original_dir]}, BENCHMARK_ROWS={},
             RESULT_PATHS=SimpleNamespace(fixed_historical_selection=False, selection_snapshot=None),
-            swaps_for=lambda key: SWAPS, swap_plan=swap_plan,
-            required_encoders=lambda key: [*ORIGINAL.values(), *(e for _, e in SWAPS)],
+            SWAPS=SWAPS, swap_plan=swap_plan,
             CHUNK_SIZE=256, DTYPE=np.float16,
             tokens=SimpleNamespace(grid_resolution=lambda key: "nucleotide", summarize=forbidden,
                                    CacheVerification=lambda: object(), inspect_cache=forbidden,
@@ -152,8 +151,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
                 plan = SimpleNamespace(ready=ready, missing_shards=missing, restore_metadata=restore,
                                        reusable_shards=[0], status="invented", provenance="fixture",
                                        issues=[], summary="invented cache")
-                env.update(CACHE_REUSE_ONLY=True, PENDING_CACHE_KEYS={(BENCHMARK, encoder)},
-                           required_encoders=lambda key: [encoder],
+                env.update(CACHE_REUSE_ONLY=True, PENDING_CACHE_KEYS=[(BENCHMARK, encoder)],
                            ENCODERS={encoder: SimpleNamespace(label=encoder)})
                 env["datasets"].blf_benchmark_rows = lambda key: pd.DataFrame({"sequence": ["ACG"]})
                 env["tokens"].inputs_for_rows = lambda enc, rows: rows
@@ -192,15 +190,17 @@ class SwapResumeNotebookTests(unittest.TestCase):
     def snapshot(self):
         return {p: p.read_bytes() for p in self.root.rglob("*.json")}
 
-    def test_all_eight_stability_swaps_and_manual_seed_defaults(self):
-        env = dict(EXPERIMENT="full", np=np, tokens=SimpleNamespace(DEFAULT_CHUNK=256),
-                   blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL))
-        exec(compile(self.sources["swaps-settings"], "fixture settings", "exec"), env)
-        self.assertEqual(env["STABILITY_SWAPS"], env["SWAPS"])
-        self.assertEqual(len(env["STABILITY_SWAPS"]), 8)
+    def test_all_eight_swaps_and_manual_seed_defaults(self):
+        env = dict(blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL))
+        for cell_id in ("swaps-run-mode", "swaps-settings", "swaps-selection"):
+            exec(compile(self.sources[cell_id], "fixture settings", "exec"), env)
+        self.assertEqual(env["EXPERIMENT"], "encoder_swaps")
+        self.assertEqual(len(env["SWAPS"]), 8)
+        self.assertEqual(list(env["INVENTORY_ENCODERS"]),
+                         [*ORIGINAL.values(), *(key for _, key in env["SWAPS"])])
         self.assertEqual(env["SEED"], 0)
         self.assertEqual(env["SELECTION_SEED"], 0)
-        self.assertFalse(env["RUN_BOOTSTRAP"])
+        self.assertFalse(env["RUN_SINGLE_SEED_INTERVALS"])
 
     def test_nondefault_recipe_reaches_planning_and_both_result_readers(self):
         env = self.namespace(seed=2)
@@ -226,16 +226,60 @@ class SwapResumeNotebookTests(unittest.TestCase):
         self.assertEqual(self.calls, [])
         self.assertEqual(self.opened, [])
 
+    def test_pending_caches_keep_first_fit_order_and_load_each_benchmark_once(self):
+        other, reused = "fungal_expression", "cov_vac_degradation"
+        expected = [(BENCHMARK, "rinalmo"), (BENCHMARK, "esm2_8m"),
+                    (BENCHMARK, "ntv2_100m"), (other, "rinalmo")]
+        env = self.namespace()
+
+        def run(benchmark, status, **encoders):
+            return SimpleNamespace(benchmark=benchmark, status=status, encoders=encoders)
+
+        planned = {
+            BENCHMARK: [run(BENCHMARK, "new", rna="rinalmo", prot="esm2_8m"),
+                        run(BENCHMARK, "resume", prot="esm2_8m", dna="ntv2_100m")],
+            other: [run(other, "new", rna="rinalmo")],
+            reused: [run(reused, "reuse", rna="rnafm")],
+        }
+        env.update(
+            BENCHMARKS=(BENCHMARK, other, reused),
+            execution_plan=lambda key: SimpleNamespace(runs=planned[key], issues=[],
+                                                       rows=lambda: [], require_ready=lambda: None),
+            ENCODERS={key: SimpleNamespace(label=key) for _, key in expected},
+        )
+        loaded, inspected = [], []
+
+        def rows_for(benchmark):
+            loaded.append(benchmark)
+            return pd.DataFrame({"sequence": [benchmark]})
+
+        def inspect_cache(encoder, texts, directory, **kwargs):
+            inspected.append((texts[0], encoder.label))
+            return SimpleNamespace(ready=True, status="complete", reusable_shards=[0],
+                                   missing_shards=[], restore_metadata=False, provenance="fixture",
+                                   issues=[], summary="")
+
+        env["datasets"].blf_benchmark_rows = rows_for
+        env["tokens"].inputs_for_rows = lambda encoder, sequences: sequences
+        env["tokens"].inspect_cache = inspect_cache
+        with redirect_stdout(io.StringIO()):
+            for cell_id in ("swaps-execution-plan", "swaps-cache-preflight"):
+                exec(compile(self.sources[cell_id], cell_id, "exec"), env)
+
+        self.assertEqual(env["PENDING_CACHE_KEYS"], expected)
+        self.assertEqual(inspected, expected)
+        self.assertEqual(loaded, [BENCHMARK, other])
+
     def test_complete_plan_opens_no_stream_and_calls_no_fit(self):
         self.complete_seed_zero()
         before = self.snapshot()
         env = self.namespace()
         self.execute_plan(env)
         self.assertEqual(env["PENDING_RUNS"], [])
-        self.assertEqual(env["PENDING_CACHE_KEYS"], set())
+        self.assertEqual(env["PENDING_CACHE_KEYS"], [])
         with redirect_stdout(io.StringIO()):
             # No dataset or token producer may be reached by these no-work branches.
-            for cell_id in ("diskproj", "3e310c7e", "swaps-cache-preflight", "c397d229", "de27ae73"):
+            for cell_id in ("diskproj", "3e310c7e", "swaps-cache-preflight", "c397d229"):
                 exec(compile(self.sources[cell_id], "fixture no-work cache orchestration", "exec"), env)
         self.execute_training_branch(env)
         self.assertEqual(self.calls, [])
@@ -252,8 +296,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
         )
         rows = pd.DataFrame({"sequence": ["AAA"]})
         env.update(
-            PENDING_CACHE_KEYS={(BENCHMARK, "rinalmo")},
-            required_encoders=lambda key: ["rinalmo"],
+            PENDING_CACHE_KEYS=[(BENCHMARK, "rinalmo")],
             ENCODERS={"rinalmo": SimpleNamespace(label="rinalmo")},
             datasets=SimpleNamespace(blf_benchmark_rows=lambda key: rows),
         )
@@ -344,7 +387,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
             self.assertEqual(ready, list(benchmarks))
             observed.append((benchmark, encoder_key, tuple(run.variant for run in runs)))
 
-        env.update(BENCHMARKS=benchmarks, swaps_for=lambda key: swaps,
+        env.update(BENCHMARKS=benchmarks, SWAPS=swaps,
                    execution_plan=lambda key: plans[key], run_pending_group=record_group)
         self.execute_training_branch(env)
         self.assertEqual(observed, [

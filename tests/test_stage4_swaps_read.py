@@ -146,7 +146,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         namespace, shown, output = self.execute_reading("historical")
         self.assertIn("Training skipped", output)
         self.assertIn("Stage 1 alignment unavailable", output)
-        self.assertIn("Paired intervals not recalculated", output)
+        self.assertIn("Single-seed intervals were skipped", output)
         self.assertTrue(namespace["result_coverage"]["missing"].str.len().gt(0).all())
 
     def test_saved_default_does_not_replace_absent_newton_with_desktop_scores_or_reports(self):
@@ -157,7 +157,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.assertFalse(namespace["original_report"]("cov_vac_degradation", 0).records)
         self.assertIn("no matching saved report", output)
         self.assertIn("newton_h100_seeds012", output)
-        self.assertIn("Paired intervals not recalculated", output)
+        self.assertIn("Single-seed intervals were skipped", output)
         self.assertTrue(namespace["result_coverage"]["missing"].str.len().gt(0).all())
 
     def test_saved_default_reads_newton_scores_and_reports_without_csv_copies_or_caches(self):
@@ -188,7 +188,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.assertEqual((namespace["SEED"], namespace["SELECTION_SEED"]), (0, 0))
         self.assertEqual(namespace["COMPARISON_SEEDS"], (0, 1, 2))
         self.assertFalse(namespace["RUN_SAVED_COMPARISONS"])
-        self.assertFalse(namespace["RUN_BOOTSTRAP"])
+        self.assertFalse(namespace["RUN_SINGLE_SEED_INTERVALS"])
         table = namespace["benchmark_score_table"]("cov_vac_degradation")
         self.assertEqual(table.loc[("none", "BioLangFusion's own"), "concat"], 0.65)
         self.assertEqual(namespace["SAVED_COMPARISON_REPORTS"], {"cov_vac_degradation": saved})
@@ -214,7 +214,8 @@ class SwapNotebookReadTests(unittest.TestCase):
         path = self.result("stage4/results/phaseB/cov_vac_degradation/nt500m/broken.json", "concat")
         path.write_text("not JSON", encoding="utf-8")
         namespace, shown, output = self.execute_reading("historical")
-        self.assertIn("seed-0 MIL selection unavailable", str(namespace["status"]))
+        prerequisites = namespace["result_coverage"]["prerequisite"]
+        self.assertTrue(prerequisites.str.contains("seed-0 MIL selection unavailable").any())
         self.assertIn("Ambiguous saved results", str(namespace["FIT_PLANS"]["cov_vac_degradation"].issues))
         self.assertFalse(namespace["result_issues"].empty)
 
@@ -280,7 +281,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         broken = self.result(f"stage4/results/phaseB/{benchmark}/nt500m/broken.json", "cross")
         broken.write_text("not JSON", encoding="utf-8")
         namespace, _, _ = self.execute_reading("historical")
-        namespace["swaps_for"] = lambda key: [("dna", "nt500m")]
+        namespace["SWAPS"] = [("dna", "nt500m")]
         before = {path: path.read_bytes() for path in self.root.rglob("*") if path.is_file()}
         with patch.object(Path, "mkdir", forbidden), patch.object(Path, "write_text", forbidden):
             coverage, issues = namespace["coverage_for_benchmark"](benchmark, (2, 0))
@@ -327,7 +328,7 @@ class SwapNotebookReadTests(unittest.TestCase):
             return selection if seed == 0 else current
 
         namespace.update(SEED=2, SELECTION_SEED=0, results_for_encoder_set=result_set,
-                         swaps_for=lambda key: [("rna", "mrnafm")])
+                         SWAPS=[("rna", "mrnafm")])
         records, comparisons = namespace["bootstrap_comparison_plan"]("fixture")
         self.assertEqual(requested, [
             ("fixture", None, None, None),

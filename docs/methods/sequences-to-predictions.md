@@ -4,7 +4,7 @@ This guide follows a sequence through input preparation, frozen encoder represen
 
 Read in three phases:
 
-1. [From sequences to embeddings](#from-sequences-to-embeddings): prepare matched inputs, handle token limits, pool representations, and understand cache reuse.
+1. [From sequences to embeddings](#from-sequences-to-embeddings): prepare matched inputs, handle token limits, pool representations, and understand cache reuse, including a [worked example for fusion](#reusing-cached-token-embeddings-for-fusion).
 2. [Linear probing](#linear-probing): fit a simple predictor, separate training from evaluation, and interpret its score and limitations.
 3. [Calculated targets and controls](#calculated-targets-and-controls): distinguish a length baseline, composition and folding targets, and a synonymous-recoding pipeline check.
 
@@ -174,6 +174,20 @@ The [Results and cache policy](../../README.md#results-caches-and-intermediate-f
 Completed caches are written per encoder. A matching `embed_with_cache` call returns its matrix before loading the tokenizer or model. Progress messages such as `hyenadna: 200/2937` report processed sequences, not a partial disk checkpoint; an interruption before that encoder finishes loses its unfinished progress. Previously completed encoder archives remain reusable. A missing cache or valid identity mismatch starts inference, so this helper is not a cache-only restore command.
 
 A kernel restart also discards analysis objects. The current layerwise embedding and attention sections are not cached, and ordinary reruns of probes, PCA/CCA, permutations and diagnostics recompute them. The stability loading check intentionally loads models even when embedding caches exist. Avoid using Run All simply to recover figures. The [saved-result exporter](../figures/README.md) recreates the recorded graphics directly from JSON snapshots, with no kernel connection, model load or probe fit. It restores figures, not the entire notebook session or an interrupted encoder run.
+
+### Reusing cached token embeddings for fusion
+
+**Worked example.** Take a retained benchmark row with a 600-nucleotide sequence. Swap RiNALMo into the RNA slot and keep the original NT v2 100M and ESM-2 8M. Each frozen encoder produces its own array for that sequence, with one row per content token and one column per feature.
+
+| Encoder | What each token represents in this example | Cached array for one sequence |
+| --- | --- | --- |
+| NT v2 100M (DNA) | Six nucleotides | 100 tokens × 512 features |
+| RiNALMo (RNA) | One nucleotide | 600 tokens × 640 features |
+| ESM-2 8M (protein) | One residue from the translated triplet | 200 tokens × 320 features |
+
+The RiNALMo array takes `600 × 640 × 2 = 768,000` bytes at `float16` precision, which stores two bytes per feature value. This is the token-array payload for one sequence. A cache holds the arrays for all retained sequences for a benchmark and encoder. The swap can reuse the DNA and protein caches, and the same three caches can serve several fusion heads and training seeds. The [token-cache implementation](../../Code/shared_code/fusion/token_embeddings.py) handles extraction and storage.
+
+During a fusion fit, the codon grid gives the three streams 200 positions for this sequence. It upsamples the DNA vectors, averages the RNA vectors in groups of three, and uses the protein positions directly. In the concatenation head, a learned projection transforms each DNA vector before it is joined with the RNA and protein vectors at that position. A second projection forms the fused vector, and TextCNN reads the resulting sequence of fused vectors to predict the benchmark target. The [codon grid](../../Code/shared_code/fusion/codon_grid.py) and [fusion heads](../../Code/shared_code/fusion/heads.py) implement these steps inside the downstream model.
 
 ## Linear probing
 

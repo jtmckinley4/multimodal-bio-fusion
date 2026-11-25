@@ -330,13 +330,25 @@ class NotebookExecution:
 
 
 def prepare_notebook(notebook, config):
-    """Inject paths/mode after Setup settings; never replace a scientific cell."""
+    """Inject overrides after all settings, supporting old notebook snapshots."""
     import copy
     import nbformat
     notebook = copy.deepcopy(notebook)
-    indices = [i for i, cell in enumerate(notebook.cells) if cell.get("id") == "swaps-settings"]
-    if len(indices) != 1:
-        raise ValueError("Expected one maintained swaps-settings cell.")
+    split_settings = any(cell.get("id") == "swaps-run-mode" for cell in notebook.cells)
+    settings_ids = (("swaps-run-mode", "swaps-settings", "swaps-locations")
+                    if split_settings else ("swaps-settings",))
+    settings_indices = []
+    for cell_id in settings_ids:
+        matches = [i for i, cell in enumerate(notebook.cells) if cell.get("id") == cell_id]
+        if len(matches) != 1 or notebook.cells[matches[0]].cell_type != "code":
+            raise ValueError(f"Expected one maintained {cell_id} code cell.")
+        settings_indices.append(matches[0])
+    if settings_indices != sorted(settings_indices):
+        raise ValueError("Expected settings order: " + ", ".join(settings_ids))
+    # Snapshot/producer identities retain 'full'; only the new notebook uses this label.
+    notebook_experiment = config.get("experiment", "full")
+    if split_settings and notebook_experiment == "full":
+        notebook_experiment = "encoder_swaps"
     for cell in notebook.cells:
         if cell.cell_type == "code":
             cell.outputs = []
@@ -350,11 +362,12 @@ def prepare_notebook(notebook, config):
         "from run_encoder_swaps import NotebookExecution",
         "EXECUTION = NotebookExecution(_execution_config)",
         "EXECUTION.observe_kernel(torch)", "EXECUTION.check_results()",
-        "EXPERIMENT = _execution_config.get('experiment', 'full')",
+        f"EXPERIMENT = {notebook_experiment!r}",
         "READ_SAVED_RESULTS = _execution_config['mode'] not in ('train', 'extract')",
         "RUN_TRAINING = _execution_config['mode'] == 'train'",
         "RUN_SAVED_COMPARISONS = _execution_config['mode'] == 'report'",
-        "RUN_BOOTSTRAP = False", "CACHE_REUSE_ONLY = True",
+        # Older packaged notebooks use RUN_BOOTSTRAP for the interval switch.
+        "RUN_BOOTSTRAP = RUN_SINGLE_SEED_INTERVALS = False", "CACHE_REUSE_ONLY = True",
         "if _execution_config['mode'] == 'extract': CACHE_REUSE_ONLY = False",
         "SEED = _execution_config['seed']", "BENCHMARKS = tuple(_execution_config['benchmarks'])",
         "DEVICE = EXECUTION.device", "CACHE_ROOT = Path(_execution_config['cache_root'])",
@@ -369,7 +382,8 @@ def prepare_notebook(notebook, config):
         "FIT_PRODUCER = lambda benchmark: EXECUTION.producer(FIT_PLANS[benchmark])",
         "print('Execution:', _execution_config['purpose'], BENCHMARKS, 'seed', SEED, 'outputs:', EXECUTION.output)",
     ])
-    notebook.cells.insert(indices[0] + 1, nbformat.v4.new_code_cell(source, id="execution-settings"))
+    notebook.cells.insert(settings_indices[-1] + 1,
+                          nbformat.v4.new_code_cell(source, id="execution-settings"))
     return notebook
 
 

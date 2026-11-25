@@ -243,15 +243,20 @@ class SwapReportingTests(unittest.TestCase):
     def test_notebook_switch_defaults_off_and_stops_training_combination_in_setup(self):
         notebook = json.loads((ROOT / "Code/stage4/encoder_swaps.ipynb").read_text(encoding="utf8"))
         cells = {c.get("id"): "".join(c["source"]) for c in notebook["cells"]}
-        source = cells["swaps-settings"]
-        guard = source[source.index("RUN_SAVED_COMPARISONS ="):source.index("# Cache chunking")]
-        state = {"READ_SAVED_RESULTS": True, "RESULTS_ROOT": self.root,
-                 "BENCHMARKS": ["fixture"], "result_recipe": lambda seed: {**RECIPE, "seed": seed},
+        modes = cells["swaps-run-mode"]
+        state = {"RESULTS_ROOT": self.root, "SAVED_REPORT_FILES": {},
+                 "blf": SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL),
+                 "result_recipe": lambda seed: {**RECIPE, "seed": seed},
                  "RESULT_PATHS": SimpleNamespace(fixed_historical_selection=False,
                                                  selection_snapshot=None,
                                                  saved_report_dirs=(self.root / "reports",))}
-        exec(guard, state)
+        exec(modes, state)
+        exec(cells["swaps-settings"], state)
+        state["BENCHMARKS"] = ["fixture"]
+        self.assertTrue(state["READ_SAVED_RESULTS"])
         self.assertFalse(state["RUN_SAVED_COMPARISONS"])
+        self.assertFalse(state["RUN_TRAINING"])
+        self.assertFalse(state["RUN_SINGLE_SEED_INTERVALS"])
         # Defining the helper must not require datasets or start report production.
         exec(cells["swaps-paired-report-def"], state)
         state["build_or_reuse_report"] = Mock(
@@ -262,9 +267,10 @@ class SwapReportingTests(unittest.TestCase):
         read_saved.assert_called_once()
         self.assertEqual(state["SAVED_COMPARISON_REPORTS"], {})
         state["build_or_reuse_report"].assert_not_called()
+        invalid = modes.replace("READ_SAVED_RESULTS = True", "READ_SAVED_RESULTS = False")
+        invalid = invalid.replace("RUN_SAVED_COMPARISONS = False", "RUN_SAVED_COMPARISONS = True")
         with self.assertRaisesRegex(ValueError, "training and extraction"):
-            exec(guard.replace("RUN_SAVED_COMPARISONS = False", "RUN_SAVED_COMPARISONS = True"),
-                 {"READ_SAVED_RESULTS": False, "RESULTS_ROOT": self.root})
+            exec(invalid, {})
         # The caller also guards against a mode changed after Setup was run.
         state.update(RUN_SAVED_COMPARISONS=True, READ_SAVED_RESULTS=False)
         with self.assertRaisesRegex(ValueError, "requires READ_SAVED_RESULTS"):
@@ -277,14 +283,14 @@ class SwapReportingTests(unittest.TestCase):
         def forbidden(*args, **kwargs):
             raise AssertionError("Reporting attempted training or extraction")
         state = dict(
-            RUN_SAVED_COMPARISONS=True, READ_SAVED_RESULTS=True, BENCHMARKS=["fixture"],
+            EXPERIMENT="encoder_swaps", RUN_SAVED_COMPARISONS=True, READ_SAVED_RESULTS=True, BENCHMARKS=["fixture"],
             datasets=SimpleNamespace(blf_benchmark_rows=lambda key: self.frame,
                                      DATASETS={"fixture": SimpleNamespace(
                                          task="classification", label_column="Value", split_column="Split")}),
             np=np, pd=pd, display=lambda obj: None,
             result_recipe=lambda seed: {**RECIPE, "seed": seed},
             ORIGINAL_RESULTS={"fixture": [self.original]}, ORIGINAL=ORIGINAL,
-            swaps_for=lambda key: [("rna", "replacement")],
+            SWAPS=[("rna", "replacement")],
             tokens=SimpleNamespace(grid_resolution=lambda e: "codon", extract=forbidden),
             train=SimpleNamespace(run=forbidden, fit=forbidden),
             RESULTS_ROOT=self.root, COMPARISON_SEEDS=(0, 1, 2),
@@ -335,7 +341,7 @@ class SwapReportingTests(unittest.TestCase):
                     ),
                     SEED=2, result_recipe=Mock(return_value=recipe),
                     ORIGINAL_RESULTS={"fixture": [self.original]}, ORIGINAL=ORIGINAL,
-                    swaps_for=lambda benchmark: [("rna", "codon-fixture"), ("dna", "base-fixture")],
+                    SWAPS=[("rna", "codon-fixture"), ("dna", "base-fixture")],
                     tokens=SimpleNamespace(grid_resolution=lambda encoder: (
                         "codon" if encoder == "codon-fixture" else "nucleotide")),
                     RESULTS_ROOT=self.root / "fits", COMPARISON_SEEDS=(2, 1),

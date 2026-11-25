@@ -45,9 +45,11 @@ class ErnieExecutionTests(unittest.TestCase):
         self.output = self.root / "outputs/ecoli_ernie"
         self.new_cache = self.root / "extension_embeddings"
         self.notebook = nbformat.v4.new_notebook(cells=[
-            nbformat.v4.new_code_cell("EXPERIMENT = 'full'", id="swaps-settings",
+            nbformat.v4.new_code_cell("READ_SAVED_RESULTS = True", id="swaps-run-mode"),
+            nbformat.v4.new_code_cell("EXPERIMENT = 'encoder_swaps'", id="swaps-settings",
                                       execution_count=4, outputs=[nbformat.v4.new_output(
                                           "stream", name="stdout", text="historical fixture")]),
+            nbformat.v4.new_code_cell("RESULTS_ROOT = 'fixture'", id="swaps-locations"),
         ])
         self.put(runtime.NOTEBOOK, nbformat.writes(self.notebook))
         for name in ("run_encoder_swaps.py", "Code/shared_code/fusion/swap_plan.py",
@@ -114,7 +116,9 @@ class ErnieExecutionTests(unittest.TestCase):
                     "analysis_dir": self.output / "analyses"})()
                 fake.NotebookExecution = Mock(return_value=execution)
                 prepared = runtime.prepare_notebook(self.notebook, {**self.config, "mode": mode})
-                injected = next(c.source for c in prepared.cells if c.id == "execution-settings")
+                self.assertEqual([cell.id for cell in prepared.cells],
+                                 ["swaps-run-mode", "swaps-settings", "swaps-locations", "execution-settings"])
+                injected = prepared.cells[-1].source
                 namespace = {"torch": object()}
                 with patch.dict(sys.modules, {"run_encoder_swaps": fake}), \
                         patch.object(sys, "path", list(sys.path)), redirect_stdout(StringIO()):
@@ -123,6 +127,8 @@ class ErnieExecutionTests(unittest.TestCase):
                 self.assertEqual(namespace["RUN_TRAINING"], mode == "train")
                 self.assertEqual(namespace["CACHE_REUSE_ONLY"], mode == "train")
                 self.assertFalse(namespace["RUN_SAVED_COMPARISONS"])
+                self.assertEqual(namespace["EXPERIMENT"], "ecoli_ernie")
+                self.assertEqual(namespace["BENCHMARKS"], ("ecoli_proteins",))
                 self.assertEqual(namespace["SWAPS"], [("rna", "rnaernie"), ("rna", "ernierna")])
                 self.assertEqual(namespace["NEW_CACHE_ROOT"], self.new_cache)
                 self.assertEqual(namespace["REFERENCE_SWAP_ROOT"], self.reference / "outputs/phaseB")

@@ -89,7 +89,7 @@ sbatch --job-name="encoder-swaps-${ARCC_BENCHMARK}-seed${ARCC_SEED}" \
 
 Expect 42 fit records per benchmark and seed, 504 across the full panel. From `ARCC_OUTPUT_ROOT`, download the fit and prediction JSONs in `phaseA/` and `phaseB/` and the matching `logs/` records. Keep those paths under `outputs/` in a distinct local result folder. [Download results](../README.md#download-results)
 
-Keep the current workspace's `source-snapshot.json` with the launch evidence. The notebook checks a separate snapshot of the original validation selection. Copy the upload's `evidence/selection-source-snapshot.json` to `provenance/source-snapshot.json` under the local result folder. Keep `RESULT_SET = "newton_h100_seeds012"` and point `RETURNED_WORKSPACE` to that result folder. [Saved result layout and settings](../../../Code/stage4/RUNBOOK.md#select-a-returned-result-set)
+Keep the current workspace's `source-snapshot.json` with the launch evidence. The notebook checks a separate snapshot of the original validation selection. Copy the upload's `evidence/selection-source-snapshot.json` to `provenance/source-snapshot.json` under the local result folder. Keep `RESULT_SET = "newton_h100_seeds012"` and point `FOUR_BENCHMARK_WORKSPACE` to that folder containing `outputs/`, or leave it at `None` for the repository default. [Saved result layout and settings](../../../Code/stage4/RUNBOOK.md#select-a-returned-result-set)
 
 To calculate a report from previously saved full-panel predictions on Newton, use the optional [CPU report wrapper](newton_report.sbatch.example). For inspection, keep the notebook's default [saved-results settings](../../../Code/stage4/RUNBOOK.md#read-saved-results-without-starting-work).
 
@@ -121,7 +121,7 @@ sbatch --job-name="ecoli-ernie-train-seed${ARCC_SEED}" \
 
 From `ARCC_OUTPUT_ROOT`, download the fit and prediction JSONs in `phaseB/` and the matching `logs/` records. Put them under `outputs/ecoli_ernie/` in a separate local result folder and keep the source snapshot for those launches. Keep `extension_embeddings/` on Newton. [Download results](../README.md#download-results)
 
-To read a new return, keep `READ_SAVED_RESULTS = True`, select `EXPERIMENT = "ecoli_ernie"`, and set `RETURNED_WORKSPACE` to the extension's local result folder. Set `REFERENCE_WORKSPACE` if you also keep the original cohort at a custom path. [Verified extension return](../../../docs/run-records.md#2026-11-19-verified-newton-return-for-e-coli-gates-and-attention)
+To read a new return, keep `READ_SAVED_RESULTS = True` and set `ECOLI_FOLLOWUP_WORKSPACE` to the extension's local folder containing `outputs/`. `FOUR_BENCHMARK_WORKSPACE` selects the original cohort used as its reference. Either setting can remain `None` to use that study's repository default. The default four-benchmark Newton view can read both returns together; select `EXPERIMENT = "ecoli_ernie"` for a focused view. [Verified extension return](../../../docs/run-records.md#2026-11-19-verified-newton-return-for-e-coli-gates-and-attention)
 
 ## Update an existing workspace
 

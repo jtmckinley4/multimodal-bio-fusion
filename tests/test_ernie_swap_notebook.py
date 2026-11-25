@@ -1,5 +1,6 @@
 """Isolated notebook branches with invented paths/records; no research execution."""
 
+import ast
 from contextlib import redirect_stdout
 import io
 import json
@@ -38,7 +39,7 @@ class FocusedNotebookTests(unittest.TestCase):
             ERNIE_ENCODERS=("rnaernie", "ernierna"),
             CACHE_REUSE_ONLY=False, CACHE_ROOT=self.root / "old", NEW_CACHE_ROOT=self.root / "new",
             REFERENCE_SWAP_ROOT=self.root / "old_results", RESULTS_ROOT=self.root / "extension",
-            ORIGINAL=ORIGINAL, SWAPS=SWAPS, STABILITY_SWAPS=SWAPS, BENCHMARKS=(BENCHMARK,),
+            ORIGINAL=ORIGINAL, SWAPS=SWAPS, BENCHMARKS=(BENCHMARK,),
             SEED=0, CHUNK_SIZE=256, DTYPE=np.float16, DEVICE="cpu", pd=pd, np=np,
             json=json, time=time, display=lambda value: None,
             tokens=SimpleNamespace(DEFAULT_CHUNK=256, extract=forbidden, inspect_cache=forbidden,
@@ -49,20 +50,50 @@ class FocusedNotebookTests(unittest.TestCase):
         )
         self.execute("swaps-selection")
 
-    def execute(self, cell_id):
-        with redirect_stdout(io.StringIO()):
-            exec(compile(self.cells[cell_id], cell_id, "exec"), self.env)
+    def execute(self, cell_id, **overrides):
+        source = self.cells[cell_id]
+        if overrides:
+            source = ast.parse(source)
+            assignments = {
+                target.id: node for node in source.body if isinstance(node, ast.Assign)
+                for target in node.targets if isinstance(target, ast.Name)
+            }
+            for name, value in overrides.items():
+                assignment = assignments[name]
+                assignment.value = ast.copy_location(ast.Constant(value), assignment.value)
+        output = io.StringIO()
+        with redirect_stdout(output):
+            exec(compile(source, cell_id, "exec"), self.env)
+        return output.getvalue()
 
     def test_extension_settings_keep_budget_and_request_only_two_encoders(self):
-        self.env["blf"] = SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL)
-        self.execute("swaps-settings")
+        self.env.update(blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL), CODE_DIR=self.root / "Code")
+        main = self.root / "four-benchmark return"
+        followup = self.root / "E. coli follow-up return"
+        self.execute("swaps-run-mode")
+        self.execute("swaps-settings", EXPERIMENT="ecoli_ernie")
+        self.execute("swaps-locations", FOUR_BENCHMARK_WORKSPACE=str(main), ECOLI_FOLLOWUP_WORKSPACE=str(followup))
         self.assertEqual(self.env["SWAPS"], SWAPS)
+        self.assertEqual(self.env["BENCHMARKS"], (BENCHMARK,))
+        self.assertEqual(self.env["RESULT_PATHS"].name, "newton_ecoli_ernie")
+        self.assertEqual(self.env["RESULTS_ROOT"], followup / "outputs/ecoli_ernie/phaseB")
+        self.assertEqual(self.env["REFERENCE_SWAP_ROOT"], main / "outputs/phaseB")
         self.assertEqual((self.env["MAX_EPOCHS"], self.env["BATCH_SIZE"], self.env["CHANNELS"]), (500, 32, 100))
         self.assertTrue(self.env["CACHE_REUSE_ONLY"])
         self.assertFalse(self.env["RUN_SAVED_COMPARISONS"])
 
+    def test_legacy_full_scope_keeps_the_regular_swap_panel(self):
+        self.env.update(blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL), CODE_DIR=self.root / "Code")
+        self.execute("swaps-run-mode")
+        self.execute("swaps-settings", EXPERIMENT="full")
+        self.execute("swaps-locations")
+        self.assertEqual(self.env["RESULT_PATHS"].name, "newton_h100_seeds012")
+        self.assertEqual(len(self.env["BENCHMARKS"]), 4)
+        self.assertEqual(len(self.env["SWAPS"]), 8)
+        self.assertFalse(self.env["CACHE_REUSE_ONLY"])
+
     def test_cache_routing_does_not_request_original_rna(self):
-        self.assertEqual(self.env["required_encoders"](BENCHMARK),
+        self.assertEqual(list(self.env["INVENTORY_ENCODERS"]),
                          ["ntv2_100m", "esm2_8m", "rnaernie", "ernierna"])
         for key in ("ntv2_100m", "esm2_8m"):
             self.assertEqual(self.env["cache_directory"](BENCHMARK, key), self.root / "old" / BENCHMARK / key)
@@ -72,7 +103,7 @@ class FocusedNotebookTests(unittest.TestCase):
             self.assertFalse(self.env["cache_is_read_only"](key))
 
     def test_missing_original_cache_blocks_even_in_extraction_mode(self):
-        self.env["PENDING_CACHE_KEYS"] = {(BENCHMARK, "ntv2_100m")}
+        self.env["PENDING_CACHE_KEYS"] = [(BENCHMARK, "ntv2_100m")]
         self.env["tokens"].inspect_cache = lambda *a, **kw: SimpleNamespace(
             ready=True, missing_shards=[0], restore_metadata=False, reusable_shards=[],
             status="missing", provenance="missing", issues=[], summary="missing original",
@@ -81,7 +112,8 @@ class FocusedNotebookTests(unittest.TestCase):
             self.execute("swaps-cache-preflight")
 
     def test_extraction_visits_only_new_caches(self):
-        self.env.update(PENDING_CACHE_KEYS={(BENCHMARK, k) for k in self.env["required_encoders"](BENCHMARK)},
+        encoder_order = ("ernierna", "ntv2_100m", "rnaernie", "esm2_8m")
+        self.env.update(PENDING_CACHE_KEYS=[(BENCHMARK, key) for key in encoder_order],
                         BENCHMARK_ROWS={BENCHMARK: pd.DataFrame({"sequence": ["ATG"]})},
                         RECOVERY_RECORDS={}, CACHE_VERIFICATION=object())
         calls, closed = [], []
@@ -102,7 +134,7 @@ class FocusedNotebookTests(unittest.TestCase):
 
         self.env["tokens"].extract = extract
         self.execute("c397d229")
-        self.assertEqual([key for key, _ in calls], ["rnaernie", "ernierna"])
+        self.assertEqual([key for key, _ in calls], ["ernierna", "rnaernie"])
         self.assertTrue(all(path.is_relative_to(self.root / "new") for _, path in calls))
         self.assertEqual(len(closed), 2)
 
@@ -170,47 +202,66 @@ class FocusedNotebookTests(unittest.TestCase):
         self.assertEqual((partial["Seed 0 (%)"], partial["Seed 2 (%)"]), (70, 80))
         self.assertTrue(partial[["Seed 1 (%)", "Mean (%)"]].isna().all())
 
-    def test_default_newton_reader_displays_only_the_two_extensions_and_their_reference(self):
+    def test_four_benchmark_view_combines_default_or_explicit_returned_workspaces(self):
         code = self.root / "Code"
-        extension = resolve_ernie_extension(code).swaps
-        full_panel = self.root / "original Newton" / "outputs" / "phaseB"
-        received = set()
+        default = code / "stage4/results"
+        for main, followup in (
+            (None, None),
+            (self.root / "alternate main", None),
+            (None, self.root / "alternate follow-up"),
+            (self.root / "alternate main", self.root / "alternate follow-up"),
+        ):
+            with self.subTest(main=main, followup=followup):
+                main_root = (main or default / "newton_h100_seeds012") / "outputs/phaseB"
+                followup_root = (followup or default / "newton_ecoli_ernie") / "outputs/ecoli_ernie/phaseB"
+                received = set()
 
-        def reader(folders, *, benchmark, config, encoders, mil_lambda, variants):
-            key, seed = encoders["rna"], config["seed"]
-            self.assertEqual(benchmark, BENCHMARK)
-            self.assertEqual(folders, [(full_panel if key == "rinalmo" else extension) / benchmark / key])
-            received.add((key, seed))
-            records = [{"data": {"variant": v, "test_score": 0.625}} for v in variants]
-            return SimpleNamespace(require_unique=lambda: records)
+                def reader(folders, *, benchmark, config, encoders, mil_lambda, variants):
+                    key, seed = encoders["rna"], config["seed"]
+                    self.assertEqual(benchmark, BENCHMARK)
+                    self.assertEqual(folders, [(main_root if key == "rinalmo" else followup_root) / benchmark / key])
+                    received.add((key, seed))
+                    records = [{"data": {"variant": v, "test_score": 0.625}} for v in variants]
+                    return SimpleNamespace(require_unique=lambda: records)
 
-        shown = []
-        self.env.update(EXPERIMENT="full", READ_SAVED_RESULTS=True,
-                        CODE_DIR=code, RETURNED_WORKSPACE=None, REFERENCE_SWAP_ROOT=full_panel,
-                        RESULTS_ROOT=full_panel, RESULT_PATHS=SimpleNamespace(name="newton_h100_seeds012"),
-                        resolve_ernie_extension=resolve_ernie_extension, blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL),
-                        swap_results=SimpleNamespace(read_results=reader), display=shown.append,
-                        selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
-        self.execute("swaps-settings")
-        self.assertNotIn(("rna", "rnaernie"), self.env["SWAPS"])
-        self.execute("swaps-summary")
-        self.execute("swaps-ernie-table")
-        table, = shown
-        self.assertEqual(table.shape, (6, 4))
-        self.assertEqual(received, {(k, s) for k in ("rinalmo", "rnaernie", "ernierna") for s in (0, 1, 2)})
+                shown = []
+                self.env.update(CODE_DIR=code, blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL),
+                                swap_results=SimpleNamespace(read_results=reader), display=shown.append,
+                                selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
+                self.execute("swaps-run-mode")
+                self.execute("swaps-settings")
+                paths = {"FOUR_BENCHMARK_WORKSPACE": main, "ECOLI_FOLLOWUP_WORKSPACE": followup}
+                self.execute("swaps-locations", **{key: str(path) for key, path in paths.items() if path is not None})
+                self.assertEqual(self.env["EXPERIMENT"], "encoder_swaps")
+                self.assertNotIn(("rna", "rnaernie"), self.env["SWAPS"])
+                self.execute("swaps-summary")
+                self.execute("swaps-ernie-table")
+                table, = shown
+                self.assertEqual(table.shape, (6, 4))
+                self.assertEqual(received, {(k, s) for k in ("rinalmo", "rnaernie", "ernierna") for s in (0, 1, 2)})
 
     def test_other_full_panel_scopes_do_not_read_the_bundled_extension(self):
-        for name, workspace, reading, benchmarks in [
-            ("historical", None, True, (BENCHMARK,)),
-            ("newton_h100_seeds012", self.root / "another return", True, (BENCHMARK,)),
-            ("newton_h100_seeds012", None, False, (BENCHMARK,)),
-            ("newton_h100_seeds012", None, True, ("fungal_expression",)),
+        for name, reading, benchmarks in [
+            ("historical", True, (BENCHMARK,)),
+            ("newton", True, (BENCHMARK,)),
+            ("newton_h100_seeds012", False, (BENCHMARK,)),
+            ("newton_h100_seeds012", True, ("fungal_expression",)),
         ]:
-            with self.subTest(name=name, workspace=workspace, reading=reading, benchmarks=benchmarks):
-                self.env.update(EXPERIMENT="full", READ_SAVED_RESULTS=reading, BENCHMARKS=benchmarks,
-                                RESULT_PATHS=SimpleNamespace(name=name), RETURNED_WORKSPACE=workspace,
+            with self.subTest(name=name, reading=reading, benchmarks=benchmarks):
+                self.env.update(EXPERIMENT="encoder_swaps", READ_SAVED_RESULTS=reading, BENCHMARKS=benchmarks,
+                                RESULT_PATHS=SimpleNamespace(name=name), FOUR_BENCHMARK_WORKSPACE=None,
+                                ECOLI_FOLLOWUP_WORKSPACE=None,
                                 resolve_ernie_extension=forbidden, extension_score_table=forbidden, display=forbidden)
                 self.execute("swaps-ernie-table")
+
+    def test_invalid_followup_workspace_reports_unavailable_without_reading_scores(self):
+        main = self.root / "main return"
+        self.env.update(EXPERIMENT="encoder_swaps", READ_SAVED_RESULTS=True,
+                        CODE_DIR=self.root / "Code", RESULT_PATHS=SimpleNamespace(name="newton_h100_seeds012"),
+                        FOUR_BENCHMARK_WORKSPACE=main, ECOLI_FOLLOWUP_WORKSPACE=main,
+                        resolve_ernie_extension=resolve_ernie_extension,
+                        extension_score_table=forbidden, display=forbidden)
+        self.assertIn("E. coli RNA swap scores unavailable:", self.execute("swaps-ernie-table"))
 
     def test_extension_saved_report_branch_does_not_compute(self):
         self.env.update(READ_SAVED_RESULTS=True, RUN_SAVED_COMPARISONS=False, build_or_reuse_report=forbidden)

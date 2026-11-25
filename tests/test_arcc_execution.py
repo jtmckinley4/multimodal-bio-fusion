@@ -253,6 +253,7 @@ class ARCCExecutionTests(unittest.TestCase):
         injected = by_id["execution-settings"].source
         compile(injected, "synthetic-settings", "exec")
         self.assertIn("CACHE_REUSE_ONLY = True", injected)
+        self.assertIn("RUN_BOOTSTRAP = RUN_SINGLE_SEED_INTERVALS = False", injected)
         self.assertIn("CHECKPOINT_VALIDATOR = EXECUTION.checkpoint_preflight", injected)
         self.assertIn("FIT_PRODUCER =", injected)
 
@@ -264,6 +265,24 @@ class ARCCExecutionTests(unittest.TestCase):
             with self.subTest(cells=len(notebook.cells)), self.assertRaises(ValueError):
                 runtime.prepare_notebook(notebook, self.config)
 
+    def test_new_layout_refuses_partial_or_out_of_order_settings(self):
+        mode, settings, paths = [
+            nbformat.v4.new_code_cell("pass", id=identity)
+            for identity in ("swaps-run-mode", "swaps-settings", "swaps-locations")
+        ]
+        prose = nbformat.v4.new_markdown_cell("Not a code cell.", id="swaps-locations")
+        invalid_layouts = {
+            "partial": [mode, settings],
+            "out of order": [mode, paths, settings],
+            "duplicate": [mode, settings, paths, paths],
+            "not code": [mode, settings, prose],
+        }
+        for issue, cells in invalid_layouts.items():
+            fixture = nbformat.v4.new_notebook()
+            fixture.cells = deepcopy(cells)
+            with self.subTest(issue=issue), self.assertRaises(ValueError):
+                runtime.prepare_notebook(fixture, self.config)
+
     def test_injected_settings_reach_actual_notebook_plan_in_reading_order(self):
         # Use the actual packaged/maintained cell ordering. Only settings and helper
         # definitions execute; the planner and runtime are stubs, with no data access.
@@ -271,10 +290,10 @@ class ARCCExecutionTests(unittest.TestCase):
         source_bytes = path.read_bytes()
         notebook = nbformat.reads(source_bytes.decode("utf-8"), as_version=4)
         original = deepcopy(notebook)
-        selected_ids = {
-            "1a72c669", "swaps-locations", "swaps-settings", "execution-settings",
+        selected_ids = [
+            "1a72c669", "swaps-run-mode", "swaps-settings", "swaps-locations", "execution-settings",
             "swaps-selection", "swaps-plan-defs", "swaps-execution-plan",
-        }
+        ]
         for mode in ("train", "report"):
             with self.subTest(mode=mode):
                 config = {**self.config, "mode": mode, "seed": 2,
@@ -337,15 +356,17 @@ class ARCCExecutionTests(unittest.TestCase):
                         if cell.cell_type == "code" and cell.id in selected_ids:
                             visited.append(cell.id)
                             exec(compile(cell.source, f"synthetic-flow:{cell.id}", "exec"), environment)
-                self.assertEqual(set(visited), selected_ids)
+                self.assertEqual(visited, selected_ids)
                 self.assertEqual(events, ["initialize", "observe_kernel", "check_results", "result_paths"])
                 self.assertEqual(environment["READ_SAVED_RESULTS"], mode != "train")
                 self.assertEqual(environment["RUN_SAVED_COMPARISONS"], mode == "report")
                 self.assertIs(environment["CACHE_REUSE_ONLY"], True)
+                self.assertIs(environment["RUN_SINGLE_SEED_INTERVALS"], False)
                 self.assertIs(environment["RUN_BOOTSTRAP"], False)
                 self.assertEqual(environment["SEED"], 2)
                 self.assertEqual(environment["SELECTION_SEED"], 0)
                 self.assertEqual(environment["BENCHMARKS"], ("fungal_expression",))
+                self.assertEqual(environment["EXPERIMENT"], "encoder_swaps")
                 arguments = planner.call_args.kwargs
                 self.assertEqual(arguments["original_folders"], routes.originals["fungal_expression"])
                 self.assertEqual(arguments["selection_original_folders"],
