@@ -189,6 +189,48 @@ The RiNALMo array takes `600 × 640 × 2 = 768,000` bytes at `float16` precision
 
 During a fusion fit, the codon grid gives the three streams 200 positions for this sequence. It upsamples the DNA vectors, averages the RNA vectors in groups of three, and uses the protein positions directly. In the concatenation head, a learned projection transforms each DNA vector before it is joined with the RNA and protein vectors at that position. A second projection forms the fused vector, and TextCNN reads the resulting sequence of fused vectors to predict the benchmark target. The [codon grid](../../Code/shared_code/fusion/codon_grid.py) and [fusion heads](../../Code/shared_code/fusion/heads.py) implement these steps inside the downstream model.
 
+## What the RNA encoders were pretrained on
+
+Every benchmark in this project is a protein-coding sequence. Fungal expression, E. coli
+protein production, CoV-Vac and mRNA stability are all coding sequences read on a codon
+grid. Most RNA language models, however, are pretrained only on non-coding RNA. The model
+name does not reveal this, and it is a candidate explanation for the swap results, so the
+corpora are recorded here.
+
+| Encoder | Parameters | Pretraining corpus | Coding or non-coding |
+| --- | ---: | --- | --- |
+| RNA-FM | 100M | RNAcentral, 23.7M sequences | non-coding |
+| RiNALMo (mega) | 148M | RNAcentral, Rfam, nt and Ensembl, ~36M sequences | non-coding |
+| ERNIE-RNA | 86M | RNAcentral, ~20.4M sequences | non-coding |
+| RNAErnie | ~86M | RNAcentral | non-coding |
+| NucleicBERT | ~400M | MARS database, ~30M sequences | non-coding |
+| mRNA-FM | 100M | coding sequences, codon tokens | coding |
+| CaLM | 86M | European Nucleotide Archive cDNA | coding |
+
+**Which RiNALMo.** RiNALMo ships in three sizes: micro at 33M parameters (12 layers, width
+480), mega at 148M (30 layers, width 640) and giga at 651M (33 layers, width 1280). This
+project uses `multimolecule/rinalmo-mega`, the middle size, pinned at revision
+`5e3a682eb856148fe81f12a25301962c9ffaf0ed`. The RiNALMo paper's headline results are the
+giga model, so every RiNALMo number here is a floor on what RiNALMo can reach rather than
+the published ceiling. Width 640 in the cached arrays confirms the variant independently of
+the registry's label.
+
+**What the pattern looks like against the swap results.** In the Phase B table where each
+encoder is read alone, the two coding-pretrained encoders lead both benchmarks that resolve:
+on fungal expression mRNA-FM and CaLM gain +0.133 each, against RiNALMo's +0.127 and
+negative gains for both DNA swaps; on E. coli mRNA-FM gains 8.2 accuracy points, CaLM 6.6
+and RiNALMo 5.6. RiNALMo is non-coding-pretrained and still third, so the split is not
+clean, and a swap changes corpus, tokenization, capacity and input width at once. This is a
+pattern worth testing, not an established effect: nothing here held the corpus fixed while
+varying everything else, which is what would be needed to attribute the difference to
+coding content.
+
+**Why it matters for the fusion question.** If a coding-pretrained RNA encoder is what the
+coding benchmarks need, then the fusion heads on these benchmarks have been asked to repair
+a modality mismatch rather than to combine complementary views. That would explain why the
+measured fusion gain collapses once a strong RNA encoder is in the slot, and it predicts
+that fusion should survive better where no single encoder already covers the target.
+
 ## Linear probing
 
 With a feature matrix available, the next question is what a simple fitted model can predict from it. This section explains the standardization, ridge regression, and evaluation used in the [stability notebook](../../Code/stage1/Stage1_stability.ipynb#Linear-probing) and the [GTEx expression probes](../../Code/stage1/Stage1_gtex.ipynb#Expression-prediction-with-linear-probes). Start with the respective notebook for its biological target, experiment settings, and saved results; use this section for the derivations and worked example. The maintained implementation is in [analysis.py](../../Code/shared_code/analysis.py) and the group assignment is in [splits.py](../../Code/shared_code/splits.py).

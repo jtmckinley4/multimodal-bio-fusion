@@ -60,7 +60,25 @@ ENCODERS = {
                 attention=False),
         Encoder("hyenadna", "HyenaDNA large", "DNA", "multimolecule/hyenadna-large", "dna", 1_000_000,
                 revision="928e4a8cf67eab56be6e9c517b1a155faca0b1e1", attention=False),
+        # Which corpus an RNA encoder was pretrained on is recorded here because every
+        # benchmark in this project is a protein-coding sequence, while most RNA encoders
+        # are pretrained only on non-coding RNA. That mismatch is a candidate explanation
+        # for the swap results and is not something the model name reveals.
+        #
+        #   encoder     params   pretraining corpus                        coding?
+        #   RNA-FM      100M     RNAcentral, 23.7M ncRNA                   non-coding
+        #   RiNALMo     148M     RNAcentral + Rfam + nt + Ensembl, 36M     non-coding
+        #   mRNA-FM     100M     coding sequences, codon tokens            coding
+        #   CaLM         86M     European Nucleotide Archive cDNA          coding
+        #   ERNIE-RNA    86M     RNAcentral, 20.4M ncRNA                   non-coding
+        #   RNAErnie    ~86M     RNAcentral, ncRNA                         non-coding
         Encoder("rnafm", "RNA-FM", "RNA", "multimolecule/rnafm", "rna", 1024),
+        # rinalmo-mega is the middle of RiNALMo's three sizes: micro 33M (12 layers, width
+        # 480), mega 148M (30 layers, width 640) and giga 651M (33 layers, width 1280). The
+        # paper's headline results are the giga model, so this project's RiNALMo numbers are
+        # a floor on what RiNALMo can do, not the published ceiling.
+        # The label stays "RiNALMo 150M" because Stage 1's notebooks and figdata.py index
+        # tables by it; the checkpoint path and the note above identify the variant exactly.
         Encoder("rinalmo", "RiNALMo 150M", "RNA", "multimolecule/rinalmo-mega", "rna", 1024,
                 revision="5e3a682eb856148fe81f12a25301962c9ffaf0ed"),
         Encoder("mrnafm", "mRNA-FM", "RNA", "multimolecule/mrnafm", "rna", 1024, codon=True),
