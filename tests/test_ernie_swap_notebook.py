@@ -166,14 +166,15 @@ class FocusedNotebookTests(unittest.TestCase):
         displayed = []
         self.env.update(swap_results=SimpleNamespace(read_results=reader), display=displayed.append,
                         SEED=2, resolve_ernie_extension=forbidden,
-                        selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
-        self.execute("swaps-summary")
+                        selected_mil_penalty=lambda b: 0.01,
+                        training_settings_for_seed=lambda seed: {"seed": seed})
+        self.execute("swaps-ecoli-followup-defs")
         self.execute("swaps-ernie-table")
         table, = displayed
         self.assertEqual(list(table.columns), ["Seed 2 (%)"])
-        self.assertEqual(table.loc[("rinalmo", "MIL gated", "existing RiNALMo reference"), "Seed 2 (%)"], 60)
-        self.assertTrue(pd.isna(table.loc[("rnaernie", "MIL gated", "focused extension"), "Seed 2 (%)"]))
-        self.assertTrue(pd.isna(table.loc[("ernierna", "Concatenation", "focused extension"), "Seed 2 (%)"]))
+        self.assertEqual(table.loc[("rinalmo", "MIL gated", "four-benchmark study"), "Seed 2 (%)"], 60)
+        self.assertTrue(pd.isna(table.loc[("rnaernie", "MIL gated", "E. coli RNA follow-up"), "Seed 2 (%)"]))
+        self.assertTrue(pd.isna(table.loc[("ernierna", "Concatenation", "E. coli RNA follow-up"), "Seed 2 (%)"]))
 
     def test_saved_table_shows_all_three_seeds_without_averaging_partial_rows(self):
         def reader(folders, *, benchmark, config, encoders, mil_lambda, variants):
@@ -190,15 +191,16 @@ class FocusedNotebookTests(unittest.TestCase):
         self.env.update(READ_SAVED_RESULTS=True, SEED=2, SCALE={BENCHMARK: 100},
                         resolve_ernie_extension=forbidden, benchmark_score_table=forbidden,
                         swap_results=SimpleNamespace(read_results=reader), display=displayed.append,
-                        selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
-        self.execute("swaps-summary")
+                        selected_mil_penalty=lambda b: 0.01,
+                        training_settings_for_seed=lambda seed: {"seed": seed})
+        self.execute("swaps-ecoli-followup-defs")
         self.execute("bcddefb4")
         self.execute("swaps-ernie-table")
         table, = displayed
         self.assertEqual(table.shape, (6, 4))
         self.assertEqual(list(table.columns), ["Seed 0 (%)", "Seed 1 (%)", "Seed 2 (%)", "Mean (%)"])
-        self.assertEqual(table.loc[("rnaernie", "MIL gated", "focused extension")].tolist(), [60, 65, 70, 65])
-        partial = table.loc[("ernierna", "Concatenation", "focused extension")]
+        self.assertEqual(table.loc[("rnaernie", "MIL gated", "E. coli RNA follow-up")].tolist(), [60, 65, 70, 65])
+        partial = table.loc[("ernierna", "Concatenation", "E. coli RNA follow-up")]
         self.assertEqual((partial["Seed 0 (%)"], partial["Seed 2 (%)"]), (70, 80))
         self.assertTrue(partial[["Seed 1 (%)", "Mean (%)"]].isna().all())
 
@@ -227,14 +229,15 @@ class FocusedNotebookTests(unittest.TestCase):
                 shown = []
                 self.env.update(CODE_DIR=code, blf=SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL),
                                 swap_results=SimpleNamespace(read_results=reader), display=shown.append,
-                                selected_mil_penalty=lambda b: 0.01, result_recipe=lambda seed: {"seed": seed})
+                                selected_mil_penalty=lambda b: 0.01,
+                                training_settings_for_seed=lambda seed: {"seed": seed})
                 self.execute("swaps-run-mode")
                 self.execute("swaps-settings")
                 paths = {"FOUR_BENCHMARK_WORKSPACE": main, "ECOLI_FOLLOWUP_WORKSPACE": followup}
                 self.execute("swaps-locations", **{key: str(path) for key, path in paths.items() if path is not None})
                 self.assertEqual(self.env["EXPERIMENT"], "encoder_swaps")
                 self.assertNotIn(("rna", "rnaernie"), self.env["SWAPS"])
-                self.execute("swaps-summary")
+                self.execute("swaps-ecoli-followup-defs")
                 self.execute("swaps-ernie-table")
                 table, = shown
                 self.assertEqual(table.shape, (6, 4))
@@ -251,7 +254,7 @@ class FocusedNotebookTests(unittest.TestCase):
                 self.env.update(EXPERIMENT="encoder_swaps", READ_SAVED_RESULTS=reading, BENCHMARKS=benchmarks,
                                 RESULT_PATHS=SimpleNamespace(name=name), FOUR_BENCHMARK_WORKSPACE=None,
                                 ECOLI_FOLLOWUP_WORKSPACE=None,
-                                resolve_ernie_extension=forbidden, extension_score_table=forbidden, display=forbidden)
+                                resolve_ernie_extension=forbidden, ecoli_rna_followup_table=forbidden, display=forbidden)
                 self.execute("swaps-ernie-table")
 
     def test_invalid_followup_workspace_reports_unavailable_without_reading_scores(self):
@@ -260,7 +263,7 @@ class FocusedNotebookTests(unittest.TestCase):
                         CODE_DIR=self.root / "Code", RESULT_PATHS=SimpleNamespace(name="newton_h100_seeds012"),
                         FOUR_BENCHMARK_WORKSPACE=main, ECOLI_FOLLOWUP_WORKSPACE=main,
                         resolve_ernie_extension=resolve_ernie_extension,
-                        extension_score_table=forbidden, display=forbidden)
+                        ecoli_rna_followup_table=forbidden, display=forbidden)
         self.assertIn("E. coli RNA swap scores unavailable:", self.execute("swaps-ernie-table"))
 
     def test_extension_saved_report_branch_does_not_compute(self):

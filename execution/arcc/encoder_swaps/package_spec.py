@@ -14,8 +14,6 @@ import subprocess
 SCHEMA = "biological-fusion.arcc-package"
 SCHEMA_VERSION = 2
 NOTEBOOK = "Code/stage4/encoder_swaps.ipynb"
-# The notebook's final context lookup reads this completed capture even in training mode.
-HISTORICAL_CONTEXT = ("docs/figures/stability/results.json",)
 REQUIRED_SHARED = (
     "Code/shared_code/__init__.py", "Code/shared_code/fusion/swap_plan.py",
     "Code/shared_code/fusion/result_sets.py",
@@ -210,8 +208,6 @@ def build_plan(source_root, selection_workspace=None, cache_root=None, *, experi
         raise ValueError("The maintained repository and selection workspace must be separate.")
     state = git_state(source_root)
     files = [_entry(source_root, NOTEBOOK, NOTEBOOK, "maintained_repository", "scientific_notebook")]
-    for relative in HISTORICAL_CONTEXT:
-        files.append(_entry(source_root, relative, relative, "maintained_repository", "historical_context"))
     shared = _root(source_root / "Code/shared_code")
     if not shared.is_relative_to(source_root):
         raise ValueError("Shared scientific source must be inside the maintained repository.")

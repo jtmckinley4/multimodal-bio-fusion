@@ -104,7 +104,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
     def namespace(self, seed=0):
         env = dict(
             EXPERIMENT="encoder_swaps", RUN_TRAINING=True,
-            READ_SAVED_RESULTS=False, SEED=seed, SELECTION_SEED=0, RUN_SINGLE_SEED_INTERVALS=False,
+            READ_SAVED_RESULTS=False, SEED=seed, SELECTION_SEED=0,
             CACHE_REUSE_ONLY=False, CHECKPOINT_VALIDATOR=forbidden, FIT_PRODUCER=None,
             BATCH_SIZE=32, MAX_EPOCHS=500, CHANNELS=100, TCONV="equation", DEVICE="cpu",
             BENCHMARKS=(BENCHMARK,), ORIGINAL=ORIGINAL, CODE_DIR=self.code,
@@ -173,7 +173,7 @@ class SwapResumeNotebookTests(unittest.TestCase):
                 exec(compile(self.sources[cell_id], "fixture metadata plan", "exec"), env)
         # Only the downstream fit identity is stubbed; the metadata plan above
         # must itself avoid current inputs for completed historical scores.
-        env["requested_identity"] = lambda key, variant, config, mapping, **kw: {
+        env["expected_fit_identity"] = lambda key, variant, config, mapping, **kw: {
             "benchmark": key, "variant": variant, "config": config,
             "inputs": {"encoders": mapping},
         }
@@ -200,7 +200,6 @@ class SwapResumeNotebookTests(unittest.TestCase):
                          [*ORIGINAL.values(), *(key for _, key in env["SWAPS"])])
         self.assertEqual(env["SEED"], 0)
         self.assertEqual(env["SELECTION_SEED"], 0)
-        self.assertFalse(env["RUN_SINGLE_SEED_INTERVALS"])
 
     def test_nondefault_recipe_reaches_planning_and_both_result_readers(self):
         env = self.namespace(seed=2)
@@ -217,12 +216,12 @@ class SwapResumeNotebookTests(unittest.TestCase):
         for cell_id in ("swaps-original-selectors", "swaps-replacement-reader"):
             exec(compile(self.sources[cell_id], "fixture result-reader definitions", "exec"), env)
         with patch.object(swap_results, "read_results") as reader:
-            env["original_report"](BENCHMARK, 2)
+            env["select_original_fit_records"](BENCHMARK, 2)
             self.assertEqual(reader.call_args.kwargs["config"], expected)
-            env["swap_report"](BENCHMARK, "rna", "rinalmo", 2, 0.01)
+            env["select_replacement_fit_records"](BENCHMARK, "rna", "rinalmo", 2, 0.01)
             self.assertEqual(reader.call_args.kwargs["config"], expected)
         # Selection can request another seed without changing the fit settings.
-        self.assertEqual(env["result_recipe"](0), {**expected, "seed": 0})
+        self.assertEqual(env["training_settings_for_seed"](0), {**expected, "seed": 0})
         self.assertEqual(self.calls, [])
         self.assertEqual(self.opened, [])
 
@@ -477,9 +476,29 @@ class SwapResumeNotebookTests(unittest.TestCase):
             exec(compile(self.sources[cell_id], "fixture result selection", "exec"), env)
         current = env["results_for_encoder_set"](BENCHMARK, "rna", "rinalmo")
         self.assertEqual(env["validation_selected_single"](current, "rna", "rinalmo"), "unimodal:dna")
+
+        original_reads = []
+        original_runs = env["original_runs"]
+
+        def track_original_reads(benchmark, seed=None):
+            original_reads.append(env["SEED"] if seed is None else seed)
+            return original_runs(benchmark, seed)
+
+        env["original_runs"] = track_original_reads
         table = env["benchmark_score_table"](BENCHMARK)
-        self.assertEqual(table.loc[("rna", "rinalmo"), "best single"], "unimodal:rna")
-        self.assertEqual(table.loc[("rna", "rinalmo"), "best single score"], 0.23)
+        self.assertEqual(original_reads, [1, 0])
+        self.assertEqual(table.loc[("none", "BioLangFusion's own"), "validation-selected single score"], 0.88)
+        self.assertEqual(table.loc[("rna", "rinalmo"), "validation-selected single"], "unimodal:rna")
+        self.assertEqual(table.loc[("rna", "rinalmo"), "validation-selected single score"], 0.23)
+
+        env["RESULT_PATHS"].fixed_historical_selection = True
+        env["FIT_PLANS"][BENCHMARK].selected_singles.update(
+            original="unimodal:dna", rinalmo="unimodal:rna",
+        )
+        original_reads.clear()
+        fixed_table = env["benchmark_score_table"](BENCHMARK)
+        self.assertEqual(original_reads, [1])
+        pd.testing.assert_frame_equal(fixed_table, table)
         self.assertEqual(self.calls, [])
 
     def test_partial_stream_open_preserves_primary_failure_and_closes_prior_caches(self):

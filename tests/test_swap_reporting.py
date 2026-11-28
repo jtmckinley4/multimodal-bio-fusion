@@ -246,7 +246,7 @@ class SwapReportingTests(unittest.TestCase):
         modes = cells["swaps-run-mode"]
         state = {"RESULTS_ROOT": self.root, "SAVED_REPORT_FILES": {},
                  "blf": SimpleNamespace(ENCODER_OF_MODALITY=ORIGINAL),
-                 "result_recipe": lambda seed: {**RECIPE, "seed": seed},
+                 "training_settings_for_seed": lambda seed: {**RECIPE, "seed": seed},
                  "RESULT_PATHS": SimpleNamespace(fixed_historical_selection=False,
                                                  selection_snapshot=None,
                                                  saved_report_dirs=(self.root / "reports",))}
@@ -256,7 +256,6 @@ class SwapReportingTests(unittest.TestCase):
         self.assertTrue(state["READ_SAVED_RESULTS"])
         self.assertFalse(state["RUN_SAVED_COMPARISONS"])
         self.assertFalse(state["RUN_TRAINING"])
-        self.assertFalse(state["RUN_SINGLE_SEED_INTERVALS"])
         # Defining the helper must not require datasets or start report production.
         exec(cells["swaps-paired-report-def"], state)
         state["build_or_reuse_report"] = Mock(
@@ -288,7 +287,7 @@ class SwapReportingTests(unittest.TestCase):
                                      DATASETS={"fixture": SimpleNamespace(
                                          task="classification", label_column="Value", split_column="Split")}),
             np=np, pd=pd, display=lambda obj: None,
-            result_recipe=lambda seed: {**RECIPE, "seed": seed},
+            training_settings_for_seed=lambda seed: {**RECIPE, "seed": seed},
             ORIGINAL_RESULTS={"fixture": [self.original]}, ORIGINAL=ORIGINAL,
             SWAPS=[("rna", "replacement")],
             tokens=SimpleNamespace(grid_resolution=lambda e: "codon", extract=forbidden),
@@ -308,6 +307,64 @@ class SwapReportingTests(unittest.TestCase):
             exec(cells["swaps-paired-report-run"], state)
         self.assertEqual(len(list((self.root / "reports").glob("*.json"))), 1)
         self.assertIn("fixture", state["SAVED_COMPARISON_REPORTS"])
+
+    def test_paired_lookup_shows_summary_seed_and_missing_pairs_from_saved_report(self):
+        notebook = json.loads((ROOT / "Code/stage4/encoder_swaps.ipynb").read_text(encoding="utf8"))
+        lookup = next("".join(cell["source"]) for cell in notebook["cells"]
+                      if cell["id"] == "swaps-paired-lookup")
+        benchmark = "fungal_expression"
+        concat = dict(encoder="mrnafm", comparison="concat vs validation-selected single",
+                      first="mrnafm/concat", second="mrnafm/unimodal:rna",
+                      first_score=0.65, second_score=0.60,
+                      difference=0.05, ci_low=0.01, ci_high=0.09, seed_sd=0.02,
+                      missing_seeds=[])
+        cross = dict(concat, comparison="cross vs concat", first="mrnafm/cross",
+                     second="mrnafm/concat", first_score=None, second_score=None,
+                     difference=None, ci_low=None, ci_high=None, seed_sd=None, missing_seeds=[1])
+        report = {
+            "identity": {"seeds": [0, 1, 2]},
+            "analysis": {
+                "units": "Spearman",
+                "seed_summary": [concat, cross, dict(concat, encoder="rinalmo",
+                                                     first="rinalmo/concat", second="rinalmo/unimodal:rna")],
+                "per_seed": [dict(concat, seed=1, first_score=0.68, difference=0.08,
+                                  ci_low=0.02, ci_high=0.14)],
+            },
+        }
+        before = deepcopy(report)
+        state = dict(READ_SAVED_RESULTS=True, EXPERIMENT="encoder_swaps", pd=pd,
+                     display=Mock(), SAVED_COMPARISON_REPORTS={benchmark: report})
+        with redirect_stdout(io.StringIO()):
+            exec(lookup, state)
+        state["display"].assert_called_once()
+        shown = state["display"].call_args.args[0]
+        concat_key = ("mrnafm", concat["comparison"])
+        cross_key = ("mrnafm", cross["comparison"])
+        self.assertEqual(shown.index.tolist(), [concat_key, cross_key])
+        self.assertEqual(shown.loc[concat_key, "mean paired difference"], 0.05)
+        self.assertEqual(shown.loc[concat_key, "difference SD"], 0.02)
+        self.assertIsNone(state["lookup_comparison"])
+
+        state["display"].reset_mock()
+        message = io.StringIO()
+        with redirect_stdout(message):
+            exec(lookup.replace("lookup_seed = None", "lookup_seed = 1", 1), state)
+        state["display"].assert_called_once()
+        shown = state["display"].call_args.args[0]
+        self.assertIn("Training seed 1", message.getvalue())
+        self.assertEqual(shown.loc[concat_key, "paired difference"], 0.08)
+        self.assertEqual(shown.loc[concat_key, "95% paired lower"], 0.02)
+        self.assertTrue(pd.isna(shown.loc[cross_key, "paired difference"]))
+        self.assertEqual(shown.loc[cross_key, "missing seeds"], [1])
+        self.assertNotIn("difference SD", shown)
+
+        state["display"].reset_mock()
+        message = io.StringIO()
+        with redirect_stdout(message):
+            exec(lookup.replace("lookup_seed = None", "lookup_seed = 99", 1), state)
+        state["display"].assert_not_called()
+        self.assertIn("Choose a training seed from", message.getvalue())
+        self.assertEqual(report, before)
 
     def test_notebook_report_helper_preserves_inputs_and_analysis_settings(self):
         notebook = json.loads((ROOT / "Code/stage4/encoder_swaps.ipynb").read_text(encoding="utf8"))
@@ -339,7 +396,7 @@ class SwapReportingTests(unittest.TestCase):
                         DATASETS={"fixture": SimpleNamespace(
                             task=task, label_column="Value", split_column="Split")},
                     ),
-                    SEED=2, result_recipe=Mock(return_value=recipe),
+                    SEED=2, training_settings_for_seed=Mock(return_value=recipe),
                     ORIGINAL_RESULTS={"fixture": [self.original]}, ORIGINAL=ORIGINAL,
                     SWAPS=[("rna", "codon-fixture"), ("dna", "base-fixture")],
                     tokens=SimpleNamespace(grid_resolution=lambda encoder: (
@@ -357,7 +414,7 @@ class SwapReportingTests(unittest.TestCase):
 
                 self.assertEqual(result, report_result)
                 load_rows.assert_called_once_with("fixture")
-                state["result_recipe"].assert_called_once_with(0)
+                state["training_settings_for_seed"].assert_called_once_with(0)
                 reporting.benchmark_context.assert_called_once_with(
                     frame, task=task, label_column="Value", split_column="Split")
                 reporting.collect.assert_called_once_with(

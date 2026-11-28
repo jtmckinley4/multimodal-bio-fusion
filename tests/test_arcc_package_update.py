@@ -108,6 +108,28 @@ class PackageUpdateTests(unittest.TestCase):
         archive = self.prepared / update.HISTORY / "snapshots" / f"{digest(original)}.json"
         self.assertEqual(archive.read_bytes(), original)
 
+    def test_encoder_swap_update_archives_retired_stage1_alignment_capture(self):
+        self.recipe = "encoder_swaps"
+        relative = "docs/figures/stability/results.json"
+        capture = b'{"retained": true}\n'
+        for root in (self.repo, self.prepared):
+            path = root / relative
+            path.parent.mkdir(parents=True)
+            path.write_bytes(capture)
+        old = {**self.plan([*self.names, relative]), "experiment": "full"}
+        original = json.dumps(old, indent=2).encode()
+        self.snapshot.write_bytes(original)
+        plan = {**self.plan(self.names), "experiment": "full"}
+
+        self.assertEqual(self.run_update(plan)["removed"], [relative])
+        self.assertEqual((self.prepared / relative).read_bytes(), capture)
+        self.assertTrue(self.run_update(plan, apply=True)["applied"])
+        self.assertFalse((self.prepared / relative).exists())
+        self.assertEqual((self.repo / relative).read_bytes(), capture)
+        history = self.prepared / update.HISTORY
+        self.assertEqual((history / "snapshots" / f"{digest(original)}.json").read_bytes(), original)
+        self.assertEqual((history / "objects" / digest(capture)).read_bytes(), capture)
+
     def test_refuse_drift_and_unmanaged_collision_before_replacing_sources(self):
         plan = self.change_sources()
         for name in ("stable.py", "new.py"):

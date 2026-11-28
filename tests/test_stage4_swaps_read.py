@@ -139,14 +139,12 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.assertTrue(namespace["READ_SAVED_RESULTS"])
         self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
         self.assertNotIn("STREAMS", namespace)
-        self.assertEqual(namespace["RESOLVED"], {})
         return namespace, shown, output.getvalue()
 
     def test_empty_checkout_reports_gaps_and_finishes_without_producers(self):
         namespace, shown, output = self.execute_reading("historical")
         self.assertIn("Training skipped", output)
-        self.assertIn("Stage 1 alignment unavailable", output)
-        self.assertIn("Single-seed intervals were skipped", output)
+        self.assertTrue(namespace["cache_summary"]["encoder metadata found"].eq("0/11").all())
         self.assertTrue(namespace["result_coverage"]["missing"].str.len().gt(0).all())
 
     def test_saved_default_does_not_replace_absent_newton_with_desktop_scores_or_reports(self):
@@ -154,10 +152,9 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.saved_report(self.code / "stage4/results/phaseB/analyses/paired-report-v1", source)
         namespace, _, output = self.execute_reading()
         self.assertEqual(namespace["SAVED_COMPARISON_REPORTS"], {})
-        self.assertFalse(namespace["original_report"]("cov_vac_degradation", 0).records)
+        self.assertFalse(namespace["select_original_fit_records"]("cov_vac_degradation", 0).records)
         self.assertIn("no matching saved report", output)
         self.assertIn("newton_h100_seeds012", output)
-        self.assertIn("Single-seed intervals were skipped", output)
         self.assertTrue(namespace["result_coverage"]["missing"].str.len().gt(0).all())
 
     def test_saved_default_reads_newton_scores_and_reports_without_csv_copies_or_caches(self):
@@ -188,7 +185,6 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.assertEqual((namespace["SEED"], namespace["SELECTION_SEED"]), (0, 0))
         self.assertEqual(namespace["COMPARISON_SEEDS"], (0, 1, 2))
         self.assertFalse(namespace["RUN_SAVED_COMPARISONS"])
-        self.assertFalse(namespace["RUN_SINGLE_SEED_INTERVALS"])
         table = namespace["benchmark_score_table"]("cov_vac_degradation")
         self.assertEqual(table.loc[("none", "BioLangFusion's own"), "concat"], 0.65)
         self.assertEqual(namespace["SAVED_COMPARISON_REPORTS"], {"cov_vac_degradation": saved})
@@ -215,7 +211,7 @@ class SwapNotebookReadTests(unittest.TestCase):
         path.write_text("not JSON", encoding="utf-8")
         namespace, shown, output = self.execute_reading("historical")
         prerequisites = namespace["result_coverage"]["prerequisite"]
-        self.assertTrue(prerequisites.str.contains("seed-0 MIL selection unavailable").any())
+        self.assertTrue(prerequisites.str.contains("seed-0 MIL entropy penalty unavailable").any())
         self.assertIn("Ambiguous saved results", str(namespace["FIT_PLANS"]["cov_vac_degradation"].issues))
         self.assertFalse(namespace["result_issues"].empty)
 
@@ -243,7 +239,7 @@ class SwapNotebookReadTests(unittest.TestCase):
     def test_cache_metadata_reports_valid_invalid_and_missing_without_recovery(self):
         benchmark = "cov_vac_degradation"
         metadata = {
-            "ntv2_100m": '{"n_shards": 13}',
+            "ntv2_100m": '{"n_shards": 1013, "n_sequences": 12345}',
             "rnafm": "[]",
             "esm2_8m": "not JSON",
         }
@@ -254,7 +250,7 @@ class SwapNotebookReadTests(unittest.TestCase):
 
         # The existing reading harness blocks recovery, producers and writers and
         # checks every fixture byte, even when cache metadata is unusable.
-        namespace, _, _ = self.execute_reading("historical")
+        namespace, shown, _ = self.execute_reading("historical")
         rows = {
             row["encoder"]: row for row in namespace["checks"]
             if row["benchmark"] == benchmark
@@ -262,17 +258,29 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.assertEqual(rows["ntv2_100m"], {
             "benchmark": benchmark,
             "encoder": "ntv2_100m",
-            "status": "saved metadata; shards not checked",
-            "recorded shards": 13,
+            "status": "cache metadata only",
+            "recorded input rows": 12345,
+            "recorded cache shards": 1013,
             "issues": "",
         })
         for encoder_key in ("rnafm", "esm2_8m", "nt500m"):
             with self.subTest(encoder=encoder_key):
                 self.assertEqual(rows[encoder_key]["status"], "metadata unavailable")
-                self.assertIsNone(rows[encoder_key]["recorded shards"])
+                self.assertIsNone(rows[encoder_key]["recorded input rows"])
+                self.assertIsNone(rows[encoder_key]["recorded cache shards"])
                 self.assertTrue(rows[encoder_key]["issues"])
         self.assertIn("metadata is not an object", rows["rnafm"]["issues"])
         self.assertIn("meta.json", rows["nt500m"]["issues"])
+
+        summary = namespace["cache_summary"]
+        self.assertEqual(summary.index.name, "benchmark")
+        self.assertEqual(summary.columns.tolist(), [
+            "encoder metadata found", "recorded input rows", "recorded shards per encoder",
+        ])
+        self.assertEqual(summary.loc[benchmark].tolist(), ["1/11", "12,345", "1,013"])
+        self.assertEqual(summary.loc["fungal_expression"].tolist(),
+                         ["0/11", "unavailable", "unavailable"])
+        self.assertTrue(any(summary is item for item in shown))
 
     def test_coverage_keeps_requested_seed_order_prerequisites_and_reference_gaps(self):
         benchmark = "cov_vac_degradation"
@@ -288,7 +296,7 @@ class SwapNotebookReadTests(unittest.TestCase):
 
         self.assertEqual([(row["encoder"], row["seed"]) for row in coverage],
                          [("original", 2), ("nt500m", 2), ("original", 0), ("nt500m", 0)])
-        self.assertTrue(all("seed-0 MIL selection unavailable" in row["prerequisite"]
+        self.assertTrue(all("seed-0 MIL entropy penalty unavailable" in row["prerequisite"]
                             for row in coverage))
         self.assertEqual(coverage[1]["available"], "")
         self.assertEqual(coverage[3]["available"], "concat")
@@ -304,83 +312,89 @@ class SwapNotebookReadTests(unittest.TestCase):
         self.assertEqual(before, {path: path.read_bytes() for path in self.root.rglob("*")
                                   if path.is_file()})
 
-    def test_bootstrap_plan_uses_selection_seed_and_requires_both_fusion_heads(self):
-        namespace, _, _ = self.execute_reading("historical")
-        original = {"concat": SimpleNamespace(), "mil": SimpleNamespace()}
-        current = {
-            "unimodal:dna": SimpleNamespace(val_score=0.95),
-            "unimodal:rna": SimpleNamespace(val_score=0.1),
-            "unimodal:prot": SimpleNamespace(val_score=0.4),
-            "concat": SimpleNamespace(),
-            "cross": SimpleNamespace(),
-        }
-        selection = {
-            "unimodal:dna": SimpleNamespace(val_score=0.2),
-            "unimodal:rna": SimpleNamespace(val_score=0.8),
-            "unimodal:prot": SimpleNamespace(val_score=0.4),
-        }
-        requested = []
-
-        def result_set(benchmark, modality=None, encoder_key=None, seed=None):
-            requested.append((benchmark, modality, encoder_key, seed))
-            if encoder_key is None:
-                return original
-            return selection if seed == 0 else current
-
-        namespace.update(SEED=2, SELECTION_SEED=0, results_for_encoder_set=result_set,
-                         SWAPS=[("rna", "mrnafm")])
-        records, comparisons = namespace["bootstrap_comparison_plan"]("fixture")
-        self.assertEqual(requested, [
-            ("fixture", None, None, None),
-            ("fixture", "rna", "mrnafm", None),
-            ("fixture", "rna", "mrnafm", 0),
-        ])
-        self.assertEqual(comparisons, [
-            ("mrnafm concat vs original", "mrnafm concat", "original concat"),
-            ("mrnafm concat vs best single (unimodal:rna)",
-             "mrnafm concat", "mrnafm unimodal:rna"),
-        ])
-        self.assertIs(records["mrnafm unimodal:rna"], current["unimodal:rna"])
-        # Incomplete selection evidence cannot silently choose a different single.
-        del selection["unimodal:rna"]
-        _, incomplete = namespace["bootstrap_comparison_plan"]("fixture")
-        self.assertEqual(incomplete, comparisons[:1])
-
-    def test_alignment_uses_explicit_capture_labels_and_preserves_raw_values(self):
-        namespace, _, _ = self.execute_reading("historical")
-        index = ["mrnafm", "esm2_8m", "nt500m", "ntv2_100m", "rnafm"]
-        columns = ["ntv2_100m", "rnafm", "esm2_8m", "nt500m", "mrnafm"]
-        values = [
-            [0.51, 0.52, 0.53, 0.54, 1.0],
-            [0.13, 0.23, 1.0, 0.43, 0.53],
-            [0.41, 0.42004, 0.43, 1.0, 0.54],
-            [1.0, 0.12, 0.13, 0.41, 0.51],
-            [0.12, 1.0, 0.23, 0.42004, 0.52],
+    def test_coverage_display_counts_fits_and_only_shows_diagnostic_rows(self):
+        source = next("".join(cell["source"]) for cell in self.cells
+                      if cell["id"] == "swaps-result-coverage")
+        benchmark = "cov_vac_degradation"
+        healthy = {"benchmark": benchmark, "encoder": "original", "seed": 0,
+                   "available": "concat, cross", "missing": "", "without paired arrays": "",
+                   "ambiguous": "", "excluded files": 1, "legacy identity": 0,
+                   "reference gaps": "", "reference arrays absent": "", "prerequisite": ""}
+        flagged = [
+            dict(healthy, encoder=column, **{column: value})
+            for column, value in (
+                ("missing", "mil"),
+                ("without paired arrays", "cross"),
+                ("ambiguous", "concat"),
+                ("legacy identity", 1),
+                ("reference gaps", "unimodal:rna"),
+                ("reference arrays absent", "unimodal:prot"),
+                ("prerequisite", "seed-0 MIL entropy penalty unavailable"),
+            )
         ]
-        capture = {"similarity": {
-            "Linear CKA": {"index": index, "columns": columns, "data": values},
-            "Linear CKA after control": {
-                "index": index, "columns": columns, "data": (np.array(values) / 2).tolist(),
-            },
-        }}
-        before = json.dumps(capture)
-        namespace["stage1"] = {"similarity": {}}  # The explicit argument owns this lookup.
-        matrix = namespace["alignment_matrix"](capture, "Linear CKA")
-        self.assertEqual(matrix.index.tolist(), index)
-        self.assertEqual(matrix.columns.tolist(), columns)
-        actual = namespace["alignment_table"](capture, {("rna", "mrnafm"), ("dna", "nt500m")})
-        expected = pd.DataFrame({
-            "swap": ["nt500m"] * 3 + ["mrnafm"] * 3,
-            "pair": ["nt500m + rnafm", "nt500m + esm2_8m",
-                     "nt500m vs the ntv2_100m it replaces",
-                     "mrnafm + ntv2_100m", "mrnafm + esm2_8m",
-                     "mrnafm vs the rnafm it replaces"],
-            "CKA": [0.42004, 0.43, 0.41, 0.51, 0.53, 0.52],
-            "CKA after composition control": [0.21002, 0.215, 0.205, 0.255, 0.265, 0.26],
-        })
-        pd.testing.assert_frame_equal(actual, expected, check_exact=True)
-        self.assertEqual(json.dumps(capture), before)
+        issues = [{"benchmark": benchmark, "encoder": "original", "seed": 0,
+                   "source": "other-seed.json", "reason": "configuration differs: seed"}]
 
+        cases = (
+            ("encoder_swaps", (2, 0), [healthy], [2, 2, 2]),
+            ("encoder_swaps", (2, 0), [healthy, *flagged], [17, 16, 15]),
+            ("ecoli_ernie", (1,), [dict(healthy, seed=1)], [2, 2, 2]),
+        )
+        for experiment, expected_seeds, rows, counts in cases:
+            with self.subTest(experiment=experiment, coverage_rows=len(rows)):
+                shown = []
+                requests = []
+
+                def collect_coverage(requested_benchmark, seeds):
+                    requests.append((requested_benchmark, seeds))
+                    return rows, issues
+
+                env = dict(
+                    BENCHMARKS=(benchmark,), EXPERIMENT=experiment, SEED=1,
+                    COMPARISON_SEEDS=(2, 0), READ_SAVED_RESULTS=True,
+                    FIT_PLANS={benchmark: SimpleNamespace(lambda_=0.01)}, pd=pd,
+                    display=shown.append, coverage_for_benchmark=collect_coverage,
+                )
+                with redirect_stdout(io.StringIO()):
+                    exec(compile(source, "swaps-result-coverage", "exec"), env)
+                self.assertEqual(requests, [(benchmark, expected_seeds)])
+                self.assertEqual(env["SEED"], 1)
+                pd.testing.assert_frame_equal(
+                    env["result_coverage"], pd.DataFrame(rows).set_index(["benchmark", "encoder", "seed"]),
+                )
+                pd.testing.assert_frame_equal(env["result_issues"], pd.DataFrame(issues))
+                expected = pd.DataFrame(
+                    [{"benchmark": benchmark, "expected fits": counts[0], "saved fits": counts[1],
+                      "fits with prediction and target arrays": counts[2], "MIL entropy penalty": 0.01}],
+                ).set_index("benchmark")
+                pd.testing.assert_frame_equal(env["coverage_summary"], expected)
+                self.assertEqual(len(shown), 1 if len(rows) == 1 else 2)
+                pd.testing.assert_frame_equal(shown[0], expected)
+                if len(shown) > 1:
+                    self.assertEqual(set(shown[1].index.get_level_values("encoder")),
+                                     {row["encoder"] for row in flagged})
+
+    def test_execution_plan_displays_details_only_when_fits_need_attention(self):
+        source = next("".join(cell["source"]) for cell in self.cells
+                      if cell["id"] == "swaps-execution-plan")
+        benchmark = "cov_vac_degradation"
+        ready = dict(benchmark=benchmark, role="original", encoder="original",
+                     variant="concat", seed=0, status="reuse")
+        pending = dict(ready, role="replacement", encoder="mrnafm", status="new")
+        run = SimpleNamespace(benchmark=benchmark, status="new", encoders={"rna": "mrnafm"})
+        for rows, runs in (([ready], []), ([ready, pending], [run])):
+            with self.subTest(has_pending=bool(runs)):
+                shown = []
+                plan = SimpleNamespace(rows=lambda: rows, runs=runs, issues=[], require_ready=forbidden)
+                env = dict(BENCHMARKS=(benchmark,), SEED=0, SELECTION_SEED=0, READ_SAVED_RESULTS=True,
+                           pd=pd, display=shown.append, execution_plan=lambda _: plan)
+                with redirect_stdout(io.StringIO()):
+                    exec(compile(source, "swaps-execution-plan", "exec"), env)
+                self.assertEqual(len(shown), 1 + bool(runs))
+                self.assertEqual(env["PENDING_RUNS"], runs)
+                self.assertEqual(env["PENDING_CACHE_KEYS"], [(benchmark, "mrnafm")] if runs else [])
+                if runs:
+                    self.assertEqual(shown[1]["status"].tolist(), ["new"])
 
 if __name__ == "__main__":
     unittest.main()

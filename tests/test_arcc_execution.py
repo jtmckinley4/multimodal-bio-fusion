@@ -146,6 +146,19 @@ class ARCCExecutionTests(unittest.TestCase):
         self.assertEqual(before, self.snapshot())
         self.assertFalse(self.output.exists())
 
+    def test_verify_checks_stage1_alignment_capture_when_listed_by_older_snapshot(self):
+        relative = "docs/figures/stability/results.json"
+        path = self.put(relative, '{"retained": true}\n')
+        digest = runtime.sha256(path)
+        self.manifest["files"].append({"destination": relative, "initial_copy_sha256": digest})
+        self.save_manifest()
+
+        _, files = runtime.verify_preserved_inputs(self.root)
+        self.assertEqual(files[relative], digest)
+        self.put(relative, '{"changed": true}\n')
+        with self.assertRaisesRegex(ValueError, "Prepared file changed"):
+            runtime.verify_preserved_inputs(self.root)
+
     def test_manifest_rejects_old_schema_empty_missing_duplicate_and_tampered_entries(self):
         original = deepcopy(self.manifest)
         changes = [
@@ -375,7 +388,7 @@ class ARCCExecutionTests(unittest.TestCase):
                 self.assertEqual(arguments["checkpoint_validator"],
                                  environment["EXECUTION"].checkpoint_preflight if mode == "train" else None)
                 self.assertEqual(arguments["identity_factory"],
-                                 environment["requested_identity"] if mode == "train" else None)
+                                 environment["expected_fit_identity"] if mode == "train" else None)
                 self.assertEqual(environment["FIT_PRODUCER"]("fungal_expression"),
                                  {"fixture_producer": True})
                 self.assertEqual(notebook, original)

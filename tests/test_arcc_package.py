@@ -41,9 +41,6 @@ class ArccPackageTests(unittest.TestCase):
         # Nonempty saved outputs/counts are deliberately preserved verbatim.
         self.notebook_bytes = b'{"cells":[{"cell_type":"code","execution_count":99,"outputs":[{"text":"historical fixture"}],"source":["READ_SAVED_RESULTS=True"]}]}\n'
         write(self.source / prepare.NOTEBOOK, self.notebook_bytes)
-        self.context_bytes = b'{\n  "invented_historical_context": 1.2300\n}\n'
-        for relative in prepare.HISTORICAL_CONTEXT:
-            write(self.source / relative, self.context_bytes)
         write(self.source / "Code/shared_code/__init__.py", b'"""Fixture package."""\n')
         write(self.source / "Code/shared_code/fusion/helper.py", b"ANSWER = 3\n")
         for relative in prepare.REQUIRED_SHARED[1:]:
@@ -107,8 +104,6 @@ class ArccPackageTests(unittest.TestCase):
         names = [item["destination"] for item in first["files"]]
         self.assertEqual(names, sorted(names))
         self.assertIn(prepare.SELECTION_EVIDENCE, names)
-        self.assertEqual({item["destination"] for item in first["files"] if item["role"] == "historical_context"},
-                         set(prepare.HISTORICAL_CONTEXT))
         self.assertEqual({item["destination"] for item in first["files"] if item["role"] == "synthetic_test"},
                          {"tests/" + name for name in prepare.RUNTIME_TESTS})
         self.assertNotIn("tests/test_arcc_package.py", names)
@@ -200,7 +195,7 @@ class ArccPackageTests(unittest.TestCase):
         self.assertFalse((self.destination / "Code/stage3/embeddings").exists())
 
     def test_missing_maintained_notebook_shared_initializer_or_runtime_stops_before_writing(self):
-        missing_paths = [prepare.NOTEBOOK, *prepare.HISTORICAL_CONTEXT, *prepare.REQUIRED_SHARED,
+        missing_paths = [prepare.NOTEBOOK, *prepare.REQUIRED_SHARED,
                          "execution/arcc/requirements.txt",
                          *["execution/arcc/encoder_swaps/" + name for name in prepare.RUNTIME_FILES],
                          *["tests/" + name for name in prepare.RUNTIME_TESTS]]
@@ -216,26 +211,15 @@ class ArccPackageTests(unittest.TestCase):
                 finally:
                     path.write_bytes(original)
 
-    def test_historical_context_is_copied_verbatim_without_regeneration(self):
+    def test_new_package_does_not_include_stage1_alignment_capture(self):
+        relative = "docs/figures/stability/results.json"
+        capture = b'{"invented_historical_context": 1.2300}\n'
         plan = self.plan()
+        write(self.source / relative, capture)
+        self.assertEqual(self.plan(), plan)
         prepare.write_package(plan, self.destination)
-        for relative in prepare.HISTORICAL_CONTEXT:
-            self.assertEqual((self.source / relative).read_bytes(), self.context_bytes)
-            self.assertEqual((self.destination / relative).read_bytes(), self.context_bytes)
-            entry = next(item for item in plan["files"] if item["destination"] == relative)
-            self.assertEqual(entry["role"], "historical_context")
-            self.assertEqual(entry["source"], relative)
-            self.assertEqual(entry["source_sha256"], hashlib.sha256(self.context_bytes).hexdigest())
-
-    def test_changed_context_after_planning_stops_without_recovery_or_package(self):
-        plan = self.plan()
-        context = self.source / prepare.HISTORICAL_CONTEXT[0]
-        changed_bytes = self.context_bytes + b"changed after inventory"
-        context.write_bytes(changed_bytes)
-        with self.assertRaisesRegex(ValueError, "Source changed after planning"):
-            prepare.write_package(plan, self.destination)
-        self.assertEqual(context.read_bytes(), changed_bytes)
-        self.assertFalse(self.destination.exists())
+        self.assertFalse((self.destination / relative).exists())
+        self.assertEqual((self.source / relative).read_bytes(), capture)
 
     def test_modified_or_missing_preserved_inputs_are_refused(self):
         for entry in self.selection_records:
