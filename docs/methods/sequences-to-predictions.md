@@ -204,7 +204,7 @@ corpora are recorded here.
 | ERNIE-RNA | 86M | RNAcentral, ~20.4M sequences | non-coding |
 | RNAErnie | ~86M | RNAcentral | non-coding |
 | NucleicBERT | ~400M | MARS database, ~30M sequences | non-coding |
-| mRNA-FM | 100M | coding sequences, codon tokens | coding |
+| mRNA-FM | ~240M | coding sequences, codon tokens | coding |
 | CaLM | 86M | European Nucleotide Archive cDNA | coding |
 
 **Which RiNALMo.** RiNALMo ships in three sizes: micro at 33M parameters (12 layers, width

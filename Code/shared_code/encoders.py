@@ -68,7 +68,7 @@ ENCODERS = {
         #   encoder     params   pretraining corpus                        coding?
         #   RNA-FM      100M     RNAcentral, 23.7M ncRNA                   non-coding
         #   RiNALMo     148M     RNAcentral + Rfam + nt + Ensembl, 36M     non-coding
-        #   mRNA-FM     100M     coding sequences, codon tokens            coding
+        #   mRNA-FM     ~240M    coding sequences, codon tokens            coding
         #   CaLM         86M     European Nucleotide Archive cDNA          coding
         #   ERNIE-RNA    86M     RNAcentral, 20.4M ncRNA                   non-coding
         #   RNAErnie    ~86M     RNAcentral, ncRNA                         non-coding
